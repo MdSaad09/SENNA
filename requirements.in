@@ -1,0 +1,30 @@
+# The pinned stack from master spec 5.9.1 — pin what breaks, float what does not.
+# Locked with `make lock` (uv pip compile); edit here, never in requirements.txt.
+
+fastf1>=3.7,<4              # 5.9.1 / F-10: 3.7 is the Jolpica-backed line
+pandas>=2.2                 # 5.9.1: FastF1 3.7 compatibility floor
+numpy>=1.26                 # 5.9.1: FastF1 3.7 compatibility floor
+
+stable-baselines3==2.9.*    # 5.9.1: pair verified matching minors on PyPI, 11 Jul 2026
+sb3-contrib==2.9.*          # 5.9.1: MaskablePPO lives here; minor must match SB3
+torch>=2.2,<3               # 5.9.1: policy is tiny, CPU wheels are enough
+
+shap>=0.45                  # 5.9.1: TreeSHAP path of spec 5.8
+numba>=0.60                 # shap's JIT backend; the floor stops the resolver
+                            # backtracking to ancient sdists when numpy floats up
+xgboost>=2.0                # 5.9.1: surrogate for TreeSHAP
+
+fastapi>=0.111              # 5.9.1
+uvicorn[standard]           # 5.9.1: floats deliberately
+pydantic>=2,<3              # 5.9.1
+sqlalchemy>=2.0,<2.1        # 5.9.1
+alembic>=1.13,<2            # 5.9.1
+asyncpg>=0.29,<1            # 5.9.1
+redis>=5,<6                 # 5.9.1
+rq>=1.16,<2                 # 5.9.1: simplest adequate queue (F-26)
+
+wandb>=0.17                 # 5.9.1
+
+pytest                      # test runner; floats
+httpx                       # TestClient transport; floats
+ruff                        # linter; floats
