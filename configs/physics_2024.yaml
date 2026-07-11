@@ -1,0 +1,27 @@
+# SENNA — 2024-era constants, used only for era-matched counterfactuals (F-24 / A-10).
+# Same env code, different constants file. Origins as in physics_2026.yaml.
+
+era: "2024"
+
+power_unit:
+  mgu_k_max_kw: 120            # sourced (A) — 2014–2025 PU regulations
+  ice_max_kw: 560              # sourced (B) — approximate, spec 5.2 table
+  drs: true                    # the era's overtaking aid; no Manual Override
+  mgu_h: true
+
+energy_store:
+  usable_capacity_mj: 4.0      # sourced AR-04 (A) — unchanged across eras
+
+harvest:
+  mgu_k_per_lap_cap_mj: 2.0    # sourced (A) — 2024-era MGU-K recovery limit, spec 5.2
+
+mass:
+  minimum_car_kg: 798          # sourced (B) — spec 5.2, approximate
+  race_fuel_kg: 100            # sourced (A) — 2024-era allowance, spec 5.2
+
+sporting:
+  grid_size: 20
+  fastest_lap_point: false     # abolished from 2025; 2023/24 replays that predate the
+                               # change are handled in evaluation, never as an agent
+                               # action or reward (F-07, R-01)
+  mandatory_dry_compounds: 2

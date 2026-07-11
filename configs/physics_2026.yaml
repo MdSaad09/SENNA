@@ -1,0 +1,52 @@
+# SENNA — 2026-era physical constants (master spec 5.2 + Part 8 assumptions register)
+# Every value names its origin: sourced (AR-xx), fitted (notebook), or stylised.
+# Grade C values are placeholders — verify or fit before the phase that consumes them.
+# null means "fit me": code that reads a null must raise, never guess.
+
+era: "2026"
+
+power_unit:
+  mgu_k_max_kw: 350            # sourced AR-01 (A) — FIA 2026 PU regs Art. 5; v2's 400 was the ICE
+  ice_max_kw: 400              # sourced AR-01 (A) — approximate, F1.com / ESPN 2026 guides
+  deploy_taper:
+    full_power_to_kmh: 290     # sourced AR-02 (A) — F1.com 2026 PU explainer
+    zero_power_at_kmh: 355     # sourced AR-02 (A)
+  manual_override:             # replaces DRS as the overtaking aid (F-05)
+    power_kw: 350              # sourced AR-03 (A)
+    held_to_kmh: 337           # sourced AR-03 (A)
+    extra_energy_mj: 0.5       # sourced AR-03 (A) — approximate
+    detection_gap_s: 1.0       # sourced AR-03 (A)
+  mgu_h: false                 # sourced (A) — abolished for 2026, FIA regs
+
+energy_store:
+  usable_capacity_mj: 4.0      # sourced AR-04 (A) — unchanged from 2024; NOT 8 (F-03)
+  per_lap_deploy_cap_mj: null  # F-02: no such rule exists. Deployment is limited by SOC
+                               # plus the per-circuit deployable-energy integral (T1).
+
+harvest:
+  per_lap_cap_mj_default: 8.5  # sourced AR-05 (A) — FIA baseline; per-event overrides
+                               # live in circuits.yaml with a source note and date (E-02)
+  lift_and_coast_kw: 350       # sourced AR-06 (B) — Raceteq; forces Z-mode, pace cost c_lc (T4)
+  super_clipping_kw: 250       # sourced AR-07 (B) — Autosport, Mar 2026
+
+aero:
+  downforce_vs_2024: 0.70      # sourced AR-08 (B) — Honda 2026 overview, about -30%
+  drag_vs_2024_x_mode: 0.45    # sourced AR-08 (B) — about -55% in low-drag X-mode
+
+mass:
+  minimum_car_kg: 768          # sourced AR-09 (A) — Honda overview, -30 kg vs 2024
+  race_fuel_kg: 70             # sourced AR-10 (C) — VERIFY vs FIA 2026 regs before F02 (F-06)
+
+sporting:
+  grid_size: 22                # sourced AR-12 (A) — 11 teams incl. Cadillac (F-08)
+  fastest_lap_point: false     # sourced AR-11 (B) — abolished from 2025 (F-07); 30-second VERIFY
+  mandatory_dry_compounds: 2   # sourced (A) — enforced structurally via the action mask (F-20)
+
+# Fitted at F02/F03 — grade C until the calibration notebooks fill them in.
+fitted:
+  mass_sensitivity_s_per_kg: null    # k_m, joint fuel/evolution fit per circuit (E-10, T3)
+  conserve_pace_cost_s_per_mj: null  # c_lc, lift-and-coast time cost (T4)
+  attack_pace_gain_s: null           # c_atk, energy-bounded (5.5.3)
+  derate_penalty_s_per_mj: null      # p_der, shortfall cost (5.5.3)
+  dirty_air_threshold_s: 2.0         # sourced spec 5.5.3 — traffic term engages under 2.0 s
+  attack_soc_floor_mj: 0.5           # sourced spec 5.5.2 — attack masked below this SOC
