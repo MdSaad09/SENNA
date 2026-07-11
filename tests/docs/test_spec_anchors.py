@@ -14,8 +14,10 @@ def test_every_spec_anchor_file_exists():
 
 
 def test_no_f1sip_in_prose():
-    # rename rule (docs/spec/README.md): the project is SENNA; F1SIP survives only
-    # inside the source PDF's own text, never in a filename
+    # rename rule (docs/spec/README.md): the project is SENNA; the old name survives
+    # only inside the source PDF's own text, never in a filename. The needle is
+    # assembled at runtime so this file passes its own scan.
+    old_name = "F1" + "SIP"
     tracked = subprocess.run(
         ["git", "ls-files"],
         cwd=REPO_ROOT,
@@ -24,17 +26,17 @@ def test_no_f1sip_in_prose():
         check=True,
     ).stdout.splitlines()
 
-    offenders = [path for path in tracked if "F1SIP" in path]
+    offenders = [path for path in tracked if old_name in path]
     for path in tracked:
         if path.startswith("docs/spec/source/"):
             continue
-        if "F1SIP" in (REPO_ROOT / path).read_text(errors="ignore"):
+        if old_name in (REPO_ROOT / path).read_text(errors="ignore"):
             offenders.append(path)
 
     # the PDF stays untracked until F00 lands, so its on-disk name is checked directly
     offenders += [
         f"docs/spec/source/{entry.name}"
         for entry in (REPO_ROOT / "docs/spec/source").iterdir()
-        if "F1SIP" in entry.name
+        if old_name in entry.name
     ]
     assert offenders == []
