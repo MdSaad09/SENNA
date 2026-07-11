@@ -11,7 +11,7 @@ nothing has to land first.
 
 **Repo reality check (explored):** the repo holds only docs, configs and CLAUDE.md files —
 no Python, no JS, no CI. The master spec PDF (34 pages) sits in `docs/spec/source/` as
-`F1SIP_Master_Implementation_Spec_v3.pdf`, untracked. A GitHub remote exists
+under its old pre-rename filename, untracked. A GitHub remote exists
 (`MdSaad09/SENNA`). The machine has **no Docker, no Node, no Python 3.11, no Homebrew**
 (only system Python 3.9.6) — see Questions.
 
@@ -44,8 +44,8 @@ IDs that shaped choices:
    — satisfies both (test asserts the `status` key; the 5.9.2 shape exists from day one;
    F10 fills the version).
 3. docs/spec/README.md says the PDF should be named `SENNA_Master_Spec_v3.pdf`; the file
-   on disk is `F1SIP_Master_Implementation_Spec_v3.pdf` and untracked. → Rename and
-   commit it as part of this feature (also serves the "no F1SIP anywhere" done-means).
+   on disk still carries the old project name and is untracked. → Rename and
+   commit it as part of this feature (also serves the rename done-means).
 
 ## Deliverables
 
@@ -76,13 +76,13 @@ IDs that shaped choices:
   `npm ci`, eslint, `vitest run`).
 - `Makefile` — `ingest / fit / train / eval / report` stubs, each echoing "not yet" (A-09).
 
-**Spec split (from the PDF, faithful in meaning, F1SIP→SENNA in prose only)**
+**Spec split (from the PDF, faithful in meaning, old name→SENNA in prose only)**
 - `docs/spec/5.1-architecture.md` … `5.13-recruiter-demo.md` (13 files; `5.5-environment.md`
   is the name master spec 6.1 itself uses). Load-bearing tables carried over intact:
   5.2 constants, 5.5.1 observation vector, 5.5.4 reward, 5.12 metrics.
 - `docs/spec/2-edge-cases.md` — Part 2, E-01…E-18 with mechanisms.
 - `docs/spec/8-assumptions.md` — Part 8, AR-01…AR-18 with grades.
-- `docs/spec/source/SENNA_Master_Spec_v3.pdf` — renamed from the F1SIP filename, committed.
+- `docs/spec/source/SENNA_Master_Spec_v3.pdf` — renamed from the old-name filename, committed.
 - `scripts/check_spec_anchors.py` — maps every "Spec anchors" ID in
   `docs/spec/features/*.md` to a file on disk (5.x → `5.x-*.md`, E-xx → `2-edge-cases.md`,
   AR-xx → `8-assumptions.md`; F/A/R/T/M/OQ IDs resolve to the PDF, which Parts 1/3/4/7
@@ -125,7 +125,7 @@ F00** — nothing behavioural exists yet, first property tests arrive with F05):
   script finds a file for every anchor cited by every feature spec (fails before the
   split, passes after — this test drives the extraction).
 - `tests/docs/test_spec_anchors.py::test_no_f1sip_in_prose` — no tracked text file
-  contains "F1SIP" (enforces the rename done-means; the PDF's internal text is the one
+  contains the old project name (enforces the rename done-means; the PDF's internal text is the one
   allowed exception, and its filename is renamed).
 - `frontend/src/App.test.tsx` — trivial vitest render: the app mounts and shows the
   SENNA title.
@@ -150,7 +150,7 @@ own, and their mechanisms:
 - [ ] CI green on the first push
 - [ ] Lockfiles committed; a fresh clone reproduces the environment
 - [ ] All spec section files exist and INDEX.md links resolve
-- [ ] No "F1SIP" remains in prose anywhere in the repo
+- [ ] No trace of the old project name remains in prose anywhere in the repo
 
 ## Out of scope
 

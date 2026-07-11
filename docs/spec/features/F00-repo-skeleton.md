@@ -14,7 +14,7 @@ later session reads only what it needs.
 - docker-compose.yml: postgres:16-alpine, redis:7-alpine, api (uvicorn with /api/v1/health), frontend (vite dev server)
 - Pinned lockfiles per spec 5.9.1 (pip-compile or uv lock; package-lock.json). React 18.3 + R3F 8 — never React 19
 - GitHub Actions: pytest + vitest + lint on push
-- docs/spec/5.x-*.md, 2-edge-cases.md and 8-assumptions.md extracted from the PDF in docs/spec/source/ (F1SIP -> SENNA in prose only)
+- docs/spec/5.x-*.md, 2-edge-cases.md and 8-assumptions.md extracted from the PDF in docs/spec/source/ (old project name -> SENNA in prose only)
 - Makefile stubs: ingest / fit / train / eval / report (each echoes "not yet") — the reproducibility-pack skeleton (A-09)
 
 ## Out of scope
@@ -34,7 +34,7 @@ sb3-contrib pair chosen (5.9.1: verify the latest matching minors now, freeze in
 - CI green on the first push
 - Lockfiles committed; a fresh clone reproduces the environment
 - All spec section files exist and INDEX.md links resolve
-- No "F1SIP" remains in prose anywhere in the repo
+- No trace of the old project name remains in prose anywhere in the repo
 
 ## Notes for the plan session
 The PDF must sit in docs/spec/source/ before /ship. Extract faithfully — the 5.2, 5.5.1,

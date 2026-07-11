@@ -3,10 +3,11 @@
 SENNA is a Formula 1 strategy engine built as an MSc dissertation (COMP702, University of
 Liverpool). A lap-level simulator races 22 cars under corrected 2026 regulations; a
 MaskablePPO agent decides pit stops and energy modes every lap; a SHAP layer explains
-every call; a React/R3F dashboard shows it all. The project was originally specced as
-"F1SIP" — it is now named SENNA. Treat any remaining "F1SIP" as SENNA and rename it on
-sight in prose, docs and UI. Code identifiers follow the master spec exactly (the env
-class stays `F1RaceEnv`, because the spec is the contract).
+every call; a React/R3F dashboard shows it all. The project was specced under an
+earlier working name — it is now named SENNA everywhere. Treat any surviving trace of
+the old name as SENNA and rename it on sight in prose, docs and UI (the source PDF's
+internal text is the only place it may remain). Code identifiers follow the master spec
+exactly (the env class stays `F1RaceEnv`, because the spec is the contract).
 
 Owner: Saad. He is learning this stack as we build. Keep chat jargon low, explain
 decisions when asked, and never skip the lesson step in /ship.
