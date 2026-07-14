@@ -43,7 +43,7 @@ def anchor_targets(line):
 def missing_anchor_files(repo_root):
     repo_root = Path(repo_root)
     cited_by = {}
-    # the underscore keeps _TEMPLATE.md out of the F*.md glob
+    # the F prefix keeps _TEMPLATE.md out of the glob
     for feature in sorted((repo_root / "docs/spec/features").glob("F*.md")):
         for line in feature.read_text().splitlines():
             if line.startswith("Spec anchors:"):

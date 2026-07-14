@@ -124,7 +124,7 @@ F00** — nothing behavioural exists yet, first property tests arrive with F05):
 - `tests/docs/test_spec_anchors.py::test_every_spec_anchor_file_exists` — the check
   script finds a file for every anchor cited by every feature spec (fails before the
   split, passes after — this test drives the extraction).
-- `tests/docs/test_spec_anchors.py::test_no_f1sip_in_prose` — no tracked text file
+- `tests/docs/test_spec_anchors.py::test_old_name_absent_from_prose` — no tracked text file
   contains the old project name (enforces the rename done-means; the PDF's internal text is the one
   allowed exception, and its filename is renamed).
 - `frontend/src/App.test.tsx` — trivial vitest render: the app mounts and shows the
@@ -182,6 +182,6 @@ both to main as `docs: plan F00`, then Saad types `/ship F00` in this same sessi
 
 `docker compose up` then curl `http://localhost:8000/api/v1/health` and open
 `http://localhost:5173` from the host; `pytest` and `npx vitest run` green locally;
-`python scripts/check_spec_anchors.py` exits 0; `grep -ri f1sip` over tracked text files
-returns nothing; push the feature branch (with your approval) and watch both CI jobs go
+`python scripts/check_spec_anchors.py` exits 0; a case-insensitive grep for the old
+project name over tracked text files returns nothing; push the feature branch (with your approval) and watch both CI jobs go
 green on GitHub.

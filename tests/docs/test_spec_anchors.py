@@ -13,11 +13,11 @@ def test_every_spec_anchor_file_exists():
     assert missing_anchor_files(REPO_ROOT) == []
 
 
-def test_no_f1sip_in_prose():
+def test_old_name_absent_from_prose():
     # rename rule (docs/spec/README.md): the project is SENNA; the old name survives
     # only inside the source PDF's own text, never in a filename. The needle is
-    # assembled at runtime so this file passes its own scan.
-    old_name = "F1" + "SIP"
+    # assembled at runtime, case-insensitively, so this file passes its own scan.
+    old_name = ("f1" + "sip").casefold()
     tracked = subprocess.run(
         ["git", "ls-files"],
         cwd=REPO_ROOT,
@@ -26,17 +26,17 @@ def test_no_f1sip_in_prose():
         check=True,
     ).stdout.splitlines()
 
-    offenders = [path for path in tracked if old_name in path]
+    offenders = [path for path in tracked if old_name in path.casefold()]
     for path in tracked:
         if path.startswith("docs/spec/source/"):
             continue
-        if old_name in (REPO_ROOT / path).read_text(errors="ignore"):
+        if old_name in (REPO_ROOT / path).read_text(errors="ignore").casefold():
             offenders.append(path)
 
-    # the PDF stays untracked until F00 lands, so its on-disk name is checked directly
+    # scan on-disk names too: anything dropped into source/ must arrive pre-renamed
     offenders += [
         f"docs/spec/source/{entry.name}"
         for entry in (REPO_ROOT / "docs/spec/source").iterdir()
-        if old_name in entry.name
+        if old_name in entry.name.casefold()
     ]
     assert offenders == []

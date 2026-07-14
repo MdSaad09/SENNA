@@ -10,6 +10,8 @@ package = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# bare `pytest` (CI) must resolve api/ and senna/ the same way `python -m pytest` does
+pythonpath = ["."]
 markers = [
     "slow: excluded from the fast suite and from CI push runs",
     "property: hypothesis property tests (first arrive with F05)",
