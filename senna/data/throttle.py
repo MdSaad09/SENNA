@@ -1,6 +1,6 @@
 """Client-side rate limiting so bulk ingest never hammers a free service (E-12)."""
 
-from typing import Callable
+from collections.abc import Callable
 
 
 class TokenBucket:

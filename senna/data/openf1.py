@@ -6,7 +6,7 @@ Config arrives as the `openf1` section of configs/ingest.yaml.
 """
 
 import time
-from typing import Callable
+from collections.abc import Callable
 
 import httpx
 
