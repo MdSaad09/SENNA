@@ -18,3 +18,4 @@ data/cache/
 fastf1_cache/
 *.parquet
 .DS_Store
+*.tsbuildinfo

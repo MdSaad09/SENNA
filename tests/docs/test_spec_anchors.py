@@ -1,0 +1,42 @@
+import subprocess
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from check_spec_anchors import missing_anchor_files  # noqa: E402  (needs the path bootstrap above)
+
+
+def test_every_spec_anchor_file_exists():
+    # drives the F00 spec split: every anchor a feature spec cites must resolve on disk
+    assert missing_anchor_files(REPO_ROOT) == []
+
+
+def test_old_name_absent_from_prose():
+    # rename rule (docs/spec/README.md): the project is SENNA; the old name survives
+    # only inside the source PDF's own text, never in a filename. The needle is
+    # assembled at runtime, case-insensitively, so this file passes its own scan.
+    old_name = ("f1" + "sip").casefold()
+    tracked = subprocess.run(
+        ["git", "ls-files"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.splitlines()
+
+    offenders = [path for path in tracked if old_name in path.casefold()]
+    for path in tracked:
+        if path.startswith("docs/spec/source/"):
+            continue
+        if old_name in (REPO_ROOT / path).read_text(errors="ignore").casefold():
+            offenders.append(path)
+
+    # scan on-disk names too: anything dropped into source/ must arrive pre-renamed
+    offenders += [
+        f"docs/spec/source/{entry.name}"
+        for entry in (REPO_ROOT / "docs/spec/source").iterdir()
+        if old_name in entry.name.casefold()
+    ]
+    assert offenders == []

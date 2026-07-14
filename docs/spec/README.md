@@ -14,9 +14,9 @@ load only what they need:
 - `8-assumptions.md` — Part 8, AR-01 to AR-18, grades included.
 - Part 1 findings (F-01 to F-30) and Parts 3–4 stay in the PDF; cite them by ID.
 
-Rename rule: the source document says F1SIP; this project is SENNA. Replace the name in
-prose during extraction. Leave code identifiers exactly as specified (`F1RaceEnv` and
-friends stay).
+Rename rule: the source document uses the project's earlier working name; this project
+is SENNA. Replace the old name in prose during extraction. Leave code identifiers
+exactly as specified (`F1RaceEnv` and friends stay).
 
 `features/` holds one spec per feature, F00–F15 — session-sized slices of the master
 spec. Each says what to read, what "done" means, and which tests come first. When a
