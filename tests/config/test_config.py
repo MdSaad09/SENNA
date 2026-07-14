@@ -1,4 +1,5 @@
 import pytest
+
 from senna.config import NullConstantError, get, load
 
 

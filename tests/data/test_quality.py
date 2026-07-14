@@ -2,6 +2,7 @@ import dataclasses
 from pathlib import Path
 
 import pytest
+
 from senna.data.quality import DropCount, render_report, report_path
 
 SECTION_HEADINGS = (

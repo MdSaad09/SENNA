@@ -1,4 +1,5 @@
 import pytest
+
 from senna.data.throttle import TokenBucket
 
 RATE_RPS = 3.0  # openf1.rate_limit_rps (sourced AR-15: free tier ~3 req/s)

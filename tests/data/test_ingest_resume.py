@@ -11,11 +11,12 @@ import os
 
 import pandas as pd
 import pytest
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import create_async_engine
+
 from senna.data.checkpoints import IncompleteIngestError, assert_complete, mark_excluded
 from senna.data.ingest import run_ingest
 from senna.data.schema import Base
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine
 
 pytestmark = pytest.mark.skipif(
     not os.environ.get("DATABASE_URL"),

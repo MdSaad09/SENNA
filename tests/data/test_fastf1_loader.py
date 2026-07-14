@@ -1,4 +1,5 @@
 import pandas as pd
+
 from senna.data.fastf1_loader import plan_sessions
 
 SESSIONS_TO_INGEST = ["Race", "Sprint"]  # fastf1.sessions_to_ingest (E-11: types, not names)

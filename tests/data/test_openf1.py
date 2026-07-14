@@ -1,5 +1,6 @@
 import httpx
 import pytest
+
 from senna.data.openf1 import OpenF1Client, OpenF1YearError
 
 # mirrors the openf1 section of configs/ingest.yaml
