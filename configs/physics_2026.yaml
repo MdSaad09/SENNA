@@ -44,7 +44,9 @@ sporting:
 
 # Fitted at F02/F03 — grade C until the calibration notebooks fill them in.
 fitted:
-  mass_sensitivity_s_per_kg: null    # k_m, joint fuel/evolution fit per circuit (E-10, T3)
+  mass_sensitivity_s_per_kg: 0.011905  # k_m pooled over identified circuits — fitted:
+                                       # notebooks/fit_joint_pace.ipynb; per-circuit values
+                                       # in physics_params.yaml (E-10, T3); grade C via AR-10
   conserve_pace_cost_s_per_mj: null  # c_lc, lift-and-coast time cost (T4)
   attack_pace_gain_s: null           # c_atk, energy-bounded (5.5.3)
   derate_penalty_s_per_mj: null      # p_der, shortfall cost (5.5.3)

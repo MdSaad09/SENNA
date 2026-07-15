@@ -14,6 +14,10 @@ anyio==4.14.1
     #   httpx
     #   starlette
     #   watchfiles
+appnope==0.1.4 ; sys_platform == 'darwin'
+    # via ipykernel
+asttokens==3.0.2
+    # via stack-data
 async-timeout==5.0.1 ; python_full_version < '3.11.3'
     # via redis
 asyncpg==0.31.0
@@ -21,6 +25,8 @@ asyncpg==0.31.0
 attrs==26.1.0
     # via
     #   cattrs
+    #   jsonschema
+    #   referencing
     #   requests-cache
 cattrs==26.1.0
     # via requests-cache
@@ -30,8 +36,10 @@ certifi==2026.6.17
     #   httpx
     #   requests
     #   sentry-sdk
-cffi==2.1.0 ; platform_python_implementation != 'PyPy'
-    # via cryptography
+cffi==2.1.0 ; implementation_name == 'pypy' or platform_python_implementation != 'PyPy'
+    # via
+    #   cryptography
+    #   pyzmq
 charset-normalizer==3.4.9
     # via requests
 click==8.4.2
@@ -47,20 +55,31 @@ cloudpickle==3.1.2
 colorama==0.4.6 ; sys_platform == 'win32'
     # via
     #   click
+    #   ipython
     #   pytest
     #   tqdm
+comm==0.2.3
+    # via ipykernel
 contourpy==1.3.3
     # via matplotlib
 cryptography==49.0.0
     # via fastf1
 cycler==0.12.1
     # via matplotlib
+debugpy==1.8.21
+    # via ipykernel
+decorator==5.3.1
+    # via ipython
+executing==2.2.1
+    # via stack-data
 farama-notifications==0.0.6
     # via gymnasium
 fastapi==0.139.0
     # via -r requirements.in
 fastf1==3.8.3
     # via -r requirements.in
+fastjsonschema==2.21.2
+    # via nbformat
 filelock==3.29.7
     # via torch
 fonttools==4.63.0
@@ -95,10 +114,32 @@ idna==3.18
     #   url-normalize
 iniconfig==2.3.0
     # via pytest
+ipykernel==7.3.0
+    # via -r requirements.in
+ipython==9.15.0
+    # via ipykernel
+ipython-pygments-lexers==1.1.1
+    # via ipython
+jedi==0.20.0
+    # via ipython
 jinja2==3.1.6
     # via torch
 joblib==1.5.3
     # via scikit-learn
+jsonschema==4.26.0
+    # via nbformat
+jsonschema-specifications==2025.9.1
+    # via jsonschema
+jupyter-client==8.9.1
+    # via
+    #   ipykernel
+    #   nbclient
+jupyter-core==5.9.1
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   nbclient
+    #   nbformat
 kiwisolver==1.5.0
     # via matplotlib
 llvmlite==0.48.0
@@ -113,14 +154,25 @@ markupsafe==3.0.3
     #   mako
 matplotlib==3.11.0
     # via
+    #   -r requirements.in
     #   fastf1
     #   timple
+matplotlib-inline==0.2.2
+    # via
+    #   ipykernel
+    #   ipython
 mpmath==1.3.0
     # via sympy
 msgpack==1.1.2
     # via signalrcore
 narwhals==2.23.0
     # via scikit-learn
+nbclient==0.11.0
+    # via -r requirements.in
+nbformat==5.10.4
+    # via nbclient
+nest-asyncio2==1.7.2
+    # via ipykernel
 networkx==3.6.1
     # via torch
 numba==0.66.0
@@ -146,6 +198,7 @@ nvidia-nccl-cu12==2.30.7 ; sys_platform == 'linux'
     # via xgboost
 packaging==26.2
     # via
+    #   ipykernel
     #   matplotlib
     #   pytest
     #   shap
@@ -155,18 +208,33 @@ pandas==2.3.3
     #   -r requirements.in
     #   fastf1
     #   shap
+parso==0.8.7
+    # via jedi
+pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
+    # via ipython
 pillow==12.3.0
     # via matplotlib
 platformdirs==4.10.0
     # via
     #   fastf1
+    #   jupyter-core
     #   requests-cache
     #   wandb
 pluggy==1.6.0
     # via pytest
+prompt-toolkit==3.0.52
+    # via ipython
 protobuf==7.35.1
     # via wandb
-pycparser==3.0 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
+psutil==7.2.2
+    # via
+    #   ipykernel
+    #   ipython
+ptyprocess==0.7.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
+    # via pexpect
+pure-eval==0.2.3
+    # via stack-data
+pycparser==3.0 ; (implementation_name != 'PyPy' and platform_python_implementation != 'PyPy') or (implementation_name == 'pypy' and platform_python_implementation == 'PyPy')
     # via cffi
 pydantic==2.13.4
     # via
@@ -177,7 +245,10 @@ pydantic==2.13.4
 pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
-    # via pytest
+    # via
+    #   ipython
+    #   ipython-pygments-lexers
+    #   pytest
 pyjwt==2.13.0
     # via
     #   fastf1
@@ -189,6 +260,7 @@ pytest==9.1.1
 python-dateutil==2.9.0.post0
     # via
     #   fastf1
+    #   jupyter-client
     #   matplotlib
     #   pandas
 python-dotenv==1.2.2
@@ -200,12 +272,20 @@ pyyaml==6.0.3
     #   -r requirements.in
     #   uvicorn
     #   wandb
+pyzmq==27.1.0
+    # via
+    #   ipykernel
+    #   jupyter-client
 rapidfuzz==3.14.5
     # via fastf1
 redis==5.3.1
     # via
     #   -r requirements.in
     #   rq
+referencing==0.37.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 requests==2.34.2
     # via
     #   fastf1
@@ -213,6 +293,10 @@ requests==2.34.2
     #   wandb
 requests-cache==1.3.3
     # via fastf1
+rpds-py==2026.6.3
+    # via
+    #   jsonschema
+    #   referencing
 rq==1.16.2
     # via -r requirements.in
 ruff==0.15.21
@@ -220,15 +304,19 @@ ruff==0.15.21
 sb3-contrib==2.9.0
     # via -r requirements.in
 scikit-learn==1.9.0
-    # via shap
+    # via
+    #   -r requirements.in
+    #   shap
 scipy==1.17.1 ; python_full_version < '3.12'
     # via
+    #   -r requirements.in
     #   fastf1
     #   scikit-learn
     #   shap
     #   xgboost
 scipy==1.18.0 ; python_full_version >= '3.12'
     # via
+    #   -r requirements.in
     #   fastf1
     #   scikit-learn
     #   shap
@@ -261,6 +349,8 @@ stable-baselines3==2.9.0
     # via
     #   -r requirements.in
     #   sb3-contrib
+stack-data==0.6.3
+    # via ipython
 starlette==1.3.1
     # via fastapi
 sympy==1.14.0
@@ -277,8 +367,21 @@ torch==2.13.0+cpu ; platform_machine == 'x86_64' or sys_platform != 'darwin'
     # via
     #   -r requirements.in
     #   stable-baselines3
+tornado==6.5.7
+    # via
+    #   ipykernel
+    #   jupyter-client
 tqdm==4.68.4
     # via shap
+traitlets==5.15.1
+    # via
+    #   ipykernel
+    #   ipython
+    #   jupyter-client
+    #   jupyter-core
+    #   matplotlib-inline
+    #   nbclient
+    #   nbformat
 typing-extensions==4.16.0
     # via
     #   alembic
@@ -286,8 +389,11 @@ typing-extensions==4.16.0
     #   cattrs
     #   fastapi
     #   gymnasium
+    #   ipython
+    #   jupyter-client
     #   pydantic
     #   pydantic-core
+    #   referencing
     #   shap
     #   sqlalchemy
     #   starlette
@@ -315,6 +421,8 @@ wandb==0.28.0
     # via -r requirements.in
 watchfiles==1.2.0
     # via uvicorn
+wcwidth==0.8.2
+    # via prompt-toolkit
 websockets==16.1
     # via
     #   fastf1

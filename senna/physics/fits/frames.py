@@ -48,7 +48,8 @@ async def circuit_index(conn: AsyncConnection, calibration_rounds: list[int]) ->
         )
         .join(Session, Session.event_id == Event.id)
         .join(Lap, Lap.session_id == Session.id)
-        .distinct(),
+        .distinct()
+        .order_by(Event.season, Event.round, Session.id),
         calibration_rounds,
     )
     frame = await _frame(conn, stmt)
@@ -73,7 +74,10 @@ async def pace_laps(
             Lap.era == era,
             Lap.source.like("real_%"),
             Session.is_dry.is_(True),
-        ),
+        )
+        # a stable order keeps float summation identical run to run, which is
+        # what lets a make fit rerun render byte-identically
+        .order_by(Lap.session_id, Lap.driver, Lap.lap_number),
         calibration_rounds,
     )
     return await _frame(conn, stmt)
@@ -92,7 +96,8 @@ async def hazard_laps(
             Event.event_name == event_name,
             Session.session_name == "Race",
             Lap.source.like("real_%"),
-        ),
+        )
+        .order_by(Lap.session_id, Lap.driver, Lap.lap_number),
         calibration_rounds,
     )
     return await _frame(conn, stmt)
@@ -110,7 +115,8 @@ async def status_laps(
             Session.session_name == "Race",
             Lap.era == era,
             Lap.source.like("real_%"),
-        ),
+        )
+        .order_by(Lap.session_id, Lap.driver, Lap.lap_number),
         calibration_rounds,
     )
     return await _frame(conn, stmt)
@@ -124,6 +130,31 @@ async def pit_stops(
         .join(Session, OpenF1PitStop.session_id == Session.id)
         .join(Event, Session.event_id == Event.id)
         .where(Event.event_name == event_name, Session.session_name == "Race"),
+        calibration_rounds,
+    )
+    return await _frame(conn, stmt)
+
+
+async def race_control_messages(
+    conn: AsyncConnection, event_name: str, calibration_rounds: list[int]
+) -> pd.DataFrame:
+    """Race-control text per race — the notebook's cross-check on track_status."""
+    from senna.data.schema import RaceControlMessage
+
+    stmt = _held_in(
+        select(
+            Event.season,
+            RaceControlMessage.session_id,
+            RaceControlMessage.category,
+            RaceControlMessage.flag,
+            RaceControlMessage.message,
+        )
+        .join(Session, RaceControlMessage.session_id == Session.id)
+        .join(Event, Session.event_id == Event.id)
+        .where(Event.event_name == event_name, Session.session_name == "Race")
+        .order_by(
+            OpenF1PitStop.session_id, OpenF1PitStop.driver_number, OpenF1PitStop.id
+        ),
         calibration_rounds,
     )
     return await _frame(conn, stmt)

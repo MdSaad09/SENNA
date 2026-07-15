@@ -24,7 +24,7 @@ from senna.physics.fits import frames
 from senna.physics.fits.clusters import assign_clusters, transfer_degradation
 from senna.physics.fits.degradation import fit_degradation
 from senna.physics.fits.energy import session_energy_frame
-from senna.physics.fits.fuel import fuel_profile
+from senna.physics.fits.fuel import session_fuel
 from senna.physics.fits.gate import assert_quality_reports
 from senna.physics.fits.hazards import (
     per_lap_hazard,
@@ -32,7 +32,7 @@ from senna.physics.fits.hazards import (
     status_multipliers,
     wilson_band,
 )
-from senna.physics.fits.joint_pace import age_partial_residuals, fit_joint_pace
+from senna.physics.fits.joint_pace import age_partial_residuals, fit_joint_pace, pool_k_m
 from senna.physics.fits.params_writer import render_params, validate_complete
 from senna.physics.fits.pit_loss import fit_pit_loss
 
@@ -52,7 +52,7 @@ async def run_battery(args: argparse.Namespace) -> dict:
     fits_cfg = config.load("fits")
     ingest_cfg = config.load("ingest")
     split = config.load("data_split")
-    calibration_rounds = config.get(split, "calibration.rounds")
+    calibration_rounds = config.get(split, "calibration_rounds")
     seasons = config.get(ingest_cfg, "seasons")
 
     assert_quality_reports(seasons, config.REPO_ROOT / config.get(ingest_cfg, "quality.report_dir"))
@@ -117,6 +117,7 @@ class _Battery:
         self.clustering = None
         self.transferred: dict[tuple[str, str], dict] = {}
         self.pooled_k_m: dict[str, float] = {}
+        self.pooled_fallback_eras: set[str] = set()
 
     async def run(self, module: str) -> None:
         await getattr(self, f"_run_{module}")()
@@ -148,7 +149,7 @@ class _Battery:
                 if laps.empty:
                     log.info("joint_pace %s/%s: no dry slick laps, skipped", slug, era)
                     continue
-                fuel_kg = _session_fuel(laps, self.fuel_by_era[era], sc_burn)
+                fuel_kg = session_fuel(laps, self.fuel_by_era[era], sc_burn)
                 fit = fit_joint_pace(
                     laps, fuel_kg, vif_max=vif_max, calibration_rounds=self.calibration_rounds
                 )
@@ -162,7 +163,7 @@ class _Battery:
                     slug, era, fit.k_m_s_per_kg, fit.identified, fit.vif_fuel, fit.n_laps,
                 )
 
-        self.pooled_k_m = _pool_k_m({k: f for k, f in self.joint.items()})
+        self.pooled_k_m, self.pooled_fallback_eras = _pool_k_m(dict(self.joint))
         for slug, era, laps, fuel_kg in pending:
             fit = self.joint[(slug, era)]
             if not fit.identified and era in self.pooled_k_m:
@@ -349,11 +350,12 @@ class _Battery:
     def params(self) -> dict:
         params: dict = {"globals": {}, "circuits": {}}
         for era, pooled in self.pooled_k_m.items():
-            params["globals"][f"k_m_pooled_s_per_kg_{era}"] = (
-                round(pooled, 6),
-                f"{JOINT_NB} — inverse-variance mean over identified circuits"
-                + (" (grade C via AR-10 fuel)" if era == "2026" else ""),
-            )
+            origin = f"{JOINT_NB} — inverse-variance mean over identified circuits"
+            if era in self.pooled_fallback_eras:
+                origin += " — cross-era fallback, no circuit of this era identified"
+            if era == "2026":
+                origin += " (grade C via AR-10 fuel)"
+            params["globals"][f"k_m_pooled_s_per_kg_{era}"] = (round(pooled, 6), origin)
         for era, multipliers in self.status_pace.items():
             params["globals"][f"status_pace_{era}"] = {
                 f"{kind}_lap_time_mult": (round(value, 4), HAZARD_NB)
@@ -409,32 +411,26 @@ def _slick_laps(laps: pd.DataFrame) -> pd.DataFrame:
     return laps[laps["compound"].isin(SLICKS)]
 
 
-def _session_fuel(laps: pd.DataFrame, race_fuel_kg: float, sc_burn_factor: float) -> pd.Series:
-    """Per (session, driver) fuel profiles; a sprint's allowance scales with its
-    length so its kg-per-lap matches a race's rather than trebling it (T6)."""
-    session_laps = laps.groupby("session_id")["lap_number"].max()
-    longest_race = float(session_laps.max())
-    parts = []
-    for (session_id, _), group in laps.groupby(["session_id", "driver"]):
-        allowance_kg = race_fuel_kg * float(session_laps[session_id]) / longest_race
-        parts.append(fuel_profile(group, allowance_kg, sc_burn_factor))
-    return pd.concat(parts).reindex(laps.index)
+def _pool_k_m(joint: dict) -> tuple[dict[str, float], set[str]]:
+    """Pooled k_m per era, plus which eras borrowed the other era's pool.
 
-
-def _pool_k_m(joint: dict) -> dict[str, float]:
-    """Inverse-variance pooled k_m per era over circuits where it was identified."""
+    Mass sensitivity is a property of car physics more than of the season, so
+    an era where no circuit identified (2024 has no sprint-plus-SC weekend
+    clean enough) borrows the other era's pooled value — flagged in the yaml,
+    never silently."""
     pooled = {}
     for era in {era for (_, era) in joint}:
-        fits = [
-            fit
-            for (_, fit_era), fit in joint.items()
-            if fit_era == era and fit.identified and fit.k_m_se_s_per_kg
-        ]
-        if fits:
-            weights = np.array([1.0 / fit.k_m_se_s_per_kg**2 for fit in fits])
-            values = np.array([fit.k_m_s_per_kg for fit in fits])
-            pooled[era] = float(np.sum(weights * values) / np.sum(weights))
-    return pooled
+        era_fits = [fit for (_, fit_era), fit in joint.items() if fit_era == era]
+        value = pool_k_m(era_fits)
+        if value is not None:
+            pooled[era] = value
+    fallback_eras = set()
+    if pooled:
+        for era in {era for (_, era) in joint} - set(pooled):
+            donor_era = sorted(pooled)[-1]  # at two eras, "the other one"
+            pooled[era] = pooled[donor_era]
+            fallback_eras.add(era)
+    return pooled, fallback_eras
 
 
 def _put_joint(circuit: dict, slug: str, joint: dict) -> None:

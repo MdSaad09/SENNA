@@ -23,3 +23,16 @@ def fuel_profile(laps: pd.DataFrame, race_fuel_kg: float, sc_burn_factor: float)
     kg_per_weight = race_fuel_kg / burn_weights.sum()
     burned_before_kg = kg_per_weight * burn_weights.cumsum().shift(1, fill_value=0.0)
     return (race_fuel_kg - burned_before_kg).reindex(laps.index).rename("fuel_kg")
+
+
+def session_fuel(laps: pd.DataFrame, race_fuel_kg: float, sc_burn_factor: float) -> pd.Series:
+    """Profiles for a multi-session circuit frame, per (session, driver); a
+    sprint's allowance scales with its length so its kg-per-lap matches a
+    race's rather than trebling it (T6)."""
+    session_laps = laps.groupby("session_id")["lap_number"].max()
+    longest_race = float(session_laps.max())
+    parts = []
+    for (session_id, _), group in laps.groupby(["session_id", "driver"]):
+        allowance_kg = race_fuel_kg * float(session_laps[session_id]) / longest_race
+        parts.append(fuel_profile(group, allowance_kg, sc_burn_factor))
+    return pd.concat(parts).reindex(laps.index)

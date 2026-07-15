@@ -36,6 +36,11 @@ class JointPaceFit:
     t_ref_s: float
     s_ref_s: float
     n_laps: int
+    # the raw OLS attribution, kept even when too weak to report per circuit:
+    # unbiased under collinearity, just noisy, so the inverse-variance pool
+    # across circuits still converges when no single circuit identifies (E-10)
+    k_m_ols_s_per_kg: float | None = None
+    k_m_ols_se_s_per_kg: float | None = None
 
 
 def fit_joint_pace(
@@ -68,11 +73,16 @@ def fit_joint_pace(
     identified = bool(np.isfinite(vif_fuel) and vif_fuel <= vif_max and rank == len(names))
 
     fuel_slope_kg_per_lap = _within_session_slope(fit_laps)
+    full_rank = rank == len(names) and np.isfinite(vif_fuel)
+    k_m_ols = float(coef[names.index("fuel_kg")]) if full_rank else None
+    k_m_ols_se = (
+        _coefficient_se(columns, lap_time_s, coef, names.index("fuel_kg")) if full_rank else None
+    )
     if identified:
-        k_m = float(coef[names.index("fuel_kg")])
+        k_m = k_m_ols
         evolution = float(coef[names.index("lap_number")])
         trend = evolution + k_m * fuel_slope_kg_per_lap
-        k_m_se = _coefficient_se(columns, lap_time_s, coef, names.index("fuel_kg"))
+        k_m_se = k_m_ols_se
     else:
         # refit without the fuel column: the lap coefficient is the combined
         # trend, which stays well identified when the attribution is not
@@ -112,6 +122,8 @@ def fit_joint_pace(
         t_ref_s=float(np.median(lap_time_s)),
         s_ref_s=float(np.std(lap_time_s, ddof=1)),
         n_laps=int(clean.sum()),
+        k_m_ols_s_per_kg=k_m_ols,
+        k_m_ols_se_s_per_kg=k_m_ols_se,
     )
 
 
@@ -140,8 +152,27 @@ def age_partial_residuals(
     coef, _ = _lstsq(design, lap_time_s)
     age_columns = [i for i, name in enumerate(names) if name.startswith(("age:", "age2:"))]
     age_contribution_s = design[:, age_columns] @ coef[age_columns]
-    residual_s = lap_time_s - design @ coef + age_contribution_s
-    return fit_laps.assign(pace_residual_s=residual_s)
+    raw_residual_s = lap_time_s - design @ coef
+    return fit_laps.assign(
+        pace_residual_s=raw_residual_s + age_contribution_s,
+        residual_s=raw_residual_s,  # for the notebook's flat-cloud checks
+    )
+
+
+def pool_k_m(fits: list[JointPaceFit]) -> float | None:
+    """Inverse-variance pooled k_m over one era's identified circuits only.
+
+    Weak fits stay out: their k_m is not merely noisy but confounded — the
+    post-interruption laps that bend the fuel line also carry cold tyres and
+    a bunched field, and pooling them yields a negative mass sensitivity
+    (the fit_joint_pace notebook shows that diagnostic). Identified circuits
+    are the ones where the instrument was strong enough to trust (E-10)."""
+    usable = [fit for fit in fits if fit.identified and fit.k_m_se_s_per_kg]
+    if not usable:
+        return None
+    weights = np.array([1.0 / fit.k_m_se_s_per_kg**2 for fit in usable])
+    values = np.array([fit.k_m_s_per_kg for fit in usable])
+    return float(np.sum(weights * values) / np.sum(weights))
 
 
 def _refuse_validation_rounds(laps: pd.DataFrame, calibration_rounds: list[int]) -> None:
