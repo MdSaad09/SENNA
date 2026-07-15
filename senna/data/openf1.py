@@ -70,10 +70,21 @@ class OpenF1Client:
         raise AssertionError("unreachable: the last attempt either returned or raised")
 
     def pit(self, session_key: int) -> list[dict]:
-        return self.get("pit", session_key=session_key)
+        return self._rows_or_empty("pit", session_key=session_key)
 
     def stints(self, session_key: int) -> list[dict]:
-        return self.get("stints", session_key=session_key)
+        return self._rows_or_empty("stints", session_key=session_key)
+
+    def _rows_or_empty(self, endpoint: str, **params) -> list[dict]:
+        # openf1 404s a no-row query instead of returning [] — seen on /pit
+        # before mid-2023 and for sprints where nobody stopped. Zero rows is
+        # an answer, not a failure.
+        try:
+            return self.get(endpoint, **params)
+        except httpx.HTTPStatusError as err:
+            if err.response.status_code == 404:
+                return []
+            raise
 
     def close(self) -> None:
         self._http.close()

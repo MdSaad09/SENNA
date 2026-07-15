@@ -88,6 +88,24 @@ def test_pit_and_stints_hit_their_endpoints_with_the_session_key(virtual_clock):
     ]
 
 
+def test_pit_and_stints_treat_a_404_as_zero_rows(virtual_clock):
+    # openf1 404s a query with no rows (verified: sprints with no stops, and
+    # /pit before mid-2023) — that is data, not an error, and must not kill
+    # the session or hide the stints that do exist
+    def handler(request):
+        if request.url.path == "/v1/pit":
+            return httpx.Response(404)
+        return httpx.Response(200, json=[{"driver_number": 1, "stint_number": 1}])
+
+    client = _client(handler, virtual_clock)
+
+    assert client.pit(session_key=9549) == []
+    assert client.stints(session_key=9549) == [{"driver_number": 1, "stint_number": 1}]
+
+    with pytest.raises(httpx.HTTPStatusError):
+        client.get("pit", session_key=9549)  # the raw call still reports the 404
+
+
 def test_match_session_handles_offsets_and_midnight_slips():
     # OpenF1 stamps offsets and a race can start past UTC midnight (Vegas);
     # the match is by UTC day with one day of tolerance

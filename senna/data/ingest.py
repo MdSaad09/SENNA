@@ -477,13 +477,15 @@ async def _amain(args: argparse.Namespace) -> None:
                 continue
             budget_stop = (fastf1_loader.RateLimitExceededError,)
             try:
+                # attempt only sessions that are due — a not-yet-raced 2026
+                # round would fail pointlessly on every rerun (E-13)
                 if args.source in ("fastf1", "all"):
                     await run_ingest(
-                        fastf1_sessions, _fastf1_session_loader, db_url, fatal=budget_stop
+                        _due(fastf1_sessions), _fastf1_session_loader, db_url, fatal=budget_stop
                     )
                 if args.source in ("openf1", "all") and openf1_sessions:
                     loader = _openf1_session_loader(client, season)
-                    await run_ingest(openf1_sessions, loader, db_url)
+                    await run_ingest(_due(openf1_sessions), loader, db_url)
             except fastf1_loader.RateLimitExceededError:
                 # fastf1's own hourly budget (not Jolpica's) is spent; everything
                 # done so far is checkpointed, so stop cleanly and rerun later (E-12)
