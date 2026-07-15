@@ -1,5 +1,6 @@
 import pytest
 import yaml
+
 from senna.physics.fits.params_writer import (
     IncompleteParamsError,
     render_params,
