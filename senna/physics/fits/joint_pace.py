@@ -18,7 +18,9 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-FIRST_2026_SEASON = 2026  # E-14 applies to the season being calibrated against
+# E-14: the season the frozen split governs. One code home — frames.py imports
+# this — mirroring configs/data_split.yaml `season`, which stays the paper trail.
+FIRST_2026_SEASON = 2026
 
 
 @dataclass(frozen=True)
@@ -36,9 +38,9 @@ class JointPaceFit:
     t_ref_s: float
     s_ref_s: float
     n_laps: int
-    # the raw OLS attribution, kept even when too weak to report per circuit:
-    # unbiased under collinearity, just noisy, so the inverse-variance pool
-    # across circuits still converges when no single circuit identifies (E-10)
+    # the raw OLS attribution, kept even when too weak to report per circuit —
+    # not for pooling (weak fits are confounded by post-SC pace effects, see
+    # pool_k_m) but for the notebook's diagnostic that demonstrates exactly that
     k_m_ols_s_per_kg: float | None = None
     k_m_ols_se_s_per_kg: float | None = None
 

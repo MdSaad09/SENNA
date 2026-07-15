@@ -20,6 +20,10 @@ degradation:
   curve_bounds:              # stylised — scipy curve_fit bounds keeping the
     a: [0.0, 5.0]            #   grip power law physical: a >= 0, shape in a
     b: [0.3, 3.0]            #   plausible wear-to-cliff range
+  curve_p0: [0.05, 1.2]      # stylised — solver seed near mild, slightly
+                             #   superlinear wear; inside the bounds by design
+  curve_maxfev: 10000        # stylised — scipy default is too small for the
+                             #   flat-residual circuits that end at a = 0
 
 hazards:
   wilson_z: 1.96             # sourced — 95% two-sided normal quantile

@@ -10,10 +10,11 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 import pytest
+
 from senna.physics.fits.fuel import fuel_profile
 
 RACE_LAPS = 57
-GRID_SIZE = 20
+N_DRIVERS = 20  # a regression sample size, not a grid — the 2026 grid is 22 (F-08)
 SC_WINDOW = tuple(range(20, 25))  # laps 20-24 run behind the safety car
 # chosen so a correct OLS recovers the injected coefficients well inside the
 # mandated tolerances for several reasonable design matrices (age+age2 per
@@ -96,7 +97,7 @@ def make_synthetic_race():
         fuel_columns = []
         driver_effects_s = []
 
-        for i in range(GRID_SIZE):
+        for i in range(N_DRIVERS):
             driver_effect_s = rng.normal(0.0, DRIVER_SPREAD_S)
             driver_effects_s.append(driver_effect_s)
             noise_s = rng.normal(0.0, LAP_NOISE_S, size=RACE_LAPS)

@@ -37,20 +37,37 @@ def per_race_events(laps: pd.DataFrame) -> pd.DataFrame:
     return flags.groupby(laps["session_id"]).any()
 
 
-def per_lap_hazard(p_per_race: float, race_laps: float) -> float:
-    """The constant per-lap hazard that reproduces the per-race probability (5.5.3)."""
-    if p_per_race >= 1.0:
-        return 1.0
-    return -math.log(1.0 - p_per_race) / race_laps
+def per_lap_hazard(n_with: int, n_races: int, race_laps: float) -> float:
+    """The constant per-lap hazard that reproduces the per-race probability (5.5.3).
+
+    A saturated count (every observed race had the event — usually 1 of 1)
+    would put p at 1.0 and the hazard at infinity, so the boundary estimate is
+    shrunk to n/(n+1) before the log: the mildest statement that the next race
+    might stay green. Interior counts pass through unshrunk.
+    """
+    p_per_race = n_with / n_races
+    if n_with == n_races:
+        p_per_race = n_with / (n_races + 1)
+    return -math.log(1.0 - p_per_race) / race_laps + 0.0  # +0.0 folds away -0.0
 
 
 def status_multipliers(laps: pd.DataFrame) -> dict[str, float]:
-    """SC and VSC lap-time multipliers vs the green median (5.5.3 status_mult)."""
-    timed = laps[laps["lap_time_s"].notna()]
-    green_median_s = timed.loc[timed["is_green"], "lap_time_s"].median()
-    events = timed["track_status"].map(classify_track_status)
-    return {
-        kind: float(timed.loc[events.map(lambda kinds, k=kind: k in kinds), "lap_time_s"].median()
-                    / green_median_s)
-        for kind in ("sc", "vsc")
-    }
+    """SC and VSC lap-time multipliers vs the green median (5.5.3 status_mult).
+
+    The ratio is taken per session first, then the median of ratios — pooling
+    raw lap times across circuits would let short-lap circuits dominate the
+    green median while SC laps cluster wherever SCs happen.
+    """
+    timed = laps[laps["lap_time_s"].notna()].copy()
+    timed["events"] = timed["track_status"].map(classify_track_status)
+    multipliers = {}
+    for kind in ("sc", "vsc"):
+        ratios = []
+        for _, session in timed.groupby("session_id"):
+            under_event = session["events"].map(lambda kinds, k=kind: k in kinds)
+            if not under_event.any() or not session["is_green"].any():
+                continue
+            green_median_s = session.loc[session["is_green"], "lap_time_s"].median()
+            ratios.append(session.loc[under_event, "lap_time_s"].median() / green_median_s)
+        multipliers[kind] = float(pd.Series(ratios).median())
+    return multipliers

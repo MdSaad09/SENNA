@@ -194,6 +194,8 @@ class _Battery:
                 min_stints=deg_cfg["min_stints"],
                 min_drivers=deg_cfg["min_drivers"],
                 min_max_age=deg_cfg["min_max_age"],
+                p0=deg_cfg["curve_p0"],
+                maxfev=deg_cfg["curve_maxfev"],
             )
             log.info("degradation %s/%s: %s", slug, era, sorted(self.deg[(slug, era)]))
 
@@ -213,7 +215,9 @@ class _Battery:
                     "n_with": int(events[kind].sum()),
                     "p_per_race": float(events[kind].mean()),
                     "band": wilson_band(int(events[kind].sum()), len(events), z=z),
-                    "lambda_per_lap": per_lap_hazard(float(events[kind].mean()), race_laps),
+                    "lambda_per_lap": per_lap_hazard(
+                        int(events[kind].sum()), len(events), race_laps
+                    ),
                 }
                 for kind in ("sc", "vsc", "red")
             }
@@ -254,6 +258,9 @@ class _Battery:
                         int(row.season), int(row.round), "Race"
                     )
                 except Exception as err:
+                    # deliberately broad, mirroring run_ingest: fastf1 raises a
+                    # zoo of cache/parse errors and one broken weekend must not
+                    # kill an hour-long battery — the warning is the record
                     log.warning("energy %s %s: telemetry load failed: %r", row.season, slug, err)
                     continue
                 lap_frames.append(
@@ -349,11 +356,14 @@ class _Battery:
 
     def params(self) -> dict:
         params: dict = {"globals": {}, "circuits": {}}
+        # the 2026 pool is grade C through the AR-10 fuel construction, and so
+        # is anything that borrowed it — the flag travels with the value
+        grade_c_pool_eras = {"2026"} | self.pooled_fallback_eras
         for era, pooled in self.pooled_k_m.items():
             origin = f"{JOINT_NB} — inverse-variance mean over identified circuits"
             if era in self.pooled_fallback_eras:
                 origin += " — cross-era fallback, no circuit of this era identified"
-            if era == "2026":
+            if era in grade_c_pool_eras:
                 origin += " (grade C via AR-10 fuel)"
             params["globals"][f"k_m_pooled_s_per_kg_{era}"] = (round(pooled, 6), origin)
         for era, multipliers in self.status_pace.items():
@@ -363,7 +373,7 @@ class _Battery:
             }
         for slug in self._slugs():
             circuit: dict = {}
-            _put_joint(circuit, slug, self.joint)
+            _put_joint(circuit, slug, self.joint, grade_c_pool_eras)
             _put_degradation(circuit, slug, self.deg, self.transferred)
             if slug in self.hazards:
                 circuit["hazards"] = {
@@ -388,8 +398,10 @@ class _Battery:
             for era in self.eras:
                 if (slug, era) in self.energy:
                     values = self.energy[(slug, era)]
+                    # braking mass = car + AR-10 fuel-at-lap, so 2026 rows are C too
+                    origin = ENERGY_NB + (" (grade C via AR-10 fuel)" if era == "2026" else "")
                     circuit.setdefault("energy", {})[era] = {
-                        key: (round(value, 4) if isinstance(value, float) else value, ENERGY_NB)
+                        key: (round(value, 4) if isinstance(value, float) else value, origin)
                         for key, value in values.items()
                     }
             if circuit:
@@ -397,6 +409,18 @@ class _Battery:
         if self.clustering:
             params["clusters"] = {
                 "k": (self.clustering.k, CLUSTER_NB + " — max silhouette"),
+                "seed": (
+                    int(config.get(self.fits_cfg, "clusters.seed")),
+                    "sourced configs/fits.yaml — determinism provenance for transfer donors",
+                ),
+                "features": (
+                    list(self._cluster_features().columns),
+                    CLUSTER_NB,
+                ),
+                "silhouettes": {
+                    f"k{k}": (round(score, 4), CLUSTER_NB)
+                    for k, score in self.clustering.silhouettes.items()
+                },
                 "assignments": {
                     slug: (label, CLUSTER_NB)
                     for slug, label in self.clustering.assignments.items()
@@ -425,30 +449,37 @@ def _pool_k_m(joint: dict) -> tuple[dict[str, float], set[str]]:
         if value is not None:
             pooled[era] = value
     fallback_eras = set()
-    if pooled:
+    if len(pooled) == 1:  # with several candidate donors the borrow is ambiguous;
+        [donor_era] = pooled  # leave the gap and let validate_complete fail loudly
         for era in {era for (_, era) in joint} - set(pooled):
-            donor_era = sorted(pooled)[-1]  # at two eras, "the other one"
             pooled[era] = pooled[donor_era]
             fallback_eras.add(era)
     return pooled, fallback_eras
 
 
-def _put_joint(circuit: dict, slug: str, joint: dict) -> None:
+def _put_joint(circuit: dict, slug: str, joint: dict, grade_c_pool_eras: set[str]) -> None:
     for (fit_slug, era), fit in joint.items():
         if fit_slug != slug:
             continue
         grade = " (grade C via AR-10 fuel)" if era == "2026" else ""
         attribution = "" if fit.identified else " — decomposed via pooled k_m"
+        # an unidentified circuit's attribution inherits the pool's grade even
+        # when its own era's fuel is verified (the 2024 borrow of the 2026 pool)
+        attribution_grade = grade
+        if not fit.identified and era in grade_c_pool_eras and not grade:
+            attribution_grade = " (grade C via AR-10 fuel — through the pooled k_m)"
         circuit.setdefault("joint_pace", {})[era] = {
             "t0_s": (round(fit.t0_s, 3), JOINT_NB + grade),
             "k_m_s_per_kg": (
                 None if fit.k_m_s_per_kg is None else round(fit.k_m_s_per_kg, 6),
-                JOINT_NB + attribution + grade,
+                JOINT_NB + attribution + attribution_grade,
             ),
             "evolution_s_per_lap": (
                 None if fit.evolution_s_per_lap is None else round(fit.evolution_s_per_lap, 6),
-                JOINT_NB + attribution + grade,
+                JOINT_NB + attribution + attribution_grade,
             ),
+            # trend, t_ref, s_ref and sigma_driver are computed from raw lap
+            # times alone — fuel-free, so no AR-10 grade even in 2026
             "trend_s_per_lap": (round(fit.trend_s_per_lap, 6), JOINT_NB),
             "identified": (fit.identified, JOINT_NB),
             "vif_fuel": (round(fit.vif_fuel, 1) if np.isfinite(fit.vif_fuel) else "inf", JOINT_NB),

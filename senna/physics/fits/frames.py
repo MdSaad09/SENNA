@@ -9,8 +9,7 @@ from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 from senna.data.schema import Event, Lap, OpenF1PitStop, Session
-
-FIRST_2026_SEASON = 2026
+from senna.physics.fits.joint_pace import FIRST_2026_SEASON
 
 LAP_COLUMNS = (
     Event.season,
@@ -108,7 +107,7 @@ async def status_laps(
 ) -> pd.DataFrame:
     """All race laps of one era, for the pooled SC/VSC pace multipliers."""
     stmt = _held_in(
-        select(Lap.lap_time_s, Lap.track_status, Lap.is_green)
+        select(Lap.session_id, Lap.lap_time_s, Lap.track_status, Lap.is_green)
         .join(Session, Lap.session_id == Session.id)
         .join(Event, Session.event_id == Event.id)
         .where(

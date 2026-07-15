@@ -40,6 +40,8 @@ def fit_degradation(
     min_stints: int,
     min_drivers: int,
     min_max_age: int,
+    p0: list[float],
+    maxfev: int,
 ) -> dict[str, DegradationFit]:
     _refuse_poisoned(laps)
     fits = {}
@@ -50,9 +52,9 @@ def fit_degradation(
             lambda x, amplitude, exponent: amplitude * x**exponent,
             age,
             residual_s,
-            p0=[max(bounds[0][0], 0.05), 1.2],
+            p0=p0,
             bounds=bounds,
-            maxfev=10_000,
+            maxfev=maxfev,
         )
         thin = (
             len(compound_laps) < min_laps

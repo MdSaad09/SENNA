@@ -22,7 +22,8 @@ HEADER = (
 def render_params(params: dict, generated_at: str) -> str:
     lines = [HEADER]
     lines.append(
-        f'generated_at: "{generated_at}"  # stylised — run timestamp, injected so reruns diff clean'
+        f'generated_at: "{generated_at}"  # stylised — data watermark, not a clock:'
+        " a rerun on the same ingest renders byte-identically"
     )
     lines.extend(_render_mapping(params, indent=0))
     return "\n".join(lines) + "\n"

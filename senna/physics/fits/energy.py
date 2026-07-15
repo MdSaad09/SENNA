@@ -8,14 +8,19 @@ nothing crosses a trace break: a dropout split upstream by split_telemetry_gaps
 would otherwise donate invented energy to the lap.
 """
 
+import logging
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
 
+from senna.data.cleaning import split_telemetry_gaps
 from senna.physics.fits.fuel import fuel_profile
 
+log = logging.getLogger(__name__)
+
 KMH_TO_MS = 1.0 / 3.6
+REQUIRED_CHANNELS = ("Time", "Speed", "Throttle", "Brake")
 
 
 @dataclass(frozen=True)
@@ -84,11 +89,16 @@ def session_energy_frame(
 
     Only green, accurate, non-in/out laps with a start time and duration are
     integrated (5.3.4); mass is the car plus constructed fuel at the lap start.
+    A driver missing a required channel is skipped and counted, never fatal —
+    channel gaps are a fact of the source (F-14), not a reason to lose a race.
     """
-    from senna.data.cleaning import split_telemetry_gaps
-
     rows = []
+    skipped_drivers = []
     for driver_number, car_data in car_data_by_driver.items():
+        missing = [ch for ch in REQUIRED_CHANNELS if ch not in car_data.columns]
+        if missing:
+            skipped_drivers.append(str(driver_number))
+            continue
         driver_laps = session_laps[
             session_laps["DriverNumber"].astype(str) == str(driver_number)
         ]
@@ -132,4 +142,10 @@ def session_energy_frame(
                     "cadence_hz": integrals.cadence_hz,
                 }
             )
+    if skipped_drivers:
+        log.warning(
+            "energy: %d driver(s) skipped for missing channels: %s",
+            len(skipped_drivers),
+            ", ".join(skipped_drivers),
+        )
     return pd.DataFrame(rows)

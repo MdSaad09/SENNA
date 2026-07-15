@@ -26,9 +26,14 @@ def fuel_profile(laps: pd.DataFrame, race_fuel_kg: float, sc_burn_factor: float)
 
 
 def session_fuel(laps: pd.DataFrame, race_fuel_kg: float, sc_burn_factor: float) -> pd.Series:
-    """Profiles for a multi-session circuit frame, per (session, driver); a
-    sprint's allowance scales with its length so its kg-per-lap matches a
-    race's rather than trebling it (T6)."""
+    """Profiles for a multi-session circuit frame, per (session, driver).
+
+    Every session's allowance scales with its lap count against the circuit's
+    longest race, so kg-per-lap comes out the same everywhere. That is the
+    right construction for sprints (T6) and, deliberately, for red-flag
+    shortened races too: a stopped race still burned normal kg-per-lap while
+    it ran, and the fuel *level* error this leaves is absorbed by the joint
+    fit's session fixed effects — only the slope reaches the estimate."""
     session_laps = laps.groupby("session_id")["lap_number"].max()
     longest_race = float(session_laps.max())
     parts = []

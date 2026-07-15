@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
+
 from senna.physics.fits.degradation import (
     InaccurateLapError,
     InOutLapError,
@@ -14,6 +15,8 @@ MINIMUMS = {
     "min_stints": 3,  # fits.yaml deg_min_stints
     "min_drivers": 2,  # fits.yaml deg_min_drivers
     "min_max_age": 12,  # fits.yaml deg_min_max_age
+    "p0": [0.05, 1.2],  # fits.yaml degradation.curve_p0 (stylised solver seed)
+    "maxfev": 10_000,  # fits.yaml degradation.curve_maxfev
 }
 
 DEG_A_S = 0.05  # A in the injected residual A*age^1.3; grip-law a = A/t0

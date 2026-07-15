@@ -1,11 +1,38 @@
+import math
+
 import pytest
+
 from senna.physics.fits.hazards import (
     classify_track_status,
+    per_lap_hazard,
     status_multipliers,
     wilson_band,
 )
 
 WILSON_Z = 1.96  # fits.yaml wilson_z (sourced: 95% normal quantile)
+
+
+def test_per_lap_hazard_reproduces_the_per_race_probability():
+    lambda_per_lap = per_lap_hazard(3, 10, race_laps=57.0)
+
+    # the defining property: 57 laps of constant hazard give back p = 0.3
+    assert 1.0 - math.exp(-lambda_per_lap * 57.0) == pytest.approx(0.3)
+
+
+def test_per_lap_hazard_zero_rate_is_clean_zero():
+    lambda_per_lap = per_lap_hazard(0, 10, race_laps=57.0)
+
+    assert lambda_per_lap == 0.0
+    assert not math.copysign(1.0, lambda_per_lap) < 0  # -0.0 must not leak to yaml
+
+
+def test_per_lap_hazard_saturated_rate_stays_finite():
+    # 1 SC in 1 race must not become "SC every lap": the boundary estimate is
+    # shrunk to n/(n+1) before the log, so the env samples a plausible hazard
+    lambda_per_lap = per_lap_hazard(1, 1, race_laps=57.0)
+
+    assert 0.0 < lambda_per_lap < 0.05
+    assert 1.0 - math.exp(-lambda_per_lap * 57.0) == pytest.approx(0.5)
 
 
 def test_wilson_band_matches_hand_computed_values():
