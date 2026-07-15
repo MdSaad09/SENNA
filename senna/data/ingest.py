@@ -15,17 +15,18 @@ import logging
 from datetime import UTC, datetime
 
 import pandas as pd
-from sqlalchemy import delete, insert, or_, select
+from sqlalchemy import delete, func, insert, or_, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 from senna import config
 from senna.data import checkpoints
-from senna.data.cleaning import flag_green_laps
+from senna.data.cleaning import flag_green_laps, is_dry_race
 from senna.data.db import database_url, engine_for
 from senna.data.quality import DropCount, render_report, report_path
 from senna.data.schema import (
     Event,
+    IngestCheckpoint,
     Lap,
     OpenF1PitStop,
     OpenF1Stint,
@@ -62,15 +63,9 @@ def _bool(value) -> bool | None:
     return None if pd.isna(value) else bool(value)
 
 
-def _era(season: int) -> str:
-    # which physics yaml governs the row: pre-2026 rows calibrate against
-    # configs/physics_2024.yaml, 2026 rows against physics_2026.yaml
-    return "2026" if season >= 2026 else "2024"
-
-
 def _lap_rows(frame: pd.DataFrame, session_id: int, session: dict) -> list[dict]:
     flagged, _ = flag_green_laps(frame)  # store the derived flag, keep every row (5.3.4)
-    era = _era(session["season"])
+    era = session["era"]  # which physics yaml governs the row; set from ingest.yaml
     source = f"real_{session['season']}"
     return [
         {
@@ -150,15 +145,16 @@ def _result_rows(frame: pd.DataFrame, session_id: int, session: dict) -> list[di
 
 
 def _pit_stop_rows(frame: pd.DataFrame, session_id: int, session: dict) -> list[dict]:
+    # lap-less stops (practice starts) keep their duration — the pit-loss
+    # distribution wants them and a silent drop would defeat the report (F-14)
     return [
         {
             "session_id": session_id,
             "driver_number": int(row["driver_number"]),
-            "lap_number": int(row["lap_number"]),
+            "lap_number": _int(row.get("lap_number")),
             "pit_duration_s": _float(row.get("pit_duration")),
         }
         for row in frame.to_dict("records")
-        if pd.notna(row.get("lap_number"))
     ]
 
 
@@ -196,17 +192,32 @@ CONVERTERS = {
 }
 
 
-async def run_ingest(sessions: list[dict], loader, db_url: str) -> None:
+async def run_ingest(
+    sessions: list[dict],
+    loader,
+    db_url: str,
+    fatal: tuple[type[BaseException], ...] = (),
+) -> None:
     """loader(session) -> dict of table name to frame; it may stash
-    missing_channels / openf1 keys on the session dict for the sessions row."""
+    missing_channels / openf1 keys on the session dict for the sessions row.
+    Exceptions in `fatal` end the batch (e.g. an hourly budget stop);
+    everything else is a per-session failure, recorded and skipped.
+
+    The loader blocks the event loop (fastf1 and httpx are sync); fine for
+    this single-task batch, revisit before anything runs it concurrently."""
     engine = engine_for(db_url)
     try:
         states = await checkpoints.states_by_key(engine)
+        # loaded is done, excluded is a recorded decision — a retry would fail
+        # again and overwrite the written reason. Only pending/failed rerun.
+        terminal = (checkpoints.LOADED, checkpoints.EXCLUDED)
         for session in sessions:
-            if states.get(checkpoints.key_of(session)) == checkpoints.LOADED:
+            if states.get(checkpoints.key_of(session)) in terminal:
                 continue
             try:
                 frames = loader(session)
+            except fatal:
+                raise
             except Exception as err:
                 # recorded, skipped, retried on the next run — never fatal to the batch
                 log.warning("%s %s failed: %r", session["event_name"], session["session_name"], err)
@@ -221,6 +232,8 @@ async def run_ingest(sessions: list[dict], loader, db_url: str) -> None:
 
 
 async def _write_session(engine: AsyncEngine, session: dict, frames: dict) -> None:
+    if "weather" in frames and "race_control" in frames:
+        session["is_dry"] = is_dry_race(frames["weather"], frames["race_control"])
     async with engine.begin() as conn:
         event_id = await _upsert_event(conn, session)
         session_id = await _upsert_session(conn, event_id, session)
@@ -280,6 +293,9 @@ async def _upsert_session(conn: AsyncConnection, event_id: int, session: dict) -
     if "missing_channels" in session:
         stmt = stmt.values(missing_channels=session["missing_channels"])
         refresh["missing_channels"] = stmt.excluded.missing_channels
+    if "is_dry" in session:
+        stmt = stmt.values(is_dry=session["is_dry"])
+        refresh["is_dry"] = stmt.excluded.is_dry
     if "openf1_session_key" in session:
         stmt = stmt.values(
             openf1_session_key=session["openf1_session_key"],
@@ -328,14 +344,21 @@ async def write_season_report(engine: AsyncEngine, season: int, report_dir: str)
 
 
 async def _completeness_rows(engine: AsyncEngine, season: int) -> list[dict]:
-    from senna.data.schema import IngestCheckpoint as CP
-
-    async with engine.connect() as conn:
-        rows = await conn.execute(
-            select(CP)
-            .where(CP.season == season)
-            .order_by(CP.round, CP.source, CP.session_name)
+    stmt = (
+        select(
+            IngestCheckpoint.round,
+            IngestCheckpoint.event_name,
+            IngestCheckpoint.session_name,
+            IngestCheckpoint.source,
+            IngestCheckpoint.state,
+            IngestCheckpoint.excluded_reason,
+            IngestCheckpoint.error,
         )
+        .where(IngestCheckpoint.season == season)
+        .order_by(IngestCheckpoint.round, IngestCheckpoint.source, IngestCheckpoint.session_name)
+    )
+    async with engine.connect() as conn:
+        rows = (await conn.execute(stmt)).all()
     return [
         {
             "event": r.event_name or f"round {r.round}",
@@ -344,7 +367,7 @@ async def _completeness_rows(engine: AsyncEngine, season: int) -> list[dict]:
             "state": r.state,
             "reason": r.excluded_reason or r.error or "",
         }
-        for r in rows.scalars()
+        for r in rows
     ]
 
 
@@ -354,8 +377,6 @@ async def _season_drop_counts(engine: AsyncEngine, season: int) -> list[DropCoun
     Each rule is counted against all stored laps, not chained after the
     previous rule, so a report line answers "how much does this rule cost".
     """
-    from sqlalchemy import func
-
     stmt = (
         select(
             func.count().label("rows_in"),
@@ -417,48 +438,64 @@ async def _amain(args: argparse.Namespace) -> None:
     db_url = database_url()
     seasons = args.seasons or config.get(cfg, "seasons")
     first_openf1 = config.get(cfg, "openf1.first_season")
+    first_2026_era = config.get(cfg, "era.first_2026_season")
 
-    fastf1_loader.enable_cache(config.get(cfg, "fastf1.cache_dir"))
+    # config paths are repo-relative so `make ingest` works from any cwd
+    fastf1_loader.enable_cache(config.REPO_ROOT / config.get(cfg, "fastf1.cache_dir"))
+    report_dir = config.REPO_ROOT / config.get(cfg, "quality.report_dir")
     session_types = config.get(cfg, "fastf1.sessions_to_ingest")
+    client = OpenF1Client(config.get(cfg, "openf1"))
 
     expected: list[dict] = []
-    for season in seasons:
-        schedule = fastf1_loader.fetch_schedule(season)
-        events = {
-            row["RoundNumber"]: row
-            for _, row in schedule.iterrows()
-        }
-        planned = [
-            {
-                "season": season,
-                "round": p["round"],
-                "event_name": p["event_name"],
-                "session_name": p["session_name"],
-                "session_date_utc": p["session_date_utc"],
-                "event_format": events[p["round"]]["EventFormat"],
-                "event_date": events[p["round"]]["EventDate"],
-            }
-            for p in fastf1_loader.plan_sessions(schedule, session_types)
-        ]
-        fastf1_sessions = [dict(p, source="fastf1") for p in planned]
-        openf1_sessions = (
-            [dict(p, source="openf1") for p in planned] if season >= first_openf1 else []
-        )
-        expected += fastf1_sessions + openf1_sessions
+    budget_spent = False
+    try:
+        for season in seasons:
+            if budget_spent:
+                break
+            schedule = fastf1_loader.fetch_schedule(season)
+            events = {row["RoundNumber"]: row for _, row in schedule.iterrows()}
+            planned = [
+                {
+                    "season": season,
+                    "round": p["round"],
+                    "event_name": p["event_name"],
+                    "session_name": p["session_name"],
+                    "session_date_utc": p["session_date_utc"],
+                    "event_format": events[p["round"]]["EventFormat"],
+                    "event_date": events[p["round"]]["EventDate"],
+                    "era": "2026" if season >= first_2026_era else "2024",
+                }
+                for p in fastf1_loader.plan_sessions(schedule, session_types)
+            ]
+            fastf1_sessions = [dict(p, source="fastf1") for p in planned]
+            openf1_sessions = (
+                [dict(p, source="openf1") for p in planned] if season >= first_openf1 else []
+            )
+            expected += fastf1_sessions + openf1_sessions
 
-        if args.report_only:
-            continue
-        if args.source in ("fastf1", "all"):
-            await run_ingest(fastf1_sessions, _fastf1_session_loader, db_url)
-        if args.source in ("openf1", "all") and openf1_sessions:
-            client = OpenF1Client(config.get(cfg, "openf1"))
-            loader = _openf1_session_loader(client, season)
-            await run_ingest(openf1_sessions, loader, db_url)
+            if args.report_only:
+                continue
+            budget_stop = (fastf1_loader.RateLimitExceededError,)
+            try:
+                if args.source in ("fastf1", "all"):
+                    await run_ingest(
+                        fastf1_sessions, _fastf1_session_loader, db_url, fatal=budget_stop
+                    )
+                if args.source in ("openf1", "all") and openf1_sessions:
+                    loader = _openf1_session_loader(client, season)
+                    await run_ingest(openf1_sessions, loader, db_url)
+            except fastf1_loader.RateLimitExceededError:
+                # fastf1's own hourly budget (not Jolpica's) is spent; everything
+                # done so far is checkpointed, so stop cleanly and rerun later (E-12)
+                log.warning("fastf1 hourly call budget spent — rerun `make ingest` in an hour")
+                budget_spent = True
+    finally:
+        client.close()
 
     engine = engine_for(db_url)
     try:
         for season in seasons:
-            await write_season_report(engine, season, config.get(cfg, "quality.report_dir"))
+            await write_season_report(engine, season, report_dir)
     finally:
         await engine.dispose()
 
@@ -466,10 +503,11 @@ async def _amain(args: argparse.Namespace) -> None:
 
 
 def _due(expected: list[dict]) -> list[dict]:
-    # E-13: only sessions whose date has passed are expected — Madrid appears
-    # in the plan today but is not owed data until its September weekend
+    # E-13: only a known future date defers a session — Madrid appears in the
+    # plan today but is not owed data until its September weekend. A NaT date
+    # stays owed rather than silently vanishing from the completeness gate.
     now = datetime.now(UTC).replace(tzinfo=None)
-    return [s for s in expected if pd.notna(s["session_date_utc"]) and s["session_date_utc"] < now]
+    return [s for s in expected if not s["session_date_utc"] > now]
 
 
 def _fastf1_session_loader(session: dict) -> dict[str, pd.DataFrame]:
@@ -483,19 +521,21 @@ def _fastf1_session_loader(session: dict) -> dict[str, pd.DataFrame]:
 
 
 def _openf1_session_loader(client, season: int):
-    key_by_date_and_name: dict[tuple, dict] = {}
+    from senna.data.openf1 import match_session
+
+    season_sessions: list[dict] = []
 
     def load(session: dict) -> dict[str, pd.DataFrame]:
-        if not key_by_date_and_name:
-            for row in client.get("sessions", year=season):
-                day = str(row.get("date_start", ""))[:10]
-                key_by_date_and_name[(day, row.get("session_name"))] = row
-        day = str(session["session_date_utc"])[:10]
-        match = key_by_date_and_name.get((day, session["session_name"]))
+        if not season_sessions:
+            season_sessions.extend(client.get("sessions", year=season))
+        match = match_session(
+            season_sessions, session["session_date_utc"], session["session_name"]
+        )
         if match is None:
             raise IngestError(
-                f"openf1 /sessions has no {session['session_name']} on {day} — "
-                "if it is genuinely absent upstream, mark_excluded with a reason"
+                f"openf1 /sessions has no {session['session_name']} near "
+                f"{session['session_date_utc']:%Y-%m-%d} — if it is genuinely "
+                "absent upstream, mark_excluded with a reason"
             )
         session["openf1_session_key"] = match["session_key"]
         session["openf1_meeting_key"] = match.get("meeting_key")

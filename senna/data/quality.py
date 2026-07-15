@@ -14,6 +14,10 @@ class DropCount:
     rows_flagged: int
 
 
+def _cell(text: str) -> str:
+    return str(text).replace("|", "\\|")  # a reason containing | must not break the table
+
+
 def report_path(season: int, report_dir: str | Path) -> Path:
     return Path(report_dir) / str(season) / "data_quality_report.md"
 
@@ -31,11 +35,18 @@ def render_report(
     lines += ["| Event | Session | Source | State | Reason |", "|---|---|---|---|---|"]
     for row in completeness:
         lines.append(
-            f"| {row['event']} | {row['session']} | {row['source']}"
-            f" | {row['state']} | {row['reason']} |"
+            f"| {_cell(row['event'])} | {_cell(row['session'])} | {_cell(row['source'])}"
+            f" | {_cell(row['state'])} | {_cell(row['reason'])} |"
         )
 
     lines += ["", "## Rows kept vs dropped per rule", ""]
+    lines += [
+        "Each rule is counted against every stored lap independently — the rows do",
+        "not chain, so the Dropped column must not be summed. The telemetry-gap,",
+        "position and wet/red rules run at fit time (F02); section 3 covers their",
+        "inputs.",
+        "",
+    ]
     lines += ["| Rule | Rows in | Dropped | Flagged | Kept |", "|---|---|---|---|---|"]
     for count in drop_counts:
         kept = count.rows_in - count.rows_dropped

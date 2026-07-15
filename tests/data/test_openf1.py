@@ -1,7 +1,8 @@
 import httpx
+import pandas as pd
 import pytest
 
-from senna.data.openf1 import OpenF1Client, OpenF1YearError
+from senna.data.openf1 import OpenF1Client, OpenF1YearError, match_session
 
 # mirrors the openf1 section of configs/ingest.yaml
 OPENF1_CFG = {
@@ -85,6 +86,25 @@ def test_pit_and_stints_hit_their_endpoints_with_the_session_key(virtual_clock):
         ("/v1/pit", {"session_key": "9158"}),
         ("/v1/stints", {"session_key": "9158"}),
     ]
+
+
+def test_match_session_handles_offsets_and_midnight_slips():
+    # OpenF1 stamps offsets and a race can start past UTC midnight (Vegas);
+    # the match is by UTC day with one day of tolerance
+    rows = [
+        {"session_key": 1, "session_name": "Race", "date_start": "2024-11-24T06:00:00+00:00"},
+        {"session_key": 2, "session_name": "Sprint", "date_start": "2024-11-22T22:30:00-06:00"},
+        {"session_key": 3, "session_name": "Race", "date_start": "2024-12-08T13:00:00"},
+    ]
+
+    # scheduled Saturday, actually started Sunday 06:00 UTC: one-day slip matched
+    saturday = pd.Timestamp("2024-11-23 22:00")
+    assert match_session(rows, saturday, "Race")["session_key"] == 1
+    # -06:00 offset: the UTC day is the 23rd even though the local date says 22nd
+    assert match_session(rows, pd.Timestamp("2024-11-23 04:30"), "Sprint")["session_key"] == 2
+    # a naive date_start is taken as UTC
+    assert match_session(rows, pd.Timestamp("2024-12-08 13:00"), "Race")["session_key"] == 3
+    assert match_session(rows, pd.Timestamp("2024-05-01"), "Race") is None
 
 
 def test_every_request_is_throttled_through_the_token_bucket(virtual_clock):

@@ -5,6 +5,10 @@
 
 seasons: [2022, 2023, 2024, 2025, 2026]   # sourced 5.3.1 — the coverage window
 
+era:
+  first_2026_season: 2026   # sourced 5.3.5 / spec 5.2 — seasons from here carry the "2026"
+                            # era flag (physics_2026.yaml); earlier rows are era "2024"
+
 fastf1:
   cache_dir: data/cache/fastf1       # stylised — local path choice; lives under the
                                      # gitignored data/cache/ so the bulk cache never lands in git

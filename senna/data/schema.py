@@ -41,6 +41,9 @@ class Session(Base):
     openf1_session_key: Mapped[int | None]
     openf1_meeting_key: Mapped[int | None]
     missing_channels: Mapped[list | None] = mapped_column(JSONB)
+    # wet or red-flagged sessions leave the dry tyre fits (5.3.4); computed at
+    # ingest from weather + race control so report and fits share one source
+    is_dry: Mapped[bool | None]
 
 
 class Lap(Base):
@@ -127,7 +130,9 @@ class OpenF1PitStop(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     session_id: Mapped[int] = mapped_column(ForeignKey("sessions.id"))
     driver_number: Mapped[int]
-    lap_number: Mapped[int]
+    # null for stops OpenF1 records without a lap (practice starts); the
+    # pit-loss distribution needs the duration either way (F-14: no silent drops)
+    lap_number: Mapped[int | None]
     pit_duration_s: Mapped[float | None]
 
 
@@ -177,7 +182,7 @@ class IngestCheckpoint(Base):
     event_name: Mapped[str | None]
     source: Mapped[str]  # fastf1 / openf1 — which client owns the fetch
     session_name: Mapped[str]
-    state: Mapped[str]  # pending -> loaded | failed | excluded
+    state: Mapped[str]  # loaded | failed | excluded; an absent row = not attempted yet
     rows_loaded: Mapped[int | None]
     error: Mapped[str | None]
     excluded_reason: Mapped[str | None]

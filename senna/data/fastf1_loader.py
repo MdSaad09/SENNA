@@ -11,6 +11,10 @@ from pathlib import Path
 import fastf1
 import pandas as pd
 
+# re-exported so the orchestrator can catch the hourly-budget stop without
+# importing fastf1 itself
+from fastf1.exceptions import RateLimitExceededError  # noqa: F401
+
 from senna.data.cleaning import missing_channels
 
 SESSION_SLOTS = range(1, 6)

@@ -2,7 +2,8 @@
 
 A checkpoint flips to `loaded` inside the same transaction that writes the
 session's rows, so a kill mid-write rolls both back and the rerun simply
-retries — there is no in_progress state to repair.
+retries — an absent row means "not attempted yet" and there is no
+in_progress state to repair.
 """
 
 from datetime import UTC, datetime
@@ -14,7 +15,6 @@ from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 from senna.data.db import engine_for
 from senna.data.schema import IngestCheckpoint
 
-PENDING = "pending"
 LOADED = "loaded"
 FAILED = "failed"
 EXCLUDED = "excluded"
@@ -101,7 +101,9 @@ async def assert_complete(db_url: str, expected: list[dict]) -> None:
     missing = [
         session
         for session in expected
-        if session["session_date_utc"] < now
+        # a NaT date is owed, not forgiven: only a known future date defers a
+        # session (E-13); an unknown one must be loaded or excluded explicitly
+        if not session["session_date_utc"] > now
         and states.get(key_of(session)) not in (LOADED, EXCLUDED)
     ]
     if missing:
