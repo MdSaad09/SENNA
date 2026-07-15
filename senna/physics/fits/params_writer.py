@@ -57,7 +57,12 @@ def _scalar(value) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
     if isinstance(value, float):
-        return repr(value)  # shortest round-trip repr; safe_load returns the same float
+        text = repr(value)  # shortest round-trip repr; safe_load returns the same float
+        if "e" in text and "." not in text:
+            # YAML 1.1 only reads scientific notation with a dot: "7e-06"
+            # loads as a string, "7.0e-06" as the float
+            text = text.replace("e", ".0e")
+        return text
     if isinstance(value, str):
         return json.dumps(value)  # double-quoted, valid YAML, never reparsed as a date
     if isinstance(value, list):

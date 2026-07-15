@@ -727,7 +727,7 @@ circuits:
           n_laps: 74  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 4e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 4.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.1335  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 47  # fitted: notebooks/fit_degradation.ipynb
@@ -833,7 +833,7 @@ circuits:
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 805  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 7e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 7.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.4002  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 27  # fitted: notebooks/fit_degradation.ipynb
@@ -1032,7 +1032,7 @@ circuits:
           max_age_seen: 43  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1315  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 1e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 1.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 3.0  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 16  # fitted: notebooks/fit_degradation.ipynb
@@ -1208,14 +1208,14 @@ circuits:
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 630  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 6e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 6.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.582  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 20  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 114  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 2e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 2.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.4438  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 37  # fitted: notebooks/fit_degradation.ipynb
@@ -1604,13 +1604,13 @@ circuits:
           n_laps: 47  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 3e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 3.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.371  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 323  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 2e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 2.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.4195  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 57  # fitted: notebooks/fit_degradation.ipynb
@@ -1874,13 +1874,13 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 7e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 7.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.1199  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 49  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 990  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 4e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 4.0e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.439  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 40  # fitted: notebooks/fit_degradation.ipynb
@@ -1893,12 +1893,12 @@ circuits:
           n_laps: 132  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 3e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 3.0e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           b: 1.653  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "australian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 3e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 3.0e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           b: 1.0851  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "australian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
@@ -1986,7 +1986,7 @@ circuits:
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 1e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 1.0e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           b: 2.4195  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb

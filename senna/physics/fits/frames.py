@@ -129,7 +129,8 @@ async def pit_stops(
         select(Event.season, OpenF1PitStop.lap_number, OpenF1PitStop.pit_duration_s)
         .join(Session, OpenF1PitStop.session_id == Session.id)
         .join(Event, Session.event_id == Event.id)
-        .where(Event.event_name == event_name, Session.session_name == "Race"),
+        .where(Event.event_name == event_name, Session.session_name == "Race")
+        .order_by(OpenF1PitStop.session_id, OpenF1PitStop.driver_number, OpenF1PitStop.id),
         calibration_rounds,
     )
     return await _frame(conn, stmt)
@@ -152,9 +153,7 @@ async def race_control_messages(
         .join(Session, RaceControlMessage.session_id == Session.id)
         .join(Event, Session.event_id == Event.id)
         .where(Event.event_name == event_name, Session.session_name == "Race")
-        .order_by(
-            OpenF1PitStop.session_id, OpenF1PitStop.driver_number, OpenF1PitStop.id
-        ),
+        .order_by(RaceControlMessage.session_id, RaceControlMessage.id),
         calibration_rounds,
     )
     return await _frame(conn, stmt)

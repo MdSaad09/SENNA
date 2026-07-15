@@ -66,6 +66,18 @@ def test_every_value_line_carries_an_origin_comment():
         )
 
 
+def test_scientific_notation_floats_load_back_as_floats():
+    # YAML 1.1 wants a dot in scientific notation: repr(7e-06) == "7e-06"
+    # loads back as a *string* under safe_load, silently poisoning every
+    # downstream mean over degradation coefficients
+    params = {"monza": {"degradation": {"a": (7e-06, "fitted: fit_degradation.ipynb")}}}
+
+    loaded = yaml.safe_load(render_params(params, generated_at=GENERATED_AT))
+
+    assert isinstance(loaded["monza"]["degradation"]["a"], float)
+    assert loaded["monza"]["degradation"]["a"] == pytest.approx(7e-06)
+
+
 def test_two_renders_are_byte_identical_regardless_of_insertion_order():
     forward = render_params(_params(), generated_at=GENERATED_AT)
     backward = render_params(_reversed_insertion(_params()), generated_at=GENERATED_AT)
