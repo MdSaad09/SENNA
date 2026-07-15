@@ -18,12 +18,16 @@ fastapi>=0.111              # 5.9.1
 uvicorn[standard]           # 5.9.1: floats deliberately
 pydantic>=2,<3              # 5.9.1
 sqlalchemy>=2.0,<2.1        # 5.9.1
+greenlet>=3                 # sqlalchemy's async bridge; declared because the universal
+                            # lock's own marker skips macOS arm64, where Saad develops
 alembic>=1.13,<2            # 5.9.1
 asyncpg>=0.29,<1            # 5.9.1
 redis>=5,<6                 # 5.9.1
 rq>=1.16,<2                 # 5.9.1: simplest adequate queue (F-26)
 
 wandb>=0.17                 # 5.9.1
+
+pyyaml>=6                   # senna.config reads configs/*.yaml (F01); was transitive-only
 
 pytest                      # test runner; floats
 httpx                       # TestClient transport; floats

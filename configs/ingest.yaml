@@ -1,0 +1,37 @@
+# SENNA — ingestion settings (master spec 5.3 + F01 plan)
+# Every value names its origin: sourced (AR-xx / spec section), fitted (notebook), or stylised.
+# Widening coverage (seasons, session types, endpoints) happens here, never in code (E-11).
+# null means "fit me": code that reads a null must raise, never guess.
+
+seasons: [2022, 2023, 2024, 2025, 2026]   # sourced 5.3.1 — the coverage window
+
+era:
+  first_2026_season: 2026   # sourced 5.3.5 / spec 5.2 — seasons from here carry the "2026"
+                            # era flag (physics_2026.yaml); earlier rows are era "2024"
+
+fastf1:
+  cache_dir: data/cache/fastf1       # stylised — local path choice; lives under the
+                                     # gitignored data/cache/ so the bulk cache never lands in git
+  sessions_to_ingest: [Race, Sprint] # stylised — what the 5.3.2 feeds actually consume; no fit
+                                     # reads practice or quali (Saad, 14 Jul 2026, plan approval)
+
+openf1:
+  base_url: https://api.openf1.org/v1  # sourced 5.3.3
+  first_season: 2023                   # sourced F-11 / AR-15 — OpenF1 has nothing for 2022
+  endpoints: [pit, stints]             # stylised — intervals/race_control/weather cross-checks
+                                       # deferred to the fits that consume them (F02)
+  rate_limit_rps: 3.0                  # sourced AR-15 (A) — free tier ~3 req/s
+  burst: 3                             # stylised — token-bucket capacity, one rate-window's worth
+  max_retries: 5                       # stylised — bulk-ingest patience on 429/5xx
+  backoff_base_s: 1.0                  # stylised — spec mandates backoff, gives no numbers
+  backoff_factor: 2.0                  # stylised
+  backoff_cap_s: 60.0                  # stylised
+
+cleaning:
+  telemetry_gap_split_s: 2.0     # sourced 5.3.4 — split traces, never interpolate across a gap
+  pos_speed_zscore_max: 4.0      # stylised — 5.3.4 mandates the outlier gate but gives no
+                                 # threshold; 4 sigma keeps real kerb strikes, drops GPS jumps
+
+quality:
+  report_dir: docs/data_quality  # stylised — committed location; F02's refuse-to-fit gate
+                                 # reads report_path() under this directory (F-14)

@@ -1,0 +1,8 @@
+# SENNA — the frozen 2026 calibration/validation split (E-14)
+# Frozen at F01 plan approval. Editing this file after fits exist is train-test
+# contamination; the viva reads this header as the paper trail.
+
+season: 2026                            # sourced E-14
+calibration_rounds: [1, 2, 3, 4, 5, 6]  # sourced E-14 — tune the synthetic generator here only
+validation_rounds_from: 7               # sourced E-14 — rounds 7+ and every future round held out
+frozen_on: "2026-07-14"                 # sourced E-14 — the split date the spec requires recording
