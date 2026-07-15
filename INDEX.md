@@ -4,15 +4,15 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F01 — in review on feature/F01-data-ingest; Saad approves, then `/land F01`
-**Next up:** F02, F04 (both unblock when F01 lands)
+**Active feature:** none — next session: `/plan-feature F02` (or F04; both are unblocked)
+**Next up:** F02, then F04
 
 ## Feature ledger
 
 | ID | Feature | Depends on | Status | Branch | Lesson |
 |----|---------|-----------|--------|--------|--------|
 | F00 | Repo skeleton, CI & spec split | — | Done 14 Jul 2026 | feature/F00-repo-skeleton | [F00](docs/learn/F00-repo-skeleton.md) |
-| F01 | Data ingestion & quality reports | F00 | In review | feature/F01-data-ingest | [F01](docs/learn/F01-data-ingest.md) |
+| F01 | Data ingestion & quality reports | F00 | Done 15 Jul 2026 | feature/F01-data-ingest | [F01](docs/learn/F01-data-ingest.md) |
 | F02 | Physics model fits | F01 | Todo | | |
 | F03 | Synthetic 2026 generator (T1–T8) | F02 | Todo | | |
 | F04 | Circuit ribbon pipeline | F01 | Todo | | |
