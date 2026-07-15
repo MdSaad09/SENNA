@@ -115,6 +115,35 @@ def fit_joint_pace(
     )
 
 
+def age_partial_residuals(
+    laps: pd.DataFrame,
+    fuel_kg: pd.Series,
+    *,
+    calibration_rounds: list[int] | None = None,
+) -> pd.DataFrame:
+    """The degradation fitter's input: clean laps with the joint fit's age
+    contribution added back after everything else is removed (partial
+    residuals), so the power law is not refitting what E-10 already explained."""
+    if calibration_rounds is not None:
+        _refuse_validation_rounds(laps, calibration_rounds)
+    clean = (
+        laps["is_green"]
+        & laps["is_accurate"]
+        & laps["lap_time_s"].notna()
+        & laps["pit_in_time_s"].isna()
+        & laps["pit_out_time_s"].isna()
+    )
+    fit_laps = laps[clean].copy()
+    fit_laps["fuel_kg"] = fuel_kg[clean]
+    design, names = _design_matrix(fit_laps)
+    lap_time_s = fit_laps["lap_time_s"].to_numpy(dtype=float)
+    coef, _ = _lstsq(design, lap_time_s)
+    age_columns = [i for i, name in enumerate(names) if name.startswith(("age:", "age2:"))]
+    age_contribution_s = design[:, age_columns] @ coef[age_columns]
+    residual_s = lap_time_s - design @ coef + age_contribution_s
+    return fit_laps.assign(pace_residual_s=residual_s)
+
+
 def _refuse_validation_rounds(laps: pd.DataFrame, calibration_rounds: list[int]) -> None:
     held_out = laps["season"].ge(FIRST_2026_SEASON) & ~laps["round"].isin(calibration_rounds)
     if held_out.any():

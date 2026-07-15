@@ -16,8 +16,12 @@ migrate:
 ingest:
 	python -m senna.data.ingest $(SEASONS) $(SOURCE)
 
+# the full battery reads Postgres + the FastF1 cache and rewrites
+# configs/physics_params.yaml — local only, never CI. Narrow with
+# ONLY="--only energy" or CIRCUIT="--circuit monaco_grand_prix"
+# (narrowed runs skip the yaml write).
 fit:
-	@echo "not yet: F02 owns make fit"
+	python -m senna.physics.fits.run $(ONLY) $(CIRCUIT)
 
 train:
 	@echo "not yet: F07 owns make train"
