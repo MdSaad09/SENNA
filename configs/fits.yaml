@@ -1,0 +1,38 @@
+# SENNA — thresholds the F02 fitting battery reads (inputs, never outputs).
+# Fitted results land in physics_params.yaml; this file is where every knob the
+# fitters take as an argument gets its named origin. null means "fit me": code
+# that reads a null must raise, never guess.
+
+fuel:
+  sc_burn_factor: 0.6        # stylised — SC/VSC laps burn less than green ones;
+                             # the exact ratio is a visual choice, sensitivity
+                             # shown in notebooks/fit_joint_pace.ipynb (T6)
+
+joint_pace:
+  vif_max: 30                # stylised — above this the fuel/evolution attribution
+                             # is flagged and decomposed via the pooled k_m (E-10)
+
+degradation:
+  min_laps: 30               # stylised — sample gates below which a fit is kept
+  min_stints: 3              #   but flagged low_confidence for T5 transfer
+  min_drivers: 2
+  min_max_age: 12            # stylised — the curve must be constrained past this age
+  curve_bounds:              # stylised — scipy curve_fit bounds keeping the
+    a: [0.0, 5.0]            #   grip power law physical: a >= 0, shape in a
+    b: [0.3, 3.0]            #   plausible wear-to-cliff range
+
+hazards:
+  wilson_z: 1.96             # sourced — 95% two-sided normal quantile
+
+pit_loss:
+  max_duration_s: 60         # stylised — beyond this a pit_duration is a penalty
+                             # or red-flag stop, excluded and counted, never silent
+
+energy:
+  throttle_full_pct: 98      # stylised — full-throttle threshold on the Throttle
+                             # channel; 100% would miss sensor jitter (AR-16)
+
+clusters:
+  k_range: [2, 6]            # stylised — silhouette search range for T5 transfer
+  seed: 20260715             # stylised — KMeans determinism; a make fit rerun
+                             # must not reshuffle transfer donors
