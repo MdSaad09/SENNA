@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F02 — in review, awaiting Saad's approval, then `/land F02`
-**Next up:** F04 after F02 lands
+**Active feature:** none — next session: `/plan-feature F04` (F03 also unblocked now)
+**Next up:** F04, then F03
 
 ## Feature ledger
 
@@ -13,7 +13,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 |----|---------|-----------|--------|--------|--------|
 | F00 | Repo skeleton, CI & spec split | — | Done 14 Jul 2026 | feature/F00-repo-skeleton | [F00](docs/learn/F00-repo-skeleton.md) |
 | F01 | Data ingestion & quality reports | F00 | Done 15 Jul 2026 | feature/F01-data-ingest | [F01](docs/learn/F01-data-ingest.md) |
-| F02 | Physics model fits | F01 | In review | feature/F02-physics-fits | |
+| F02 | Physics model fits | F01 | Done 16 Jul 2026 | feature/F02-physics-fits | [F02](docs/learn/F02-physics-fits.md) |
 | F03 | Synthetic 2026 generator (T1–T8) | F02 | Todo | | |
 | F04 | Circuit ribbon pipeline | F01 | Todo | | |
 | F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Todo | | |
