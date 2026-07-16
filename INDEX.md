@@ -41,6 +41,12 @@ the work — resume with `claude --continue`, or start fresh and say
 - **OQ-3 deadline & AI policy:** default freeze 17 Nov 2026; AI assistance declared.
   Saad: replace with the real submission date and the written COMP702 policy.
 - **OQ-4 … OQ-12:** spec defaults apply until edited here.
+- **AR-10 race fuel (spec Part 8):** VERIFIED 16 Jul 2026 — the FIA 2026 regs cap fuel
+  energy flow at 3,000 MJ/h (energy-based, replacing 100 kg/h) and the race allowance
+  works out to ~70 kg with the Advanced Sustainable Fuel spec. Sources: Formula1.com
+  2026 regulation explainers; FIA 2026 Technical Regulations issue 8 (24 Jun 2024).
+  The assumption stands as written ("about 70 kg, energy-flow limited"); next fits
+  session may lift the grade-C flag per the register's close-out rule.
 
 ## Timeline anchor (spec Part 6.2, start 8 Jul 2026)
 F00 by 11 Jul · F01 by 21 Jul · F02–F04 by 4 Aug · F05–F06 by 25 Aug ·
