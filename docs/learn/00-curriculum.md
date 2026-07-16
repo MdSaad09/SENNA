@@ -28,3 +28,15 @@ they do not re-explain it.
 | Delete-and-reload vs upsert idempotency | F01 | Keyless tables can't upsert; deleting a session's rows and reinserting inside one transaction makes any rerun a clean no-op. |
 | Checkpointed resumable batch jobs | F01 | One state row per work unit, flipped to `loaded` in the same commit as the data; reruns skip terminal states, so a killed run loses nothing (E-12). |
 | Flagged superset storage | F01 | Store every raw row plus derived flags (`is_green`, `lap_time_imputed`); fits filter at query time, so no cleaning decision is irreversible (E-09/5.3.4). |
+| OLS with fixed effects | F02 | Least squares on a design matrix with drop-one 0/1 dummy columns per category level, so slopes are estimated within driver/session/compound. |
+| Collinearity, VIF and condition number | F02 | Near-linear dependence between regressors; VIF = 1/(1−R²) of one column on the rest, condition number the same worry matrix-wide — both reported per fit (E-10). |
+| Identifiability vs noise | F02 | Noise shrinks with data; unidentifiable means the data cannot distinguish two explanations — report what is pinned down and flag the rest (`identified: false`). |
+| Partial residuals | F02 | Raw residuals plus one term's fitted contribution added back: "the data with everything except this term removed" — the degradation fit's input. |
+| Inverse-variance pooling | F02 | Combine estimates weighted by 1/SE²; minimum variance for unbiased inputs, which is why confounded (not merely noisy) fits must be excluded first. |
+| Wilson score interval | F02 | A proportion confidence band that stays usable at 0-of-n and small n, unlike the normal approximation's zero-width collapse at the boundaries. |
+| Per-race probability to per-lap hazard | F02 | λ = −ln(1−p)/laps inverts "chance of ≥1 event in L laps of constant hazard"; saturated counts shrink to n/(n+1) before the log (5.5.3). |
+| scipy curve_fit with bounds | F02 | Nonlinear least squares for models like a·age^b; bounds keep coefficients physical and p0 seeds the local optimiser. |
+| KMeans and silhouette | F02 | Distance-based clustering on standardised features; silhouette scores pick k, and a fixed seed keeps transfer donors stable across reruns (T5). |
+| Trapezoidal integration on irregular timestamps | F02 | Integrate with actual dt per sample pair, `dt·(y₁+y₂)/2`, never a nominal rate; stop at every trace break so dropouts donate nothing (AR-16/F-13). |
+| The YAML 1.1 float trap | F02 | `repr(7e-06)` has no dot, so `safe_load` returns a string; scientific notation must be written `7.0e-06` to load back as a float. |
+| Byte-deterministic artifacts | F02 | Same data in, identical bytes out: total ORDER BY on every query, sorted keys in the writer, and a data watermark instead of a clock. |

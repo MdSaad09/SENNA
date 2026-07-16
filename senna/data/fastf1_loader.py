@@ -64,6 +64,19 @@ def load_session_frames(
     return frames, _probe_missing_channels(session)
 
 
+def load_car_data(
+    season: int, round_number: int, session_name: str
+) -> tuple[dict[str, pd.DataFrame], pd.DataFrame]:
+    """Per-driver car telemetry plus the laps frame that windows it (F02 energy fits).
+
+    Telemetry never went to Postgres — the on-disk cache is the store, so this
+    stays cheap on reruns and this module stays the only fastf1 import site.
+    """
+    session = fastf1.get_session(season, round_number, session_name)
+    session.load(laps=True, telemetry=True, weather=False, messages=False)
+    return dict(session.car_data), pd.DataFrame(session.laps)
+
+
 def _probe_missing_channels(session) -> list[str]:
     try:
         car_data = session.laps.pick_fastest().get_car_data()
