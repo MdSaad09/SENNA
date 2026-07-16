@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+
 from senna.physics.fits.clusters import assign_clusters, transfer_degradation
 
 K_RANGE = (2, 6)  # fits.yaml cluster_k_range (stylised)

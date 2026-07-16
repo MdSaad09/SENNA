@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from senna.physics.fits.joint_pace import fit_joint_pace
 
 CALIBRATION_ROUNDS = [1, 2, 3, 4, 5, 6]  # frozen split (E-14, configs/data_split.yaml)

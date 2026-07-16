@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+
 from senna.physics.fits.pit_loss import fit_pit_loss
 
 PIT_DURATION_MAX_S = 60.0  # fits.yaml pit_duration_max_s (stylised)

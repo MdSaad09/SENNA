@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+
 from senna.physics.fits.energy import lap_energy_integrals
 
 THROTTLE_FULL_PCT = 98.0  # fits.yaml throttle_full_pct (stylised)
