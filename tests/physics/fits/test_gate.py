@@ -1,7 +1,7 @@
 import pytest
-from senna.physics.fits.gate import MissingQualityReportError, assert_quality_reports
 
 from senna.data.quality import report_path
+from senna.physics.fits.gate import MissingQualityReportError, assert_quality_reports
 
 
 def _write_report(season, report_dir):
