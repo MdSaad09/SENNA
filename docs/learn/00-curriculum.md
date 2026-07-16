@@ -28,6 +28,7 @@ they do not re-explain it.
 | Delete-and-reload vs upsert idempotency | F01 | Keyless tables can't upsert; deleting a session's rows and reinserting inside one transaction makes any rerun a clean no-op. |
 | Checkpointed resumable batch jobs | F01 | One state row per work unit, flipped to `loaded` in the same commit as the data; reruns skip terminal states, so a killed run loses nothing (E-12). |
 | Flagged superset storage | F01 | Store every raw row plus derived flags (`is_green`, `lap_time_imputed`); fits filter at query time, so no cleaning decision is irreversible (E-09/5.3.4). |
+| 404 as zero rows | F01 | Some APIs 404 an empty query; where "no rows" is a legal answer the client translates that status to `[]` per endpoint — absence is data, errors stay errors (F-14). |
 | OLS with fixed effects | F02 | Least squares on a design matrix with drop-one 0/1 dummy columns per category level, so slopes are estimated within driver/session/compound. |
 | Collinearity, VIF and condition number | F02 | Near-linear dependence between regressors; VIF = 1/(1−R²) of one column on the rest, condition number the same worry matrix-wide — both reported per fit (E-10). |
 | Identifiability vs noise | F02 | Noise shrinks with data; unidentifiable means the data cannot distinguish two explanations — report what is pinned down and flag the rest (`identified: false`). |

@@ -24,6 +24,12 @@ One rule shapes the whole schema: store the flagged superset, never a cleaned su
 In-laps poison pace fits but feed pit-timing fits (E-09), so we keep every lap and
 store flags; each fit filters at query time.
 
+The finished run is on main: 121,406 laps from 227 checkpointed session loads (a
+Race or Sprint counts once per source), covering every due session across the 115
+events on the 2022–2026 calendars, five committed quality reports, completeness
+green. And zero exclusions — which surprised us, and the surprise had a lesson in
+it (the OpenF1 story below).
+
 ## New ideas in this feature
 
 **pandas DataFrames, and NaT vs NaN.** A DataFrame is a table in memory: named
@@ -101,6 +107,17 @@ neither may clobber the other. The split is the design decision, not an accident
 `loaded` commits in the same transaction as the data rows, so a kill mid-write rolls
 back both and there is no lying checkpoint and no `in_progress` state to repair. A
 rerun skips terminal states and retries the rest. This is E-12 turned into a table.
+
+**A 404 that means "no rows".** REST APIs disagree about what an empty result looks
+like: most return `200` with `[]`, OpenF1 returns `404 Not Found` for any query that
+matches zero rows. Once that dialect is verified, the client must translate the status
+back into "zero rows" at exactly the endpoints where an empty answer is legal — and
+nowhere else, so a mistyped path still fails loudly. SENNA needs this because excluding
+a whole session over one empty endpoint would discard the other endpoint's real rows
+and put a false gap in the completeness report (F-14). Mental model: this API answers
+"nothing matched" with silence, and the client is the interpreter who knows when
+silence is an answer. Smallest example: `client.pit(key)` returns `[]` on a 404, while
+`client.get("pit", ...)` still raises.
 
 ## The code, guided
 
@@ -192,7 +209,10 @@ for attempt in range(self._max_retries + 1):
         return response.json()
     if attempt == self._max_retries:
         response.raise_for_status()
-    backoff_s = min(self._backoff_base_s * self._backoff_factor**attempt, self._backoff_cap_s)
+    backoff_s = min(
+        self._backoff_base_s * self._backoff_factor**attempt,
+        self._backoff_cap_s,
+    )
     self._sleep(backoff_s)
 ```
 
@@ -202,6 +222,46 @@ earn exponential backoff (1 s, 2 s, 4 s... capped at 60), and the last attempt r
 rather than sleeping pointlessly. Above the loop, `year < first_season` raises
 `OpenF1YearError` before any network call: OpenF1 has nothing before 2023 (F-11), and
 asking would waste the budget to learn what the spec already says.
+
+The two data endpoints wrap `get` in one more translation layer, and it earned its
+place the hard way. The plan was written believing OpenF1's pit data simply starts
+mid-2023, and when `/pit` 404'd on nine early-2023 sessions, the first bulk run duly
+excluded them with the written reason "no upstream data". Then the run kept going and
+no-stop sprints 404'd too — sessions that demonstrably exist, where the true answer is
+"zero pit stops". And `/stints` was returning rows for the same session keys `/pit`
+refused. So the 404 never meant "this session is missing"; it is OpenF1's way of
+saying "your query matched no rows". The exclusions were reverted, the client learned
+the dialect, and all nine sessions loaded:
+
+```python
+def pit(self, session_key: int) -> list[dict]:
+    return self._rows_or_empty("pit", session_key=session_key)
+
+def stints(self, session_key: int) -> list[dict]:
+    return self._rows_or_empty("stints", session_key=session_key)
+
+def _rows_or_empty(self, endpoint: str, **params) -> list[dict]:
+    # openf1 404s a no-row query instead of returning [] — seen on /pit
+    # before mid-2023 and for sprints where nobody stopped. Zero rows is
+    # an answer, not a failure.
+    try:
+        return self.get(endpoint, **params)
+    except httpx.HTTPStatusError as err:
+        if err.response.status_code == 404:
+            return []
+        raise
+```
+
+Only `pit` and `stints` route through `_rows_or_empty`, because those are the two
+endpoints where "no rows" is a legal domain answer; the raw `get` still raises on 404,
+so a wrong path cannot masquerade as an empty session
+(`test_pit_and_stints_treat_a_404_as_zero_rows` pins both sides). And only 404 is
+translated — 429 and the 5xx family keep their retry-then-raise path, because an
+outage is not an answer. The first version of this story, "excluded with a written
+reason beats silence", was already better than most pipelines manage. The final
+version is better: an exclusion is a last resort, and reaching for it over one empty
+endpoint would have thrown away the stint rows that endpoint's sibling was happily
+serving for the very same sessions.
 
 `match_session` pairs a FastF1 session with OpenF1's `/sessions` row by name and UTC
 day, with one day of tolerance — Vegas starts late Saturday local and lands on Sunday
@@ -217,7 +277,10 @@ have been renamed twice already and that is data, not code (E-11). It also re-ex
 `RateLimitExceededError` so the orchestrator can catch fastf1's hourly budget without
 importing fastf1 itself. `_probe_missing_channels` asks the fastest lap for its car
 data and records which of the six expected channels are absent — recorded, never
-fatal (F-14).
+fatal (F-14). One later arrival lives here too: F02 added `load_car_data`, which
+pulls per-driver telemetry straight from the on-disk cache and never touches
+Postgres. It is walked in the F02 lesson; it sits in this module because this must
+stay the package's only fastf1 import site.
 
 ### senna/data/cleaning.py — the 5.3.4 contract
 
@@ -288,10 +351,13 @@ date every comparison is `False`, so `not False` keeps the session in the owed l
 a session whose date we do not know must be loaded or excluded, never quietly skipped.
 A genuinely future date defers it, which is how Madrid sits on the 2026 calendar all
 summer without failing every run before September (E-13). Anything owed and neither
-`loaded` nor `excluded` raises `IncompleteIngestError`, listing each offender. This
-is why OpenF1's `/pit` returning 404 for early 2023 (upstream data simply starts
-mid-season) shows up as checkpoint rows marked `excluded` with "no upstream data" —
-the completeness gate's answer to a real gap is a written reason, not silence.
+`loaded` nor `excluded` raises `IncompleteIngestError`, listing each offender. The
+`excluded` state and `mark_excluded` did get exercised mid-run — the nine early-2023
+sessions spent a day in that state before the 404 turned out to be data (the
+openf1.py story above) — but the final ingest ended with all 227 owed loads `loaded`
+and the exclusion state empty. The machinery stays, because the gate's answer to a
+genuine upstream gap is still a written reason, not silence; it just turned out that
+2022–2026 does not contain one.
 
 ### senna/data/ingest.py
 
@@ -357,7 +423,27 @@ because no test rendered a report from a real connection until then.
 The CLI (`_amain`) is plumbing: build the season plan from the schedule, split it into
 a fastf1 pass and an openf1 pass (2023+ only), run both, write one report per season,
 then `assert_complete` over everything due. `--report-only` skips fetching and
-regenerates reports from the database.
+regenerates reports from the database. One filter in it was added by the bulk run
+itself:
+
+```python
+def _due(expected: list[dict]) -> list[dict]:
+    # E-13: only a known future date defers a session — Madrid appears in the
+    # plan today but is not owed data until its September weekend. A NaT date
+    # stays owed rather than silently vanishing from the completeness gate.
+    now = datetime.now(UTC).replace(tzinfo=None)
+    return [s for s in expected if not s["session_date_utc"] > now]
+```
+
+Early resumes ran `run_ingest` over the whole plan, so every not-yet-raced 2026 round
+was attempted, failed (no data exists yet), recorded as `failed`, and retried on the
+very next resume — and each doomed attempt spent calls from the same 500-per-hour
+fastf1 budget that had already killed run one. The completeness gate never owed those
+sessions anything, so the attempts bought nothing and taxed the retries that mattered.
+Now both passes receive `_due(sessions)` and the gate receives `_due(expected)`: one
+definition of "due", applied at the fetch end and the gate end. Notice it is the same
+`not >` comparison as `assert_complete`'s own — a NaT date stays due here too, for the
+same E-13 reason.
 
 ### tests/
 
@@ -397,8 +483,9 @@ the very same `laps` table; F04 reads telemetry through the loader's cache.
 
 ## Try it yourself
 
-A bulk ingest may be running against the `senna` database — reports get committed when
-it finishes. Read-only queries there are always safe.
+The bulk ingest is done and its five reports are committed under `docs/data_quality/`:
+121,406 laps, 227 session loads, zero exclusions. Read-only queries against `senna`
+are always safe.
 
 **The one warning that matters:** the Postgres tests drop and recreate every table in
 whatever database `DATABASE_URL` names. Pointed at `senna`, pytest erases the ingested
@@ -420,7 +507,9 @@ weakening the constraint.
    sessions.id join events on sessions.event_id = events.id group by season order by
    season;` and `select state, count(*) from ingest_checkpoints group by state;`.
    You'll know it worked when the per-season lap counts look like real calendars
-   (roughly 20k+ laps a season) and you can explain every checkpoint state you see.
+   (roughly 20k+ laps a season, 121,406 total), the checkpoint query returns exactly
+   one state — `loaded`, 227 rows — and you can explain why neither `failed` nor
+   `excluded` survived to the end of the run.
 
 3. Change a config value and predict the effect. Set `openf1.burst: 1` in
    `configs/ingest.yaml`, predict which throttle test still passes and what the
@@ -437,12 +526,13 @@ weakening the constraint.
    can explain which real-world case (a schedule row with no date) now slips through
    silently — then revert.
 
-5. Once the bulk run is done: `python -m senna.data.ingest --report-only` (with
-   `DATABASE_URL` pointed at `senna` — report-only never writes to tables), then read
-   `docs/data_quality/2024/data_quality_report.md`. Optionally rerun
-   `make ingest SEASONS="--seasons 2024"` and watch it skip every loaded session in
-   seconds. You'll know it worked when the completeness table shows every past session
-   `loaded` or `excluded` with a reason, and the rerun costs no network calls.
+5. Regenerate the reports: `python -m senna.data.ingest --report-only` (with
+   `DATABASE_URL` pointed at `senna` — report-only never writes to tables), then diff
+   `docs/data_quality/2024/data_quality_report.md` against the committed copy.
+   Optionally rerun `make ingest SEASONS="--seasons 2024"` and watch it skip every
+   loaded session in seconds. You'll know it worked when the completeness table shows
+   every session `loaded` — zero exclusions; the state exists, this run never needed
+   it — and the rerun costs no network calls.
 
 ## Check yourself
 
@@ -456,8 +546,9 @@ weakening the constraint.
    instead of upserting every row. What forced it, and what does the transaction
    contribute?
 
-4. The token bucket's clock and sleep are constructor arguments. What would the
-   throttle tests look like without that, and why is that unacceptable?
+4. Defend this design choice: `pit()` and `stints()` translate a 404 into zero rows.
+   Is that not swallowing errors — how do you know an outage or a typo'd endpoint
+   does not now look like an empty session?
 
 5. `assert_complete` treats a session with an unknown (NaT) date as owed, but a
    session dated next month as not owed. Why are those opposite, when both are "no
@@ -490,12 +581,14 @@ weakening the constraint.
    (events, sessions, checkpoints) still upsert because two source passes must merge
    into one row without clobbering each other's columns.
 
-4. Without injection the tests would call the real clock and really sleep: proving
-   "9 requests at 3/s wait at least 2 s" costs 2 wall seconds per assertion, and
-   timing noise makes the exact-equality assertions flaky. With `VirtualClock`,
-   sleeping is `now_s += duration` and the tests assert exact timestamps in
-   microseconds. The production default is unchanged — `time.monotonic` and
-   `time.sleep` are just the default arguments.
+4. Viva answer: the translation is scoped and verified, not a blanket catch. Only
+   the two endpoints where zero rows is a legal domain answer route through
+   `_rows_or_empty`; the raw `get` still raises on 404, so a wrong path fails
+   loudly, and 429/5xx keep their retry-then-raise treatment because an outage is
+   not an answer. The verification: sprints where nobody pitted 404 on `/pit` while
+   `/stints` returns rows for the same session_key, which pins the meaning as "no
+   matching rows", never "no such session". The alternative — excluding the session
+   — was tried first, and it threw away real stint data over one empty endpoint.
 
 5. A known future date is a scheduled fact: the session has not happened, so no data
    can exist and demanding it would make every run before September fail on Madrid
@@ -520,3 +613,4 @@ These rows were appended to `docs/learn/00-curriculum.md`:
 | Delete-and-reload vs upsert idempotency | F01 | Keyless tables can't upsert; deleting a session's rows and reinserting inside one transaction makes any rerun a clean no-op. |
 | Checkpointed resumable batch jobs | F01 | One state row per work unit, flipped to `loaded` in the same commit as the data; reruns skip terminal states, so a killed run loses nothing (E-12). |
 | Flagged superset storage | F01 | Store every raw row plus derived flags (`is_green`, `lap_time_imputed`); fits filter at query time, so no cleaning decision is irreversible (E-09/5.3.4). |
+| 404 as zero rows | F01 | Some APIs 404 an empty query; where "no rows" is a legal answer the client translates that status to `[]` per endpoint — absence is data, errors stay errors (F-14). |
