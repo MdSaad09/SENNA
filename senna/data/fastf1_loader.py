@@ -9,13 +9,14 @@ name list — sprint weekends renamed their sessions twice already (E-11).
 from pathlib import Path
 
 import fastf1
+import numpy as np
 import pandas as pd
 
 # re-exported so the orchestrator can catch the hourly-budget stop without
 # importing fastf1 itself
 from fastf1.exceptions import RateLimitExceededError  # noqa: F401
 
-from senna.data.cleaning import missing_channels
+from senna.data.cleaning import clean_pos_data, missing_channels
 
 SESSION_SLOTS = range(1, 6)
 
@@ -78,25 +79,30 @@ def load_car_data(
 
 
 def load_fastest_lap_geometry(
-    season: int, round_number: int, session_name: str, *, pos_units_per_m: float
-) -> tuple[dict[str, "pd.Series | object"], pd.DataFrame]:
-    """Fastest clean lap's centreline and telemetry, plus the circuit corners (F04, 5.10.1).
+    season: int, round_number: int, session_name: str, *, zscore_max: float
+) -> tuple[dict[str, np.ndarray], pd.DataFrame]:
+    """Fastest accurate lap's cleaned centreline and telemetry, plus corners (F04, 5.10.1).
 
-    X/Y/Z arrive as FastF1 decimetres and convert to metres here at the data
-    boundary; Speed, Throttle and Distance ride along for the braking and X-mode
-    annotations. Corners come from CircuitInfo. The caller (senna.circuits) sees
-    only numpy — this stays the one site that imports fastf1.
+    The centreline runs through clean_pos_data (5.3.4): decimetres to metres,
+    OnTrack points only, point-to-point z-score gate. Picking an accurate lap and
+    then cleaning keeps a track-limits lap or a GPS teleport out of the ribbon, so
+    a data spike never masquerades as a geometry self-intersection (E-17). Speed
+    and throttle ride the car-data channel for the braking and X-mode annotations.
+    Corners come from CircuitInfo. This stays the one site that imports fastf1.
     """
     session = fastf1.get_session(season, round_number, session_name)
     session.load(laps=True, telemetry=True, weather=False, messages=False)
-    telemetry = session.laps.pick_fastest().get_telemetry()
+    lap = session.laps.pick_accurate().pick_fastest()
+
+    centreline, _ = clean_pos_data(lap.get_pos_data(), zscore_max)
+    car = lap.get_car_data().add_distance()
     geometry = {
-        "x_m": telemetry["X"].to_numpy(dtype=float) / pos_units_per_m,
-        "y_m": telemetry["Y"].to_numpy(dtype=float) / pos_units_per_m,
-        "z_m": telemetry["Z"].to_numpy(dtype=float) / pos_units_per_m,
-        "speed_kmh": telemetry["Speed"].to_numpy(dtype=float),
-        "throttle_pct": telemetry["Throttle"].to_numpy(dtype=float),
-        "distance_m": telemetry["Distance"].to_numpy(dtype=float),
+        "x_m": centreline["X"].to_numpy(),
+        "y_m": centreline["Y"].to_numpy(),
+        "z_m": centreline["Z"].to_numpy(),
+        "speed_kmh": car["Speed"].to_numpy(dtype=float),
+        "throttle_pct": car["Throttle"].to_numpy(dtype=float),
+        "distance_m": car["Distance"].to_numpy(dtype=float),
     }
     return geometry, session.get_circuit_info().corners
 

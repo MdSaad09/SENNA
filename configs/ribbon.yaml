@@ -14,7 +14,8 @@ ribbon:
   savgol_polyorder_xy: 3         # stylised — cubic keeps corner shape while denoising
   savgol_window_z: 31            # stylised — Z is noisier, smoothed harder (5.10.1 item 2)
   savgol_polyorder_z: 3          # stylised
-  pos_data_units_per_m: 10       # sourced — FastF1 position channels are decimetres (spec 5.3)
+  flat_z_epsilon_m: 1.0          # stylised — Z spread below this reads as absent, so the
+                                 # ribbon takes the flat-plus-camber elevation fallback (F-12)
   lap_length_tolerance_pct: 5    # sourced — spec 5.10.1 item 7, match official length within 5%
 
 braking:

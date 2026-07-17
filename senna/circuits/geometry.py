@@ -1,11 +1,11 @@
 """Ribbon geometry — the pure-numpy core of the F04 pipeline (spec 5.10.1).
 
-The seven-step algorithm splits cleanly: resample the raw centreline by arc
-length, close the loop, smooth it, carry rotation-minimising frames along it,
-then extrude a ribbon whose half-width is clamped to the local curve radius so
-Monaco and Hungary do not fold their inner edge (E-17). Everything here is
-numpy in, numpy out — no FastF1, no pandas, no I/O — so the invariants can be
-asserted against synthetic hairpins as well as real circuits.
+The algorithm splits cleanly: resample the raw centreline by arc length, smooth
+it, carry rotation-minimising frames along it (kept periodic on a closed loop),
+then extrude a ribbon whose half-width is clamped to the local curve radius. The
+clamp is what stops a sub-6 m hairpin — Monaco, Hungary — from folding its inner
+edge (E-17). Everything here is numpy in, numpy out — no FastF1, no pandas, no
+I/O — so the invariants hold against synthetic hairpins and real circuits alike.
 """
 
 import numpy as np
@@ -41,20 +41,27 @@ def rotation_minimising_frames(
 
     Frenet frames twist at inflection points and hairpins (E-17); this carries a
     reference normal along the curve with the least possible rotation, so the
-    extruded ribbon never flips. Returns unit (tangents, normals, binormals).
+    extruded ribbon never flips. A closed circuit accumulates a holonomy angle
+    around the loop; when `closed`, that residual twist is spread back over the
+    stations so the frame is periodic and the start-finish quad has no seam.
+    Returns unit (tangents, normals, binormals).
     """
-    tangents = _unit(np.gradient(points, axis=0))
+    tangents = _unit(_periodic_gradient(points) if closed else np.gradient(points, axis=0))
     normals = np.empty_like(points)
     normals[0] = _seed_normal(tangents[0])
-
     for i in range(len(points) - 1):
-        step = points[i + 1] - points[i]
-        reflected_normal = _reflect(normals[i], step)
-        reflected_tangent = _reflect(tangents[i], step)
-        bisector = tangents[i + 1] - reflected_tangent
-        normals[i + 1] = _reflect(reflected_normal, bisector)
-
+        normals[i + 1] = _transport(
+            normals[i], tangents[i], tangents[i + 1], points[i + 1] - points[i]
+        )
     normals = _unit(normals)
+
+    if closed:
+        wrapped = _transport(normals[-1], tangents[-1], tangents[0], points[0] - points[-1])
+        holonomy = _signed_angle(wrapped, normals[0], tangents[0])
+        spread = holonomy * np.arange(len(points)) / len(points)
+        turned = [_rotate_about(n, t, a) for n, t, a in zip(normals, tangents, spread, strict=True)]
+        normals = _unit(np.array(turned))
+
     binormals = _unit(np.cross(tangents, normals))
     return tangents, normals, binormals
 
@@ -154,6 +161,30 @@ def _seed_normal(tangent: np.ndarray) -> np.ndarray:
     # aligned with it so the cross product is well conditioned
     axis = np.eye(3)[np.argmin(np.abs(tangent))]
     return _unit(np.cross(tangent, axis))
+
+
+def _transport(normal: np.ndarray, tangent: np.ndarray, next_tangent: np.ndarray, step: np.ndarray):
+    # one double-reflection step: reflect the frame across the segment, then across
+    # the bisector that maps the reflected tangent onto the next one (Wang 2008)
+    reflected_normal = _reflect(normal, step)
+    reflected_tangent = _reflect(tangent, step)
+    return _reflect(reflected_normal, next_tangent - reflected_tangent)
+
+
+def _periodic_gradient(points: np.ndarray) -> np.ndarray:
+    # central difference that wraps, so the tangent at the seam is not one-sided
+    return (np.roll(points, -1, axis=0) - np.roll(points, 1, axis=0)) / 2.0
+
+
+def _signed_angle(start: np.ndarray, end: np.ndarray, axis: np.ndarray) -> float:
+    start, end, axis = _unit(start), _unit(end), _unit(axis)
+    return float(np.arctan2(np.cross(start, end) @ axis, start @ end))
+
+
+def _rotate_about(vector: np.ndarray, axis: np.ndarray, angle: float) -> np.ndarray:
+    axis = _unit(axis)
+    cos, sin = np.cos(angle), np.sin(angle)
+    return vector * cos + np.cross(axis, vector) * sin + axis * (axis @ vector) * (1.0 - cos)
 
 
 def _reflect(vector: np.ndarray, mirror: np.ndarray) -> np.ndarray:

@@ -1,11 +1,12 @@
 """Build one GLTF ribbon per ingested circuit (spec 5.10.1, F04).
 
 The battery walks every event that has an ingested session, picks the fastest
-clean lap of the most recent dry session, and runs it through the geometry core:
-resample, smooth, close, frame, extrude, annotate. It writes a GLB plus a
-metadata sidecar per circuit and a build-time index — the library is generated
-from the data, never a hand-listed calendar, so Madrid appears the moment its
-first session lands (F-08, E-13).
+accurate lap of the most recent dry session, and runs it through the geometry
+core: resample, smooth, frame, extrude, annotate. The loop is kept periodic
+rather than sealed with a duplicate seam point, and the mesh closes the ring at
+export. It writes a GLB plus a metadata sidecar per circuit and a build-time
+index — the library is generated from the data, never a hand-listed calendar, so
+Madrid appears the moment its first session lands (F-08, E-13).
 
 Run it: python -m senna.circuits.build   (or `make circuits`)
 """
@@ -27,13 +28,9 @@ from senna.data.schema import Event, Session
 
 log = logging.getLogger(__name__)
 
-# below this metre-scale spread the Z channel is missing or flat, so elevation
-# falls back to the stylised flat-plus-camber treatment (F-12)
-FLAT_Z_EPSILON_M = 1.0
-
 
 def slugify_event(event_name: str) -> str:
-    """Event name to the slug circuits.yaml keys on ('Monaco Grand Prix' -> ...)."""
+    """Event name to a filesystem slug ('Monaco Grand Prix' -> 'monaco_grand_prix')."""
     slug = re.sub(r"[^\w]+", "_", event_name.strip().lower(), flags=re.UNICODE)
     return slug.strip("_")
 
@@ -51,10 +48,15 @@ def build_ribbon(geometry_channels: dict, corners, ribbon_cfg: dict) -> tuple[np
     exaggeration = config.get(ribbon_cfg, "ribbon.elevation_exaggeration")
     camber_deg = config.get(ribbon_cfg, "ribbon.camber_deg")
 
+    flat_z_epsilon_m = config.get(ribbon_cfg, "ribbon.flat_z_epsilon_m")
+
     raw = np.column_stack(
         [geometry_channels["x_m"], geometry_channels["y_m"], geometry_channels["z_m"]]
     )
-    resampled = geometry.close_loop(geometry.resample_by_arc_length(raw, spacing_m))
+    # resample leaves distinct stations (no duplicated start-finish point); the
+    # loop is treated as periodic through smoothing, frames and radius, and the
+    # mesh closes the ring at export — so the seam never sees a zero-length segment
+    resampled = geometry.resample_by_arc_length(raw, spacing_m)
     station_count = len(resampled)
 
     plan_xy = geometry.savgol_smooth(
@@ -64,7 +66,7 @@ def build_ribbon(geometry_channels: dict, corners, ribbon_cfg: dict) -> tuple[np
         closed=True,
     )
 
-    if np.ptp(resampled[:, 2]) > FLAT_Z_EPSILON_M:
+    if np.ptp(resampled[:, 2]) > flat_z_epsilon_m:
         smoothed_z = geometry.savgol_smooth(
             resampled[:, 2],
             _fit_window(config.get(ribbon_cfg, "ribbon.savgol_window_z"), station_count),
@@ -87,6 +89,8 @@ def build_ribbon(geometry_channels: dict, corners, ribbon_cfg: dict) -> tuple[np
     )
 
     measured_length_m = geometry.lap_length_m(centreline, closed=True)
+    # the lap's own odometer stands in for the published length, which we do not
+    # have per circuit; the gate catches gross scale errors, not a true 5% audit
     odometer_m = float(geometry_channels["distance_m"].max())
     tolerance_pct = config.get(ribbon_cfg, "ribbon.lap_length_tolerance_pct")
 
@@ -130,7 +134,7 @@ async def _ingested_sessions(conn) -> list[dict]:
 async def run_build(output_dir: Path) -> dict:
     ribbon_cfg = config.load("ribbon")
     ingest_cfg = config.load("ingest")
-    pos_units_per_m = config.get(ribbon_cfg, "ribbon.pos_data_units_per_m")
+    zscore_max = config.get(ingest_cfg, "cleaning.pos_speed_zscore_max")
 
     from senna.data import fastf1_loader
 
@@ -158,14 +162,14 @@ async def run_build(output_dir: Path) -> dict:
             chosen["season"],
             chosen["round"],
             chosen["session_name"],
-            pos_units_per_m=pos_units_per_m,
+            zscore_max=zscore_max,
         )
         vertices, meta = build_ribbon(channels, corners, ribbon_cfg)
         slug = slugify_event(event_name)
         meta = {"slug": slug, "event_name": event_name, **meta}
 
         circuit_dir = output_dir / slug
-        export.write_glb(circuit_dir / "ribbon.glb", vertices)
+        export.write_glb(circuit_dir / "ribbon.glb", vertices, closed=True)
         export.write_metadata(circuit_dir / "meta.json", meta)
         entries.append(
             {

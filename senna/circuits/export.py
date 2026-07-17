@@ -13,22 +13,29 @@ import numpy as np
 import pygltflib
 
 
-def ribbon_mesh(vertices: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """(N, 2, 3) ribbon edges to (positions (2N, 3) float32, triangles (2(N-1), 3) uint32)."""
+def ribbon_mesh(vertices: np.ndarray, *, closed: bool = False) -> tuple[np.ndarray, np.ndarray]:
+    """(N, 2, 3) ribbon edges to (positions (2N, 3) float32, triangles uint32).
+
+    A closed circuit adds the wrap quad from the last station back to the first,
+    so the ring seals with no duplicated seam vertex — 2N triangles closed, or
+    2(N-1) for an open strip.
+    """
     station_count = vertices.shape[0]
     positions = vertices.reshape(2 * station_count, 3).astype(np.float32)
 
-    triangles = np.empty((2 * (station_count - 1), 3), dtype=np.uint32)
-    for i in range(station_count - 1):
-        left, right = 2 * i, 2 * i + 1
-        next_left, next_right = 2 * i + 2, 2 * i + 3
-        triangles[2 * i] = (left, right, next_left)
-        triangles[2 * i + 1] = (right, next_right, next_left)
+    quad_count = station_count if closed else station_count - 1
+    triangles = np.empty((2 * quad_count, 3), dtype=np.uint32)
+    for quad in range(quad_count):
+        here, ahead = quad, (quad + 1) % station_count
+        left, right = 2 * here, 2 * here + 1
+        next_left, next_right = 2 * ahead, 2 * ahead + 1
+        triangles[2 * quad] = (left, right, next_left)
+        triangles[2 * quad + 1] = (right, next_right, next_left)
     return positions, triangles
 
 
-def write_glb(path: str | Path, vertices: np.ndarray) -> None:
-    positions, triangles = ribbon_mesh(vertices)
+def write_glb(path: str | Path, vertices: np.ndarray, *, closed: bool = False) -> None:
+    positions, triangles = ribbon_mesh(vertices, closed=closed)
     indices = triangles.reshape(-1)
 
     position_bytes = positions.tobytes()

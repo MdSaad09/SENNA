@@ -61,6 +61,19 @@ def test_rmf_no_twist_flip_across_hairpin():
     assert np.all(rmf_dots > 0.0), "rotation-minimising normals must stay continuous (E-17)"
 
 
+def test_rmf_is_periodic_on_a_closed_loop():
+    # a circle tilted out of plane, sampled without a duplicate seam point: the
+    # frame must come back to itself around the loop, so the wrap step (last normal
+    # to first) is as smooth as any interior step — no start-finish twist.
+    theta = np.linspace(0.0, 2 * np.pi, 360, endpoint=False)
+    loop = np.column_stack([50 * np.cos(theta), 50 * np.sin(theta), 6 * np.sin(2 * theta)])
+
+    _, normals, _ = rotation_minimising_frames(loop, closed=True)
+
+    wrap_dots = np.sum(normals * np.roll(normals, -1, axis=0), axis=1)
+    assert np.all(wrap_dots > 0.99)  # continuous across every step including the seam
+
+
 def test_ribbon_no_self_intersection_synthetic_hairpin():
     # 12 m ribbon extruded along a sub-6 m radius arc: the half-width clamp keeps the
     # inner edge on its own side, so no edge crosses itself (E-17).
