@@ -41,10 +41,12 @@ def test_loop_closure_first_last_coincide():
 
 
 def test_rmf_no_twist_flip_across_hairpin():
-    # A 3D S-curve: the y-sine carries an inflection at t = pi and tight curvature at the
-    # peaks. Frenet frames flip their normal through the inflection; RMF must not (E-17).
+    # A 3D S-curve climbing at a constant rate: the y-sine carries an inflection at t = pi
+    # where the in-plane acceleration vanishes and reverses. Frenet frames flip their normal
+    # through that inflection; RMF must not (E-17). Z is linear so it adds no curvature of its
+    # own — otherwise the out-of-plane term would mask the flip the baseline is meant to show.
     t = np.linspace(0.2, 2 * np.pi - 0.2, 240)
-    centreline = np.column_stack([3.0 * t, 8.0 * np.sin(t), 2.0 * np.sin(0.5 * t)])
+    centreline = np.column_stack([3.0 * t, 8.0 * np.sin(t), 0.5 * t])
 
     _, normals, _ = rotation_minimising_frames(centreline, closed=False)
     rmf_dots = np.sum(normals[:-1] * normals[1:], axis=1)
@@ -88,7 +90,11 @@ def test_halfwidth_clamped_to_local_radius():
     clamp_fraction = 0.9
 
     vertices = build_ribbon_vertices(
-        centreline, lateral, half_width_m=12.0, local_radius=local_radius, clamp_fraction=clamp_fraction
+        centreline,
+        lateral,
+        half_width_m=12.0,
+        local_radius=local_radius,
+        clamp_fraction=clamp_fraction,
     )
 
     left, right = vertices[:, 0], vertices[:, 1]
