@@ -584,6 +584,6 @@ globals:
   c_lc_median_s_per_mj: 0.423  # fitted: notebooks/fit_energy_budget.ipynb — cross-circuit median, mirrored to physics_2026.yaml
   corner_speed_exponent: 0.2239  # fitted: notebooks/fit_corner_exponent.ipynb — global fit over both-era apexes
   overtaking:
-    beta_pace: 0.3577  # fitted: notebooks/fit_overtaking.ipynb
-    n_events: 20617  # fitted: notebooks/fit_overtaking.ipynb
-    shift_2026_logit: 0.1054  # fitted: notebooks/fit_overtaking.ipynb — 2026 pass-rate shift vs 2024
+    beta_pace: 0.3727  # fitted: notebooks/fit_overtaking.ipynb
+    n_events: 21159  # fitted: notebooks/fit_overtaking.ipynb
+    shift_2026_logit: 0.1231  # fitted: notebooks/fit_overtaking.ipynb — 2026 pass-rate shift vs 2024

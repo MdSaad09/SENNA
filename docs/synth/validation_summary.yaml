@@ -8,11 +8,11 @@ austrian_grand_prix:
   lap_time_ks: 0.9182  # KS vs real held-out green laps; target < 0.15
   pit_delta_within_1s: true  # |sim 22.2 - real 21.9| <= 1.0
   sim_minus_real_median_s: -4.073  # headline sim-to-real lap-time offset
-  stint_emd_laps: 333.75  # earth-mover distance, sim vs real stint lengths
+  stint_emd_laps: 14.246  # earth-mover distance, sim vs real stint lengths
 british_grand_prix:
   derate_deficit_mj: 1.49  # T4 energy shortfall — higher means more straight-line derate
   ks_within_target: false  # 5.4.1 target met
   lap_time_ks: 0.8716  # KS vs real held-out green laps; target < 0.15
   pit_delta_within_1s: false  # |sim 29.7 - real 31.7| <= 1.0
   sim_minus_real_median_s: -4.414  # headline sim-to-real lap-time offset
-  stint_emd_laps: 184.5  # earth-mover distance, sim vs real stint lengths
+  stint_emd_laps: 16.012  # earth-mover distance, sim vs real stint lengths
