@@ -4,7 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none — next session: `/plan-feature F05`
+**Active feature:** F05 — planned, ready to `/ship F05`
 **Next up:** F05, then F06
 
 ## Feature ledger
@@ -16,7 +16,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F02 | Physics model fits | F01 | Done 16 Jul 2026 | feature/F02-physics-fits | [F02](docs/learn/F02-physics-fits.md) |
 | F03 | Synthetic 2026 generator (T1–T8) | F02 | Done 17 Jul 2026 | feature/F03-synthetic-2026 | [F03](docs/learn/F03-synthetic-2026.md) |
 | F04 | Circuit ribbon pipeline | F01 | Done 17 Jul 2026 | feature/F04-circuit-ribbons | [F04](docs/learn/F04-circuit-ribbons.md) |
-| F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Todo | | |
+| F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Planned | | |
 | F06 | Rivals, baselines, oracle & throughput | F05 | Todo | | |
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Todo | | |
 | F08 | Ablations & headline runs | F07 | Todo | | |
