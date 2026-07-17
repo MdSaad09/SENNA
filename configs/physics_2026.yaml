@@ -35,7 +35,9 @@ aero:
 
 mass:
   minimum_car_kg: 768          # sourced AR-09 (A) — Honda overview, -30 kg vs 2024
-  race_fuel_kg: 70             # sourced AR-10 (C) — VERIFY vs FIA 2026 regs before F02 (F-06)
+  race_fuel_kg: 70             # sourced AR-10 (A) — verified 16 Jul 2026, INDEX decisions
+                               # log: 3,000 MJ/h energy-flow cap, ~70 kg race allowance
+                               # (FIA 2026 Tech Regs issue 8; F1.com explainers) (F-06)
 
 sporting:
   grid_size: 22                # sourced AR-12 (A) — 11 teams incl. Cadillac (F-08)
@@ -47,8 +49,8 @@ fitted:
   mass_sensitivity_s_per_kg: 0.011905  # k_m pooled over identified circuits — fitted:
                                        # notebooks/fit_joint_pace.ipynb; per-circuit values
                                        # in physics_params.yaml (E-10, T3); grade C via AR-10
-  conserve_pace_cost_s_per_mj: null  # c_lc, lift-and-coast time cost (T4)
-  attack_pace_gain_s: null           # c_atk, energy-bounded (5.5.3)
-  derate_penalty_s_per_mj: null      # p_der, shortfall cost (5.5.3)
+  conserve_pace_cost_s_per_mj: 0.423  # fitted: notebooks/fit_energy_budget.ipynb — cross-circuit median c_lc (T4)
+  attack_pace_gain_s: 0.1411  # fitted: notebooks/fit_energy_budget.ipynb — override gain, longest straight (5.5.3)
+  derate_penalty_s_per_mj: 0.8368  # fitted: notebooks/fit_energy_budget.ipynb — deploy-shortfall cost (5.5.3)
   dirty_air_threshold_s: 2.0         # sourced spec 5.5.3 — traffic term engages under 2.0 s
   attack_soc_floor_mj: 0.5           # sourced spec 5.5.2 — attack masked below this SOC

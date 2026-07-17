@@ -1,0 +1,58 @@
+# SENNA — per-event circuit facts (E-02). Hand-maintained, sourced; never generated.
+# h_max_mj is the FIA per-event recoverable-energy cap (AR-05: 8.5 MJ baseline,
+# ~5-9 MJ adjusted per event, extra reductions in some qualifying sessions).
+# Every entry carries a source note and date; substitute a sourced per-event figure
+# as reporting surfaces it and rerun make synth — the code reads only this file.
+# One entry per ingested event (E-13: the index is data-driven; Madrid appears
+# with its first ingested session, September 2026).
+
+abu_dhabi_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+australian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+austrian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+azerbaijan_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+bahrain_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+belgian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+british_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+canadian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+chinese_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+dutch_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+emilia_romagna_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+french_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+hungarian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+italian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+japanese_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+las_vegas_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+mexico_city_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+miami_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+monaco_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+qatar_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+saudi_arabian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+singapore_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+spanish_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+são_paulo_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+united_states_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
