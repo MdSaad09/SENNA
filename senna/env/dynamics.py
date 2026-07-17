@@ -43,9 +43,12 @@ class LapOutcome:
 
 
 def per_lap_harvest_mj(scenario) -> float:
-    """Recovery is flow-limited: the FIA per-lap cap over the circuit's braking harvest.
-    The store (4 MJ) buffers the difference against deployment (5.5.3)."""
-    return min(scenario.h_max_mj, scenario.harvest_braking_mj)
+    """Recovery is flow-limited (5.5.3): braking plus super-clipping harvest, capped at the
+    FIA per-lap recoverable-energy limit. In 2026 the cap almost always binds, so the 4 MJ
+    store buffers the difference against deployment — the banking lever is how much a mode
+    deploys, not how much it harvests. The conserve H_lc term is subsumed: clipping already
+    reaches the cap."""
+    return min(scenario.h_max_mj, scenario.harvest_braking_mj + scenario.harvest_clipping_mj)
 
 
 def deploy_request_mj(modes: np.ndarray, scenario) -> np.ndarray:

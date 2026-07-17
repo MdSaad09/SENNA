@@ -46,6 +46,7 @@ class CircuitScenario:
     h_max_mj: float
     e_dep_mj: float
     harvest_braking_mj: float
+    harvest_clipping_mj: float
     conserve_pace_cost_s_per_mj: float
     attack_pace_gain_s: float
     derate_penalty_s_per_mj: float
@@ -101,6 +102,7 @@ def build_scenario(
         h_max_mj = float(config.get(circuits, f"{circuit}.h_max_mj"))
         e_dep_mj = float(energy["e_dep_mj"])
         harvest_braking_mj = float(energy["harvest_braking_mj"])
+        harvest_clipping_mj = float(energy["harvest_clipping_mj"])
         conserve_cost = max(0.0, float(energy["c_lc_s_per_mj"]))  # a negative fit is unphysical
         override_gap_s = float(config.get(physics, "power_unit.manual_override.detection_gap_s"))
         aero_scale = float(config.get(physics, "aero.downforce_vs_2024"))
@@ -108,6 +110,7 @@ def build_scenario(
         t0_s = float(jp["t0_s"])
         energy_2024 = params.get("energy", {}).get(2024, {})
         harvest_braking_mj = float(energy_2024.get("braking_energy_mj_per_lap", 8.0))
+        harvest_clipping_mj = 0.0  # no super-clipping in the 2024 MGU-K era
         h_max_mj = float(config.get(physics, "harvest.mgu_k_per_lap_cap_mj"))
         e_dep_mj = h_max_mj  # the 2024 MGU-K per-lap budget bounds deployment
         conserve_cost = float(fitted["conserve_pace_cost_s_per_mj"])
@@ -138,6 +141,7 @@ def build_scenario(
         h_max_mj=h_max_mj,
         e_dep_mj=e_dep_mj,
         harvest_braking_mj=harvest_braking_mj,
+        harvest_clipping_mj=harvest_clipping_mj,
         conserve_pace_cost_s_per_mj=conserve_cost,
         attack_pace_gain_s=float(fitted["attack_pace_gain_s"]),
         derate_penalty_s_per_mj=float(fitted["derate_penalty_s_per_mj"]),
