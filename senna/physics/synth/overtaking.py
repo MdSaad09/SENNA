@@ -53,7 +53,8 @@ def extract_pass_events(
             restart_exclude_laps=restart_exclude_laps,
             retire_lookahead_laps=retire_lookahead_laps,
         )
-    columns = ["season", "round", "lap_number", "follower", "leader", "gap_s", "pace_delta_s", "passed"]
+    columns = ["season", "round", "lap_number", "follower", "leader",
+               "gap_s", "pace_delta_s", "passed"]
     return PassEvents(events=pd.DataFrame(events, columns=columns), n_excluded=excluded)
 
 
@@ -161,6 +162,8 @@ def _recent_pace_s(ordered, driver, lap_number, pace_window_laps) -> float:
         & (ordered["lap_number"] <= lap_number)
         & ordered["is_green"].fillna(False).astype(bool)
     ].tail(pace_window_laps)
+    if history.empty:  # no green history yet — the pace delta is unknown, not zero
+        return float("nan")
     return float(history["lap_time_s"].median())
 
 
@@ -175,13 +178,14 @@ def _passed(next_lap: pd.DataFrame | None, leader, follower) -> bool:
 
 def fit_overtaking(events: pd.DataFrame, *, calibration_rounds: list[int]) -> OvertakeFit:
     refuse_validation_rounds(events, calibration_rounds)
-    is_2026 = (events["season"] >= FIRST_2026_SEASON).to_numpy(dtype=float)
+    usable = events[events["pace_delta_s"].notna() & events["passed"].notna()]
+    is_2026 = (usable["season"] >= FIRST_2026_SEASON).to_numpy(dtype=float)
     design = np.column_stack(
-        [np.ones(len(events)), events["pace_delta_s"].to_numpy(dtype=float), is_2026]
+        [np.ones(len(usable)), usable["pace_delta_s"].to_numpy(dtype=float), is_2026]
     )
-    target = events["passed"].to_numpy(dtype=float)
+    target = usable["passed"].to_numpy(dtype=float)
     beta = _fit_logistic(design, target)
-    return OvertakeFit(beta_pace=float(beta[1]), shift_2026=float(beta[2]), n_events=len(events))
+    return OvertakeFit(beta_pace=float(beta[1]), shift_2026=float(beta[2]), n_events=len(usable))
 
 
 def _fit_logistic(design: np.ndarray, target: np.ndarray) -> np.ndarray:

@@ -1,7 +1,7 @@
 # A-09 reproducibility pack. Each stub becomes real in the feature that owns it;
 # until then it says so instead of silently doing nothing.
 
-.PHONY: lock migrate ingest fit train eval report
+.PHONY: lock migrate ingest fit synth synth-figures train eval report
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -22,6 +22,18 @@ ingest:
 # (narrowed runs skip the yaml write).
 fit:
 	python -m senna.physics.fits.run $(ONLY) $(CIRCUIT)
+
+# the T1-T8 generator reads Postgres + the FastF1 cache and rewrites
+# configs/transforms.yaml (and fills the c_lc/c_atk/p_der block in
+# physics_2026.yaml) — local only, never CI. Narrow with ONLY="--only aero"
+# or CIRCUIT="--circuit monaco_grand_prix" (narrowed runs skip the yaml write).
+synth:
+	python -m senna.physics.synth.run $(ONLY) $(CIRCUIT)
+
+# regenerate the 5.4.1 Chapter 6 validation figures + docs/synth/validation_summary.yaml
+# from the held-out 2026 rounds (7+). Reads rounds 7+ through heldout.py only (E-14).
+synth-figures:
+	python -m senna.physics.synth.validate
 
 train:
 	@echo "not yet: F07 owns make train"

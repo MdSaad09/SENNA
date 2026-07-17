@@ -63,18 +63,25 @@ def matched_apexes(
     circuit: str,
     min_corner_apex_kmh: float,
 ) -> pd.DataFrame:
-    """Pair corners by lap-order ordinal; only aero-dominated apexes inform T2.
+    """Pair a circuit's corners across eras by descending-speed rank.
 
-    Ordinal matching only holds when both eras resolve the same corner count;
-    a mismatched lap contributes nothing rather than misaligned pairs.
+    Telemetry segmentation rarely resolves the exact same corner count in both
+    eras, so a strict ordinal match throws most circuits away. Ranking each
+    era's apexes fastest-first and pairing up to the shorter list keeps the
+    fastest corner matched to the fastest — good enough for a global exponent
+    regressed over many corners, where the aggregate slope, not any single
+    pairing, is what T2 needs.
     """
-    if len(apexes_2024_kmh) != len(apexes_2026_kmh):
+    fast_2024 = sorted(apexes_2024_kmh, reverse=True)
+    fast_2026 = sorted(apexes_2026_kmh, reverse=True)
+    count = min(len(fast_2024), len(fast_2026))
+    if count == 0:
         return pd.DataFrame(columns=["circuit", "v_2024_kmh", "v_2026_kmh"])
     pairs = pd.DataFrame(
         {
             "circuit": circuit,
-            "v_2024_kmh": apexes_2024_kmh,
-            "v_2026_kmh": apexes_2026_kmh,
+            "v_2024_kmh": fast_2024[:count],
+            "v_2026_kmh": fast_2026[:count],
         }
     )
     return pairs[pairs["v_2024_kmh"] >= min_corner_apex_kmh].reset_index(drop=True)

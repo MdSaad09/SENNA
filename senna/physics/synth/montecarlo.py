@@ -10,7 +10,7 @@ module-level RNG (5.5.5 discipline, kept even here).
 import numpy as np
 import pandas as pd
 
-from senna.physics.fits.fuel import INTERVENTION_DIGITS, fuel_profile
+from senna.physics.fits.fuel import fuel_profile
 
 _COLUMNS = ["race", "car", "lap_number", "lap_time_s", "compound", "tyre_age", "is_green", "pit"]
 
@@ -102,7 +102,9 @@ def _race_fuel_kg(status: list[str], race_fuel_kg: float, sc_burn_factor: float)
     return fuel_profile(laps, race_fuel_kg=race_fuel_kg, sc_burn_factor=sc_burn_factor).to_numpy()
 
 
-def _append_car(rows, spec, race, car, rng, base_plan, is_green, status, fuel_kg, jitter_sigma) -> None:
+def _append_car(
+    rows, spec, race, car, rng, base_plan, is_green, status, fuel_kg, jitter_sigma
+) -> None:
     n_laps = spec["n_laps"]
     driver_s = rng.normal(0.0, spec["sigma_driver_s"])
     noise_s = rng.normal(0.0, spec["sigma_lap_s"], n_laps)
