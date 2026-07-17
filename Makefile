@@ -1,7 +1,7 @@
 # A-09 reproducibility pack. Each stub becomes real in the feature that owns it;
 # until then it says so instead of silently doing nothing.
 
-.PHONY: lock migrate ingest fit synth synth-figures train eval report
+.PHONY: lock migrate ingest fit synth synth-figures circuits train eval report
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -34,6 +34,12 @@ synth:
 # from the held-out 2026 rounds (7+). Reads rounds 7+ through heldout.py only (E-14).
 synth-figures:
 	python -m senna.physics.synth.validate
+
+# build one GLTF ribbon + metadata per ingested circuit into data/circuits/
+# (gitignored). Reads Postgres for the dry-session pick and the FastF1 cache for
+# geometry — local only, never CI (needs both). Regenerate after a fresh ingest.
+circuits:
+	python -m senna.circuits.build
 
 train:
 	@echo "not yet: F07 owns make train"

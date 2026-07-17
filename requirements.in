@@ -32,6 +32,7 @@ pyyaml>=6                   # senna.config reads configs/*.yaml (F01); was trans
 scipy>=1.11                 # curve_fit for the degradation power law (F02); was transitive-only
 scikit-learn>=1.4           # KMeans + silhouette for T5 cluster transfer (F02); was via shap
 matplotlib>=3.8             # residual plots in the calibration notebooks (F02); was via fastf1
+pygltflib>=1.16             # writes the binary GLB track ribbons (F04, spec 5.10.1)
 ipykernel                   # the kernel the calibration notebooks run on; floats
 nbclient                    # headless notebook execution for make-style reruns; floats
 

@@ -1,0 +1,27 @@
+# SENNA — circuit ribbon geometry (F04). Stylised visual choices unless a comment
+# marks a constant sourced. This file is F04's alone; the sourced per-event H_max
+# facts live in circuits.yaml, and elevation/banking here are decoration, never
+# data (F-12). The ribbon algorithm is spec 5.10.1; item numbers cite its steps.
+
+ribbon:
+  resample_spacing_m: 2.0        # stylised — 5.10.1 item 2 arc-length spacing
+  width_m: 12.0                  # stylised — 5.10.1 item 4 full ribbon width
+  halfwidth_clamp_fraction: 0.9  # stylised — half-width capped at 0.9 x local radius so a
+                                 # sub-6 m hairpin cannot fold its inner edge (E-17)
+  elevation_exaggeration: 1.5    # stylised — 5.10.1 item 5, smoothed Z x1.5 (F-12)
+  camber_deg: 3.0                # stylised — corner camber for the flat-Z fallback (F-12)
+  savgol_window_xy: 11           # stylised — 11 samples x 2 m ~ 22 m smoothing window
+  savgol_polyorder_xy: 3         # stylised — cubic keeps corner shape while denoising
+  savgol_window_z: 31            # stylised — Z is noisier, smoothed harder (5.10.1 item 2)
+  savgol_polyorder_z: 3          # stylised
+  flat_z_epsilon_m: 1.0          # stylised — Z spread below this reads as absent, so the
+                                 # ribbon takes the flat-plus-camber elevation fallback (F-12)
+  lap_length_tolerance_pct: 5    # sourced — spec 5.10.1 item 7, match official length within 5%
+
+braking:
+  speed_drop_kmh: 50             # sourced — 5.10.1 item 6, braking zone = drop over 50 km/h
+  window_m: 100                  # sourced — 5.10.1 item 6, within a 100 m window
+
+xmode:
+  full_throttle_pct: 99          # stylised — full-throttle stretch threshold; X-mode sections
+                                 # are inferred as the longest such runs until official data
