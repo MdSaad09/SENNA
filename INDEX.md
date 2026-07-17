@@ -4,7 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F03 — planned; next step is `/ship F03` in the same session
+**Active feature:** F03 — in review on feature/F03-synthetic-2026; `/land F03` to merge
 **Next up:** F04
 
 ## Feature ledger
@@ -14,7 +14,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F00 | Repo skeleton, CI & spec split | — | Done 14 Jul 2026 | feature/F00-repo-skeleton | [F00](docs/learn/F00-repo-skeleton.md) |
 | F01 | Data ingestion & quality reports | F00 | Done 15 Jul 2026 | feature/F01-data-ingest | [F01](docs/learn/F01-data-ingest.md) |
 | F02 | Physics model fits | F01 | Done 16 Jul 2026 | feature/F02-physics-fits | [F02](docs/learn/F02-physics-fits.md) |
-| F03 | Synthetic 2026 generator (T1–T8) | F02 | Planned | | |
+| F03 | Synthetic 2026 generator (T1–T8) | F02 | In review | feature/F03-synthetic-2026 | |
 | F04 | Circuit ribbon pipeline | F01 | Todo | | |
 | F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Todo | | |
 | F06 | Rivals, baselines, oracle & throughput | F05 | Todo | | |
