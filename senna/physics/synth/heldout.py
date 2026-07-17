@@ -22,6 +22,7 @@ async def held_out_race_laps(conn: AsyncConnection, validation_rounds_from: int)
         select(
             Event.event_name,
             Event.round,
+            Lap.driver,
             Lap.lap_number,
             Lap.compound,
             Lap.stint,
@@ -37,7 +38,7 @@ async def held_out_race_laps(conn: AsyncConnection, validation_rounds_from: int)
             Session.session_name == "Race",
             Lap.source.like("real_%"),
         )
-        .order_by(Event.round, Lap.session_id, Lap.lap_number)
+        .order_by(Event.round, Lap.driver, Lap.lap_number)
     )
     frame = await _frame(conn, stmt)
     if not frame.empty:

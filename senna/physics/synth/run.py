@@ -43,8 +43,6 @@ ENERGY_NB = "fitted: notebooks/fit_energy_budget.ipynb"
 OVERTAKE_NB = "fitted: notebooks/fit_overtaking.ipynb"
 RESIDUAL_NB = "fitted: notebooks/fit_residual_2026.ipynb"
 
-CAR_DELTA_KG = -30.0  # sourced AR-09 — 798 kg (2024) to 768 kg (2026)
-
 
 async def run_battery(args: argparse.Namespace) -> dict:
     synth_cfg = config.load("synth")
@@ -168,8 +166,6 @@ class _Battery:
         physics_2024 = config.load("physics_2024")
         car_2024 = float(config.get(physics_2024, "mass.minimum_car_kg"))
         fuel_2024 = float(config.get(physics_2024, "mass.race_fuel_kg"))
-        car_2026 = self._p26("mass.minimum_car_kg")
-        fuel_2026 = self._p26("mass.race_fuel_kg")
         drag_2026 = self._p26("aero.drag_vs_2024_x_mode")
         p_ice_2026 = self._p26("power_unit.ice_max_kw")
         downforce = self._p26("aero.downforce_vs_2024")
@@ -186,7 +182,7 @@ class _Battery:
                 accel_smooth_window_s=smooth, profile_tolerance_frac=tol,
             )
             self.effective[slug] = car
-            mass_2026 = car_2026 + ref_frac * fuel_2026
+            mass_2026 = self._reference_mass_2026_kg()
             self.t1[slug] = _profile_2026(
                 trace, car, exponent=self.exponent.exponent, taper=self.taper_2026,
                 p_ice_2026=p_ice_2026, drag_scale=drag_2026, mass_2026=mass_2026,
@@ -202,7 +198,7 @@ class _Battery:
         drag_scale = self._p26("aero.drag_vs_2024_x_mode")
         p_ice = self._p26("power_unit.ice_max_kw")
         sweep = int(config.get(self.synth_cfg, "energy_budget.lc_sweep_points"))
-        mass_2026 = self._p26("mass.minimum_car_kg") + 35.0
+        mass_2026 = self._reference_mass_2026_kg()
         for slug, profile in self.t1.items():
             h_max = _circuit_h_max(self.circuits_cfg, slug)
             braking = _param(self.params, slug, "energy", "2024", "braking_energy_mj_per_lap")
@@ -246,8 +242,14 @@ class _Battery:
         return c_atk, p_der
 
     async def _run_mass_fuel(self, conn, loader) -> None:
+        physics_2024 = config.load("physics_2024")
         fuel_2026 = self._p26("mass.race_fuel_kg")
-        fuel_2024 = float(config.get(config.load("physics_2024"), "mass.race_fuel_kg"))
+        fuel_2024 = float(config.get(physics_2024, "mass.race_fuel_kg"))
+        # AR-09: the -30 kg minimum-mass change, derived from the two era configs
+        # rather than restated, so it can never drift from them
+        car_delta = self._p26("mass.minimum_car_kg") - float(
+            config.get(physics_2024, "mass.minimum_car_kg")
+        )
         pooled_k_m = float(config.get(self.params, "globals.k_m_pooled_s_per_kg_2026"))
         for slug in self.t1:
             k_m = _param(self.params, slug, "joint_pace", "2026", "k_m_s_per_kg")
@@ -260,7 +262,7 @@ class _Battery:
             self.t3[slug] = {
                 "k_m_s_per_kg": k_m,
                 "static_mass_delta_s": mass_fuel.static_mass_delta_s(
-                    k_m_s_per_kg=k_m, car_delta_kg=CAR_DELTA_KG, fuel_delta_kg=fuel_delta
+                    k_m_s_per_kg=k_m, car_delta_kg=car_delta, fuel_delta_kg=fuel_delta
                 ),
                 "avg_fuel_kg_2026": 0.5 * fuel_2026,
             }
@@ -318,6 +320,11 @@ class _Battery:
 
     def _p26(self, dotted: str) -> float:
         return float(config.get(self.physics_2026, dotted))
+
+    def _reference_mass_2026_kg(self) -> float:
+        """2026 car at the reference fuel load T1 integrates at (AR-09, AR-10)."""
+        ref_frac = float(config.get(self.synth_cfg, "pointmass.reference_fuel_frac"))
+        return self._p26("mass.minimum_car_kg") + ref_frac * self._p26("mass.race_fuel_kg")
 
     def _throttle_full_pct(self) -> float:
         # the telemetry full-throttle threshold is an ingest/fits concern; reuse

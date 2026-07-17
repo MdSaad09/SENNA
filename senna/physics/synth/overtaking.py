@@ -69,7 +69,13 @@ def _extract_session(
     retire_lookahead_laps: int,
 ) -> None:
     ordered = session.sort_values(["driver", "lap_number"])
-    ordered = ordered.assign(cum_s=ordered.groupby("driver")["lap_time_s"].cumsum())
+    # in/out and NaT laps carry null lap_time_s (E-09); a plain cumsum drops them
+    # and understates every later lap's clock, so fill each null with the field's
+    # pace on that lap before summing — the running clock stays monotonic and the
+    # gap between adjacent cars stays meaningful
+    field_pace_s = ordered.groupby("lap_number")["lap_time_s"].transform("median")
+    lap_s = ordered["lap_time_s"].fillna(field_pace_s).fillna(ordered["lap_time_s"].median())
+    ordered = ordered.assign(cum_s=lap_s.groupby(ordered["driver"]).cumsum())
     last_lap = ordered.groupby("driver")["lap_number"].max()
     session_final_lap = int(ordered["lap_number"].max())
     restart_laps = _restart_laps(ordered, restart_exclude_laps)
@@ -122,8 +128,10 @@ def _exclusion_reason(
         return "restart"
     if _in_pit_cycle(running, lap_number, leader, follower):
         return "pit_cycle"
-    leader_last = int(last_lap[leader])
-    if leader_last < session_final_lap and leader_last < lap_number + retire_lookahead_laps:
+    # either car about to retire makes the position swap a retirement, not a
+    # pass — check both directions (a follower who retires can't complete one)
+    soonest_last = min(int(last_lap[leader]), int(last_lap[follower]))
+    if soonest_last < session_final_lap and soonest_last < lap_number + retire_lookahead_laps:
         return "retirement"
     return None
 

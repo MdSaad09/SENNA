@@ -120,6 +120,13 @@ def fit_effective_car(
                 brake_v_ms.append(v_mid)
                 brake_a.append(accel)
 
+    if len(drive_v_ms) < 2:
+        # a lap with no usable full-throttle span cannot constrain (P, beta);
+        # flag it out of the transform rather than crash on an empty lstsq
+        return EffectiveCar(
+            p_drive_kw=0.0, beta_drag=0.0, mu_brake=0.0, kappa_brake=0.0,
+            check_err_frac=np.inf, ok=False,
+        )
     v_drive = np.array(drive_v_ms)
     # m*a = P/v - beta*v^2, linear in (P, beta)
     drive_design = np.column_stack([1.0 / v_drive, -v_drive**2])

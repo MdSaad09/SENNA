@@ -168,14 +168,24 @@ def _f(value) -> float:
 
 
 def _stint_emd(draw: pd.DataFrame, real: pd.DataFrame) -> float:
-    sim_lengths = draw[draw["pit"]].groupby(["race", "car"]).size().to_numpy(dtype=float)
-    real_lengths = real.groupby(["round", "stint"]).size().to_numpy(dtype=float)
+    """EMD between per-driver stint-length histograms, sim vs real (5.4.1)."""
+    # a stint runs from a fresh tyre (age 0) to the next; count laps per stint on
+    # both sides at the (unit, stint) grain — never pooling drivers into one bucket
+    stint_id = (draw["tyre_age"] == 0).groupby([draw["race"], draw["car"]]).cumsum()
+    sim_stint = draw.assign(stint=stint_id)
+    sim_lengths = sim_stint.groupby(["race", "car", "stint"]).size().to_numpy(dtype=float)
+    real_lengths = (
+        real.groupby(["round", "driver", "stint"]).size().to_numpy(dtype=float)
+    )
     if sim_lengths.size == 0 or real_lengths.size == 0:
         return 0.0
     return stint_emd_laps(sim_lengths, real_lengths)
 
 
 def _pit_check(slug: str, spec: dict, real_pits: pd.DataFrame, tolerance_s: float):
+    # caveat: sim_pit is the F02-fitted net pit loss and real is the OpenF1
+    # stationary duration; they are close in this data but not the same quantity,
+    # so read a near-miss here as a definition gap, not necessarily a model error
     sim_pit = spec["pit_loss_mean_s"]
     circuit_pits = (
         real_pits[real_pits["slug"] == slug]["pit_duration_s"].dropna()

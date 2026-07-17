@@ -1,10 +1,11 @@
 """T4 — the energy accounting layer: four numbers per circuit.
 
 H_max (per-event cap, E-02), deployable energy E_dep (from T1), and the two
-harvest mechanisms — braking recovery and super-clipping on throttle (AR-07) —
-are the entire energy game (F-02/F-04). Supply is what the mechanisms deliver
-capped by H_max; any shortfall against E_dep is the derate deficit. Lift-and-
-coast (AR-06) buys extra harvest by spending lap time; c_lc is the price.
+passive harvest mechanisms — braking recovery and super-clipping on throttle
+(AR-07) — are the entire energy game (F-02/F-04). Supply is what those two
+deliver capped by H_max; any shortfall against E_dep is the derate deficit.
+Lift-and-coast (AR-06) is a separate, priced lever — it buys extra harvest by
+spending lap time, so it enters as the cost c_lc, never as passive supply.
 """
 
 from dataclasses import dataclass
