@@ -37,7 +37,7 @@ def test_position_shaping_nets_exactly_zero_over_a_closed_loop():
     places = [3, 5, 2, 7, 4, 3]  # starts and ends on P3
     total = sum(
         shaping_step(prev, nxt, COEF, gamma=1.0)
-        for prev, nxt in zip(places, places[1:])
+        for prev, nxt in zip(places, places[1:], strict=False)
     )
     assert total == pytest.approx(0.0, abs=1e-9)
 

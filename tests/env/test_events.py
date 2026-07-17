@@ -4,7 +4,6 @@ stochastic stream is fed an explicit rng — no module globals.
 """
 
 import numpy as np
-import pytest
 
 from senna.config import get, load
 from senna.env.events import advance_track_status, advance_weather, tyre_failure

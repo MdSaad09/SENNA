@@ -8,9 +8,9 @@ import subprocess
 import sys
 
 import numpy as np
-import pytest
 
 from tests.env.conftest import SEED
+
 
 # balanced most of the way, one mid-race stop to satisfy the two-compound rule (F-20)
 def _policy(lap):

@@ -8,7 +8,7 @@ suite's budget, so /ship gates it deliberately.
 
 import numpy as np
 import pytest
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 USABLE_SOC_MJ = 4.0
@@ -24,7 +24,11 @@ def _sample_legal_action(pit_mask, mode_mask, rng):
 @pytest.mark.property
 @pytest.mark.slow
 @given(base_seed=st.integers(min_value=0, max_value=2**31 - 1))
-@settings(max_examples=5, deadline=None)
+# make_env only builds fresh envs, so it is safe to reuse across generated seeds
+@settings(
+    max_examples=5, deadline=None,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
 def test_random_legal_play_keeps_soc_and_energy_within_bounds(make_env, base_seed):
     env = make_env()
     rng = np.random.default_rng(base_seed)

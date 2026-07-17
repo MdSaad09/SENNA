@@ -4,7 +4,6 @@ head. Reasons keys are "pit:k"/"mode:k" for each DISALLOWED action.
 """
 
 import numpy as np
-import pytest
 
 from senna.env.masks import (
     INTER_OUTSIDE_DAMP,
@@ -99,7 +98,11 @@ def test_attack_is_masked_below_the_soc_floor():
 
 def test_defend_is_never_masked():
     # defend is meaningful only with a car close behind, but it is never illegal
-    for kwargs in (_mask_kwargs(soc_mj=0.0), _mask_kwargs(pit_open=False), _mask_kwargs(wetness=0.9)):
+    for kwargs in (
+        _mask_kwargs(soc_mj=0.0),
+        _mask_kwargs(pit_open=False),
+        _mask_kwargs(wetness=0.9),
+    ):
         assert build_mask(**kwargs).mode[3]
 
 

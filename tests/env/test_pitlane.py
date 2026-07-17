@@ -4,7 +4,6 @@ leave within lane_gap_s of each other — the mechanism behind double-stacking.
 """
 
 import numpy as np
-import pytest
 
 from senna.env.pitlane import resolve_pit_lane
 
