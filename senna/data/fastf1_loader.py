@@ -77,6 +77,30 @@ def load_car_data(
     return dict(session.car_data), pd.DataFrame(session.laps)
 
 
+def load_fastest_lap_geometry(
+    season: int, round_number: int, session_name: str, *, pos_units_per_m: float
+) -> tuple[dict[str, "pd.Series | object"], pd.DataFrame]:
+    """Fastest clean lap's centreline and telemetry, plus the circuit corners (F04, 5.10.1).
+
+    X/Y/Z arrive as FastF1 decimetres and convert to metres here at the data
+    boundary; Speed, Throttle and Distance ride along for the braking and X-mode
+    annotations. Corners come from CircuitInfo. The caller (senna.circuits) sees
+    only numpy — this stays the one site that imports fastf1.
+    """
+    session = fastf1.get_session(season, round_number, session_name)
+    session.load(laps=True, telemetry=True, weather=False, messages=False)
+    telemetry = session.laps.pick_fastest().get_telemetry()
+    geometry = {
+        "x_m": telemetry["X"].to_numpy(dtype=float) / pos_units_per_m,
+        "y_m": telemetry["Y"].to_numpy(dtype=float) / pos_units_per_m,
+        "z_m": telemetry["Z"].to_numpy(dtype=float) / pos_units_per_m,
+        "speed_kmh": telemetry["Speed"].to_numpy(dtype=float),
+        "throttle_pct": telemetry["Throttle"].to_numpy(dtype=float),
+        "distance_m": telemetry["Distance"].to_numpy(dtype=float),
+    }
+    return geometry, session.get_circuit_info().corners
+
+
 def _probe_missing_channels(session) -> list[str]:
     try:
         car_data = session.laps.pick_fastest().get_car_data()

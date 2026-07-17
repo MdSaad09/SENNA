@@ -15,6 +15,7 @@ wandb/
 models/*.zip
 models/*.pkl
 data/cache/
+data/circuits/
 fastf1_cache/
 *.parquet
 .DS_Store

@@ -5,7 +5,11 @@ def test_index_generated_from_ingested_only():
     entries = [
         {"slug": "bahrain_grand_prix", "event_name": "Bahrain Grand Prix", "has_elevation": True},
         {"slug": "monaco_grand_prix", "event_name": "Monaco Grand Prix", "has_elevation": False},
-        {"slug": "silverstone_grand_prix", "event_name": "British Grand Prix", "has_elevation": True},
+        {
+            "slug": "silverstone_grand_prix",
+            "event_name": "British Grand Prix",
+            "has_elevation": True,
+        },
     ]
 
     index = circuit_index(entries)
