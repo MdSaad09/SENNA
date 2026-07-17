@@ -71,7 +71,7 @@ Postgres, only `run.py`/`validate.py` read configs and write files.
 | `senna/physics/synth/aero.py` | T2: matched-corner apex extraction 2024 vs 2026 on both-era circuits; global exponent fit of log(v26/v24) vs log(0.70); prior fallback flagged |
 | `senna/physics/synth/energy_budget.py` | T4: per circuit H_max (circuits.yaml), harvest-by-mode = braking (re-integrated on the 2026 profile) + clipping (250 kW × full-throttle time) + lift-and-coast sweep → **c_lc = fitted sweep slope**; E_dep from T1; derate-deficit ranking; derived c_atk and p_der (question 3) |
 | `senna/physics/synth/mass_fuel.py` | T3+T6: 70 kg allowance, burn rescale via `fits/fuel.py`, static mass delta through fitted k_m — per-lap mass lives in k_m only, never double-counted in T1 |
-| `senna/physics/synth/overtaking.py` | T7: racing-pass and opportunity extraction from `Lap.position` + cumulative-time gaps (lap 1, pit cycles, non-green, restarts, retirements excluded); logistic P(pass) with circuit effects + a 2026 era shift fitted on rounds 1–6 only |
+| `senna/physics/synth/overtaking.py` | T7: racing-pass and opportunity extraction from `Lap.position` + cumulative-time gaps (lap 1, pit cycles, non-green, restarts, retirements excluded); sprint sessions enter the extraction — the model is per-opportunity, so shorter exposure cannot bias it (unlike the per-race hazard counts F02 excluded them from), and 2026 sprint laps are scarce real passing evidence; logistic P(pass) with circuit effects + a 2026 era shift fitted on rounds 1–6 only |
 | `senna/physics/synth/assemble.py` | composes t0_2026 = t0_2024 + ΔT1/T2 + ΔT3 per circuit; applies real-beats-transform-beats-donor precedence; T5 completeness gate: every indexed circuit must have a 2026 degradation block or the battery fails loudly |
 | `senna/physics/synth/residual.py` | T8: c_circuit = median(real 2026 green laps, rounds 1–6) − median(model-implied curve) per calibration circuit; pooled c_global for unseen circuits; refuses validation rounds |
 | `senna/physics/synth/montecarlo.py` | seeded generator-level sampler (explicitly NOT the F05 env, docstring says so): 22 cars × n_races per circuit; draws SC/VSC from fitted hazards, driver effects from sigma_driver, lap noise from joint-fit residuals; deterministic t0/fuel/evolution/degradation/status terms; stints from min-time compound plans + jitter; one SeedSequence spawned per (circuit, race) |
@@ -85,7 +85,7 @@ Postgres, only `run.py`/`validate.py` read configs and write files.
 | `configs/physics_2026.yaml` | `fitted.conserve_pace_cost_s_per_mj` ← cross-circuit median c_lc; AR-10 comment updated per the INDEX close-out; c_atk/p_der if question 3 approved |
 | `configs/physics_2024.yaml` | add `sporting.drs_detection_gap_s: 1.0` (sourced) for T7 era symmetry |
 | `Makefile` | `synth:` → `python -m senna.physics.synth.run`; `synth-figures:` → `python -m senna.physics.synth.validate` (report stays F14's) |
-| `notebooks/fit_*.ipynb` | five thin notebooks (below) — every computation an import |
+| `notebooks/fit_*.ipynb` | five thin notebooks (below) — every computation an import; `fit_overtaking` states explicitly that sprints enter the pass extraction and why (Saad's addition, 17 Jul) |
 | `tests/physics/synth/test_*.py` | test battery (below) |
 
 Ownership rule, one line: **F02 owns fits-from-real-data (physics_params.yaml,
@@ -199,6 +199,12 @@ F05; the taper and MC determinism pins above are parametrized sweeps, not hypoth
 - Re-ingesting anything; rounds 7+ data is already in Postgres, read-only here.
 
 ## Questions for Saad
+
+**Answered 17 Jul 2026:** 1 — yes, AR-10 verified per the INDEX decisions log, cite it
+in the physics_2026.yaml comment, 70 kg stands, T6 unblocked. 2 — yes, seed at 8.5
+with dated notes; sourced per-event figures substituted later. 3 — yes, fill c_atk and
+p_der now. Addition: the overtaking notebook must state explicitly whether sprint
+sessions enter the pass extraction, and why (they do — recorded in the deliverables).
 
 1. **Lift AR-10 to verified?** You closed it out on 16 Jul (INDEX decisions log):
    ~70 kg, energy-flow limited. The spec note says T6 blocks until this is surfaced —
