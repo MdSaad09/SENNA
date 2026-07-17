@@ -21,6 +21,9 @@ mass:
 
 sporting:
   grid_size: 20
+  drs_detection_gap_s: 1.0     # sourced (A) — 2011-2025 sporting regs; same 1.0 s
+                               # detection rule as the 2026 Manual Override, so T7's
+                               # opportunity definition is era-symmetric (F-05)
   fastest_lap_point: false     # abolished from 2025; 2023/24 replays that predate the
                                # change are handled in evaluation, never as an agent
                                # action or reward (F-07, R-01)

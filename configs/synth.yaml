@@ -1,0 +1,50 @@
+# SENNA — thresholds the F03 synthetic-2026 battery reads (inputs, never outputs).
+# Transform results land in transforms.yaml; this file names the origin of every
+# knob the T1-T8 stages take as an argument. null means "fit me": code that reads
+# a null must raise, never guess.
+
+pointmass:
+  representative_laps: 5     # stylised — fastest green laps pooled per circuit for
+                             #   the effective-car fit (T1)
+  min_straight_s: 3.0        # stylised — a full-throttle run this long counts as an
+                             #   X-mode section (T2 drag scaling applies there)
+  accel_smooth_window_s: 0.5 # stylised — finite-difference smoothing window at the
+                             #   4-5 Hz telemetry cadence (AR-16)
+  profile_tolerance_frac: 0.05  # stylised — self-check gate: the fitted car must
+                                #   reproduce observed 2024 phase times this closely
+                                #   before its transform is trusted
+  reference_fuel_frac: 0.5   # stylised — T1 integrates at half tank; per-lap fuel
+                             #   mass effects live in k_m only (E-10, no double count)
+
+aero:
+  exponent_prior: 0.25       # sourced spec 5.4 T2 — v_corner ~ downforce^(1/4)
+  exponent_bounds: [0.1, 0.6]  # stylised — plausibility gate; a fit outside falls
+                               #   back to the prior and is flagged in transforms.yaml
+  min_corner_apex_kmh: 150   # stylised — only aero-dominated corners inform the
+                             #   exponent; slow corners are mechanical-grip territory
+  min_corners: 30            # stylised — matched-apex sample gate for the fit
+
+energy_budget:
+  lc_sweep_points: 10        # stylised — lift-point grid per straight for the c_lc
+                             #   slope fit (T4)
+
+overtaking:
+  pace_window_laps: 3        # stylised — rolling median window for the pace delta
+                             #   feature in T7
+  restart_exclude_laps: 1    # stylised — green laps after an intervention excluded
+                             #   from pass extraction; restart shuffles are not
+                             #   racing passes
+  retire_lookahead_laps: 2   # stylised — a "pass" on a car about to retire is the
+                             #   retirement, not an overtake
+
+montecarlo:
+  n_races: 200               # stylised — ~10^4 green laps per circuit keeps the KS
+                             #   statistic stable run to run
+  seed: 20260717             # stylised — determinism; a make synth rerun must not
+                             #   reshuffle the 5.4.1 figures
+  stint_jitter_laps_sigma: 1.5  # stylised — real pit windows spread around the
+                                #   min-time plan; matches observed switch-lap spread
+
+validation:
+  ks_target: 0.15            # sourced 5.4.1 — lap-time KS bound per held-out circuit
+  pit_tolerance_s: 1.0       # sourced 5.4.1 — sim pit delta vs OpenF1 mean

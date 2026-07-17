@@ -19,8 +19,8 @@ HEADER = (
 )
 
 
-def render_params(params: dict, generated_at: str) -> str:
-    lines = [HEADER]
+def render_params(params: dict, generated_at: str, *, header: str = HEADER) -> str:
+    lines = [header]
     lines.append(
         f'generated_at: "{generated_at}"  # stylised — data watermark, not a clock:'
         " a rerun on the same ingest renders byte-identically"

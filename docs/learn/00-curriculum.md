@@ -41,3 +41,10 @@ they do not re-explain it.
 | Trapezoidal integration on irregular timestamps | F02 | Integrate with actual dt per sample pair, `dt·(y₁+y₂)/2`, never a nominal rate; stop at every trace break so dropouts donate nothing (AR-16/F-13). |
 | The YAML 1.1 float trap | F02 | `repr(7e-06)` has no dot, so `safe_load` returns a string; scientific notation must be written `7.0e-06` to load back as a float. |
 | Byte-deterministic artifacts | F02 | Same data in, identical bytes out: total ORDER BY on every query, sorted keys in the writer, and a data watermark instead of a clock. |
+| Point-mass longitudinal model (effective car) | F03 | Car as mass under effective power and drag `m·a = P/v − beta·v²`, both fitted from telemetry so they absorb every unsourced physical constant (T1, 5.4). |
+| RK4 ODE integration | F03 | Fourth-order Runge-Kutta solving the point-mass trajectory over distance; four gradient samples per step, error ~step⁵, validated against the flat-out closed form. |
+| Frozen train/validation split and data leakage | F03 | Calibrate on 2026 rounds 1–6, validate on 7+ (E-14); leakage is any path by which held-out data reaches a fit, blocked here in three independent layers. |
+| Distribution distances (KS, EMD) | F03 | KS is the max gap between two CDFs, EMD the work to reshape one histogram into another (laps for stints); the 5.4.1 sim-to-real metrics. |
+| Logistic regression by Newton-Raphson | F03 | Maximum-likelihood fit of a probability model `P(pass) = sigmoid(design·beta)`, iterated to convergence by hand — T7's overtaking model. |
+| Derived quantity vs noisy regression | F03 | Computing `c_lc` as an exact slope off the calibrated model (sweep lift depths) instead of regressing confounded race laps. |
+| Seeded Monte Carlo with stream spawning | F03 | `SeedSequence(seed).spawn(n)` gives each simulated race an independent reproducible RNG, so validation figures regenerate byte-identically (5.5.5). |
