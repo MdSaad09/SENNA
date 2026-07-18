@@ -46,6 +46,21 @@ def test_a_2026_race_runs_to_the_flag_and_reports_a_result(env):
     assert "energy_totals" in info
 
 
+def test_a_classified_finisher_of_a_green_race_scores_points(make_env):
+    # regression: fuel burns to ~0 at the flag, so crossing the line must not read as a DNF.
+    # Suzuka's 53-lap distance lands fuel on exactly zero — the case that mis-scored the winner.
+    env = make_env(circuit="japanese_grand_prix")
+    obs, info = env.reset(seed=SEED)
+    terminated = False
+    while not terminated:
+        obs, reward, terminated, truncated, info = env.step(_policy(info["lap"]))
+
+    assert info["dnf"] is False
+    assert info["final_position"] <= env.n_cars
+    if info["final_position"] <= len(env.scenario.env["reward"]["points_2026"]):
+        assert info["points"] > 0.0
+
+
 def test_a_2024_era_race_runs_on_the_same_code_path(make_env):
     # A-10: the era switch is one code path over two constant files
     env = make_env(era="2024")

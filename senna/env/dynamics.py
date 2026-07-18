@@ -11,8 +11,12 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from senna.env.scenario import COMPOUNDS
+
 CONSERVE, BALANCED, ATTACK, DEFEND = 0, 1, 2, 3
 GREEN, VSC, SC, RED = 0, 1, 2, 3
+_INTERMEDIATE = COMPOUNDS.index("INTERMEDIATE")
+_WET = COMPOUNDS.index("WET")
 
 
 def tyre_deg_s(t0_s, a, b, age):
@@ -42,13 +46,16 @@ class LapOutcome:
     derate_penalty_s: np.ndarray
 
 
-def per_lap_harvest_mj(scenario) -> float:
+def per_lap_harvest_mj(scenario, track_status: int) -> float:
     """Recovery is flow-limited (5.5.3): braking plus super-clipping harvest, capped at the
     FIA per-lap recoverable-energy limit. In 2026 the cap almost always binds, so the 4 MJ
     store buffers the difference against deployment — the banking lever is how much a mode
-    deploys, not how much it harvests. The conserve H_lc term is subsumed: clipping already
-    reaches the cap."""
-    return min(scenario.h_max_mj, scenario.harvest_braking_mj + scenario.harvest_clipping_mj)
+    deploys, not how much it harvests. Under a neutralisation the field brakes less and
+    harvests less, so the cap stops binding and obs #16 moves (E-03)."""
+    harvest = min(scenario.h_max_mj, scenario.harvest_braking_mj + scenario.harvest_clipping_mj)
+    if track_status in (SC, VSC):
+        harvest *= scenario.env["harvest"]["neutralized_scale"]
+    return harvest
 
 
 def deploy_request_mj(modes: np.ndarray, scenario) -> np.ndarray:
@@ -89,12 +96,10 @@ def wet_penalty_s(compound: np.ndarray, wetness: float, scenario) -> np.ndarray:
     """Pace cost for a compound that does not suit the wetness (E-08). Slicks suffer as the
     track wets; a full wet grains on a drying track. The crossover on this scalar is where
     the British GP counterfactual lives."""
-    from senna.env.scenario import COMPOUNDS
-
     validity = scenario.env["compound_validity"]
     scale = scenario.env["weather"]["wet_mismatch_penalty_s"]
-    is_slick = compound < COMPOUNDS.index("INTERMEDIATE")
-    is_wet = compound == COMPOUNDS.index("WET")
+    is_slick = compound < _INTERMEDIATE
+    is_wet = compound == _WET
     slick_over = np.maximum(0.0, wetness - validity["slick_max_wetness"])
     wet_under = np.maximum(0.0, validity["wet_min_wetness"] - wetness)
     penalty = np.where(is_slick, scale * slick_over, 0.0)
@@ -133,8 +138,6 @@ def _compound_lookup(compound: np.ndarray, table: dict, scenario) -> np.ndarray:
     """Map each car's compound code to its per-compound scalar. A compound with no fit
     (e.g. a wet tyre where only slicks were fitted) falls back to the hardest slick, so a
     forced wet stop still runs rather than throwing in the hot loop."""
-    from senna.env.scenario import COMPOUNDS
-
     out = np.empty(compound.shape, dtype=float)
     fallback = table.get("HARD") or next(iter(table.values()))
     for code, name in enumerate(COMPOUNDS):

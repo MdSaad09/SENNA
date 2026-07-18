@@ -9,6 +9,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from senna.env.events import DRY
+
 PIT_LANE_CLOSED = "pit_lane_closed"
 SLICK_ABOVE_WET = "slick_above_wet_threshold"
 INTER_OUTSIDE_DAMP = "inter_outside_damp_band"
@@ -60,7 +62,7 @@ def build_mask(*, pit_open: bool, weather: int, wetness: float, soc_mj: float,
     # F-20: on the last lap a dry race can still serve the mandatory second compound,
     # staying out is illegal — the rule is structural, not a reward penalty. It can only
     # fire with the lane open, so it never collides with the closed-lane mask above.
-    dry = weather == 0 and wetness <= validity["slick_max_wetness"]
+    dry = weather == DRY and wetness <= validity["slick_max_wetness"]
     if pit_open and dry and not second_compound_used and lap == total_laps - 1:
         pit[0] = False
         reasons["pit:0"] = TWO_COMPOUND_RULE

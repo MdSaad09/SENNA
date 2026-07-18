@@ -22,7 +22,6 @@ from senna.env.state import RaceState
 _STATUS_NAMES = {events.GREEN: "green", events.VSC: "vsc", events.SC: "sc", events.RED: "red"}
 _BALANCED = 1
 _START_COMPOUND = compound_code("MEDIUM")
-_RIVAL_SECOND_COMPOUND = compound_code("HARD")
 
 
 class F1RaceEnv(Env):
@@ -58,6 +57,8 @@ class F1RaceEnv(Env):
         self._gamma = env_cfg["reward"]["gamma"]
         self._points = env_cfg["reward"]["points_2026"]
         self._divisor = env_cfg["reward"]["points_divisor"]
+        self._rival_window = env_cfg["placeholder_rival"]["pit_window_laps"]
+        self._rival_compound = compound_code(env_cfg["placeholder_rival"]["second_compound"])
 
         self._state: RaceState | None = None
         self._mask: ActionMask | None = None
@@ -98,7 +99,9 @@ class F1RaceEnv(Env):
 
         # the placeholder field: each rival takes one stop to a second compound mid-race
         centre = max(1, self.total_laps // 2)
-        self._rival_pit_lap = self._rng.integers(centre - 3, centre + 4, size=n)
+        self._rival_pit_lap = self._rng.integers(
+            centre - self._rival_window, centre + self._rival_window + 1, size=n
+        )
         self._ego_pit_laps: list[int] = []
         self._ego_pit_compounds: list[str] = []
         self._ego_derate_count = 0
@@ -127,7 +130,7 @@ class F1RaceEnv(Env):
         self._forced_pit_now = bool(failed[state.ego])
 
         gap_ahead = self._gaps_ahead()
-        harvest = dynamics.per_lap_harvest_mj(self.scenario)
+        harvest = dynamics.per_lap_harvest_mj(self.scenario, state.track_status)
         harvest_mj = np.full(self.n_cars, harvest)
         request = dynamics.deploy_request_mj(modes, self.scenario)
         delivered, derate, soc_next = dynamics.resolve_energy(
@@ -151,7 +154,6 @@ class F1RaceEnv(Env):
         state.last_harvest_mj = harvest_mj
         state.last_deploy_mj = delivered
         state.fuel_kg = self._burn_fuel()
-        state.retired |= state.fuel_kg <= 0.0
         state.lap += 1
         state.red_flag_now = red_flag
         if state.track_status == events.RED:
@@ -220,13 +222,13 @@ class F1RaceEnv(Env):
         due = self._rival_pit_lap == (state.lap + 1)
         for car in range(self.n_cars):
             if car != state.ego and due[car] and state.pit_count[car] == 0:
-                choice[car] = _RIVAL_SECOND_COMPOUND
+                choice[car] = self._rival_compound
         if pit_ego >= 1:
             choice[state.ego] = pit_ego - 1  # pit head 1..5 -> compound code 0..4
         if red_flag:
             for car in range(self.n_cars):
                 if choice[car] < 0 and car != state.ego:
-                    choice[car] = _RIVAL_SECOND_COMPOUND  # rivals take the free harder set
+                    choice[car] = self._rival_compound  # rivals take the free harder set
         return choice
 
     def _pit_times(self, pit_choice: np.ndarray, failed: np.ndarray, red_flag: bool) -> np.ndarray:
@@ -268,10 +270,15 @@ class F1RaceEnv(Env):
             self._ego_pit_compounds.append(COMPOUNDS[int(pit_choice[state.ego])])
 
     def _burn_fuel(self) -> np.ndarray:
+        """Burn this lap's fuel. A car that cannot cover the lap retires — it never reaches
+        the flag; a car landing on exactly zero at the line has finished, not retired, so the
+        winner of a green race is never mis-scored as a DNF."""
+        state = self._state
         base = self.scenario.race_fuel_kg / self.total_laps
-        if self._state.track_status in (events.SC, events.VSC):
+        if state.track_status in (events.SC, events.VSC):
             base *= self.scenario.sc_burn_factor
-        return np.maximum(0.0, self._state.fuel_kg - base)
+        state.retired |= state.fuel_kg < base - 1e-9
+        return np.maximum(0.0, state.fuel_kg - base)
 
     # -- reward, gaps, observation, info ---------------------------------------
 
@@ -312,7 +319,9 @@ class F1RaceEnv(Env):
         return ahead, behind, float(gap_ahead), float(gap_behind)
 
     def _pit_open(self) -> bool:
-        return self._state.track_status in (events.GREEN, events.VSC, events.RED)
+        # the real pit lane stays open under SC and VSC — that is what makes the SC stop the
+        # interesting decision (E-03/E-05); only a physical closure would shut it
+        return self._state.track_status in (events.GREEN, events.VSC, events.SC, events.RED)
 
     def _ego_mask(self) -> ActionMask:
         state = self._state

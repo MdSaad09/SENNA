@@ -109,7 +109,8 @@ def build_scenario(
     else:
         t0_s = float(jp["t0_s"])
         energy_2024 = params.get("energy", {}).get(2024, {})
-        harvest_braking_mj = float(energy_2024.get("braking_energy_mj_per_lap", 8.0))
+        braking_default = config.get(physics, "harvest.braking_energy_mj_per_lap_default")
+        harvest_braking_mj = float(energy_2024.get("braking_energy_mj_per_lap", braking_default))
         harvest_clipping_mj = 0.0  # no super-clipping in the 2024 MGU-K era
         h_max_mj = float(config.get(physics, "harvest.mgu_k_per_lap_cap_mj"))
         e_dep_mj = h_max_mj  # the 2024 MGU-K per-lap budget bounds deployment

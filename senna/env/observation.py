@@ -7,12 +7,15 @@ actual neighbours' continuous tyre state, not v2's binary archetype flags.
 import numpy as np
 
 from senna.env.dynamics import grip_est
-from senna.env.events import GREEN, SC, VSC
+from senna.env.events import GREEN, RED, SC, VSC
 from senna.env.scenario import COMPOUNDS
 
 OBS_DIM = 32
 _N_COMPOUNDS = len(COMPOUNDS)
 _MAX_HARDNESS = _N_COMPOUNDS - 1
+_NO_DEG_A, _NO_DEG_B = 0.0, 1.0  # a compound with no fit reads as full grip (identity)
+# red is an event, not a state the policy acts in (5.5.1), so it shares the green slot
+_STATUS_SLOT = {GREEN: 0, VSC: 1, SC: 2, RED: 0}
 
 
 def encode(state, scenario, *, gap_ahead_s: float, gap_behind_s: float,
@@ -34,9 +37,10 @@ def encode(state, scenario, *, gap_ahead_s: float, gap_behind_s: float,
     obs[2] = _unit((state.grid_position[ego] - position) / (state.n_cars - 1))
     obs[3 + compound] = 1.0
     obs[8] = min(age / age_norm, 1.0)
-    obs[9] = grip_est(scenario.deg_a.get(COMPOUNDS[compound], 0.0),
-                      scenario.deg_b.get(COMPOUNDS[compound], 1.0), age)
-    obs[10] = _tyre_temp_state(age, scenario.deg_max_age.get(COMPOUNDS[compound], age_norm))
+    obs[9] = grip_est(scenario.deg_a.get(COMPOUNDS[compound], _NO_DEG_A),
+                      scenario.deg_b.get(COMPOUNDS[compound], _NO_DEG_B), age)
+    cliff_age = scenario.deg_max_age.get(COMPOUNDS[compound], age_norm)
+    obs[10] = _tyre_temp_state(age, cliff_age, obs_cfg["tyre_cold_age_laps"])
     obs[11] = min(state.pit_count[ego] / obs_cfg["max_stops_norm"], 1.0)
     obs[12] = float(state.second_compound_used[ego])
     obs[13] = state.fuel_kg[ego] / scenario.race_fuel_kg
@@ -54,7 +58,7 @@ def encode(state, scenario, *, gap_ahead_s: float, gap_behind_s: float,
         obs[21] = _unit((state.tyre_age[behind] - age) / age_norm)
     obs[22] = 1.0 if (has_ahead and gap_ahead_s <= scenario.override_gap_s) else 0.0
 
-    obs[23 + {GREEN: 0, VSC: 1, SC: 2}[state.track_status]] = 1.0
+    obs[23 + _STATUS_SLOT[state.track_status]] = 1.0
     obs[26] = 1.0 if pit_open else 0.0
     obs[27 + state.weather] = 1.0
     obs[30] = state.wetness
@@ -66,10 +70,11 @@ def _unit(value: float) -> float:
     return float(np.clip(value, -1.0, 1.0))
 
 
-def _tyre_temp_state(age: float, cliff_age: float) -> float:
+def _tyre_temp_state(age: float, cliff_age: float, cold_age: float) -> float:
     """Cliff-risk signal (#11): a fresh out-lap runs cold, a set past its cliff runs hot,
-    everything between is in the optimal window."""
-    if age <= 1.0:
+    everything between is optimal. The 0 / 0.5 / 1 values are the 5.5.1 encoding; the
+    cold-age boundary is the stylised knob."""
+    if age <= cold_age:
         return 0.0
     if age >= cliff_age:
         return 1.0
