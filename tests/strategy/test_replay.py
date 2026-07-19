@@ -7,14 +7,13 @@ no database.
 """
 
 import pandas as pd
-import pytest
 
 from senna import config
+from senna.env import events
 from senna.strategy.extract import compile_plan
 from senna.strategy.plans import PitPlan
 from senna.strategy.replay import RealStrategyReplay, load_real_plan
 from senna.strategy.rollout import run_episode
-from senna.env import events
 from tests.strategy.conftest import CIRCUIT, SEED
 
 
