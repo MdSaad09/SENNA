@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none — next session: `/plan-feature F06`
-**Next up:** F06, then F07
+**Active feature:** F06 — planned, ready for `/ship F06` in this session
+**Next up:** F07, then F08
 
 ## Feature ledger
 
@@ -17,7 +17,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F03 | Synthetic 2026 generator (T1–T8) | F02 | Done 17 Jul 2026 | feature/F03-synthetic-2026 | [F03](docs/learn/F03-synthetic-2026.md) |
 | F04 | Circuit ribbon pipeline | F01 | Done 17 Jul 2026 | feature/F04-circuit-ribbons | [F04](docs/learn/F04-circuit-ribbons.md) |
 | F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Done 19 Jul 2026 | feature/F05-race-env | [F05](docs/learn/F05-race-env.md) |
-| F06 | Rivals, baselines, oracle & throughput | F05 | Todo | | |
+| F06 | Rivals, baselines, oracle & throughput | F05 | Planned | | |
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Todo | | |
 | F08 | Ablations & headline runs | F07 | Todo | | |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Todo | | |
@@ -41,6 +41,15 @@ the work — resume with `claude --continue`, or start fresh and say
 - **OQ-3 deadline & AI policy:** default freeze 17 Nov 2026; AI assistance declared.
   Saad: replace with the real submission date and the written COMP702 policy.
 - **OQ-4 … OQ-12:** spec defaults apply until edited here.
+- **F06 rival bands (Saad, 19 Jul 2026):** held-out test band extrapolates toward each
+  archetype's character; F14 must also run the fixed scripted baselines against the
+  test band and frame the result as robustness, not in-distribution generalisation.
+  TO-DO before F14's M1 run: sanity-check the stylised rival bands against the real
+  ingested pit-lap distributions — M1's headline is provisional until that passes.
+- **Paired evaluation pairs on event traces, not raw seeds (19 Jul 2026):** tyre-failure
+  and pit-service draws consume RNG variates policy-dependently, so same-seed episodes
+  diverge in events after the first different stop; F06's EventTrace is the mechanism,
+  F14's M1/A-06 harness must use it.
 - **AR-10 race fuel (spec Part 8):** VERIFIED 16 Jul 2026 — the FIA 2026 regs cap fuel
   energy flow at 3,000 MJ/h (energy-based, replacing 100 kg/h) and the race allowance
   works out to ~70 kg with the Advanced Sustainable Fuel spec. Sources: Formula1.com
