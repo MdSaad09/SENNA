@@ -90,6 +90,12 @@ class F1RaceEnv(Env):
         self._max_age_by_code = np.array(
             [self.scenario.deg_max_age.get(name, age_fallback) for name in COMPOUNDS]
         )
+        # F08 mask guard (INDEX 19 Jul): pit action = compound code + 1, slicks only —
+        # the baselines already shop fitted compounds, this closes the same door on
+        # the agent
+        self._fitted_slick_actions = frozenset(
+            compound_code(name) + 1 for name in self.scenario.available_compounds
+        )
 
         self._state: RaceState | None = None
         self._mask: ActionMask | None = None
@@ -509,6 +515,7 @@ class F1RaceEnv(Env):
             second_compound_used=bool(state.second_compound_used[state.ego]),
             attack_soc_floor_mj=self.scenario.attack_soc_floor_mj,
             validity=self.scenario.env["compound_validity"],
+            fitted_slick_actions=self._fitted_slick_actions,
         )
 
     def _coerce(self, action) -> tuple[int, int]:

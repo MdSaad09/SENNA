@@ -17,6 +17,7 @@ INTER_OUTSIDE_DAMP = "inter_outside_damp_band"
 WET_NEEDS_WET = "wet_requires_wet_track"
 TWO_COMPOUND_RULE = "two_compound_rule"  # F-20
 SOC_BELOW_ATTACK_FLOOR = "soc_below_attack_floor"
+UNFITTED_COMPOUND = "compound_unfitted_for_circuit"  # F08 guard, INDEX 19 Jul
 
 # pit head: 0 stay · 1 Soft · 2 Medium · 3 Hard · 4 Inter · 5 Wet
 SLICK_ACTIONS = (1, 2, 3)
@@ -37,7 +38,8 @@ class ActionMask:
 
 def build_mask(*, pit_open: bool, weather: int, wetness: float, soc_mj: float,
                lap: int, total_laps: int, second_compound_used: bool,
-               attack_soc_floor_mj: float, validity: dict) -> ActionMask:
+               attack_soc_floor_mj: float, validity: dict,
+               fitted_slick_actions: frozenset | None = None) -> ActionMask:
     pit = np.ones(6, dtype=bool)
     mode = np.ones(4, dtype=bool)
     reasons: dict[str, str] = {}
@@ -58,6 +60,14 @@ def build_mask(*, pit_open: bool, weather: int, wetness: float, soc_mj: float,
         if wetness < validity["wet_min_wetness"]:
             pit[WET_ACTION] = False
             reasons[f"pit:{WET_ACTION}"] = WET_NEEDS_WET
+        # a slick with no deg fit for this circuit would read as full grip and never
+        # wear (identity fallback), so it is masked structurally — a data limit, not
+        # a sporting rule. The first reason wins: weather already explains a wet slick.
+        if fitted_slick_actions is not None:
+            for action in SLICK_ACTIONS:
+                if pit[action] and action not in fitted_slick_actions:
+                    pit[action] = False
+                    reasons[f"pit:{action}"] = UNFITTED_COMPOUND
 
     # F-20: on the last lap a dry race can still serve the mandatory second compound,
     # staying out is illegal — the rule is structural, not a reward penalty. It can only
