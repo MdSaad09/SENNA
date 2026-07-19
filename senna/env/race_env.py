@@ -36,12 +36,20 @@ class F1RaceEnv(Env):
     metadata = {"render_modes": []}
 
     def __init__(self, circuit: str, era: str = "2026", *, rival_band: str = "train",
-                 configs_dir=None, record: bool = False, twin: EventTrace | None = None):
+                 configs_dir=None, record: bool = False, twin: EventTrace | None = None,
+                 solo: bool = False, weather: str = "markov", hazards: str = "full"):
+        if weather not in ("markov", "dry"):
+            raise ValueError(f"weather must be 'markov' or 'dry', not '{weather}'")
+        if hazards not in ("full", "sc_vsc", "none"):
+            raise ValueError(f"hazards must be 'full', 'sc_vsc' or 'none', not '{hazards}'")
         self.circuit = circuit
         self.era = era
         self.scenario = build_scenario(circuit, era, configs_dir=configs_dir)
         self.total_laps = self.scenario.total_laps
-        self.n_cars = self.scenario.grid_size
+        self.n_cars = 1 if solo else self.scenario.grid_size
+        self._solo = solo
+        self._weather_mode = weather
+        self._hazards = hazards
 
         self.action_space = MultiDiscrete([6, 4])
         self.observation_space = Box(
@@ -54,7 +62,8 @@ class F1RaceEnv(Env):
         self._weather_targets = env_cfg["weather"]["target_wetness"]
         self._sc_laps = env_cfg["events"]["sc_duration_laps"]
         self._vsc_laps = env_cfg["events"]["vsc_duration_laps"]
-        self._max_red = env_cfg["events"]["red_flag_max_per_race"]
+        # the red flag first appears in the Stage C row of 5.7, so "sc_vsc" zeroes the cap
+        self._max_red = env_cfg["events"]["red_flag_max_per_race"] if hazards == "full" else 0
         self._tyre_penalty_s = env_cfg["forced_pit"]["tyre_failure_penalty_s"]
         self._cliff_margin = env_cfg["tyre_failure"]["cliff_age_margin_laps"]
         self._tyre_hazard = env_cfg["tyre_failure"]["hazard_per_lap_beyond_cliff"]
@@ -68,6 +77,8 @@ class F1RaceEnv(Env):
         self._divisor = env_cfg["reward"]["points_divisor"]
 
         self._band = rival_band
+        if twin is not None:
+            self._check_twin(twin)
         self._twin = twin
         self._record = record
         self._book = rivals.load_book(configs_dir, validity=env_cfg["compound_validity"])
@@ -88,8 +99,21 @@ class F1RaceEnv(Env):
 
     # -- gymnasium api ----------------------------------------------------------
 
+    def _check_twin(self, trace: EventTrace) -> None:
+        if trace.n_cars != self.n_cars or trace.n_laps != self.total_laps:
+            raise ValueError(
+                f"twin shape ({trace.n_laps} laps, {trace.n_cars} cars) does not match the "
+                f"env ({self.total_laps} laps, {self.n_cars} cars) — a mismatched trace "
+                "would misreplay mid-race instead of failing here"
+            )
+
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
+        if options and "twin" in options:
+            # swap the replayed race without rebuilding the env — the Stage B eval replays
+            # 200 traces per gate check, and construction re-parses every physics yaml
+            self._check_twin(options["twin"])
+            self._twin = options["twin"]
         self._rng = np.random.default_rng(seed)
         n = self.n_cars
 
@@ -224,7 +248,10 @@ class F1RaceEnv(Env):
             self._ego_derate_count += 1
 
         terminated = bool(state.lap >= self.total_laps or state.retired[ego])
-        terms = self._reward(prev_position, float(racing_time[ego]), terminated)
+        # solo, the position and terminal terms are constants, so pit loss must enter
+        # through the pace term or stops are free (5.7 Stage A; F07 decision 1)
+        pace_time_s = float(lap_time[ego]) if self._solo else float(racing_time[ego])
+        terms = self._reward(prev_position, pace_time_s, terminated)
         self._mask = self._ego_mask()
         return self._observe(), terms.total, terminated, False, self._info(terms)
 
@@ -252,6 +279,8 @@ class F1RaceEnv(Env):
         event flag (E-04, consumed this lap) and the neutralisation that began this lap, if
         any — GREEN on a countdown lap, since only an onset offers a fresh pit decision."""
         state = self._state
+        if self._hazards == "none":
+            return False, events.GREEN  # no roll, so the RNG stream is untouched
         if state.status_laps_left > 0:
             state.status_laps_left -= 1
             if state.status_laps_left == 0:
@@ -281,6 +310,8 @@ class F1RaceEnv(Env):
             state.weather = int(self._twin.weather[lap_index])
             state.wetness = float(self._twin.wetness[lap_index])
             return
+        if self._weather_mode == "dry":
+            return  # pinned DRY/0.0 from reset; no Markov roll, so no RNG draw
         state.weather, state.wetness = events.advance_weather(
             state.weather, state.wetness, self._markov, self._n_sectors, self._rng,
             target_wetness=self._weather_targets,
@@ -340,9 +371,14 @@ class F1RaceEnv(Env):
             name = COMPOUNDS[int(state.compound[car])]
             age_fallback = self.scenario.env["obs"]["tyre_age_norm_laps"]
             max_age = self.scenario.deg_max_age.get(name, age_fallback)
-            failed[car] = events.tyre_failure(
-                int(state.tyre_age[car]), max_age, self._cliff_margin, self._tyre_hazard, self._rng
-            )
+            if self._hazards == "none":
+                # deterministic Stage A: the twin's hard cap at the cliff, not a hazard roll
+                failed[car] = state.tyre_age[car] > max_age + self._cliff_margin
+            else:
+                failed[car] = events.tyre_failure(
+                    int(state.tyre_age[car]), max_age, self._cliff_margin, self._tyre_hazard,
+                    self._rng,
+                )
         return failed
 
     # -- pit choices and timing -------------------------------------------------

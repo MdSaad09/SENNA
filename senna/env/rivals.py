@@ -128,7 +128,7 @@ def draw_field(book: ArchetypeBook, band: str, *, n_cars: int, ego: int, rng) ->
     if band not in book.bands:
         raise KeyError(f"no rival band '{band}' — rivals.yaml defines: {', '.join(book.bands)}")
 
-    non_ego = np.array([c for c in range(n_cars) if c != ego])
+    non_ego = np.array([c for c in range(n_cars) if c != ego], dtype=int)  # solo: empty, F07
     labels = np.resize(np.arange(len(book.names)), non_ego.size)
     archetype = np.full(n_cars, -1)
     archetype[non_ego] = rng.permutation(labels)

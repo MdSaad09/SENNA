@@ -32,9 +32,10 @@ def encode(state, scenario, *, gap_ahead_s: float, gap_behind_s: float,
     age = float(state.tyre_age[ego])
 
     obs = np.zeros(OBS_DIM, dtype=np.float32)
+    span = max(state.n_cars - 1, 1)  # a solo field (F07 Stage A) must not divide by zero
     obs[0] = state.lap / scenario.total_laps
-    obs[1] = (position - 1) / (state.n_cars - 1)
-    obs[2] = _unit((state.grid_position[ego] - position) / (state.n_cars - 1))
+    obs[1] = (position - 1) / span
+    obs[2] = _unit((state.grid_position[ego] - position) / span)
     obs[3 + compound] = 1.0
     obs[8] = min(age / age_norm, 1.0)
     obs[9] = grip_est(scenario.deg_a.get(COMPOUNDS[compound], _NO_DEG_A),
