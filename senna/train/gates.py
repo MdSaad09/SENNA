@@ -6,9 +6,9 @@ inline constant wearing a disguise. Stage A and B gates hold once triggered: tra
 stops on the first pass, so a later noisy eval must not flap an already-made decision.
 """
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from statistics import median
-from typing import Sequence
 
 
 @dataclass(frozen=True)
@@ -94,7 +94,8 @@ def _stage_a_decide(history, *, reference_time_s, plateau_window, plateau_min_im
 
     passed = flat and time_ok
     if passed:
-        reason = f"plateau ({improvement:.2%}) and time within {time_tolerance:.1%} at step {latest.step}"
+        reason = (f"plateau ({improvement:.2%}) and time within {time_tolerance:.1%} "
+                  f"at step {latest.step}")
     elif not flat:
         reason = f"still improving: {improvement:.2%} over the last {plateau_window} evals"
     else:

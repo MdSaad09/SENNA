@@ -50,7 +50,8 @@ class RewardTermsCallback(BaseCallback):
                           for _ in range(self.training_env.num_envs)]
 
     def _on_step(self) -> bool:
-        for slot, info, done in zip(self._open, self.locals["infos"], self.locals["dones"]):
+        for slot, info, done in zip(self._open, self.locals["infos"], self.locals["dones"],
+                                    strict=True):
             terms = info["reward_terms"]
             slot["pace"] += terms["pace"]
             slot["position"] += terms["position"]

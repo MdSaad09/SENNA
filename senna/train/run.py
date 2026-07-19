@@ -12,7 +12,7 @@ import argparse
 import json
 import platform
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from senna import config
@@ -147,7 +147,7 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
         print(f"DEV CAP: every stage budget clipped to {total_steps} steps — "
               "not a real training run")
 
-    run_id = f"{datetime.now(timezone.utc):%Y%m%d}-s{seed}-{fingerprint[:12]}"
+    run_id = f"{datetime.now(UTC):%Y%m%d}-s{seed}-{fingerprint[:12]}"
     run_dir = Path(models_dir or config.REPO_ROOT / "models") / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     if tracker is None:
@@ -201,7 +201,10 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
             configs_dir=configs_dir,
         )
 
-        def manifest(step, exit_reason=None, stage=stage):
+        # keyword defaults pin this stage's objects: the loop rebinds these names next
+        # stage, and a late-bound closure would silently checkpoint the wrong stage
+        def manifest(step, exit_reason=None, *, stage=stage, stage_cfg=stage_cfg,
+                     resumed=resume):
             return {
                 "model_version": model_version(fingerprint, stage, step),
                 "run_id": run_id,
@@ -220,17 +223,20 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
                 "dominance_ratio": reward_terms.run_dominance_ratio(),
                 "wandb_run_id": getattr(tracker, "run_id", None),
                 "versions": _versions(),
-                "resumed_from": str(resume) if resume else None,
-                "saved_at": datetime.now(timezone.utc).isoformat(),
+                "resumed_from": str(resumed) if resumed else None,
+                "saved_at": datetime.now(UTC).isoformat(),
             }
+
+        def save_to(name, step, exit_reason=None, *, model=model, venv=venv,
+                    stage_dir=stage_dir, manifest=manifest):
+            save_triplet(model, venv, stage_dir / name,
+                         manifest=manifest(step, exit_reason))
 
         gate_cb = GateEvalCallback(
             evaluate, every_steps=stage_cfg["eval_every_steps"], tracker=tracker,
-            save_last=lambda step: save_triplet(model, venv, stage_dir / "last",
-                                                manifest=manifest(step)),
+            save_last=lambda step, save_to=save_to: save_to("last", step),
             save_best=(
-                (lambda step: save_triplet(model, venv, stage_dir / "best",
-                                           manifest=manifest(step)))
+                (lambda step, save_to=save_to: save_to("best", step))
                 if stage == "C" else None
             ),
         )
@@ -294,10 +300,9 @@ def _git_commit() -> str:
 
 
 def _versions() -> dict:
+    import sb3_contrib
     import stable_baselines3
     import torch
-
-    import sb3_contrib
 
     return {
         "stable_baselines3": stable_baselines3.__version__,
