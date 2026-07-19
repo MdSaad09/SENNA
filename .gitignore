@@ -12,8 +12,7 @@ build/
 .env.*
 !.env.example
 wandb/
-models/*.zip
-models/*.pkl
+models/
 data/cache/
 data/circuits/
 fastf1_cache/
