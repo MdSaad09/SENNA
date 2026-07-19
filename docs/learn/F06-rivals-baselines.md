@@ -540,7 +540,9 @@ Python: `.venv/bin/python -m pytest tests/strategy tests/env/test_rivals.py -q`.
    `enumerate_plans` with a type error, not a wrong answer — the constant is trusted, so a
    malformed one is caught at the point of use. Revert.
 
-5. **Measure your own throughput.** Run `make bench WORKERS=4 STEPS=20000`. It prints
+5. **Measure your own throughput.** Run `uv run make bench WORKERS=4 STEPS=20000` (the
+   `uv run` puts the venv's `python` on the Makefile's PATH; a plain `make bench` only
+   works from an activated venv). It prints
    steps/s aggregate and per worker, the projected 8M-step hours, and the config hash.
    You'll know it worked when the number is comfortably above 300 and the hours line reads a
    fraction of an hour. Compare your per-worker rate to the recorded 1,540/worker in

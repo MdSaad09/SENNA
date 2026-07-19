@@ -1,5 +1,8 @@
 # A-09 reproducibility pack. Each stub becomes real in the feature that owns it;
 # until then it says so instead of silently doing nothing.
+#
+# Recipes call `python` directly, so run these inside the project env: either
+# `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
 .PHONY: lock migrate ingest fit synth synth-figures circuits bench train eval report
 
