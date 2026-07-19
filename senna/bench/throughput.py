@@ -54,6 +54,8 @@ def run_benchmark(*, workers: int, total_steps: int, warmup_steps: int, circuit:
                   era: str = "2026", vec: str = "subproc") -> dict:
     from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 
+    train_budget_steps = config.load("baselines")["bench"]["train_budget_steps"]
+
     vec_cls = SubprocVecEnv if vec == "subproc" else DummyVecEnv
     venv = vec_cls([_env_factory(circuit, era) for _ in range(workers)])
     rng = np.random.default_rng(0)
@@ -90,7 +92,7 @@ def run_benchmark(*, workers: int, total_steps: int, warmup_steps: int, circuit:
         "python": platform.python_version(),
         "commit": _commit(),
         "config_hash": config.fingerprint(_CONFIG_FILES),
-        "projected_8m_hours": 8_000_000 / steps_s / 3600,
+        "projected_8m_hours": train_budget_steps / steps_s / 3600,
     }
 
 

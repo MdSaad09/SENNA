@@ -20,3 +20,6 @@ fastf1_cache/
 *.parquet
 .DS_Store
 *.tsbuildinfo
+
+# uv creates this on `uv run`; this project locks via requirements.txt (make lock)
+uv.lock

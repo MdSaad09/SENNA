@@ -138,6 +138,7 @@ class F1RaceEnv(Env):
         self._ego_deploy_total = 0.0
         self._forced_pit_now = False
         self._trace = self._new_trace(seed, grid, driver_s) if self._record else None
+        self._recorded_laps = 0
 
         self._mask = self._ego_mask()
         return self._observe(), self._info(RewardTerms(0.0, 0.0, 0.0, 0.0))
@@ -158,9 +159,16 @@ class F1RaceEnv(Env):
 
     def recorded_trace(self) -> EventTrace:
         """The EventTrace captured during a record=True episode — the deterministic twin
-        the oracle rolls against and the M5 afterstate metric branches from."""
+        the oracle rolls against and the M5 afterstate metric branches from. Refuses an
+        incomplete trace: a race that retired before the flag would leave a green-tailed
+        twin that silently misrepresents the events (M3)."""
         if self._trace is None:
             raise RuntimeError("no trace recorded — build the env with record=True")
+        if self._recorded_laps < self.total_laps:
+            raise RuntimeError(
+                f"trace covers only {self._recorded_laps}/{self.total_laps} laps — the "
+                "recorded race did not reach the flag, so the twin is incomplete"
+            )
         return self._trace
 
     def step(self, action):
@@ -310,6 +318,7 @@ class F1RaceEnv(Env):
         rival_mode = modes.copy()
         rival_mode[state.ego] = _BALANCED
         self._trace.rival_mode[lap_index] = rival_mode
+        self._recorded_laps = lap_index + 1
 
     def _resolve_failures(self, lap_index: int) -> np.ndarray:
         """Tyre failures this lap. A twin replays the field's verbatim, but recomputes the

@@ -245,6 +245,30 @@ def test_every_rival_runs_two_compounds_in_a_dry_race():
     assert state.second_compound_used[finishers].all()
 
 
+def test_rival_lap_noise_scales_with_the_drawn_sigma():
+    # each rival's pace_sigma_mult scales its per-lap pace noise; the ego keeps unit sigma
+    # so the agent's own noise model is untouched. This dispersion is the pace half of an
+    # archetype's identity and what M1's paired comparison leans on (E-06).
+    env = F1RaceEnv(CIRCUIT, ERA)
+    env.reset(seed=SEED)
+    n = env.n_cars
+    sigma_mult = np.ones(n)
+    sigma_mult[1] = 0.2  # a metronome
+    sigma_mult[2] = 3.0  # a scrappy, high-variance driver
+    env._rivals = RivalDraw(
+        archetype=np.full(n, -1),
+        pit_age_frac=np.full(n, np.inf),
+        sc_response_prob=np.zeros(n),
+        sigma_mult=sigma_mult,
+        wet_jitter=np.zeros(n),
+    )
+
+    noise = np.array([env._lap_noise() for _ in range(4000)])
+    spread = noise.std(axis=0)
+    assert spread[2] > spread[1]  # a higher multiplier is a wider spread
+    assert spread[env._state.ego] == pytest.approx(env.scenario.s_ref_s, rel=0.1)
+
+
 def test_a_red_flag_gives_every_rival_a_legal_archetype_chosen_change():
     # E-04: the free change is archetype- and wetness-aware, not one forced HARD monoculture
     book = load_book(validity=VALIDITY)

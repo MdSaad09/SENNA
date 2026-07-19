@@ -54,7 +54,7 @@ class EngineerHeuristic:
         if head >= 1 and mask[head]:
             self._compound = head - 1
             self._second_used |= self._compound != _START
-            self._stint_start = lap
+            self._stint_start = lap + 1  # the fresh tyre is age 0 on the out-lap (lap + 1)
         else:
             head = _STAY_OUT
         return np.array([head, self._decide_mode(info, mask)])

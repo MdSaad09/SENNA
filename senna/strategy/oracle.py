@@ -5,7 +5,13 @@ plan-independent — fuel burn is fixed, the greedy energy schedule is decided l
 and the only cross-plan couplings are traffic and the pit-lane FIFO. So stage 1 costs
 every stint exactly with per-compound tables and enumerates all 1..max_stops plans by
 table lookup (cheap); stage 2 re-scores the best of those, plus any baseline plans handed
-in, with full twin rolls that put traffic and FIFO back. The winner is the answer.
+in, with full twin rolls that put traffic and FIFO back. The best rolled time wins.
+
+Because each baseline's own plan is re-rolled here, the oracle can only tie or beat a
+baseline on the pit dimension. The energy dimension is re-optimised greedily rather than
+proven optimal (SOC couples laps, so greedy-per-lap is a heuristic, not a global optimum —
+assumption 4 below), so "beats or ties a baseline" is a strong empirical property here,
+not a theorem.
 
 Published assumptions (the honest half of the metric — an easy oracle flatters the agent):
   1. full information: the frozen event trace is known before lap 1;
@@ -114,6 +120,11 @@ def _plan_table_cost(plan: PitPlan, tables: dict, scenario, n: int) -> float:
 
 
 def solve_oracle(scenario, trace: EventTrace, *, cfg: dict, baselines=()) -> OracleResult:
+    if float(trace.wetness.max()) > scenario.env["compound_validity"]["slick_max_wetness"]:
+        raise NotImplementedError(
+            "the oracle enumerates slicks only — a wet trace needs the inter/wet compounds "
+            "(A-05 wet extension, F14); scoring slicks in the rain would be meaningless (M3)"
+        )
     codes = {_START} | {compound_code(c) for c in scenario.available_compounds}
     tables = {code: stint_cost_table(scenario, trace, code) for code in codes}
 

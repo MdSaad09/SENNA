@@ -56,3 +56,5 @@ bench:                              # 5.6.2 — the throughput number that price
                                     # and the per-step mask fetch, pricing the env as MaskablePPO will drive it
   min_steps_s: 300                  # sourced spec 5.6.2 — below this, profile the env before trusting any
                                     # schedule (per-step object churn, pandas in the hot loop) and flag F07
+  train_budget_steps: 8000000       # sourced spec 5.6.1 — the 8M-step training budget the measured
+                                    # steps/s is projected against (replaces v2's unpriced 20M, R-12)

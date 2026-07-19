@@ -36,8 +36,14 @@ the work — resume with `claude --continue`, or start fresh and say
 ## Decisions log (spec Part 7 answers)
 - **OQ-1 name:** SENNA (Saad, 7 Jul 2026). Repo, docs and UI say SENNA; code identifiers
   follow the spec.
-- **OQ-2 compute:** default assumption 12-core CPU, 8M-step budget — replace with real
-  hardware after the F06 throughput measurement.
+- **OQ-2 compute:** MEASURED 19 Jul 2026 (F06 `make bench`, spec 5.6.2): **18,477 env
+  steps/s aggregate** (~1,540/worker across 12 SubprocVecEnv workers) on Saad's Mac
+  (macOS arm64 / Apple Silicon, 10 cores), random-legal actions with the per-step mask
+  fetch on the clock. That puts the 8M-step budget at ~7 minutes and 15M at ~14 —
+  comfortably above the ~300 steps/s floor and even the spec's 1,000–4,000 expectation,
+  so training is cheap and the F07 3-seed + ablation plans are safe as written. Config
+  hash e28c3d83ba10. A GPU is optional (the policy is tiny); note the real training
+  hardware here if it differs.
 - **OQ-3 deadline & AI policy:** default freeze 17 Nov 2026; AI assistance declared.
   Saad: replace with the real submission date and the written COMP702 policy.
 - **OQ-4 … OQ-12:** spec defaults apply until edited here.

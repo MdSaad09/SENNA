@@ -19,7 +19,7 @@ from senna.env.events import DRY
 from senna.env.masks import build_mask
 from senna.env.scenario import compound_code
 from senna.strategy.heuristic import EngineerHeuristic
-from senna.strategy.oracle import solo_reference, solve_oracle, stint_cost_table
+from senna.strategy.oracle import enumerate_plans, solo_reference, solve_oracle, stint_cost_table
 from senna.strategy.plans import PitPlan, greedy_mode
 from senna.strategy.random_legal import RandomLegal
 from senna.strategy.replay import RealStrategyReplay
@@ -109,10 +109,32 @@ def test_the_oracle_beats_or_ties_every_baseline_on_a_deterministic_toy_race(
         assert oracle.race_time_s <= result.race_time_s + 1e-6, f"oracle lost to {name}"
 
 
-@pytest.mark.slow
 def test_every_enumerated_plan_honours_the_two_compound_rule_and_the_stop_cap(
     scenario, green_trace
 ):
+    max_stops = 2
+    plans = enumerate_plans(scenario, green_trace, max_stops)
+    assert plans
+
+    cliff = scenario.env["tyre_failure"]["cliff_age_margin_laps"]
+    age_fallback = scenario.env["obs"]["tyre_age_norm_laps"]
+    for plan in plans:
+        laps = [lap for lap, _ in plan.stops]
+        assert laps == sorted(set(laps))  # stop laps strictly increasing
+        assert len(plan.stops) <= max_stops  # the stop cap
+        compounds_run = {"MEDIUM"} | {compound for _, compound in plan.stops}
+        assert len(compounds_run) >= 2  # F-20: two distinct compounds, MEDIUM start included
+
+        # no stint banks on a forced failure: every segment stays inside its compound's cliff
+        boundaries = [1, *laps, scenario.total_laps + 1]
+        segments = ["MEDIUM", *[compound for _, compound in plan.stops]]
+        for start, end, name in zip(boundaries[:-1], boundaries[1:], segments, strict=True):
+            max_age_in_stint = (end - start) - 1
+            assert max_age_in_stint <= scenario.deg_max_age.get(name, age_fallback) + cliff
+
+
+@pytest.mark.slow
+def test_the_oracle_winner_honours_the_two_compound_rule_and_the_stop_cap(scenario, green_trace):
     cfg = _small_oracle_cfg()
     oracle = solve_oracle(scenario, green_trace, cfg=cfg)
 
@@ -155,6 +177,14 @@ def test_the_greedy_energy_rule_never_picks_a_worse_priced_mode(
     assert chosen in legal_modes
     best_price_s = min(_mode_price_s(m, soc_mj, track_status, scenario) for m in legal_modes)
     assert _mode_price_s(chosen, soc_mj, track_status, scenario) <= best_price_s + 1e-9
+
+
+def test_the_oracle_refuses_a_wet_trace(scenario, green_trace):
+    # slick-only enumeration cannot price the rain; scoring it would be meaningless (M3),
+    # so the oracle refuses rather than return a wrong ceiling (the wet extension is F14)
+    green_trace.wetness[20:] = 0.9
+    with pytest.raises(NotImplementedError):
+        solve_oracle(scenario, green_trace, cfg=_small_oracle_cfg())
 
 
 def test_the_solo_reference_is_deterministic_across_calls(scenario):

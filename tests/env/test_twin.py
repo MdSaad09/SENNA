@@ -10,6 +10,7 @@ Suite seed 704, matching the F06 rival tests and clear of the env suite's 512.
 """
 
 import numpy as np
+import pytest
 
 from senna.env import F1RaceEnv
 from senna.env.twin import EventTrace
@@ -111,6 +112,18 @@ def test_a_trace_survives_the_npz_round_trip(tmp_path):
         "wetness", "failed", "rival_pit", "rival_mode",
     ):
         assert np.array_equal(getattr(reloaded, field), getattr(trace, field))
+
+
+def test_recorded_trace_refuses_an_incomplete_record():
+    # a race that stopped short of the flag would leave a green-tailed twin; refuse it
+    # rather than hand back a trace that silently misrepresents the events (M3)
+    env = F1RaceEnv(CIRCUIT, ERA, record=True)
+    env.reset(seed=SEED)
+    for _ in range(5):
+        env.step(np.array([0, 1]))
+
+    with pytest.raises(RuntimeError):
+        env.recorded_trace()
 
 
 def test_terminal_info_reports_the_ego_race_time():
