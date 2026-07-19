@@ -1,0 +1,58 @@
+# SENNA — scripted baselines, oracle and throughput knobs (F06 — A-05, A-07, 5.6.2).
+# The three baselines the agent is measured against (M1/M2), the full-information oracle
+# that sets the M3 ceiling, and the benchmark that prices the F07 training plan.
+#
+# Origins: sourced (a spec section, the FIA regs or the ingested data, with the id),
+# fitted (which notebook), or stylised (an explicit modelling choice naming the future
+# fit that could replace it). Wetness thresholds appear nowhere below on purpose — the
+# heuristic reads them from env.yaml compound_validity so the mask and the baseline share
+# one source of truth (E-08).
+
+heuristic:                          # A-07 — the engineer-heuristic baseline
+  deg_pit_threshold_s: 1.2          # stylised — box when the fitted deg term a*t0*age^b costs this
+                                    # much per lap; ~1/20 of a green pit loss, so a ~20-lap stint
+                                    # amortises the stop. A stint-economics fit could set it (F08)
+  min_stint_laps: 8                 # stylised — no engineer boxes a set younger than this on pace alone
+  forced_compound_laps_left: 3      # stylised — F-20 backstop: serve the mandatory second compound this
+                                    # many laps before the flag rather than trust the last-lap mask
+  sc_pit_min_age_laps: 6            # stylised — a safety car halves relative pit loss (env.yaml
+                                    # pit_loss_mult.sc), so any set at least this old takes the stop (E-03)
+  vsc_pit_min_age_laps: 10          # stylised — the VSC discount (0.65) is smaller, so demand more age
+  compound_by_laps_left:            # the pit-wall wheel: pick the set for the run home
+    hard_min_laps: 22               # stylised — HARD for a long final stint,
+    medium_min_laps: 10             # MEDIUM in the middle, SOFT for a sprint; near fitted Bahrain
+                                    # stint lengths (F08 could fit them per circuit)
+  modes:                            # SOC-aware energy mode (5.5.2 heads)
+    conserve_soc_mj: 0.8            # stylised — rebuild the store below this (attack is masked at the
+                                    # 0.5 MJ floor anyway, physics_2026.yaml attack_soc_floor_mj)
+    attack_soc_mj: 2.5              # stylised — only attack from a healthy store
+    attack_gap_s: 1.5              # stylised — chase the car ahead inside this; the override aid detects
+                                    # at 1.0 s (physics_2026.yaml), 1.5 s is the approach phase
+    defend_gap_s: 1.0               # stylised — defend when the car behind is inside this
+
+replay:                             # A-07 — the replayed-real baseline
+  mode: balanced                    # stylised — a 2024 strategy carries no 2026 energy decision; balanced
+                                    # is the neutral, sustainable request and matches the rival field, so
+                                    # an M2 gap reads as strategy, never as a fabricated energy schedule
+  defer_max_laps: 3                 # stylised — a stop the mask blocks (wet track) retries for this many laps
+  snap: nearest_legal_harder        # stylised — then fit the legal slick nearest in hardness, ties to the
+                                    # harder set; every deviation is counted in the episode result
+
+oracle:                             # A-05 — the search space published verbatim (5.12 M3)
+  max_stops: 3                      # sourced spec 5.7 — the Stage A reference is a 1-3 stop grid search; no
+                                    # >=4-scheduled-stop dry race appears in the 2022-26 ingest and a 4th
+                                    # stop costs a full green pit loss
+  top_k_rolls: 50                   # stylised — table-ranked finalists re-scored by full twin rolls (traffic
+                                    # + pit FIFO); the table-rank vs rolled-rank overlap is the sanity check
+  tyre_failure: hard_cap            # stylised — on the deterministic twin the beyond-cliff failure hazard
+                                    # becomes certainty, so no oracle stint runs past the fitted data support
+
+bench:                              # 5.6.2 — the throughput number that prices the training plan
+  workers: 12                       # sourced spec 5.6.1 — n_envs default, one per physical core
+  total_steps: 100000               # sourced spec 5.6.2 — the measured window
+  warmup_steps: 2400                # stylised — 200 steps/worker, untimed, to absorb process spawn + imports
+  circuit: bahrain_grand_prix       # stylised — the raced 2026 event with real fitted params
+  policy: random_legal              # stylised — random legal actions exercise the pit/FIFO/compound branches
+                                    # and the per-step mask fetch, pricing the env as MaskablePPO will drive it
+  min_steps_s: 300                  # sourced spec 5.6.2 — below this, profile the env before trusting any
+                                    # schedule (per-step object churn, pandas in the hot loop) and flag F07
