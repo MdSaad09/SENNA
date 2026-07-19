@@ -10,12 +10,12 @@ import re
 from pathlib import Path
 
 import pytest
-from senna.train.ablate import run_ablation
-from senna.train.ledger import RunLedger
 
 from senna import config
 from senna.train import run as run_module
+from senna.train.ablate import run_ablation
 from senna.train.gates import GateDecision
+from senna.train.ledger import RunLedger
 from senna.train.run import train_run
 from senna.train.seeds import SeedBankReservedError, load_reserved_test_bank
 from senna.train.tracking import Tracker, _WandbTracker
@@ -140,5 +140,5 @@ def test_selection_code_cannot_read_the_test_bank():
         load_reserved_test_bank(consumer="F08")
 
     train_pkg = Path(run_module.__file__).resolve().parent
-    for module in ("ablate.py", "selection.py", "ledger.py"):
+    for module in ("ablate.py", "selection.py", "ledger.py", "headline.py"):
         assert "F14" not in (train_pkg / module).read_text(), module

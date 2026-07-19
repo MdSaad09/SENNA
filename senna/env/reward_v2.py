@@ -23,9 +23,9 @@ def position_change(prev_position: int, position: int, *, gain: float,
 
 
 def sc_pit_bonus(pitted: bool, sc_laps_active: int, *, bonus: float,
-                 window_laps: int = 2) -> float:
-    """The F-17 coached bonus: paid for boxing in the "first 2 laps of a safety car"
-    (the window is part of the quote, hence the sourced default)."""
+                 window_laps: int) -> float:
+    """The F-17 coached bonus: paid for boxing in the "first 2 laps of a safety car";
+    the window arrives from ablations.yaml like every other coefficient."""
     return bonus if pitted and 1 <= sc_laps_active <= window_laps else 0.0
 
 
@@ -48,8 +48,10 @@ def undercut_success(resolved_ahead: bool, *, bonus: float) -> float:
 
 
 def ers_violation(derate_s: float, *, penalty: float) -> float:
-    """v2 fined the breach it did not prevent: any lap the store derated the request
-    pays the flat -8 (F-16 "v2 says"). Physics still clips — the fine is on top."""
+    """v2 fined the breach it did not prevent. The -8 magnitude is quoted (F-16
+    "v2 says"); the trigger is reconstructed as any derated lap, because v2's own
+    trigger was the 4 MJ/lap cap breach and that cap does not exist (F-02, R-03).
+    Physics still clips — the fine is on top."""
     return penalty if derate_s > 0 else 0.0
 
 
@@ -66,7 +68,7 @@ def fuel_exhausted(retired_by_fuel: bool, *, penalty: float) -> float:
 
 
 def fastest_lap_bonus(holds_fastest: bool, final_position: int, *, bonus: float,
-                      points_places: int = 10) -> float:
+                      points_places: int) -> float:
     """"+1.0 if fastest lap claimed" inside the points — the rule the 2025 season
     abolished (F-07, R-01). Judged from race lap times at the flag, because the
     action that chased it was deleted with the ghost."""

@@ -69,7 +69,8 @@ train:
 
 # one 5.6.3 ablation arm, Stage C from scratch at the 4M ceiling (F08). RUN= names
 # the arm in configs/ablations.yaml; SEED= defaults to the first ablation seed.
-# DRY=1 proves the wiring on the tiny profile before any real run. Local only.
+# DRY=1 proves the wiring on the tiny profile before any real run. Run arms one at
+# a time: the ledger is a single file and each run wants every core anyway. Local only.
 ablate:
 	python -m senna.train.ablate --run $(RUN) $(if $(SEED),--seed $(SEED)) \
 		$(if $(DRY),--dry-run) $(if $(WANDB),--wandb-mode $(WANDB)) \

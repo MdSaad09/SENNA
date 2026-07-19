@@ -55,7 +55,9 @@ reward_v2:                   # the twelve terms, one coefficient each. Sourced v
                              # never published; see undercut_window_laps
   undercut_window_laps: 3    # reconstructed — ahead of the pre-stop target this many
                              # laps after boxing counts as a successful undercut
-  ers_violation_penalty: -8.0  # sourced F-16 "v2 says" — fires on any derated lap
+  ers_violation_penalty: -8.0  # magnitude sourced F-16 "v2 says"; the trigger (any
+                             # derated lap) is reconstructed — v2 fined its 4 MJ/lap
+                             # cap breach, and that cap does not exist (F-02, R-03)
   tyre_failure_penalty: -12.0  # sourced R-02 — "tyre-failure -12"
   fastest_lap_bonus: 1.0     # sourced F-07 "v2 says" — "+1.0 if fastest lap claimed",
                              # P1-P10; computed from race lap times because the action

@@ -13,7 +13,9 @@ from senna.env.scenario import COMPOUNDS
 OBS_DIM = 32
 _N_COMPOUNDS = len(COMPOUNDS)
 _MAX_HARDNESS = _N_COMPOUNDS - 1
-_NO_DEG_A, _NO_DEG_B = 0.0, 1.0  # a compound with no fit reads as full grip (identity)
+# a compound with no fit reads as full grip (identity) — shared with the v2 reward's
+# stint-end grip term so the two views of an unfitted set can never drift apart
+NO_DEG_A, NO_DEG_B = 0.0, 1.0
 # red is an event, not a state the policy acts in (5.5.1), so it shares the green slot
 _STATUS_SLOT = {GREEN: 0, VSC: 1, SC: 2, RED: 0}
 
@@ -38,8 +40,8 @@ def encode(state, scenario, *, gap_ahead_s: float, gap_behind_s: float,
     obs[2] = _unit((state.grid_position[ego] - position) / span)
     obs[3 + compound] = 1.0
     obs[8] = min(age / age_norm, 1.0)
-    obs[9] = grip_est(scenario.deg_a.get(COMPOUNDS[compound], _NO_DEG_A),
-                      scenario.deg_b.get(COMPOUNDS[compound], _NO_DEG_B), age)
+    obs[9] = grip_est(scenario.deg_a.get(COMPOUNDS[compound], NO_DEG_A),
+                      scenario.deg_b.get(COMPOUNDS[compound], NO_DEG_B), age)
     cliff_age = scenario.deg_max_age.get(COMPOUNDS[compound], age_norm)
     obs[10] = _tyre_temp_state(age, cliff_age, obs_cfg["tyre_cold_age_laps"])
     obs[11] = min(state.pit_count[ego] / obs_cfg["max_stops_norm"], 1.0)

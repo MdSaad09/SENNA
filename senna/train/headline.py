@@ -25,8 +25,15 @@ def run_headline_seed(seed: int, *, wandb_mode: str = "auto",
     run_id = run_identity(seed=seed, fingerprint=fingerprint, run_tag="headline")
     ledger = RunLedger(models_dir / "runs.json")
 
-    existing = ledger.rows().get(run_id)
-    if existing and existing["status"] == "complete":
+    # matched on (kind, seed, fingerprint), never on run_id — the run id embeds its
+    # start date, and an overnight interruption must not re-run finished seeds
+    existing = next(
+        (row for row in ledger.rows().values()
+         if row["kind"] == "headline" and row["seed"] == seed
+         and row["fingerprint"] == fingerprint and row["status"] == "complete"),
+        None,
+    )
+    if existing:
         print(f"headline seed {seed} already complete: {existing['run_dir']}")
         return Path(existing["run_dir"])
 

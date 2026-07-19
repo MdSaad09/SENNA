@@ -77,15 +77,19 @@ class RewardTermsCallback(BaseCallback):
         terminal = sum(abs(e.get("terminal", 0.0)) for e in self._window)
         shaping = sum(abs(value) for episode in self._window
                       for term, value in episode.items() if term != "terminal")
-        # 1e-8 is a divide guard, not a modelling constant — shaping can only reach
-        # zero on a degenerate window, and the ratio is then meaninglessly large anyway
-        self.logger.record("reward/dominance_ratio", terminal / max(shaping, 1e-8))
+        # no ratio without a denominator: the terminal-only arm has shaping
+        # identically zero, and |terminal|/epsilon would be noise dressed as telemetry
+        if shaping > 0.0:
+            self.logger.record("reward/dominance_ratio", terminal / shaping)
         self._window.clear()
 
-    def run_dominance_ratio(self) -> float:
+    def run_dominance_ratio(self) -> float | None:
         """The whole run so far — 5.5.4 expects roughly 3 (terminal about 3x the
-        maximum cumulative shaping)."""
-        return self._terminal_total / max(self._shaping_total, 1e-8)  # same divide guard
+        maximum cumulative shaping). None when no shaping term ever fired (the
+        terminal-only arm), and the manifest records that honestly."""
+        if self._shaping_total == 0.0:
+            return None
+        return self._terminal_total / self._shaping_total
 
 
 class ThroughputCallback(BaseCallback):

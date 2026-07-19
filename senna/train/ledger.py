@@ -21,7 +21,11 @@ class RunLedger:
 
     def record_start(self, *, run_id: str, kind: str, seed: int, fingerprint: str,
                      budget_steps: int, wandb_run_id: str | None) -> None:
+        # a same-day restart of an interrupted run lands on the same id; the counter
+        # keeps the first attempt visible instead of silently overwriting it
+        attempts = self._rows.get(run_id, {}).get("attempts", 0) + 1
         self._rows[run_id] = {
+            "attempts": attempts,
             "kind": kind,
             "seed": seed,
             "fingerprint": fingerprint,

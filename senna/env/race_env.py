@@ -21,7 +21,8 @@ from gymnasium.spaces import Box, MultiDiscrete
 
 from senna import config
 from senna.env import dynamics, events, observation, reward_v2, rivals
-from senna.env.masks import SLICK_ACTIONS, ActionMask, build_mask
+from senna.env.masks import SLICK_ACTIONS, UNFITTED_COMPOUND, ActionMask, build_mask
+from senna.env.observation import NO_DEG_A, NO_DEG_B
 from senna.env.pitlane import resolve_pit_lane
 from senna.env.reward import pace_shaping, shaping_step, terminal_points
 from senna.env.scenario import COMPOUNDS, build_scenario, compound_code
@@ -307,7 +308,7 @@ class F1RaceEnv(Env):
         if self._constraints == "penalty":
             # the learner sees no fence; the true mask still runs inside as the
             # violation detector (5.6.3 row 2)
-            return np.ones(10, dtype=bool)
+            return np.ones_like(self._mask.flat())
         return self._mask.flat()
 
     # -- events -----------------------------------------------------------------
@@ -537,7 +538,7 @@ class F1RaceEnv(Env):
         return terms
 
     def _v2_terms(self, prev_position: int, position: int, racing_time_s: float,
-                  terminated: bool, dnf: bool, terminal: float, lap: dict) -> dict:
+                  terminated: bool, dnf: bool, terminal: float, lap_facts: dict) -> dict:
         v2 = self._v2
         gain, loss = reward_v2.position_change(
             prev_position, position, gain=v2["position_gain"], loss=v2["position_loss"]
@@ -553,30 +554,31 @@ class F1RaceEnv(Env):
             "position_loss": loss,
             "terminal": terminal,
             "sc_pit": reward_v2.sc_pit_bonus(
-                lap["pitted"], lap["sc_laps_active"], bonus=v2["sc_pit_bonus"],
+                lap_facts["pitted"], lap_facts["sc_laps_active"], bonus=v2["sc_pit_bonus"],
                 window_laps=v2["sc_pit_window_laps"],
             ),
             "ers_efficiency": reward_v2.ers_efficiency(
-                lap["deployed_mj"], self.scenario.e_dep_mj,
+                lap_facts["deployed_mj"], self.scenario.e_dep_mj,
                 coef=v2["ers_efficiency_coef"],
             ),
             "grip_stint_end": reward_v2.grip_stint_end(
-                lap["pitted"], lap["outgoing_grip"], coef=v2["grip_stint_end_coef"]
+                lap_facts["pitted"], lap_facts["outgoing_grip"], coef=v2["grip_stint_end_coef"]
             ),
             "undercut": reward_v2.undercut_success(
                 self._undercut_resolved_ahead(), bonus=v2["undercut_bonus"]
             ),
             "ers_violation": reward_v2.ers_violation(
-                lap["derate_s"], penalty=v2["ers_violation_penalty"]
+                lap_facts["derate_s"], penalty=v2["ers_violation_penalty"]
             ),
             "fuel": reward_v2.fuel_exhausted(
                 terminated and dnf, penalty=v2["fuel_penalty"]
             ),
             "tyre_failure": reward_v2.tyre_failure(
-                lap["tyre_failed"], penalty=v2["tyre_failure_penalty"]
+                lap_facts["tyre_failed"], penalty=v2["tyre_failure_penalty"]
             ),
             "fastest_lap": reward_v2.fastest_lap_bonus(
-                holds_fastest, position, bonus=v2["fastest_lap_bonus"]
+                holds_fastest, position, bonus=v2["fastest_lap_bonus"],
+                points_places=len(self._points),  # P1-P10 = the env.yaml points table
             ),
         }
 
@@ -588,14 +590,18 @@ class F1RaceEnv(Env):
         pitted = pit_ego >= 1 and not bool(failed[ego])
         name = COMPOUNDS[int(state.compound[ego])]
         outgoing_grip = float(dynamics.grip_est(
-            self.scenario.deg_a.get(name, 0.0), self.scenario.deg_b.get(name, 1.0),
+            self.scenario.deg_a.get(name, NO_DEG_A),
+            self.scenario.deg_b.get(name, NO_DEG_B),
             int(state.tyre_age[ego]),
         ))
         self._field_fastest_s = min(self._field_fastest_s, float(racing_time.min()))
         self._ego_fastest_s = min(self._ego_fastest_s, float(racing_time[ego]))
         if pitted and prev_ahead_car is not None and self._undercut_check is None:
+            # +1: state.lap is pre-advance here, and the window counts full laps
+            # AFTER the stop lap — undercut_window_laps 3 means judged once laps
+            # L+1..L+3 have run, exactly as the yaml comment reads
             self._undercut_check = (
-                prev_ahead_car, state.lap + int(self._v2["undercut_window_laps"])
+                prev_ahead_car, state.lap + 1 + int(self._v2["undercut_window_laps"])
             )
         return {
             "pitted": pitted,
@@ -698,9 +704,14 @@ class F1RaceEnv(Env):
             self._count_violation(mask.reasons[f"mode:{mode}"])
         if mask.pit[pit]:
             return pit, mode
+        reason = mask.reasons[f"pit:{pit}"]
         if pit in SLICK_ACTIONS and pit not in self._fitted_slick_actions:
-            return self._snap_pit(pit), mode  # the guard holds in every mode, unfined
-        self._count_violation(mask.reasons[f"pit:{pit}"])
+            # the guard holds in every mode: the request is snapped, and it is fined
+            # only when a sporting rule (not the data limit) was what forbade it
+            if reason != UNFITTED_COMPOUND:
+                self._count_violation(reason)
+            return self._snap_pit(pit), mode
+        self._count_violation(reason)
         return pit, mode
 
     def _count_violation(self, reason: str) -> None:

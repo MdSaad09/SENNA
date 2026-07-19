@@ -55,8 +55,11 @@ def run_ablation(arm: str, *, seed: int, dry_run: bool = False,
                  tracker=None) -> Path:
     base_dir = Path(configs_dir or config.REPO_ROOT / "configs")
     models_dir = Path(models_dir or config.REPO_ROOT / "models")
+    # keyed by arm AND seed so the two seeds of one arm can never rebuild an
+    # overlay out from under a live run
     overlay = overlay_configs(arm, base_dir=base_dir,
-                              dest=models_dir / "overlays" / arm, dry_run=dry_run)
+                              dest=models_dir / "overlays" / f"{arm}-s{seed}",
+                              dry_run=dry_run)
 
     # the same fingerprint train_run will compute from the overlay, needed early so
     # the ledger row exists while the run is live
