@@ -22,9 +22,10 @@ Then:
 4. Implement in small vertical slices until green. Every constant goes to
    configs/*.yaml with a provenance comment — an inline number is a defect. Commit each
    coherent slice with a conventional, imperative message and no attribution trailers.
-5. Full gate: the entire test suite, linters and type checks, plus any property tests
-   the spec demands for this feature (e.g. the 100k-random-action legality and energy
-   test for F05).
+5. Full gate: the entire test suite, `make lint` (ruff over the WHOLE repo, notebooks
+   included — CI runs `ruff check .`, so a lint scoped to senna/tests/api hides notebook
+   errors and reds CI on merge), type checks, plus any property tests the spec demands
+   for this feature (e.g. the 100k-random-action legality and energy test for F05).
 6. Review: run the code-reviewer subagent and the spec-auditor subagent over
    `git diff main...HEAD`. Fix every Blocker and Major. For anything you deliberately
    reject, keep a one-line reason for the ship report.
