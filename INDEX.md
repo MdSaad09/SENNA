@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none — next session: `/plan-feature F07`
-**Next up:** F07, then F08
+**Active feature:** F07 — planned, next: `/ship F07` (same session)
+**Next up:** F08, then F09
 
 ## Feature ledger
 
@@ -18,7 +18,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F04 | Circuit ribbon pipeline | F01 | Done 17 Jul 2026 | feature/F04-circuit-ribbons | [F04](docs/learn/F04-circuit-ribbons.md) |
 | F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Done 19 Jul 2026 | feature/F05-race-env | [F05](docs/learn/F05-race-env.md) |
 | F06 | Rivals, baselines, oracle & throughput | F05 | Done 19 Jul 2026 | feature/F06-rivals-baselines | [F06](docs/learn/F06-rivals-baselines.md) |
-| F07 | Training: MaskablePPO + curriculum | F05, F06 | Todo | | |
+| F07 | Training: MaskablePPO + curriculum | F05, F06 | Planned | | |
 | F08 | Ablations & headline runs | F07 | Todo | | |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Todo | | |
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Todo | | |
