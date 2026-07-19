@@ -37,5 +37,6 @@ ipykernel                   # the kernel the calibration notebooks run on; float
 nbclient                    # headless notebook execution for make-style reruns; floats
 
 pytest                      # test runner; floats
+hypothesis>=6               # F05's 100k-random-action property test (5.5.2, E-01); floats
 httpx                       # TestClient transport; floats
 ruff                        # linter; floats

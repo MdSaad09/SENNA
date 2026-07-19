@@ -14,6 +14,9 @@ energy_store:
 
 harvest:
   mgu_k_per_lap_cap_mj: 2.0    # sourced (A) — 2024-era MGU-K recovery limit, spec 5.2
+  braking_energy_mj_per_lap_default: 9.0  # stylised — era fallback where a circuit has no 2024 energy
+                                          # fit (Canada, Paul Ricard); 2024 harvest is capped at the
+                                          # 2 MJ MGU-K limit above, so this only needs to exceed the cap
 
 mass:
   minimum_car_kg: 798          # sourced (B) — spec 5.2, approximate
