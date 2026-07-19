@@ -4,7 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F06 — planned, ready for `/ship F06` in this session
+**Active feature:** none — next session: `/plan-feature F07`
 **Next up:** F07, then F08
 
 ## Feature ledger
@@ -17,7 +17,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F03 | Synthetic 2026 generator (T1–T8) | F02 | Done 17 Jul 2026 | feature/F03-synthetic-2026 | [F03](docs/learn/F03-synthetic-2026.md) |
 | F04 | Circuit ribbon pipeline | F01 | Done 17 Jul 2026 | feature/F04-circuit-ribbons | [F04](docs/learn/F04-circuit-ribbons.md) |
 | F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Done 19 Jul 2026 | feature/F05-race-env | [F05](docs/learn/F05-race-env.md) |
-| F06 | Rivals, baselines, oracle & throughput | F05 | Planned | | |
+| F06 | Rivals, baselines, oracle & throughput | F05 | Done 19 Jul 2026 | feature/F06-rivals-baselines | [F06](docs/learn/F06-rivals-baselines.md) |
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Todo | | |
 | F08 | Ablations & headline runs | F07 | Todo | | |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Todo | | |
@@ -36,8 +36,14 @@ the work — resume with `claude --continue`, or start fresh and say
 ## Decisions log (spec Part 7 answers)
 - **OQ-1 name:** SENNA (Saad, 7 Jul 2026). Repo, docs and UI say SENNA; code identifiers
   follow the spec.
-- **OQ-2 compute:** default assumption 12-core CPU, 8M-step budget — replace with real
-  hardware after the F06 throughput measurement.
+- **OQ-2 compute:** MEASURED 19 Jul 2026 (F06 `make bench`, spec 5.6.2): **18,477 env
+  steps/s aggregate** (~1,540/worker across 12 SubprocVecEnv workers) on Saad's Mac
+  (macOS arm64 / Apple Silicon, 10 cores), random-legal actions with the per-step mask
+  fetch on the clock. That puts the 8M-step budget at ~7 minutes and 15M at ~14 —
+  comfortably above the ~300 steps/s floor and even the spec's 1,000–4,000 expectation,
+  so training is cheap and the F07 3-seed + ablation plans are safe as written. Config
+  hash e28c3d83ba10. A GPU is optional (the policy is tiny); note the real training
+  hardware here if it differs.
 - **OQ-3 deadline & AI policy:** default freeze 17 Nov 2026; AI assistance declared.
   Saad: replace with the real submission date and the written COMP702 policy.
 - **OQ-4 … OQ-12:** spec defaults apply until edited here.

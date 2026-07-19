@@ -1,7 +1,10 @@
 # A-09 reproducibility pack. Each stub becomes real in the feature that owns it;
 # until then it says so instead of silently doing nothing.
+#
+# Recipes call `python` directly, so run these inside the project env: either
+# `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock migrate ingest fit synth synth-figures circuits train eval report
+.PHONY: lock migrate ingest fit synth synth-figures circuits bench train eval report
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -40,6 +43,11 @@ synth-figures:
 # geometry — local only, never CI (needs both). Regenerate after a fresh ingest.
 circuits:
 	python -m senna.circuits.build
+
+# measure env steps/s across workers — the 5.6.2 number that prices the training plan.
+# narrow with WORKERS=8 or STEPS=50000; record the result and hardware in INDEX (OQ-2).
+bench:
+	python -m senna.bench.throughput $(if $(WORKERS),--workers $(WORKERS)) $(if $(STEPS),--steps $(STEPS))
 
 train:
 	@echo "not yet: F07 owns make train"

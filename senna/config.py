@@ -4,6 +4,7 @@ Every constant the system uses comes through here. A null in the yaml means
 "not fitted yet"; reading one raises instead of guessing (configs/README.md).
 """
 
+import hashlib
 from pathlib import Path
 
 import yaml
@@ -21,6 +22,17 @@ def load(name: str, configs_dir: Path | None = None) -> dict:
         raise FileNotFoundError(f"no such config: {path}")
     with path.open() as handle:
         return yaml.safe_load(handle)
+
+
+def fingerprint(names: list[str], configs_dir: Path | None = None) -> str:
+    """A sha256 over the raw bytes of the named config files, in order — the exact configs
+    an artefact was produced from. The throughput bench stamps a run with it (5.6.2), and
+    the served model carries the same hash later (SimulationRun.env_config_hash)."""
+    directory = configs_dir or REPO_ROOT / "configs"
+    digest = hashlib.sha256()
+    for name in names:
+        digest.update((directory / f"{name}.yaml").read_bytes())
+    return digest.hexdigest()
 
 
 def get(cfg: dict, dotted_path: str):
