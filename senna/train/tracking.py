@@ -62,13 +62,15 @@ def make_tracker(*, mode: str, project: str, run_name: str, group: str,
 def sb3_output_format(tracker: Tracker):
     """An SB3 KVWriter that forwards every logger dump (rollout/*, train/*, time/*)
     to the tracker, replacing the tensorboard route wandb's stock callback needs."""
+    import numpy as np
     from stable_baselines3.common.logger import KVWriter
 
     class _TrackerFormat(KVWriter):
         def write(self, key_values: dict, key_excluded: dict, step: int = 0) -> None:
             numeric = {
                 key: float(value) for key, value in key_values.items()
-                if isinstance(value, (int, float))
+                # np.number catches approx_kl and friends, which SB3 emits as float32
+                if isinstance(value, (int, float, np.number))
             }
             if numeric:
                 tracker.log(numeric, step=step)

@@ -45,6 +45,15 @@ class GateLog:
         self._stage(stage)["budget_stop"] = {"step": step}
         self._write()
 
+    def record_recording(self, stage: str, *, replaced_seeds: list, traces_dir: str) -> None:
+        """The Stage B trace-recording audit: which frozen seeds were swapped for
+        overflow seeds (a DNF'd recording), and where the npz twins live."""
+        self._stage(stage)["recording"] = {
+            "replaced_seeds": [list(pair) for pair in replaced_seeds],
+            "traces_dir": traces_dir,
+        }
+        self._write()
+
     def record_selection(self, stage: str, *, step: int, values: dict) -> None:
         self._stage(stage)["selected_checkpoint"] = {"step": step, **values}
         self._write()
