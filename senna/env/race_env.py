@@ -19,10 +19,12 @@ import numpy as np
 from gymnasium import Env
 from gymnasium.spaces import Box, MultiDiscrete
 
-from senna.env import dynamics, events, observation, rivals
-from senna.env.masks import ActionMask, build_mask
+from senna import config
+from senna.env import dynamics, events, observation, reward_v2, rivals
+from senna.env.masks import SLICK_ACTIONS, UNFITTED_COMPOUND, ActionMask, build_mask
+from senna.env.observation import NO_DEG_A, NO_DEG_B
 from senna.env.pitlane import resolve_pit_lane
-from senna.env.reward import RewardTerms, pace_shaping, shaping_step, terminal_points
+from senna.env.reward import pace_shaping, shaping_step, terminal_points
 from senna.env.scenario import COMPOUNDS, build_scenario, compound_code
 from senna.env.state import RaceState
 from senna.env.twin import EventTrace
@@ -37,11 +39,18 @@ class F1RaceEnv(Env):
 
     def __init__(self, circuit: str, era: str = "2026", *, rival_band: str = "train",
                  configs_dir=None, record: bool = False, twin: EventTrace | None = None,
-                 solo: bool = False, weather: str = "markov", hazards: str = "full"):
+                 solo: bool = False, weather: str = "markov", hazards: str = "full",
+                 constraints: str = "mask", reward_mode: str = "v3"):
         if weather not in ("markov", "dry"):
             raise ValueError(f"weather must be 'markov' or 'dry', not '{weather}'")
         if hazards not in ("full", "sc_vsc", "none"):
             raise ValueError(f"hazards must be 'full', 'sc_vsc' or 'none', not '{hazards}'")
+        if constraints not in ("mask", "penalty"):
+            raise ValueError(f"constraints must be 'mask' or 'penalty', not '{constraints}'")
+        if reward_mode not in ("v3", "terminal_only", "v2"):
+            raise ValueError(
+                f"reward_mode must be 'v3', 'terminal_only' or 'v2', not '{reward_mode}'"
+            )
         self.circuit = circuit
         self.era = era
         self.scenario = build_scenario(circuit, era, configs_dir=configs_dir)
@@ -50,6 +59,24 @@ class F1RaceEnv(Env):
         self._solo = solo
         self._weather_mode = weather
         self._hazards = hazards
+        self._constraints = constraints
+        self._reward_mode = reward_mode
+        # the ablation arms' constants load once here, never in the hot loop; the
+        # default path does not read ablations.yaml at all (5.6.3 rows 2-3)
+        ablations = (config.load("ablations", configs_dir)
+                     if constraints == "penalty" or reward_mode == "v2" else None)
+        self._violation_penalty = (float(ablations["penalty"]["violation_penalty"])
+                                   if constraints == "penalty" else 0.0)
+        self._v2 = ablations["reward_v2"] if reward_mode == "v2" else None
+        if reward_mode == "v2":
+            term_keys = ("pace", "position_gain", "position_loss", "terminal", "sc_pit",
+                         "ers_efficiency", "grip_stint_end", "undercut", "ers_violation",
+                         "fuel", "tyre_failure", "fastest_lap")
+        else:
+            term_keys = ("pace", "position", "terminal")
+        if constraints == "penalty":
+            term_keys = (*term_keys, "violation_penalty")
+        self._term_keys = term_keys
 
         self.action_space = MultiDiscrete([6, 4])
         self.observation_space = Box(
@@ -89,6 +116,12 @@ class F1RaceEnv(Env):
         age_fallback = env_cfg["obs"]["tyre_age_norm_laps"]
         self._max_age_by_code = np.array(
             [self.scenario.deg_max_age.get(name, age_fallback) for name in COMPOUNDS]
+        )
+        # F08 mask guard (INDEX 19 Jul): pit action = compound code + 1, slicks only —
+        # the baselines already shop fitted compounds, this closes the same door on
+        # the agent
+        self._fitted_slick_actions = frozenset(
+            compound_code(name) + 1 for name in self.scenario.available_compounds
         )
 
         self._state: RaceState | None = None
@@ -161,11 +194,17 @@ class F1RaceEnv(Env):
         self._ego_harvest_total = 0.0
         self._ego_deploy_total = 0.0
         self._forced_pit_now = False
+        self._violations_this_lap: dict[str, int] = {}
+        if self._reward_mode == "v2":
+            self._sc_laps_active = 0
+            self._field_fastest_s = np.inf
+            self._ego_fastest_s = np.inf
+            self._undercut_check: tuple[int, int] | None = None
         self._trace = self._new_trace(seed, grid, driver_s) if self._record else None
         self._recorded_laps = 0
 
         self._mask = self._ego_mask()
-        return self._observe(), self._info(RewardTerms(0.0, 0.0, 0.0, 0.0))
+        return self._observe(), self._info(dict.fromkeys((*self._term_keys, "total"), 0.0))
 
     def _new_trace(self, seed, grid, driver_s) -> EventTrace:
         laps, n = self.total_laps, self.n_cars
@@ -199,10 +238,14 @@ class F1RaceEnv(Env):
         state = self._state
         lap_index = state.lap  # 0-based row for the record / replay trace
         prev_position = int(state.positions()[state.ego])
+        prev_ahead_car = self._car_ahead() if self._reward_mode == "v2" else None
         pit_ego, mode_ego = self._coerce(action)
 
         red_flag, onset = self._resolve_track_status(lap_index)
         self._resolve_weather(lap_index)
+        if self._reward_mode == "v2":
+            self._sc_laps_active = (self._sc_laps_active + 1
+                                    if state.track_status == events.SC else 0)
 
         modes = self._field_modes(mode_ego, lap_index)
         pit_choice = self._field_pit_choices(pit_ego, red_flag, onset, lap_index)
@@ -226,6 +269,12 @@ class F1RaceEnv(Env):
         )
         pit_time = self._pit_times(pit_choice, failed, red_flag)
         lap_time = racing_time + pit_time
+
+        # gathered before the pit swap mutates compound and age — the stint-end grip
+        # must be the outgoing set's, and the fastest-lap ledger wants racing time
+        v2_lap = (self._v2_lap_facts(pit_ego, failed, delivered, derate, racing_time,
+                                     prev_ahead_car)
+                  if self._reward_mode == "v2" else None)
 
         if self._record:
             self._capture(lap_index, red_flag, failed, pit_choice, modes)
@@ -251,11 +300,15 @@ class F1RaceEnv(Env):
         # solo, the position and terminal terms are constants, so pit loss must enter
         # through the pace term or stops are free (5.7 Stage A; F07 decision 1)
         pace_time_s = float(lap_time[ego]) if self._solo else float(racing_time[ego])
-        terms = self._reward(prev_position, pace_time_s, terminated)
+        terms = self._reward(prev_position, pace_time_s, terminated, v2_lap)
         self._mask = self._ego_mask()
-        return self._observe(), terms.total, terminated, False, self._info(terms)
+        return self._observe(), terms["total"], terminated, False, self._info(terms)
 
     def action_masks(self) -> np.ndarray:
+        if self._constraints == "penalty":
+            # the learner sees no fence; the true mask still runs inside as the
+            # violation detector (5.6.3 row 2)
+            return np.ones_like(self._mask.flat())
         return self._mask.flat()
 
     # -- events -----------------------------------------------------------------
@@ -456,17 +509,132 @@ class F1RaceEnv(Env):
 
     # -- reward, gaps, observation, info ---------------------------------------
 
-    def _reward(self, prev_position: int, racing_time_s: float, terminated: bool) -> RewardTerms:
+    def _reward(self, prev_position: int, racing_time_s: float, terminated: bool,
+                v2_lap: dict | None) -> dict:
+        """The step's reward decomposition; total is always the exact sum of the other
+        keys, in every mode — the contract the RewardTermsCallback iterates over."""
         state = self._state
         position = int(state.positions()[state.ego])
-        pace = pace_shaping(racing_time_s, self.scenario.t_ref_s, self.scenario.s_ref_s, self._w_p)
-        shape = shaping_step(prev_position, position, self._coef, self._gamma)
-        terminal = 0.0
-        if terminated:
-            dnf = bool(state.retired[state.ego])
-            terminal = terminal_points(position, self._points, self._divisor, dnf=dnf)
-        total = pace + shape + terminal
-        return RewardTerms(pace=pace, position=shape, terminal=terminal, total=total)
+        dnf = bool(state.retired[state.ego])
+        terminal = (terminal_points(position, self._points, self._divisor, dnf=dnf)
+                    if terminated else 0.0)
+
+        if self._reward_mode == "v2":
+            terms = self._v2_terms(prev_position, position, racing_time_s, terminated,
+                                   dnf, terminal, v2_lap)
+        elif self._reward_mode == "terminal_only":
+            terms = {"pace": 0.0, "position": 0.0, "terminal": terminal}
+        else:
+            terms = {
+                "pace": pace_shaping(racing_time_s, self.scenario.t_ref_s,
+                                     self.scenario.s_ref_s, self._w_p),
+                "position": shaping_step(prev_position, position, self._coef, self._gamma),
+                "terminal": terminal,
+            }
+        if self._constraints == "penalty":
+            terms["violation_penalty"] = (self._violation_penalty
+                                          * sum(self._violations_this_lap.values()))
+        terms["total"] = sum(terms.values())
+        return terms
+
+    def _v2_terms(self, prev_position: int, position: int, racing_time_s: float,
+                  terminated: bool, dnf: bool, terminal: float, lap_facts: dict) -> dict:
+        v2 = self._v2
+        gain, loss = reward_v2.position_change(
+            prev_position, position, gain=v2["position_gain"], loss=v2["position_loss"]
+        )
+        holds_fastest = terminated and self._ego_fastest_s <= self._field_fastest_s
+        return {
+            # pace and terminal reuse v3's forms (ablations.yaml: the arm isolates
+            # what v2 added); the ego's only retirement path is fuel exhaustion, so
+            # a terminal DNF and the fuel penalty coincide by construction
+            "pace": pace_shaping(racing_time_s, self.scenario.t_ref_s,
+                                 self.scenario.s_ref_s, self._w_p),
+            "position_gain": gain,
+            "position_loss": loss,
+            "terminal": terminal,
+            "sc_pit": reward_v2.sc_pit_bonus(
+                lap_facts["pitted"], lap_facts["sc_laps_active"], bonus=v2["sc_pit_bonus"],
+                window_laps=v2["sc_pit_window_laps"],
+            ),
+            "ers_efficiency": reward_v2.ers_efficiency(
+                lap_facts["deployed_mj"], self.scenario.e_dep_mj,
+                coef=v2["ers_efficiency_coef"],
+            ),
+            "grip_stint_end": reward_v2.grip_stint_end(
+                lap_facts["pitted"], lap_facts["outgoing_grip"], coef=v2["grip_stint_end_coef"]
+            ),
+            "undercut": reward_v2.undercut_success(
+                self._undercut_resolved_ahead(), bonus=v2["undercut_bonus"]
+            ),
+            "ers_violation": reward_v2.ers_violation(
+                lap_facts["derate_s"], penalty=v2["ers_violation_penalty"]
+            ),
+            "fuel": reward_v2.fuel_exhausted(
+                terminated and dnf, penalty=v2["fuel_penalty"]
+            ),
+            "tyre_failure": reward_v2.tyre_failure(
+                lap_facts["tyre_failed"], penalty=v2["tyre_failure_penalty"]
+            ),
+            "fastest_lap": reward_v2.fastest_lap_bonus(
+                holds_fastest, position, bonus=v2["fastest_lap_bonus"],
+                points_places=len(self._points),  # P1-P10 = the env.yaml points table
+            ),
+        }
+
+    def _v2_lap_facts(self, pit_ego: int, failed: np.ndarray, delivered: np.ndarray,
+                      derate: np.ndarray, racing_time: np.ndarray,
+                      prev_ahead_car: int | None) -> dict:
+        state = self._state
+        ego = state.ego
+        pitted = pit_ego >= 1 and not bool(failed[ego])
+        name = COMPOUNDS[int(state.compound[ego])]
+        outgoing_grip = float(dynamics.grip_est(
+            self.scenario.deg_a.get(name, NO_DEG_A),
+            self.scenario.deg_b.get(name, NO_DEG_B),
+            int(state.tyre_age[ego]),
+        ))
+        self._field_fastest_s = min(self._field_fastest_s, float(racing_time.min()))
+        self._ego_fastest_s = min(self._ego_fastest_s, float(racing_time[ego]))
+        if pitted and prev_ahead_car is not None and self._undercut_check is None:
+            # +1: state.lap is pre-advance here, and the window counts full laps
+            # AFTER the stop lap — undercut_window_laps 3 means judged once laps
+            # L+1..L+3 have run, exactly as the yaml comment reads
+            self._undercut_check = (
+                prev_ahead_car, state.lap + 1 + int(self._v2["undercut_window_laps"])
+            )
+        return {
+            "pitted": pitted,
+            "outgoing_grip": outgoing_grip,
+            "deployed_mj": float(delivered[ego]),
+            "derate_s": float(derate[ego]),
+            "tyre_failed": bool(failed[ego]),
+            "sc_laps_active": self._sc_laps_active,
+        }
+
+    def _undercut_resolved_ahead(self) -> bool:
+        """True on the lap a pending undercut window closes with the ego classified
+        ahead of its pre-stop target; the pending check clears either way."""
+        if self._undercut_check is None or self._state.lap < self._undercut_check[1]:
+            return False
+        target, _ = self._undercut_check
+        self._undercut_check = None
+        state = self._state
+        if bool(state.retired[state.ego]) or bool(state.retired[target]):
+            return False
+        rank = state.positions()
+        return int(rank[state.ego]) < int(rank[target])
+
+    def _car_ahead(self) -> int | None:
+        """The car classified directly ahead of the ego at this moment, or None for
+        the leader — the target a v2 undercut is judged against."""
+        state = self._state
+        rank = state.positions()
+        position = int(rank[state.ego])
+        if position <= 1:
+            return None
+        by_rank = np.argsort(rank, kind="stable")
+        return int(by_rank[position - 2])
 
     def _gaps_ahead(self) -> np.ndarray:
         """Each car's time gap to the car classified one place ahead — the traffic input.
@@ -509,23 +677,54 @@ class F1RaceEnv(Env):
             second_compound_used=bool(state.second_compound_used[state.ego]),
             attack_soc_floor_mj=self.scenario.attack_soc_floor_mj,
             validity=self.scenario.env["compound_validity"],
+            fitted_slick_actions=self._fitted_slick_actions,
         )
 
     def _coerce(self, action) -> tuple[int, int]:
-        """Physics disposes: an action the mask forbids is snapped to a legal one, so a
-        raw agent request can never execute something illegal (F-16)."""
+        """Physics disposes. Masked, an illegal request snaps to a legal one, so the
+        agent can never execute it (F-16). Under penalty constraints the request
+        executes and is counted instead — v2's architecture, rebuilt for ablation 2
+        (5.6.3) — except the unfitted-compound guard, a data limit no fine buys out."""
         pit, mode = int(action[0]), int(action[1])
         mask = self._mask
+        self._violations_this_lap = {}
+        if self._constraints == "penalty":
+            return self._coerce_penalty(pit, mode)
         if not mask.mode[mode]:
             mode = _BALANCED
         if mask.pit[pit]:
             return pit, mode
+        return self._snap_pit(pit), mode
+
+    def _coerce_penalty(self, pit: int, mode: int) -> tuple[int, int]:
+        mask = self._mask
+        if not mask.mode[mode]:
+            # attack on an empty store executes and derates anyway (E-01 clipping);
+            # the fine is on the request, exactly v2's clip-plus-penalty
+            self._count_violation(mask.reasons[f"mode:{mode}"])
+        if mask.pit[pit]:
+            return pit, mode
+        reason = mask.reasons[f"pit:{pit}"]
+        if pit in SLICK_ACTIONS and pit not in self._fitted_slick_actions:
+            # the guard holds in every mode: the request is snapped, and it is fined
+            # only when a sporting rule (not the data limit) was what forbade it
+            if reason != UNFITTED_COMPOUND:
+                self._count_violation(reason)
+            return self._snap_pit(pit), mode
+        self._count_violation(reason)
+        return pit, mode
+
+    def _count_violation(self, reason: str) -> None:
+        self._violations_this_lap[reason] = self._violations_this_lap.get(reason, 0) + 1
+
+    def _snap_pit(self, pit: int) -> int:
+        mask = self._mask
         if mask.pit[0] and pit != 0:
-            return 0, mode  # asked for an unavailable compound; stay out
+            return 0  # asked for an unavailable compound; stay out
         first = COMPOUNDS[int(self._state.first_compound[self._state.ego])]
         compounds = [k for k in np.flatnonzero(mask.pit) if k != 0]
         fresh = [k for k in compounds if COMPOUNDS[k - 1] != first]
-        return int((fresh or compounds)[0]), mode
+        return int((fresh or compounds)[0])
 
     def _observe(self) -> np.ndarray:
         ahead, behind, gap_ahead, gap_behind = self._neighbours()
@@ -534,7 +733,7 @@ class F1RaceEnv(Env):
             ahead=ahead, behind=behind, pit_open=self._pit_open(),
         )
 
-    def _info(self, terms: RewardTerms) -> dict:
+    def _info(self, terms: dict) -> dict:
         state = self._state
         ahead, behind, gap_ahead, gap_behind = self._neighbours()
         info = {
@@ -543,10 +742,8 @@ class F1RaceEnv(Env):
             "gap_ahead_s": gap_ahead,
             "gap_behind_s": gap_behind,
             "track_status": _STATUS_NAMES[state.track_status],
-            "reward_terms": {
-                "pace": terms.pace, "position": terms.position,
-                "terminal": terms.terminal, "total": terms.total,
-            },
+            "reward_terms": dict(terms),
+            "violations": dict(self._violations_this_lap),
             "energy": {
                 "harvest_mj": float(state.last_harvest_mj[state.ego]),
                 "deploy_mj": float(state.last_deploy_mj[state.ego]),

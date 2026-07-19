@@ -4,8 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F08 — planned 19 Jul 2026 ([plan](docs/plans/F08-plan.md), opens
-with the unfitted-compound mask guard as required); next: `/ship F08`, same session
+**Active feature:** none — next session: `/plan-feature F09`
 **Next up:** F09, then F10
 
 ## Feature ledger
@@ -20,7 +19,7 @@ with the unfitted-compound mask guard as required); next: `/ship F08`, same sess
 | F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Done 19 Jul 2026 | feature/F05-race-env | [F05](docs/learn/F05-race-env.md) |
 | F06 | Rivals, baselines, oracle & throughput | F05 | Done 19 Jul 2026 | feature/F06-rivals-baselines | [F06](docs/learn/F06-rivals-baselines.md) |
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Done 19 Jul 2026 | feature/F07-training | [F07](docs/learn/F07-training.md) |
-| F08 | Ablations & headline runs | F07 | Planned | | |
+| F08 | Ablations & headline runs | F07 | Done 19 Jul 2026 | feature/F08-ablations | [F08](docs/learn/F08-ablations.md) |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Todo | | |
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Todo | | |
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Todo | | |
@@ -64,6 +63,10 @@ the work — resume with `claude --continue`, or start fresh and say
   mask slicks outside scenario.available_compounds. Touches the F05 mask contract
   (F-16), so it opens F08's plan rather than landing as a hotfix. F07's own gates are
   unaffected (Stage A runs Monza solo; the heuristic now shops fitted compounds only).
+- **F08 headline model (19 Jul 2026):** `senna-ppo-6b6edb78d84e-C-00835584` (seed 331,
+  step 835,584, 6.517 validation points) promoted to `models/headline/` — the frozen
+  checkpoint F09 explains and F10 serves. Evidence: docs/results/F08-ablations.md;
+  ledger models/runs.json. W&B runs are offline pending an account.
 - **AR-10 race fuel (spec Part 8):** VERIFIED 16 Jul 2026 — the FIA 2026 regs cap fuel
   energy flow at 3,000 MJ/h (energy-based, replacing 100 kg/h) and the race allowance
   works out to ~70 kg with the Advanced Sustainable Fuel spec. Sources: Formula1.com

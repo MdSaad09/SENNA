@@ -12,6 +12,8 @@ import warnings
 class Tracker:
     """No-op base. The real tracker overrides all three; tests record through log."""
 
+    run_id = None  # the W&B run id the manifest and ledger record (F08 finding 5)
+
     def log(self, series: dict, *, step: int) -> None:
         pass
 
@@ -25,6 +27,7 @@ class Tracker:
 class _WandbTracker(Tracker):
     def __init__(self, run):
         self._run = run
+        self.run_id = getattr(run, "id", None)
 
     def log(self, series: dict, *, step: int) -> None:
         self._run.log(series, step=step)
@@ -38,7 +41,7 @@ class _WandbTracker(Tracker):
 
 
 def make_tracker(*, mode: str, project: str, run_name: str, group: str,
-                 config: dict) -> Tracker:
+                 config: dict, tags: list | None = None) -> Tracker:
     """mode: auto | online | offline | disabled. auto goes online only when
     WANDB_API_KEY is set, so a machine with no account still trains and syncs later."""
     if mode == "auto":
@@ -50,7 +53,8 @@ def make_tracker(*, mode: str, project: str, run_name: str, group: str,
 
     try:
         run = wandb.init(
-            project=project, name=run_name, group=group, mode=mode, config=config
+            project=project, name=run_name, group=group, mode=mode, config=config,
+            tags=tags,
         )
     except Exception as error:  # telemetry must never kill a training run
         warnings.warn(f"wandb.init failed ({error}); continuing without tracking",

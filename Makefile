@@ -4,7 +4,7 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train eval report
+.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval report
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -67,8 +67,28 @@ train:
 		$(if $(WORKERS),--workers $(WORKERS)) $(if $(VEC),--vec $(VEC)) \
 		$(if $(WANDB),--wandb-mode $(WANDB))
 
+# one 5.6.3 ablation arm, Stage C from scratch at the 4M ceiling (F08). RUN= names
+# the arm in configs/ablations.yaml; SEED= defaults to the first ablation seed.
+# DRY=1 proves the wiring on the tiny profile before any real run. Run arms one at
+# a time: the ledger is a single file and each run wants every core anyway. Local only.
+ablate:
+	python -m senna.train.ablate --run $(RUN) $(if $(SEED),--seed $(SEED)) \
+		$(if $(DRY),--dry-run) $(if $(WANDB),--wandb-mode $(WANDB)) \
+		$(if $(WORKERS),--workers $(WORKERS)) $(if $(VEC),--vec $(VEC))
+
+# the 3-seed headline (F08): full curriculum per seed, cross-seed selection on
+# validation points, promotion to models/headline — the model version F09/F10
+# consume. SEED= narrows to one seed (no selection); completed seeds are skipped
+# via models/runs.json.
+headline:
+	python -m senna.train.headline $(if $(SEED),--seed $(SEED)) \
+		$(if $(WANDB),--wandb-mode $(WANDB)) $(if $(WORKERS),--workers $(WORKERS)) \
+		$(if $(VEC),--vec $(VEC))
+
+# re-score a run's selected checkpoint on the validation banks (F08) and note the
+# result in the ledger. RUN=models/<run_dir>.
 eval:
-	@echo "not yet: F08 owns make eval"
+	python -m senna.train.selection --rescore $(RUN)
 
 report:
 	@echo "not yet: F14 owns make report"
