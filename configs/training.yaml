@@ -1,0 +1,56 @@
+# SENNA — MaskablePPO training constants (F07, master spec 5.6.1). Every value carries
+# the 5.6.1 default with its range and reasoning; this file is the single tuning
+# surface. A run is reproducible from this file + curriculum.yaml + seeds.yaml + the
+# git sha — config.fingerprint over that set is stamped into every checkpoint manifest.
+#
+# Origins: sourced (spec section or FIA regs, with the id), fitted (which notebook), or
+# stylised (an explicit choice naming its reasoning).
+
+ppo:
+  n_envs: 12                    # sourced 5.6.1 (8-16) — one per physical core; the env is
+                                # numpy + Python, so CPU parallelism is the throughput lever
+  n_steps: 512                  # sourced 5.6.1 (256-1024) — a 6144-step rollout spans ~100
+                                # full races per update on a 44-70 step horizon
+  batch_size: 1024              # sourced 5.6.1 (512-2048) — divides 6144 into 6 minibatches
+  n_epochs: 8                   # sourced 5.6.1 (4-10) — standard PPO reuse; watch
+                                # train/approx_kl in W&B
+  learning_rate:                # sourced 5.6.1 (1e-4..5e-4) — linear decay replaces v2's
+    start: 3.0e-4               # cosine: one fewer shape to justify. Decayed over the
+    end: 0.0                    # schedules.horizon below, not SB3's per-learn progress
+  gamma: 0.997                  # sourced 5.6.1 (0.995-0.999) — 0.997^69 = 0.81 keeps lap-1
+                                # influence at lap 70. CONSCIOUS MISMATCH with env.yaml
+                                # reward.gamma 1.0 (F-15): the position potential telescopes
+                                # exactly only at matched gamma, so at 0.997 the Ng-Harada-
+                                # Russell invariance holds approximately, not verbatim
+                                # (~0.1 * 0.003 residual per lap). Master spec wins (F07
+                                # decision 2); 1.0 and 0.999 are one-line F08 runs.
+  gae_lambda: 0.95              # sourced 5.6.1 — the standard bias-variance point
+  clip_range: 0.2               # sourced 5.6.1 — fixed, PPO standard
+  ent_coef:                     # sourced 5.6.1 — explore early, commit late; the endpoint
+    start: 0.01                 # is raised from v2 to avoid premature collapse in Stage C
+    end: 0.002                  # stochasticity. SB3 takes a float, so the decay lives in
+                                # a callback driven by the global step
+  vf_coef: 0.5                  # sourced 5.6.1 — SB3 default; no evidence it needs touching
+  max_grad_norm: 0.5            # sourced 5.6.1 — SB3 default
+policy:
+  pi: [256, 256]                # sourced 5.6.1 ([128,128]..[512,256]) — a 32-dim input
+  vf: [256, 256]                # needs no more, and a small policy keeps the F09 surrogate
+                                # distillation faithful (5.8)
+schedules:
+  horizon: global               # stylised — lr and ent_coef decay linearly over the SUMMED
+                                # stage ceilings (8M), driven by the true global step.
+                                # Per-stage decay would jump lr back up at every early gate
+                                # exit (R-12) — exactly when the obs distribution shifts.
+                                # The cost: an early-gated run ends with lr above zero.
+normalize:
+  obs: true                     # sourced 5.6.1 — observations vary in scale
+  reward: false                 # sourced 5.6.1 — the reward is hand-scaled (5.5.4); a
+                                # running normaliser would shrink the sparse terminal
+                                # signal the dominance ratio guards
+  carry_across_stages: true     # sourced 5.7 — continuity beats re-warming for an
+                                # observation vector whose bounds do not change (F-23)
+tracking:
+  project: senna                # stylised — the W&B project name
+  mode: auto                    # stylised — online when WANDB_API_KEY is set, offline
+                                # otherwise, so training never crashes without an account.
+                                # Training-side only; W&B never enters serving (F-26).

@@ -55,8 +55,17 @@ circuits:
 bench:
 	python -m senna.bench.throughput $(if $(WORKERS),--workers $(WORKERS)) $(if $(STEPS),--steps $(STEPS))
 
+# train the curriculum A->B->C (F07, spec 5.6.1/5.7): MaskablePPO, competence gates,
+# triplet checkpoints under models/, gate values in curriculum_gates.json. Narrow with
+# SEED=211, FROM=B RESUME=models/<run>/stageA/final, STEPS=5000 (dev cap, smoke only),
+# WANDB=offline|disabled, WORKERS=2 VEC=dummy. Local only — training never runs in
+# serving (F-26).
 train:
-	@echo "not yet: F07 owns make train"
+	python -m senna.train.run $(if $(SEED),--seed $(SEED)) \
+		$(if $(FROM),--from-stage $(FROM)) $(if $(TO),--to-stage $(TO)) \
+		$(if $(RESUME),--resume $(RESUME)) $(if $(STEPS),--total-steps $(STEPS)) \
+		$(if $(WORKERS),--workers $(WORKERS)) $(if $(VEC),--vec $(VEC)) \
+		$(if $(WANDB),--wandb-mode $(WANDB))
 
 eval:
 	@echo "not yet: F08 owns make eval"

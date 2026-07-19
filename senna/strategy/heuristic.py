@@ -38,6 +38,9 @@ class EngineerHeuristic:
         validity = scenario.env["compound_validity"]
         self._slick_max = validity["slick_max_wetness"]
         self._wet_min = validity["wet_min_wetness"]
+        # only compounds with a fitted deg curve exist at this event — Suzuka's 2026
+        # fit has no SOFT, and a target outside this set would crash the deg trigger
+        self._fitted_slicks = tuple(compound_code(c) for c in scenario.available_compounds)
 
     def reset(self, obs, info, *, rng=None) -> None:
         self._compound = _START
@@ -84,8 +87,8 @@ class EngineerHeuristic:
         if dry and not self._second_used and laps_left <= self._forced_laps_left:
             return self._dry_target(laps_left, mask)
 
-        # the ordinary degradation trigger — only slicks carry a fitted deg curve
-        if dry and self._compound in _SLICKS:
+        # the ordinary degradation trigger — only fitted slicks carry a deg curve
+        if dry and self._compound in self._fitted_slicks:
             deg_s = dynamics.tyre_deg_s(
                 self._scenario.t0_s, self._scenario.deg_a[COMPOUNDS[self._compound]],
                 self._scenario.deg_b[COMPOUNDS[self._compound]], age,
@@ -105,11 +108,10 @@ class EngineerHeuristic:
             want = compound_code("SOFT")
         if not self._second_used and want == _START:
             want = compound_code("HARD")
-        head = want + 1
-        if mask[head]:
-            return head
+        if want in self._fitted_slicks and mask[want + 1]:
+            return want + 1
         for candidate in (compound_code("HARD"), compound_code("MEDIUM"), compound_code("SOFT")):
-            if mask[candidate + 1]:
+            if candidate in self._fitted_slicks and mask[candidate + 1]:
                 return candidate + 1
         return _STAY_OUT
 

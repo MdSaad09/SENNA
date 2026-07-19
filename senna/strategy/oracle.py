@@ -110,12 +110,17 @@ def enumerate_plans(scenario, trace: EventTrace, max_stops: int) -> list:
 
 
 def _plan_table_cost(plan: PitPlan, tables: dict, scenario, n: int) -> float:
+    """Cost a plan exactly as the env executes it through PlanPolicy: the pit lap
+    itself still runs on the outgoing tyre, and the new compound's age-0 lap is the
+    one after — the F07 Stage A gate rolls agents against this number, so a one-lap
+    stint offset here would bias the 1.5% bar by most of a second."""
     cost = scenario.pit_loss_mean_s * len(plan.stops)
     compound, start_lap = _START, 1
     for out, name in plan.stops:
-        cost += tables[compound][start_lap, out - 1]
-        compound, start_lap = compound_code(name), out
-    cost += tables[compound][start_lap, n]
+        cost += tables[compound][start_lap, out]
+        compound, start_lap = compound_code(name), out + 1
+    if start_lap <= n:  # a last-lap stop leaves zero laps on the new tyre
+        cost += tables[compound][start_lap, n]
     return cost
 
 

@@ -66,3 +66,15 @@ def test_every_heuristic_threshold_reads_from_baselines_yaml(scenario):
     # the deg trigger is a config value, not an inline constant: dropping it must be fatal
     with pytest.raises(KeyError):
         EngineerHeuristic(scenario, without_deg_trigger)
+
+
+def test_the_heuristic_shops_only_from_the_circuit_s_fitted_compounds(make_env):
+    # Suzuka's 2026 fit carries no SOFT: the compound wheel must not target it, and
+    # the deg trigger must not index a curve that does not exist (the F07 Stage B
+    # recording crash — every earlier test ran Bahrain, which fits all three slicks)
+    env = make_env(circuit="japanese_grand_prix")
+    assert "SOFT" not in env.scenario.available_compounds
+
+    result = run_episode(env, _heuristic(env.scenario), seed=SEED)
+    assert not result.dnf
+    assert set(result.compounds) <= set(env.scenario.available_compounds)

@@ -1,0 +1,72 @@
+# SENNA — curriculum stages and competence gates (F07, master spec 5.7, F-21). Budgets
+# are CEILINGS, never schedules (R-12): a stage ends at gate pass or ceiling, whichever
+# comes first, and no stage ever advances on step count alone — a ceiling hit is a
+# budget_stop in curriculum_gates.json, never a transition. Gate values are logged to
+# curriculum_gates.json, the interpretability-contract row for this component.
+#
+# The env block per stage is the 5.7 row translated into F1RaceEnv keywords; the env
+# owns the mechanisms, this file owns the policy of which stage gets which world.
+
+plateau_denominator_floor: 1.0  # stylised — |best_before| floor for the relative plateau
+                                # test near zero return; one unit is a tenth of the
+                                # terminal term, so it cannot mask a real improvement
+
+stages:
+  A:                            # solo fundamentals
+    circuits: [italian_grand_prix]        # sourced 5.7 — Monza
+    env: {solo: true, weather: dry, hazards: none}      # sourced 5.7 row A — no rivals,
+                                # dry, deterministic; tyre failure becomes the twin's
+                                # hard cap so the only stochastic residue is pit service
+    rival_band: train           # sourced E-06 — vacuous solo, kept explicit for uniformity
+    budget_steps: 1500000       # sourced 5.6.1 / R-12 — a ceiling
+    eval_every_steps: 49152     # stylised — 8 rollouts of 6144, so evals land on rollout
+                                # boundaries; ~30 evals fit under the ceiling and the
+                                # 3-eval plateau window spans ~150k steps
+    gate:
+      plateau_window: 3         # sourced 5.7 — three consecutive evals
+      plateau_min_improvement: 0.01       # sourced 5.7 — improvement under 1%
+      time_tolerance: 0.015     # sourced 5.7 — mean race time within 1.5% of the scripted
+                                # solo reference. Applied one-sided (F07 documented
+                                # reading): faster than the reference passes, a beat
+                                # beyond 1.5% passes flagged as an anomaly — the
+                                # reference is near-optimal, not provably optimal.
+  B:                            # competition
+    circuits: [italian_grand_prix, spanish_grand_prix, british_grand_prix,
+               belgian_grand_prix, japanese_grand_prix, monaco_grand_prix]
+                                # sourced 5.7 / OQ-7 — the six kept from v2
+    env: {solo: false, weather: dry, hazards: sc_vsc}   # sourced 5.7 row B — 21 rivals,
+                                # dry, SC/VSC on; the red flag first appears in row C
+    rival_band: train           # sourced E-06 — the test band never trains
+    budget_steps: 2500000       # sourced 5.6.1 / R-12 — a ceiling
+    eval_every_steps: 49152     # stylised — as Stage A
+    gate:
+      finish_ahead_min: 0.55    # sourced 5.7 — vs the rule-based baseline on 200 paired
+                                # seeds in identical stochastic draws (A-06); inclusive
+      median_delta_min: 0.0     # sourced 5.7 — median position delta at least 0; inclusive
+      n_pairs: 200              # sourced 5.7 — exactly, or the eval fails loudly
+  C:                            # the full problem
+    circuits: [abu_dhabi_grand_prix, australian_grand_prix, austrian_grand_prix,
+               azerbaijan_grand_prix, bahrain_grand_prix, belgian_grand_prix,
+               british_grand_prix, canadian_grand_prix, chinese_grand_prix,
+               dutch_grand_prix, emilia_romagna_grand_prix, hungarian_grand_prix,
+               italian_grand_prix, japanese_grand_prix, las_vegas_grand_prix,
+               mexico_city_grand_prix, miami_grand_prix, monaco_grand_prix,
+               qatar_grand_prix, saudi_arabian_grand_prix, singapore_grand_prix,
+               spanish_grand_prix, são_paulo_grand_prix, united_states_grand_prix]
+                                # sourced 5.7 "all circuits with validated data", read as
+                                # end-to-end fitted params (F07 decision 3): every
+                                # physics_params circuit except french_grand_prix, which
+                                # has no 2026 joint_pace fit. Listed explicitly — a
+                                # frozen curriculum beats a computed one.
+    env: {solo: false, weather: markov, hazards: full}  # sourced 5.7 row C — weather
+                                # transitions, red flags, stochastic rival draws
+    rival_band: train           # sourced E-06 — training never touches the test band
+    budget_steps: 4000000       # sourced 5.6.1 / R-12 — a ceiling
+    eval_every_steps: 98304     # stylised — twice the A/B cadence: a C eval rolls 240
+                                # validation races (~60 s), and the 1M-step stagnation
+                                # window still spans ~10 evals
+    gate:
+      stagnation_steps: 1000000 # sourced 5.7 — stop when best validation points has not
+                                # improved for 1M steps
+      min_improvement_points: 0.0         # stylised — spec-silent; strict best-so-far
+                                # (an equal eval is not an improvement)
