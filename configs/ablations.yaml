@@ -1,0 +1,58 @@
+# SENNA — the F08 ablation study (master spec 5.6.3, F-22, R-06). Four arms at a 4M
+# ceiling and 2 seeds each (seeds.yaml train.ablation), every arm Stage C from scratch
+# so arm 1 (no curriculum) doubles as the matched control for arms 2-4: each later arm
+# differs from it in exactly one axis. DQN is absent by design — SB3's DQN needs a flat
+# Discrete space and the env is MultiDiscrete([6, 4]) (F-18, R-06).
+#
+# The penalty and reward_v2 blocks exist to be measured AGAINST. They are 5.6.3's
+# sanctioned deviations from the F-16 / 5.5.4 architecture, reachable only through
+# non-default F1RaceEnv kwargs — the default path never reads this file.
+
+budget_steps: 4000000        # sourced 5.6.3 — 4M steps per arm
+eval_every_steps: 98304      # stylised — Stage C's cadence reused (curriculum.yaml C)
+
+# lr/ent schedules keep the global 8M horizon in every arm (run.py sums the stage
+# ceilings), so an arm's schedule position at step t matches the headline's — the
+# comparison 5.6.3 row 1 makes. An arm therefore ends mid-decay, deliberately.
+
+runs:                        # sourced 5.6.3 rows 1-4 — each arm is env overrides only
+  no_curriculum:             # row 1: Stage C from scratch, stock env — the control
+    env: {}
+  penalty_constraints:       # row 2: v2's compliance architecture, the direct F-16 test
+    env: {constraints: penalty}
+  reward_v2:                 # row 3: the 12-term reward — the likely negative result
+    env: {reward_mode: v2}
+  terminal_only:             # row 4: both shaping terms off
+    env: {reward_mode: terminal_only}
+
+penalty:
+  violation_penalty: -8.0    # reconstructed — v2 quoted -8.0 for the ERS breach alone
+                             # (F-16 "v2 says"); one magnitude for every discrete
+                             # breach is our reading, tagged as such (plan decision 1)
+
+reward_v2:                   # the twelve terms, one coefficient each. Sourced values
+                             # quote the master spec's "v2 says" rows verbatim; the v2
+                             # document itself no longer exists (plan decision 1), so
+                             # every unquoted value is a flagged reconstruction.
+  position_gain: 1.0         # sourced F-15 "v2 says" — +1.0 per position gained
+  position_loss: -0.8        # sourced F-15 "v2 says" — -0.8 per position lost
+  sc_pit_bonus: 2.5          # sourced F-17 "v2 says" — pitting under an early SC
+  sc_pit_window_laps: 2      # sourced F-17 "v2 says" — "first 2 laps of a safety car"
+  ers_efficiency_coef: 0.1   # sourced F-17 "v2 says"; the circular "circuit-optimal
+                             # MJ" denominator is read as the circuit's E_dep
+                             # (reconstruction)
+  grip_stint_end_coef: 0.2   # sourced F-17 "v2 says" — grip remaining at stint end;
+                             # the perverse early-box incentive, kept on purpose
+  undercut_bonus: 0.5        # sourced F-17 "v2 says" — the success rule itself was
+                             # never published; see undercut_window_laps
+  undercut_window_laps: 3    # reconstructed — ahead of the pre-stop target this many
+                             # laps after boxing counts as a successful undercut
+  ers_violation_penalty: -8.0  # sourced F-16 "v2 says" — fires on any derated lap
+  tyre_failure_penalty: -12.0  # sourced R-02 — "tyre-failure -12"
+  fastest_lap_bonus: 1.0     # sourced F-07 "v2 says" — "+1.0 if fastest lap claimed",
+                             # P1-P10; computed from race lap times because the action
+                             # that chased it was deleted with the ghost rule (R-01)
+  fuel_penalty: -5.0         # reconstructed — magnitude unquoted anywhere; fires on a
+                             # fuel-exhaustion retirement
+  # pace and terminal reuse v3's forms and coefficients (env.yaml reward), so this
+  # arm isolates what v2 ADDED, not what both objectives share.

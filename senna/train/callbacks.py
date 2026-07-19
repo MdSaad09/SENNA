@@ -33,9 +33,12 @@ class ScheduleCallback(BaseCallback):
 
 
 class RewardTermsCallback(BaseCallback):
-    """Per-episode sums of the three reward terms from training rollouts, logged as
-    means per rollout, plus the 5.5.4 dominance ratio: |terminal| over shaping
-    magnitude, batch-level so points-zero episodes pull it down honestly."""
+    """Per-episode sums of the reward decomposition from training rollouts, logged as
+    means per rollout, plus the 5.5.4 dominance ratio: |terminal| over the summed
+    magnitude of every other term, batch-level so points-zero episodes pull it down
+    honestly. The keys come from the env's info["reward_terms"], so the F08 variant
+    rewards (5.6.3) log their own decompositions without this callback caring which
+    objective is in the saddle."""
 
     def __init__(self):
         super().__init__()
@@ -47,33 +50,33 @@ class RewardTermsCallback(BaseCallback):
     def _on_training_start(self) -> None:
         # a gate pass aborts learn() mid-episode: the previous stage's partial sums
         # and its aborted-rollout window must not leak into this stage's first means
-        self._open = [{"pace": 0.0, "position": 0.0, "terminal": 0.0}
-                      for _ in range(self.training_env.num_envs)]
+        self._open = [{} for _ in range(self.training_env.num_envs)]
         self._window.clear()
 
     def _on_step(self) -> bool:
         for slot, info, done in zip(self._open, self.locals["infos"], self.locals["dones"],
                                     strict=True):
-            terms = info["reward_terms"]
-            slot["pace"] += terms["pace"]
-            slot["position"] += terms["position"]
-            slot["terminal"] += terms["terminal"]
+            for term, value in info["reward_terms"].items():
+                if term != "total":
+                    slot[term] = slot.get(term, 0.0) + value
             if done:
                 self._window.append(dict(slot))
-                self._terminal_total += abs(slot["terminal"])
-                self._shaping_total += abs(slot["pace"]) + abs(slot["position"])
-                slot["pace"] = slot["position"] = slot["terminal"] = 0.0
+                self._terminal_total += abs(slot.get("terminal", 0.0))
+                self._shaping_total += sum(abs(value) for term, value in slot.items()
+                                           if term != "terminal")
+                slot.clear()
         return True
 
     def _on_rollout_end(self) -> None:
         if not self._window:
             return
         n = len(self._window)
-        for term in ("pace", "position", "terminal"):
-            mean = sum(episode[term] for episode in self._window) / n
+        for term in sorted({term for episode in self._window for term in episode}):
+            mean = sum(episode.get(term, 0.0) for episode in self._window) / n
             self.logger.record(f"reward/{term}_ep_mean", mean)
-        terminal = sum(abs(e["terminal"]) for e in self._window)
-        shaping = sum(abs(e["pace"]) + abs(e["position"]) for e in self._window)
+        terminal = sum(abs(e.get("terminal", 0.0)) for e in self._window)
+        shaping = sum(abs(value) for episode in self._window
+                      for term, value in episode.items() if term != "terminal")
         # 1e-8 is a divide guard, not a modelling constant — shaping can only reach
         # zero on a degenerate window, and the ratio is then meaninglessly large anyway
         self.logger.record("reward/dominance_ratio", terminal / max(shaping, 1e-8))
