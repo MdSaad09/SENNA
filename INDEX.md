@@ -4,8 +4,9 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F08 — planned 19 Jul 2026 ([plan](docs/plans/F08-plan.md), opens
-with the unfitted-compound mask guard as required); next: `/ship F08`, same session
+**Active feature:** F08 — in review 19 Jul 2026 (branch feature/F08-ablations; slate
+complete, headline promoted: `senna-ppo-6b6edb78d84e-C-00835584`); next: Saad reads
+the ship report and lesson, then `/land F08`
 **Next up:** F09, then F10
 
 ## Feature ledger
@@ -20,7 +21,7 @@ with the unfitted-compound mask guard as required); next: `/ship F08`, same sess
 | F05 | F1RaceEnv: obs, masks, dynamics, reward | F02, F03 | Done 19 Jul 2026 | feature/F05-race-env | [F05](docs/learn/F05-race-env.md) |
 | F06 | Rivals, baselines, oracle & throughput | F05 | Done 19 Jul 2026 | feature/F06-rivals-baselines | [F06](docs/learn/F06-rivals-baselines.md) |
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Done 19 Jul 2026 | feature/F07-training | [F07](docs/learn/F07-training.md) |
-| F08 | Ablations & headline runs | F07 | Planned | | |
+| F08 | Ablations & headline runs | F07 | In review | feature/F08-ablations | |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Todo | | |
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Todo | | |
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Todo | | |
