@@ -72,13 +72,15 @@ class RewardTermsCallback(BaseCallback):
             self.logger.record(f"reward/{term}_ep_mean", mean)
         terminal = sum(abs(e["terminal"]) for e in self._window)
         shaping = sum(abs(e["pace"]) + abs(e["position"]) for e in self._window)
+        # 1e-8 is a divide guard, not a modelling constant — shaping can only reach
+        # zero on a degenerate window, and the ratio is then meaninglessly large anyway
         self.logger.record("reward/dominance_ratio", terminal / max(shaping, 1e-8))
         self._window.clear()
 
     def run_dominance_ratio(self) -> float:
         """The whole run so far — 5.5.4 expects roughly 3 (terminal about 3x the
         maximum cumulative shaping)."""
-        return self._terminal_total / max(self._shaping_total, 1e-8)
+        return self._terminal_total / max(self._shaping_total, 1e-8)  # same divide guard
 
 
 class ThroughputCallback(BaseCallback):
@@ -92,7 +94,7 @@ class ThroughputCallback(BaseCallback):
     def _on_rollout_end(self) -> None:
         elapsed = time.perf_counter() - self._rollout_started
         stepped = self.model.n_steps * self.training_env.num_envs
-        self.logger.record("perf/steps_s", stepped / max(elapsed, 1e-9))
+        self.logger.record("perf/steps_s", stepped / max(elapsed, 1e-9))  # divide guard
 
     def _on_step(self) -> bool:
         return True
@@ -107,12 +109,18 @@ class GateEvalCallback(BaseCallback):
         super().__init__()
         self._evaluate = evaluate
         self._every = every_steps
-        self._next = every_steps
+        self._next = None  # anchored to the stage's entry step at training start
         self._tracker = tracker
         self._save_last = save_last
         self._save_best = save_best
         self.decision = None
         self.last_eval_step = None
+
+    def _on_training_start(self) -> None:
+        # num_timesteps is global and cumulative across stages (reset_num_timesteps
+        # False), so an absolute cadence would burst-evaluate every step at a stage
+        # boundary until it caught up — anchor to wherever this stage begins
+        self._next = self.model.num_timesteps + self._every
 
     @property
     def passed(self) -> bool:

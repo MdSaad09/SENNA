@@ -90,6 +90,9 @@ def _stage_a_decide(history, *, reference_time_s, plateau_window, plateau_min_im
     # so a faster agent passes — but a beat beyond tolerance smells like a physics or
     # reference bug and is flagged for Saad, loudly
     anomaly = "beats_reference_beyond_tolerance" if delta_frac < -time_tolerance else None
+    # dnf_count == 0 is a documented strengthening of 5.7: a DNF'd solo race corrupts
+    # the mean-time bar, so competence requires a clean bank — it can only delay an
+    # exit, never fake one, and the count is logged either way
     time_ok = delta_frac <= time_tolerance and latest.dnf_count == 0
 
     passed = flat and time_ok

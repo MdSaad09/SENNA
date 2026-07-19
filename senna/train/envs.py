@@ -36,7 +36,7 @@ class CircuitCycler(Env):
         if seed is not None:
             self._episode_rng = np.random.default_rng(seed)
         self._index = (self._index + 1) % len(self._envs)
-        episode_seed = int(self._episode_rng.integers(2**31 - 1))
+        episode_seed = int(self._episode_rng.integers(2**31 - 1))  # int32 bound, mechanical
         return self._envs[self._index].reset(seed=episode_seed, options=options)
 
     def step(self, action):
@@ -60,6 +60,10 @@ def stage_venv(stage_cfg: dict, *, workers: int, stage_seed: int, vec: str,
     assignment = assign_circuits(stage_cfg["circuits"], workers)
     env_kwargs = dict(stage_cfg["env"])
     band = stage_cfg["rival_band"]
+    if band != "train":
+        # E-06: the test band is held out for F14 — a curriculum edit must not be
+        # enough to train on it, mirroring the seed bank's mechanical refusal
+        raise ValueError(f"training draws rivals from the train band only, not '{band}'")
 
     def worker(circuits):
         def make():
