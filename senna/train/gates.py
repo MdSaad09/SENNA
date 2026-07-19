@@ -59,10 +59,14 @@ def stage_a_gate(history: Sequence[StageAEval], *, reference_time_s: float,
     """Plateau AND race time within tolerance of the solo reference, on the same eval.
     Scans prefixes so a pass holds even if later evals regress (trigger and hold)."""
     if len(history) < plateau_window + 1:
+        latest = history[-1]
         return GateDecision(
             passed=False,
             reason=f"history too short: {len(history)} evals, plateau needs {plateau_window + 1}",
-            values={"plateau_improvement": None, "time_delta_frac": None, "anomaly": None},
+            # the full decision's key set, so every gate-log eval row has one schema
+            values={"step": latest.step, "plateau": False, "plateau_improvement": None,
+                    "mean_race_time_s": latest.mean_race_time_s, "time_delta_frac": None,
+                    "dnf_count": latest.dnf_count, "anomaly": None},
         )
 
     decision = None

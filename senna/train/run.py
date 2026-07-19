@@ -34,6 +34,7 @@ from senna.train.evals import (
 )
 from senna.train.gatelog import GateLog
 from senna.train.gates import (
+    GateDecision,
     select_checkpoint,
     stage_a_gate,
     stage_b_gate,
@@ -92,8 +93,11 @@ def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log
         gate_log.record_recording(stage, replaced_seeds=replaced,
                                   traces_dir=str(traces_dir))
 
+        replay_envs = {}  # built once; a gate check replays 200 races across six circuits
+
         def evaluate(step):
-            pairs = run_stage_b_eval(policy, recorded, configs_dir=configs_dir)
+            pairs = run_stage_b_eval(policy, recorded, configs_dir=configs_dir,
+                                     env_cache=replay_envs)
             decision = stage_b_gate(
                 pairs, finish_ahead_min=gate["finish_ahead_min"],
                 median_delta_min=gate["median_delta_min"], n_required=gate["n_pairs"],
@@ -105,10 +109,12 @@ def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log
         return evaluate
 
     history = []
+    eval_envs = {}  # 24 circuits' worth of yaml parsing, paid once per run
 
     def evaluate(step):
         history.append(run_stage_c_eval(
             policy, step=step, banks=banks.stage_c_validation, configs_dir=configs_dir,
+            env_cache=eval_envs,
         ))
         decision = stage_c_stop(
             history, current_step=step, stagnation_steps=gate["stagnation_steps"],
@@ -119,7 +125,7 @@ def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log
             "improved": decision.values["best_step"] == step, "passed": decision.passed,
         }
         gate_log.record_eval(stage, step=step, values=values)
-        return type(decision)(decision.passed, decision.reason, values)
+        return GateDecision(decision.passed, decision.reason, values)
 
     evaluate.history = history  # the loop selects the checkpoint from it (5.7)
     return evaluate
@@ -140,6 +146,8 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
     fingerprint = config.fingerprint(_CONFIG_FILES, configs_dir)
 
     workers = workers or train_cfg["ppo"]["n_envs"]
+    if STAGES.index(from_stage) > STAGES.index(to_stage):
+        raise ValueError(f"stage span {from_stage}->{to_stage} is empty")
     stages = STAGES[STAGES.index(from_stage): STAGES.index(to_stage) + 1]
     if from_stage != "A" and resume is None:
         raise ValueError(f"starting at stage {from_stage} needs --resume <triplet dir>")
@@ -189,6 +197,10 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
             model.set_logger(Logger(folder=None, output_formats=[sb3_output_format(tracker)]))
         else:
             model.set_env(venv, force_reset=True)
+        # the ctor and load paths call set_random_seed, which re-seeds the env with the
+        # run seed — re-issue the stage seed so the disjoint-stream design (seeds.yaml
+        # train.stage_offset) and the manifest's stage_seed entry stay true
+        venv.seed(seed + stage_offset[stage])
 
         stage_dir = run_dir / f"stage{stage}"
         tracker.log({"curriculum/stage": STAGES.index(stage)}, step=model.num_timesteps)
@@ -278,7 +290,10 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
 
         save_triplet(model, venv, stage_dir / "final",
                      manifest=manifest(step_now, exit_reason))
-        stats_path = stage_dir / "final" / "vecnormalize.pkl"
+        # carry_across_stages False is F08's re-warm ablation: each stage then starts
+        # with fresh statistics instead of the previous stage's
+        stats_path = (stage_dir / "final" / "vecnormalize.pkl"
+                      if train_cfg["normalize"]["carry_across_stages"] else None)
         resume = None  # only the first trained stage warm-starts from the CLI triplet
         venv.close()
 

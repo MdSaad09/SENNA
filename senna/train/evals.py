@@ -106,10 +106,13 @@ def _live_recorder(configs_dir):
     return record
 
 
-def run_stage_b_eval(policy, recorded, *, configs_dir=None) -> list[PairedRace]:
+def run_stage_b_eval(policy, recorded, *, configs_dir=None,
+                     env_cache: dict | None = None) -> list[PairedRace]:
     """Replay the agent on every recorded twin and pair it with the stored baseline
-    roll. One env per circuit; the twin is swapped per race through reset options."""
-    envs: dict[str, F1RaceEnv] = {}
+    roll. One env per circuit; the twin is swapped per race through reset options.
+    Pass env_cache to keep the envs across eval calls — construction re-parses every
+    physics yaml, and a Stage B gate check replays 200 races."""
+    envs = env_cache if env_cache is not None else {}
     pairs = []
     for race in recorded:
         if race.circuit not in envs:
@@ -125,13 +128,18 @@ def run_stage_b_eval(policy, recorded, *, configs_dir=None) -> list[PairedRace]:
     return pairs
 
 
-def run_stage_c_eval(policy, *, step: int, banks: dict, configs_dir=None) -> StageCEval:
+def run_stage_c_eval(policy, *, step: int, banks: dict, configs_dir=None,
+                     env_cache: dict | None = None) -> StageCEval:
     """Mean points over the validation bank on the full stochastic env — weather,
     red flags, rival draws from the train band (E-06; the test band is F14's)."""
+    envs = env_cache if env_cache is not None else {}
     points = []
     for circuit, seeds in banks.items():
-        env = F1RaceEnv(circuit, _ERA, rival_band="train", configs_dir=configs_dir)
-        points.extend(run_episode(env, policy, seed=seed).points for seed in seeds)
+        if circuit not in envs:
+            envs[circuit] = F1RaceEnv(circuit, _ERA, rival_band="train",
+                                      configs_dir=configs_dir)
+        points.extend(run_episode(envs[circuit], policy, seed=seed).points
+                      for seed in seeds)
     return StageCEval(step=step, mean_points=float(np.mean(points)))
 
 

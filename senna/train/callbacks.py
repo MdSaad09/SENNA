@@ -45,9 +45,11 @@ class RewardTermsCallback(BaseCallback):
         self._shaping_total = 0.0
 
     def _on_training_start(self) -> None:
-        if not self._open:
-            self._open = [{"pace": 0.0, "position": 0.0, "terminal": 0.0}
-                          for _ in range(self.training_env.num_envs)]
+        # a gate pass aborts learn() mid-episode: the previous stage's partial sums
+        # and its aborted-rollout window must not leak into this stage's first means
+        self._open = [{"pace": 0.0, "position": 0.0, "terminal": 0.0}
+                      for _ in range(self.training_env.num_envs)]
+        self._window.clear()
 
     def _on_step(self) -> bool:
         for slot, info, done in zip(self._open, self.locals["infos"], self.locals["dones"],
