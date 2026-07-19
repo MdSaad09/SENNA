@@ -11,6 +11,14 @@
 budget_steps: 4000000        # sourced 5.6.3 — 4M steps per arm
 eval_every_steps: 98304      # stylised — Stage C's cadence reused (curriculum.yaml C)
 
+dry_run:                     # stylised — the tiny wiring profile from the train test
+                             # suite (tests/train/conftest.py tiny_configs), promoted
+                             # to the CLI so the whole matrix proves itself in seconds
+  n_steps: 64                # one rollout per update on two dummy workers
+  batch_size: 64
+  budget_steps: 256          # a stage that fits in seconds
+  eval_every_steps: 128
+
 # lr/ent schedules keep the global 8M horizon in every arm (run.py sums the stage
 # ceilings), so an arm's schedule position at step t matches the headline's — the
 # comparison 5.6.3 row 1 makes. An arm therefore ends mid-decay, deliberately.

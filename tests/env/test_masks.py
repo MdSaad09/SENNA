@@ -12,6 +12,7 @@ from senna.env.masks import (
     SLICK_ABOVE_WET,
     SOC_BELOW_ATTACK_FLOOR,
     TWO_COMPOUND_RULE,
+    UNFITTED_COMPOUND,
     WET_NEEDS_WET,
     ActionMask,
     build_mask,
@@ -145,10 +146,6 @@ def test_no_head_is_ever_left_all_false():
 
 
 def test_dry_slicks_outside_available_compounds_are_masked():
-    # local import: the reason code is new with the F08 guard, and a top-level import
-    # would stop this module's standing tests from collecting before it lands
-    from senna.env.masks import UNFITTED_COMPOUND
-
     mask = build_mask(**_mask_kwargs(), fitted_slick_actions=frozenset({2, 3}))
 
     assert not mask.pit[1]  # Soft has no degradation fit here

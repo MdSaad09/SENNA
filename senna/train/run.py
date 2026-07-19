@@ -46,9 +46,19 @@ from senna.train.tracking import make_tracker, sb3_output_format
 
 STAGES = ("A", "B", "C")
 
-# the exact configs a run is reproducible from — the bench's env list plus F07's own
-_CONFIG_FILES = ["env", "circuits", "physics_2026", "physics_2024", "physics_params",
-                 "transforms", "fits", "rivals", "training", "curriculum", "seeds"]
+# the exact configs a run is reproducible from — the bench's env list plus F07's own.
+# The ablation harness appends "ablations" for its runs only (extra_config_files), so
+# the headline's fingerprint can never be broken by a later coefficient edit there.
+CONFIG_FILES = ["env", "circuits", "physics_2026", "physics_2024", "physics_params",
+                "transforms", "fits", "rivals", "training", "curriculum", "seeds"]
+
+
+def run_identity(*, seed: int, fingerprint: str, run_tag: str | None = None) -> str:
+    """The run's directory name and ledger key. The tag keeps two same-day arms with
+    the same seed apart (F08 finding 6); the harness computes this before training so
+    the ledger row exists while the run is still live."""
+    tag = f"{run_tag}-" if run_tag else ""
+    return f"{tag}{datetime.now(UTC):%Y%m%d}-s{seed}-{fingerprint[:12]}"
 
 
 def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log,
@@ -135,7 +145,8 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
               resume: Path | None = None, total_steps: int | None = None,
               workers: int | None = None, vec: str = "subproc",
               wandb_mode: str = "auto", configs_dir=None, tracker=None,
-              models_dir=None) -> Path:
+              models_dir=None, fresh: bool = False, run_tag: str | None = None,
+              run_id: str | None = None, extra_config_files: tuple = ()) -> Path:
     from stable_baselines3.common.logger import Logger
     from stable_baselines3.common.utils import set_random_seed
 
@@ -143,27 +154,33 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
     curriculum = config.load("curriculum", configs_dir)
     stage_offset = config.load("seeds", configs_dir)["train"]["stage_offset"]
     banks = load_banks(configs_dir)
-    fingerprint = config.fingerprint(_CONFIG_FILES, configs_dir)
+    config_files = [*CONFIG_FILES, *extra_config_files]
+    fingerprint = config.fingerprint(config_files, configs_dir)
 
     workers = workers or train_cfg["ppo"]["n_envs"]
     if STAGES.index(from_stage) > STAGES.index(to_stage):
         raise ValueError(f"stage span {from_stage}->{to_stage} is empty")
     stages = STAGES[STAGES.index(from_stage): STAGES.index(to_stage) + 1]
-    if from_stage != "A" and resume is None:
-        raise ValueError(f"starting at stage {from_stage} needs --resume <triplet dir>")
+    if from_stage != "A" and resume is None and not fresh:
+        # fresh=True is the no-curriculum ablation's door (5.6.3 row 1); everyone
+        # else starting past A without a triplet is an accident
+        raise ValueError(f"starting at stage {from_stage} needs --resume <triplet dir>"
+                         " (or --fresh for a from-scratch ablation run)")
     if total_steps is not None:
         print(f"DEV CAP: every stage budget clipped to {total_steps} steps — "
               "not a real training run")
 
-    run_id = f"{datetime.now(UTC):%Y%m%d}-s{seed}-{fingerprint[:12]}"
+    run_id = run_id or run_identity(seed=seed, fingerprint=fingerprint, run_tag=run_tag)
     run_dir = Path(models_dir or config.REPO_ROOT / "models") / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     if tracker is None:
         tracker = make_tracker(
             mode=wandb_mode, project=train_cfg["tracking"]["project"],
-            run_name=f"train-s{seed}-{fingerprint[:12]}", group=fingerprint[:12],
+            run_name=f"{run_tag or 'train'}-s{seed}-{fingerprint[:12]}",
+            group=fingerprint[:12],
             config={"seed": seed, "fingerprint": fingerprint, "stages": list(stages),
                     "training": train_cfg, "curriculum": curriculum},
+            tags=[run_tag] if run_tag else None,
         )
     gate_log = GateLog(
         run_dir / "curriculum_gates.json", run_id=run_id, config_hash=fingerprint,
@@ -220,8 +237,9 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
             return {
                 "model_version": model_version(fingerprint, stage, step),
                 "run_id": run_id,
+                "run_tag": run_tag,
                 "fingerprint": fingerprint,
-                "config_files": _CONFIG_FILES,
+                "config_files": config_files,
                 "git_commit": _git_commit(),
                 "stage": stage,
                 "global_step": step,
@@ -335,6 +353,10 @@ def main() -> None:
     parser.add_argument("--to-stage", choices=STAGES, default="C")
     parser.add_argument("--resume", type=Path, default=None,
                         help="triplet dir to warm-start from (required past stage A)")
+    parser.add_argument("--fresh", action="store_true",
+                        help="allow a from-scratch start past stage A (5.6.3 row 1)")
+    parser.add_argument("--run-tag", default=None,
+                        help="prefix for the run id and W&B name (the harness sets it)")
     parser.add_argument("--total-steps", type=int, default=None,
                         help="dev cap per stage — smoke runs only")
     parser.add_argument("--workers", type=int, default=None)
@@ -346,7 +368,8 @@ def main() -> None:
     run_dir = train_run(
         seed=args.seed, from_stage=args.from_stage, to_stage=args.to_stage,
         resume=args.resume, total_steps=args.total_steps, workers=args.workers,
-        vec=args.vec, wandb_mode=args.wandb_mode,
+        vec=args.vec, wandb_mode=args.wandb_mode, fresh=args.fresh,
+        run_tag=args.run_tag,
     )
     print(f"run complete: {run_dir}")
     print(json.dumps(json.loads((run_dir / "curriculum_gates.json").read_text()), indent=2)[:2000])
