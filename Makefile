@@ -4,12 +4,18 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock migrate ingest fit synth synth-figures circuits bench train eval report
+.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train eval report
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
 		--extra-index-url https://download.pytorch.org/whl/cpu \
 		--index-strategy unsafe-best-match --emit-index-url
+
+# lint the whole repo exactly as CI does (ruff check .), notebooks included, so the
+# local gate can't drift from CI — the cause of the F03-F06 red-CI streak. Notebook
+# style rules (E501/E702) are relaxed in pyproject's per-file-ignores.
+lint:
+	ruff check .
 
 migrate:
 	alembic upgrade head
