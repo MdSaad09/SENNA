@@ -122,8 +122,9 @@ optimises for reproducibility and an honest paper trail, not for wall clock.
 - `checkpoints.py` — atomic triplet save/load under
   `models/{utcdate}-s{seed}-{fp12}/stage{X}/{last,best,final}/`, `manifest.json`
   (fingerprint, git sha, stage, global step, seeds, circuit assignment, dominance
-  ratio, wandb run id, library versions), and
-  `model_version = "senna-ppo-{fp12}-{stage}-{step:08d}"` — the string F10 stores.
+  ratio, wandb run id, library versions, and sha256 of `model.zip` and
+  `vecnormalize.pkl` — F-23 wants the stats' own hash in the model version record),
+  and `model_version = "senna-ppo-{fp12}-{stage}-{step:08d}"` — the string F10 stores.
 - `tracking.py` — the only wandb import. `Tracker` seam (no-op when disabled or init
   fails), SB3 KVWriter bridge for the native series, mode auto/online/offline/disabled.
 
@@ -253,10 +254,11 @@ stay green throughout.
 2. **Seed-bank sizes** — Stage C validation 240 and reserved test 480 are proposals
    (spec is silent). Cheap to enlarge before freezing, contamination to change after.
    Default: as proposed.
-3. **Master-spec PDF rows F-21/F-23/R-12** — still unread pending
-   `brew install poppler`; the extracted 5.6/5.7 sections carry each ID's substance
-   and this plan cites them. Default: I read the raw rows at the start of /ship once
-   poppler is in.
+3. **Master-spec PDF rows F-21/F-23/R-12** — RESOLVED 19 Jul: raw rows read from the
+   PDF (pages 10, 15) after poppler install. All three match this plan. One nuance
+   folded in: F-23's fix says the vecnormalize.pkl hash is itself part of the model
+   version record, so the manifest carries artifact sha256s alongside the config
+   fingerprint.
 
 ## Decisions (Saad, 19 Jul 2026)
 
