@@ -55,8 +55,11 @@ def test_an_illegal_recorded_compound_defers_then_snaps_and_is_counted(
     make_env, green_trace
 ):
     wet_from = 20
-    green_trace.wetness[wet_from - 1 :] = 0.5  # slicks masked, only inters legal here
-    green_trace.weather[wet_from - 1 :] = events.DAMP
+    # the env commits to a pit the lap before it is driven, so the mask for the lap-20 stop
+    # reflects the previous lap's weather: wet the track from a lap earlier so the decision
+    # for the recorded stop actually sees the rain
+    green_trace.wetness[wet_from - 2 :] = 0.5  # slicks masked, only inters legal here
+    green_trace.weather[wet_from - 2 :] = events.DAMP
     plan = PitPlan(stops=((wet_from, "SOFT"),))  # a slick call onto a wet track
 
     env = make_env(twin=green_trace)
