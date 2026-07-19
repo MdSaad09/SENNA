@@ -64,3 +64,32 @@ def test_random_legal_play_keeps_soc_and_energy_within_bounds(make_env, base_see
 
             assert truncated is False  # the horizon is the race by definition (5.5.5)
             transitions += 1
+
+
+# far fewer transitions than the E-01 run: an unguarded mask offers SOFT within laps
+UNFITTED_TRANSITIONS_PER_SEED = 2_000
+
+
+@pytest.mark.property
+@pytest.mark.slow
+@given(base_seed=st.integers(min_value=0, max_value=2**31 - 1))
+@settings(
+    max_examples=5, deadline=None,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+def test_random_legal_play_never_pits_onto_an_unfitted_compound(make_env, base_seed):
+    # japanese_grand_prix 2026 fits only MEDIUM and HARD: no legal trajectory may ever
+    # land the ego on SOFT — the "never degrades" exploit the F08 mask guard closes
+    env = make_env("japanese_grand_prix")
+    rng = np.random.default_rng(base_seed)
+
+    transitions = 0
+    while transitions < UNFITTED_TRANSITIONS_PER_SEED:
+        env.reset(seed=int(rng.integers(0, 2**31)))
+        terminated = False
+        while not terminated and transitions < UNFITTED_TRANSITIONS_PER_SEED:
+            flat = env.action_masks()
+            action = _sample_legal_action(flat[:6], flat[6:], rng)
+            _, _, terminated, _, _ = env.step(action)
+            assert "SOFT" not in env._ego_pit_compounds
+            transitions += 1
