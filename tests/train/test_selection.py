@@ -8,6 +8,7 @@ the artifact F09 and F10 consume.
 import json
 
 import pytest
+
 from senna.train.selection import (
     HeadlineCandidate,
     promote_headline,
