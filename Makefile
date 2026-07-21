@@ -4,7 +4,7 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval report
+.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain report
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -89,6 +89,15 @@ headline:
 # result in the ledger. RUN=models/<run_dir>.
 eval:
 	python -m senna.train.selection --rescore $(RUN)
+
+# distill the frozen headline triplet, gate on fidelity, and card every validation
+# race into agent_decisions (F09, spec 5.8). Reads models/headline + Postgres —
+# local only, never CI. Smoke the wiring with PAIRS=2000 RACES=2 SKIP_PERSIST=1.
+# OMP_NUM_THREADS=1: torch + xgboost in one process carry duplicate OpenMP runtimes
+# on arm64 and segfault without it (F09 plan).
+explain:
+	OMP_NUM_THREADS=1 python -m senna.explain.run $(if $(PAIRS),--pairs $(PAIRS)) \
+		$(if $(RACES),--card-races $(RACES)) $(if $(SKIP_PERSIST),--skip-persist)
 
 report:
 	@echo "not yet: F14 owns make report"

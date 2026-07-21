@@ -180,6 +180,7 @@ All new constants live in `configs/explain.yaml`:
 | `distill.pairs` | 200000 | sourced 5.8.2 |
 | `background.size` | 1024 | sourced 5.8.2 |
 | `crosscheck.sample` | 500 | sourced 5.8.2 |
+| `crosscheck.background_subsample` | 128 | stylised — added during /ship: GradientExplainer cost scales with background x samples, and the full 1,024 buys no extra honesty |
 | `cards.top_k_drivers` | 5 | sourced 5.8.3 / A-03 |
 | `distill.holdout_episode_frac` | 0.2 | stylised — episode-level fidelity holdout |
 | `distill.soft_label_weight_floor` | 0.01 | stylised — row-expansion weight floor |

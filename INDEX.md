@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F09 — planned, `/ship F09` next (same session)
-**Next up:** F10
+**Active feature:** none — next session: `/plan-feature F10`
+**Next up:** F10, then F11
 
 ## Feature ledger
 
@@ -20,7 +20,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F06 | Rivals, baselines, oracle & throughput | F05 | Done 19 Jul 2026 | feature/F06-rivals-baselines | [F06](docs/learn/F06-rivals-baselines.md) |
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Done 19 Jul 2026 | feature/F07-training | [F07](docs/learn/F07-training.md) |
 | F08 | Ablations & headline runs | F07 | Done 19 Jul 2026 | feature/F08-ablations | [F08](docs/learn/F08-ablations.md) |
-| F09 | Explainability: surrogate, SHAP, cards | F07 | Planned | | |
+| F09 | Explainability: surrogate, SHAP, cards | F07 | Done 21 Jul 2026 | feature/F09-explainability | [F09](docs/learn/F09-explainability.md) |
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Todo | | |
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Todo | | |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Todo | | |
@@ -67,6 +67,13 @@ the work — resume with `claude --continue`, or start fresh and say
   step 835,584, 6.517 validation points) promoted to `models/headline/` — the frozen
   checkpoint F09 explains and F10 serves. Evidence: docs/results/F08-ablations.md;
   ledger models/runs.json. W&B runs are offline pending an account.
+- **F09 fidelity badge (21 Jul 2026):** the surrogate that explains the headline model
+  agrees with it on **99.70%** of held-out pit decisions and **99.08%** of energy-mode
+  decisions, gate 0.90 (spec 5.8.2). Gradient cross-check on the true network: mean
+  Spearman 0.687 over 500 decisions, all positive. 14,460 cards across the 240
+  validation races sit in `agent_decisions`. Evidence: docs/results/F09-explainability.md.
+  A retrain invalidates all of it by construction (E-15) — `make explain` must re-run
+  before F10 serves a new checkpoint.
 - **AR-10 race fuel (spec Part 8):** VERIFIED 16 Jul 2026 — the FIA 2026 regs cap fuel
   energy flow at 3,000 MJ/h (energy-based, replacing 100 kg/h) and the race allowance
   works out to ~70 kg with the Advanced Sustainable Fuel spec. Sources: Formula1.com

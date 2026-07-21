@@ -149,14 +149,16 @@ class Sb3Policy:
     place training statistics touch a gate evaluation."""
 
     def __init__(self, model, normalize_obs):
-        self._model = model
-        self._normalize_obs = normalize_obs
+        # public on purpose: F09's DecisionLogger reads the head distributions off
+        # the same model and statistics this policy acts with
+        self.model = model
+        self.normalize_obs = normalize_obs
 
     def reset(self, obs, info, *, rng=None) -> None:
         pass
 
     def act(self, obs, info, mask) -> np.ndarray:
-        action, _ = self._model.predict(
-            self._normalize_obs(obs), action_masks=np.asarray(mask), deterministic=True
+        action, _ = self.model.predict(
+            self.normalize_obs(obs), action_masks=np.asarray(mask), deterministic=True
         )
         return action

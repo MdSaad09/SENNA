@@ -1,0 +1,62 @@
+# SENNA — F09 explainability constants (master spec 5.8, F-25, A-03, A-04).
+# The surrogate/TreeSHAP pipeline that explains the frozen headline policy.
+#
+# Origins: sourced (spec section, with the id), fitted (which notebook), or stylised
+# (an explicit choice). The fitted artifact here is the surrogate itself — its
+# provenance lives in models/explain/<model_version>/manifest.json, not in this file.
+
+fidelity:
+  threshold: 0.90               # sourced 5.8.2 — top-1 agreement per action head; below
+                                # this the pipeline refuses to emit cards (feature spec
+                                # row one: the gate is code, not intention)
+
+distill:
+  pairs: 200000                 # sourced 5.8.2 — (state, action-probability) pairs from
+                                # evaluation rollouts of the frozen triplet
+  holdout_episode_frac: 0.2     # stylised — fidelity holdout, split at episode level so
+                                # neighbouring laps cannot leak the badge up (E-14
+                                # discipline applied to fidelity)
+  soft_label_weight_floor: 0.01 # stylised — row-expansion rows lighter than this are
+                                # dropped; keeps the expanded set ~2-3 rows per state
+  rollout_seed_base: 20260720   # stylised-frozen — root of the derived episode seeds;
+                                # drawn once, never edited after a result exists
+                                # (the seeds.yaml discipline)
+  seed_floor: 1000000           # stylised — every frozen bank seed is six digits
+                                # (configs/seeds.yaml), so a 1e6 floor makes the
+                                # distillation seeds disjoint by construction (E-06)
+  xgb_ladder:                   # stylised — the "deepen the surrogate" rungs (5.8.2);
+                                # walked shallow to deep until the threshold passes
+    - {max_depth: 6, n_estimators: 300, learning_rate: 0.1}
+    - {max_depth: 8, n_estimators: 600, learning_rate: 0.1}
+    - {max_depth: 10, n_estimators: 1200, learning_rate: 0.1}
+
+background:
+  size: 1024                    # sourced 5.8.2 — the stratified background set; the
+                                # composition is documented because attributions
+                                # depend on it
+  phase_thresholds:             # stylised — race-phase bands on lap fraction (obs #1)
+    early: 0.25                 # for the circuit x phase x status stratification
+    late: 0.75
+
+crosscheck:
+  sample: 500                   # sourced 5.8.2 — decisions given GradientExplainer
+                                # attributions on the true network; the rank
+                                # correlation is the integrity statistic. Drawn from
+                                # the carded decisions, so a dev run narrowed with
+                                # RACES= must still card at least this many.
+  background_subsample: 128     # stylised — background states handed to
+                                # GradientExplainer; its cost scales with background
+                                # x samples and the full 1,024 buys no extra honesty
+
+cards:
+  top_k_drivers: 5              # sourced 5.8.3 / A-03 — drivers shown per head
+
+flip:
+  sweep_points: 64              # stylised — grid resolution of a single-feature sweep
+  features_per_card: 2          # stylised — flip lines reported per card; the
+                                # 5.8.3 example card shows two flip conditions
+  max_sweeps: 6                 # stylised — sweepable dims tried, in attribution
+                                # order, before giving up. The strongest drivers are
+                                # usually one-hots (compound, track status), which no
+                                # physical sweep can cross, so a probe that only
+                                # looked at the top few found nothing on most cards.
