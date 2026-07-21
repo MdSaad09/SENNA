@@ -37,6 +37,22 @@ def test_flip_probe_finds_known_threshold():
     assert flip_at == pytest.approx(0.43)  # first grid point past the built-in threshold
 
 
+def test_flip_reports_the_nearest_crossing():
+    # the recorded set is already worn past the threshold, so the honest counterfactual
+    # is the fresher tyre just below it — a sweep scanning from the bottom of the range
+    # would report 0.00 ("about 0 laps"), which is a false line on a card
+    def pits_past_a_worn_set(obs, mask):
+        return SLICK_PIT if obs[TYRE_AGE_DIM] > 0.42 else STAY
+
+    obs = np.zeros(32, dtype=np.float32)
+    obs[TYRE_AGE_DIM] = 0.8  # recorded action: pit
+
+    flip_at = find_flip(pits_past_a_worn_set, obs, TYRE_AGE_DIM, _grid(TYRE_AGE_DIM),
+                        _lane_always_open)
+
+    assert flip_at == pytest.approx(0.42)
+
+
 def test_sweep_recomputes_mask():
     # an over-eager policy wants the full wet from 0.5 wetness, but the tyre only
     # becomes legal at 0.7 — like MaskablePPO, the policy can never pick a masked action

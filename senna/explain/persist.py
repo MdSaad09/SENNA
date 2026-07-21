@@ -43,10 +43,11 @@ async def _rewrite(db_url, model_version, env_config_hash, races):
                                 "seed": race["seed"]},
                     ).returning(SimulationRun.id)
                 )).scalar_one()
-                await conn.execute(
-                    insert(AgentDecision),
-                    [{"run_id": run_id, "lap_number": card["lap"], "decision": card}
-                     for card in race["cards"]],
-                )
+                if race["cards"]:  # executemany refuses an empty parameter list
+                    await conn.execute(
+                        insert(AgentDecision),
+                        [{"run_id": run_id, "lap_number": card["lap"], "decision": card}
+                         for card in race["cards"]],
+                    )
     finally:
         await engine.dispose()

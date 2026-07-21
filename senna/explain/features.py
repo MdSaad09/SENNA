@@ -75,17 +75,34 @@ def phase_of(lap_frac: float, early: float, late: float) -> str:
 
 
 def physical_note(dim: int, value: float, scenario) -> str:
-    """The card's translation of a normalised flip value back into race units —
-    the "i.e. about 17 laps" clause of 5.8.2. Dims without a natural unit get none."""
+    """The card's translation of a normalised flip value back into race units — the
+    "i.e. about 17 laps" clause of 5.8.2. Dims that are already dimensionless
+    (position, grip, wetness, hardness steps) get none; a fabricated unit would read
+    as precision the encoding does not carry."""
     obs_cfg = scenario.env["obs"]
+    age_norm = obs_cfg["tyre_age_norm_laps"]
     if dim == 0:
         return f"about lap {value * scenario.total_laps:.0f}"
-    if dim in (8, 19, 21):
-        return f"about {abs(value) * obs_cfg['tyre_age_norm_laps']:.0f} laps"
+    if dim == 8:
+        return f"about {value * age_norm:.0f} laps old"
+    if dim in (19, 21):
+        # a signed delta: dropping the sign would report a rival 17 laps fresher as
+        # 17 laps older, inverting the reason for the call
+        laps = value * age_norm
+        return f"about {abs(laps):.0f} laps {'older' if laps >= 0 else 'fresher'}"
+    if dim == 11:
+        return f"about {value * obs_cfg['max_stops_norm']:.0f} stops"
     if dim == 13:
         return f"about {value * scenario.race_fuel_kg:.0f} kg of fuel"
     if dim == 14:
         return f"about {value * scenario.usable_soc_mj:.1f} MJ in the store"
+    if dim == 15:
+        return f"about {value * scenario.h_max_mj:.1f} MJ harvested last lap"
+    if dim == 16:
+        return f"about {value * scenario.e_dep_mj:.1f} MJ deployed last lap"
     if dim in (17, 18):
         return f"about {value * obs_cfg['gap_norm_cap_s']:.1f} s"
+    if dim == 31:
+        temp_c = obs_cfg["track_temp_min_c"] + value * obs_cfg["track_temp_span_c"]
+        return f"about {temp_c:.0f} C track"
     return ""

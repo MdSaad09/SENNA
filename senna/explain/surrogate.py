@@ -49,14 +49,17 @@ def distill_or_refuse(*, ladder, threshold: float, fit_rung):
     """Walk the deepen ladder shallow to deep (5.8.2: "deepen the surrogate before
     shipping explanations"); return the first rung that clears the bar, refuse after
     the last. fit_rung(rung) -> (surrogate, top1, mean_kl)."""
-    top1 = mean_kl = None
+    if not ladder:
+        raise ValueError("distill.xgb_ladder is empty — there is nothing to fit")
+    best = 0.0
     for rung in ladder:
         surrogate, top1, mean_kl = fit_rung(rung)
         if top1 >= threshold:
             return surrogate, top1, mean_kl
+        best = max(best, top1)
     raise FidelityGateError(
-        f"fidelity {top1:.3f} after the deepest of {len(ladder)} rungs, threshold "
-        f"{threshold} — no cards ship from this surrogate; deepen the ladder in "
+        f"best fidelity {best:.3f} across {len(ladder)} rungs, threshold {threshold} "
+        "— no cards ship from this surrogate; deepen the ladder in "
         "configs/explain.yaml or revisit the distillation data"
     )
 
@@ -89,3 +92,23 @@ def head_probs(booster, X) -> np.ndarray:
     import xgboost as xgb
 
     return booster.predict(xgb.DMatrix(np.asarray(X)))
+
+
+def load_surrogates(artifacts_dir):
+    """Rehydrate the boosters and the checkpoint they were fitted to. Reading the
+    version back off disk rather than passing it along in memory is what makes the
+    E-15 refusal real: cards are built against what the artifact says it explains,
+    so a stale models/explain/ directory is caught instead of trusted."""
+    import json
+    from pathlib import Path
+
+    import xgboost as xgb
+
+    artifacts_dir = Path(artifacts_dir)
+    heads = {}
+    for head in ("pit", "mode"):
+        booster = xgb.Booster()
+        booster.load_model(str(artifacts_dir / f"{head}.ubj"))
+        heads[head] = booster
+    manifest = json.loads((artifacts_dir / "manifest.json").read_text())
+    return heads, manifest["model_version"]

@@ -35,9 +35,16 @@ def gradient_attributions(model, normalize_obs, X_raw, background_raw, head: str
             )
             return self.policy.action_net(latent)[:, head_slice]
 
-    background = th.as_tensor(
-        np.asarray([normalize_obs(row) for row in background_raw], dtype=np.float32)
-    )
-    X = th.as_tensor(np.asarray([normalize_obs(row) for row in X_raw], dtype=np.float32))
+    background = th.as_tensor(np.asarray(normalize_obs(np.asarray(background_raw)),
+                                         dtype=np.float32))
+    X = th.as_tensor(np.asarray(normalize_obs(np.asarray(X_raw)), dtype=np.float32))
     explainer = shap.GradientExplainer(_HeadLogits(), background)
-    return np.asarray(explainer.shap_values(X))
+    values = np.asarray(explainer.shap_values(X))
+    n_actions = head_slice.stop - head_slice.start
+    if values.shape != (len(X), X.shape[1], n_actions):
+        raise RuntimeError(
+            f"GradientExplainer returned {values.shape}, expected "
+            f"{(len(X), X.shape[1], n_actions)} — a shap upgrade changed the layout "
+            "and the per-decision rank correlation would silently compare noise"
+        )
+    return values

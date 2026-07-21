@@ -7,27 +7,23 @@ the booster's own logit, and the property test holds the pair to that.
 import numpy as np
 
 
-def explain_head(booster, X, background=None):
-    """SHAP values (n, features, classes) and expected values (classes,). With a
-    background set the explainer is interventional — attributions are marginal
-    contributions against those 1,024 documented states (5.8.2); without one it
-    falls back to shap's tree-path weighting (the additivity test needs no
-    background to make its claim)."""
+def head_explainer(booster, background):
+    """One interventional explainer per head, built once and reused across every
+    card: attributions are marginal contributions against the 1,024 documented
+    background states (5.8.2), and preparing that background is per-explainer work
+    the booster does not change."""
     import shap
 
-    if background is None:
-        explainer = shap.TreeExplainer(booster)
-    else:
-        explainer = shap.TreeExplainer(
-            booster, data=np.asarray(background), feature_perturbation="interventional"
-        )
-    values = np.asarray(explainer.shap_values(np.asarray(X)))
-    return values, np.atleast_1d(np.asarray(explainer.expected_value))
+    return shap.TreeExplainer(booster, data=np.asarray(background),
+                              feature_perturbation="interventional")
 
 
 def top_drivers(shap_row, names, k: int):
     """The card's driver list: the k features that moved this decision most, ordered
     by attribution magnitude, signs kept (positive pushed toward the call)."""
     shap_row = np.asarray(shap_row)
-    order = np.argsort(-np.abs(shap_row))[:k]
+    # stable: zero-attribution ties are common, and quicksort would order them
+    # differently run to run — a card that reshuffles its drivers on a rerun
+    # invites exactly the "is this thing deterministic" doubt the layer exists to kill
+    order = np.argsort(-np.abs(shap_row), kind="stable")[:k]
     return [(names[i], float(shap_row[i])) for i in order]

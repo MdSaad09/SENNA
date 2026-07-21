@@ -65,7 +65,8 @@ def background_composition(composition: dict, top_n: int = 20) -> plt.Figure:
     by_phase_status: dict[str, int] = {}
     for key, count in strata.items():
         _, phase, status = key.split("|")
-        by_phase_status[f"{phase} / {status}"] = by_phase_status.get(f"{phase} / {status}", 0) + count
+        label = f"{phase} / {status}"
+        by_phase_status[label] = by_phase_status.get(label, 0) + count
 
     ordered = sorted(by_phase_status.items(), key=lambda kv: -kv[1])[:top_n]
     fig, ax = plt.subplots(figsize=(6, 0.35 * len(ordered) + 1.5))

@@ -4,8 +4,6 @@ types in the payload, and it refuses to explain a ghost — a surrogate fitted t
 checkpoint stays silent about every other (E-15 pairing).
 """
 
-import numpy as np
-
 from senna.env.masks import ATTACK_MODE
 from senna.explain.features import FEATURE_NAMES
 
@@ -38,6 +36,7 @@ def build_card(record, *, pit_drivers, mode_drivers, flip_lines, fidelity,
             "reasons": dict(record.reasons),
         },
         "action": {"pit": int(record.pit_action), "mode": int(record.mode_action)},
+        "decision": _decision_line(record),
         "probs": {
             "pit": [float(p) for p in record.pit_probs_masked],
             "mode": [float(p) for p in record.mode_probs_masked],
@@ -51,23 +50,35 @@ def build_card(record, *, pit_drivers, mode_drivers, flip_lines, fidelity,
         "honesty": {
             "fidelity": {head: float(v) for head, v in fidelity.items()},
             "model_version": model_version,
+            # the headline drivers and the flip line are the pit head's, so the
+            # badge quoted in prose is the pit head's too
             "statement": (
                 f"Attribution of the trained policy via a "
-                f"{fidelity['pit']:.0%}-faithful surrogate; not a causal claim."
+                f"{fidelity['pit']:.0%}-faithful surrogate of its pit head; "
+                "not a causal claim."
             ),
         },
     }
 
 
-def _plain_language(record, pit_drivers) -> str:
-    """One honest sentence: the call, its confidence, and the input that moved it
-    most. Deterministic template, no generation — the card must never say more than
-    the attribution supports."""
+def _decision_line(record) -> str:
+    """The 5.8.3 Decision row: what was chosen, and how strongly."""
     call = _PIT_CALLS[record.pit_action]
-    if record.mode_action == ATTACK_MODE:
-        call += ", attacking on energy"
-    confidence = float(np.max(record.pit_probs_masked))
+    confidence = float(record.pit_probs_masked[record.pit_action])
+    return (f"Lap {record.lap} - {call}, {_MODE_CALLS[record.mode_action]} "
+            f"(probability {confidence:.2f})")
+
+
+def _plain_language(record, pit_drivers) -> str:
+    """The 5.8.3 plain-language row: why, in one sentence a recruiter reads without
+    a glossary. Deterministic template, no generation — the card must never say
+    more than the attribution supports."""
     top_name, top_value = pit_drivers[0]
-    direction = "pushed toward" if top_value >= 0 else "pushed against"
-    return (f"Lap {record.lap}: {call} (probability {confidence:.2f}); "
-            f"{top_name.replace('_', ' ')} {direction} the call hardest.")
+    driver = top_name.replace("_", " ")
+    if top_value >= 0:
+        reason = f"{driver} was the strongest push toward this call"
+    else:
+        reason = f"the call held despite {driver} pushing against it"
+    if record.mode_action == ATTACK_MODE:
+        reason += ", with the energy mode set to attack"
+    return reason[0].upper() + reason[1:] + "."

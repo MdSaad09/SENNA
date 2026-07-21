@@ -9,6 +9,7 @@ applying it.
 from dataclasses import dataclass
 
 import numpy as np
+import torch as th
 
 from senna.strategy.rollout import run_episode
 
@@ -46,8 +47,6 @@ class DecisionLogger:
         self._inner.reset(obs, info, rng=rng)
 
     def act(self, obs, info, mask) -> np.ndarray:
-        import torch as th
-
         action = np.asarray(self._inner.act(obs, info, mask))
         mask_flat = np.asarray(mask, dtype=bool)
 

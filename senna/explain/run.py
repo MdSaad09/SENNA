@@ -27,7 +27,7 @@ from senna.data.db import database_url
 from senna.env import F1RaceEnv
 from senna.env.masks import build_mask
 from senna.env.scenario import compound_code
-from senna.explain.attributions import explain_head, top_drivers
+from senna.explain.attributions import head_explainer, top_drivers
 from senna.explain.background import stratified_background
 from senna.explain.cards import build_card
 from senna.explain.crosscheck import gradient_attributions, rank_correlation
@@ -39,6 +39,7 @@ from senna.explain.surrogate import (
     distill_or_refuse,
     fit_head,
     head_probs,
+    load_surrogates,
     masked_top1_and_kl,
 )
 from senna.train.checkpoints import load_triplet
@@ -49,25 +50,26 @@ _ERA = "2026"  # the headline model is the 2026 strategist (5.7)
 _MIN_RACE_LAPS = 30  # only sizes the seed draw; shorter circuits just use more seeds
 
 
-def load_headline(triplet_dir: Path, configs_dir=None):
+def load_headline(triplet_dir: Path):
     """The score_triplet recipe (F-23): one throwaway env for the spaces, statistics
     frozen from the triplet, and the manifest that names what we are explaining."""
     from stable_baselines3.common.monitor import Monitor
     from stable_baselines3.common.vec_env import DummyVecEnv
 
-    banks = load_banks(configs_dir)
+    banks = load_banks()
     circuit = next(iter(banks.stage_c_validation))
-    venv = DummyVecEnv([lambda: Monitor(F1RaceEnv(circuit, _ERA, configs_dir=configs_dir))])
+    venv = DummyVecEnv([lambda: Monitor(F1RaceEnv(circuit, _ERA))])
     model, loaded = load_triplet(Path(triplet_dir), venv)
     manifest = json.loads((Path(triplet_dir) / "manifest.json").read_text())
     return Sb3Policy(model, loaded.normalize_obs), manifest, banks
 
 
-def collect_distillation(policy, circuits, *, pairs_target, seed_base, seed_floor,
-                         configs_dir=None):
+def collect_distillation(policy, circuits, *, pairs_target, seed_base, seed_floor):
     """Evaluation rollouts until the pair budget is met: deterministic head on the
     stochastic train-band env (E-06), circuits round-robin, derived seeds. The seed
-    list is drawn once up front so the run is a pure function of the config."""
+    list is drawn once up front so the run is a pure function of the config; the
+    margin over the naive episode count covers circuits shorter than _MIN_RACE_LAPS
+    and races that end early."""
     seeds = derived_seeds(seed_base, seed_floor, pairs_target // _MIN_RACE_LAPS + 64)
     envs: dict[str, F1RaceEnv] = {}
     records = []
@@ -77,10 +79,15 @@ def collect_distillation(policy, circuits, *, pairs_target, seed_base, seed_floo
             break
         circuit = circuits[i % len(circuits)]
         if circuit not in envs:
-            envs[circuit] = F1RaceEnv(circuit, _ERA, rival_band="train",
-                                      configs_dir=configs_dir)
+            envs[circuit] = F1RaceEnv(circuit, _ERA, rival_band="train")
         records.extend(log_episode(envs[circuit], policy, circuit=circuit, seed=seed))
         episodes += 1
+    if len(records) < pairs_target:
+        raise RuntimeError(
+            f"{len(records)} pairs from {episodes} episodes, {pairs_target} required "
+            "(distill.pairs) — the seed draw ran out; a surrogate fitted on less "
+            "would be a quieter model than the spec asks for"
+        )
     return records, episodes
 
 
@@ -192,17 +199,16 @@ def flip_lines_for(record, pit_top, scenario, policy_fn, mask_fn, *, per_card,
     return lines
 
 
-def race_cards(policy, env, circuit, seed, heads, background, cfg, *, model_version,
-               surrogate_version):
+def race_cards(policy, env, circuit, seed, explainers, cfg, *, fidelity,
+               model_version, surrogate_version):
     records = log_episode(env, policy, circuit=circuit, seed=seed)
     X = np.stack([r.obs for r in records])
-    pit_shap, _ = explain_head(heads["pit"]["booster"], X, background)
-    mode_shap, _ = explain_head(heads["mode"]["booster"], X, background)
+    pit_shap = explainers["pit"].shap_values(X)
+    mode_shap = explainers["mode"].shap_values(X)
 
     top_k = config.get(cfg, "cards.top_k_drivers")
     per_card = config.get(cfg, "flip.features_per_card")
     sweep_points = config.get(cfg, "flip.sweep_points")
-    fidelity = {"pit": heads["pit"]["top1"], "mode": heads["mode"]["top1"]}
     mask_fn = pit_mask_fn(env.scenario)
     policy_fn = pit_policy_fn(policy)
 
@@ -220,16 +226,21 @@ def race_cards(policy, env, circuit, seed, heads, background, cfg, *, model_vers
     return cards, records
 
 
-def run_crosscheck(policy, card_records, heads, background, cfg, *, seed):
+def run_crosscheck(policy, card_records, explainers, background, cfg, *, seed):
     sample = config.get(cfg, "crosscheck.sample")
     subsample = config.get(cfg, "crosscheck.background_subsample")
+    if len(card_records) < sample:
+        raise ValueError(
+            f"only {len(card_records)} decisions to cross-check, {sample} required "
+            "(crosscheck.sample) — the integrity statistic would be measured on less "
+            "than the spec asks for; card more races"
+        )
     rng = np.random.default_rng(seed)
-    picks = rng.choice(len(card_records), size=min(sample, len(card_records)),
-                       replace=False)
+    picks = rng.choice(len(card_records), size=sample, replace=False)
     X = np.stack([card_records[i].obs for i in picks])
     chosen = [card_records[i].pit_action for i in picks]
 
-    tree_vals, _ = explain_head(heads["pit"]["booster"], X, background)
+    tree_vals = explainers["pit"].shap_values(X)
     bg = background[rng.choice(len(background), size=min(subsample, len(background)),
                                replace=False)]
     grad_vals = gradient_attributions(policy.model, policy.normalize_obs, X, bg, "pit")
@@ -240,9 +251,17 @@ def run_crosscheck(policy, card_records, heads, background, cfg, *, seed):
     return float(rhos.mean()), rhos
 
 
-def write_artifacts(dest: Path, *, heads, fidelity_payload, background, composition,
-                    holdout_records, rhos):
+def write_surrogate_artifacts(dest: Path, *, heads, background, composition,
+                              holdout_records, model_version: str):
+    """Everything the cards are built from, written before a single card exists —
+    the manifest is then what names the checkpoint being explained, so card
+    generation reads the version off disk instead of trusting a variable (E-15).
+    The manifest is removed first and written last: a run that dies mid-write
+    leaves no stale manifest whose hashes describe boosters that are gone."""
     dest.mkdir(parents=True, exist_ok=True)
+    manifest_path = dest / "manifest.json"
+    manifest_path.unlink(missing_ok=True)
+
     for head in ("pit", "mode"):
         heads[head]["booster"].save_model(str(dest / f"{head}.ubj"))
     np.savez_compressed(dest / "background.npz", states=background)
@@ -254,15 +273,19 @@ def write_artifacts(dest: Path, *, heads, fidelity_payload, background, composit
         mode_probs_masked=np.stack([r.mode_probs_masked for r in holdout_records]),
         masks=np.stack([r.mask for r in holdout_records]),
     )
-    np.savez_compressed(dest / "crosscheck.npz", pit_spearman_rho=rhos)
-    (dest / "fidelity.json").write_text(json.dumps(fidelity_payload, indent=2))
-    (dest / "manifest.json").write_text(json.dumps({
-        "model_version": fidelity_payload["model_version"],
+    manifest_path.write_text(json.dumps({
+        "model_version": model_version,
         "pit_ubj_sha256": _sha256(dest / "pit.ubj"),
         "mode_ubj_sha256": _sha256(dest / "mode.ubj"),
         "git_commit": _git_commit(),
         "saved_at": datetime.now(UTC).isoformat(),
     }, indent=2))
+
+
+def write_readout(dest: Path, *, fidelity_payload, rhos):
+    """The numbers, once the cards and the cross-check have produced them."""
+    np.savez_compressed(dest / "crosscheck.npz", pit_spearman_rho=rhos)
+    (dest / "fidelity.json").write_text(json.dumps(fidelity_payload, indent=2))
 
 
 def _sha256(path: Path) -> str:
@@ -306,7 +329,9 @@ def main() -> None:
     train, holdout = split_by_episode(
         records, config.get(cfg, "distill.holdout_episode_frac"), seed=seed_base
     )
-    print(f"distillation: {len(records)} pairs from {episodes} episodes "
+    n_pairs = len(records)
+    del records  # 200k records is a few hundred MB; the split owns them from here
+    print(f"distillation: {n_pairs} pairs from {episodes} episodes "
           f"({len(holdout)} held out at episode level)")
 
     heads = distill_heads(train, holdout, cfg, seed=seed_base)
@@ -320,6 +345,17 @@ def main() -> None:
         early=thresholds["early"], late=thresholds["late"], seed=seed_base,
     )
 
+    dest = Path("models/explain") / model_version
+    write_surrogate_artifacts(dest, heads=heads, background=background,
+                              composition=composition, holdout_records=holdout,
+                              model_version=model_version)
+    # read the version back out of the artifact the cards are about to be built
+    # from: a stale models/explain/ is then caught by build_card, not trusted (E-15)
+    _, surrogate_version = load_surrogates(dest)
+    explainers = {head: head_explainer(fit["booster"], background)
+                  for head, fit in heads.items()}
+    fidelity = {head: fit["top1"] for head, fit in heads.items()}
+
     race_list = [(c, s) for c in circuits for s in banks.stage_c_validation[c]]
     if args.card_races:
         race_list = race_list[:args.card_races]
@@ -329,14 +365,14 @@ def main() -> None:
         if circuit not in envs:
             envs[circuit] = F1RaceEnv(circuit, _ERA, rival_band="train")
         cards, recs = race_cards(
-            policy, envs[circuit], circuit, seed, heads, background, cfg,
-            model_version=model_version, surrogate_version=model_version,
+            policy, envs[circuit], circuit, seed, explainers, cfg, fidelity=fidelity,
+            model_version=model_version, surrogate_version=surrogate_version,
         )
         races.append({"circuit": circuit, "seed": seed, "cards": cards})
         card_records.extend(recs)
     print(f"cards: {sum(len(r['cards']) for r in races)} across {len(races)} races")
 
-    rho_mean, rhos = run_crosscheck(policy, card_records, heads, background, cfg,
+    rho_mean, rhos = run_crosscheck(policy, card_records, explainers, background, cfg,
                                     seed=seed_base)
     print(f"cross-check: mean Spearman rho {rho_mean:.3f} over {len(rhos)} decisions")
 
@@ -348,7 +384,7 @@ def main() -> None:
             head: {"top1": fit["top1"], "mean_kl": fit["mean_kl"], "rung": fit["rung"]}
             for head, fit in heads.items()
         },
-        "pairs": len(records),
+        "pairs": n_pairs,
         "episodes": episodes,
         "holdout_pairs": len(holdout),
         "crosscheck": {"mean_spearman_rho": rho_mean, "sample": int(len(rhos))},
@@ -356,10 +392,7 @@ def main() -> None:
         "card_races": len(races),
         "generated_at": datetime.now(UTC).isoformat(),
     }
-    dest = Path("models/explain") / model_version
-    write_artifacts(dest, heads=heads, fidelity_payload=fidelity_payload,
-                    background=background, composition=composition,
-                    holdout_records=holdout, rhos=rhos)
+    write_readout(dest, fidelity_payload=fidelity_payload, rhos=rhos)
     print(f"artifacts: {dest}")
 
     if args.skip_persist:
