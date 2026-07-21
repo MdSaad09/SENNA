@@ -3,10 +3,14 @@ policy's soft targets, and fidelity is scored on the surrogate exactly as cards 
 it — masked to the legal actions and renormalised, never on the raw distribution.
 """
 
+import tempfile
+from pathlib import Path
+
 import numpy as np
 import pytest
 
 from senna.explain.surrogate import expand_soft_labels, masked_top1_and_kl
+from tests.explain.conftest import SEED
 
 
 def test_row_expansion_reproduces_targets():
@@ -45,3 +49,35 @@ def test_fidelity_measured_after_masking():
     #   row A: 0.6*ln(0.6/0.75) + 0.4*ln(0.4/0.25) = 0.054115
     #   row B: 0.7*ln(0.7/0.4)  + 0.3*ln(0.3/0.6)  = 0.183787
     assert mean_kl == pytest.approx(0.118951, abs=1e-5)
+
+
+def test_load_surrogates_reports_the_version_it_was_fitted_to():
+    """The saved artifact is what card generation reads its version from, so a stale
+    models/explain/ is caught rather than trusted (E-15). Round-tripping the boosters
+    is also what --reuse-surrogate rests on."""
+    import json
+
+    import xgboost as xgb
+
+    from senna.explain.surrogate import load_surrogates
+
+    version = "senna-ppo-deadbeef0000-C-00000042"
+    artifacts = Path(tempfile.mkdtemp())
+    rng = np.random.default_rng(SEED)
+    X = rng.normal(size=(60, 4)).astype(np.float32)
+    for head, n_class in (("pit", 6), ("mode", 4)):
+        booster = xgb.train(
+            {"objective": "multi:softprob", "num_class": n_class, "max_depth": 2,
+             "base_score": 0.5, "nthread": 1},
+            xgb.DMatrix(X, label=rng.integers(0, n_class, size=len(X))),
+            num_boost_round=2,
+        )
+        booster.save_model(str(artifacts / f"{head}.ubj"))
+    (artifacts / "manifest.json").write_text(json.dumps({"model_version": version}))
+
+    heads, loaded_version = load_surrogates(artifacts)
+
+    assert loaded_version == version
+    assert set(heads) == {"pit", "mode"}
+    assert heads["pit"].predict(xgb.DMatrix(X)).shape == (60, 6)
+    assert heads["mode"].predict(xgb.DMatrix(X)).shape == (60, 4)
