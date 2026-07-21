@@ -26,7 +26,8 @@ def find_flip(policy_fn, obs, dim: int, grid, mask_fn):
 
     start = int(np.clip(np.searchsorted(grid, float(obs[dim])), 0, len(grid) - 1))
     for offset in range(len(grid)):
-        for i in dict.fromkeys((start - offset, start + offset)):  # nearer side first
+        below, above = start - offset, start + offset
+        for i in (below, above) if below != above else (below,):
             if 0 <= i < len(grid) and differs(i):
                 return float(grid[i])
     return None

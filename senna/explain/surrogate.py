@@ -20,6 +20,8 @@ def expand_soft_labels(X, probs, weight_floor: float):
     X = np.asarray(X)
     probs = np.asarray(probs)
     keep = probs >= weight_floor
+    # nonzero and boolean indexing both walk in row-major order, which is what keeps
+    # each weight paired with its own label
     state_idx, labels = np.nonzero(keep)
     return X[state_idx], labels.astype(np.int64), probs[keep].astype(np.float64)
 
@@ -48,14 +50,16 @@ def masked_top1_and_kl(surrogate_probs, policy_masked_probs, masks):
 def distill_or_refuse(*, ladder, threshold: float, fit_rung):
     """Walk the deepen ladder shallow to deep (5.8.2: "deepen the surrogate before
     shipping explanations"); return the first rung that clears the bar, refuse after
-    the last. fit_rung(rung) -> (surrogate, top1, mean_kl)."""
+    the last. fit_rung(rung) -> (surrogate, top1, mean_kl); the winning rung comes
+    back with the fit, so the caller records what was fitted rather than inferring
+    it."""
     if not ladder:
         raise ValueError("distill.xgb_ladder is empty — there is nothing to fit")
     best = 0.0
     for rung in ladder:
         surrogate, top1, mean_kl = fit_rung(rung)
         if top1 >= threshold:
-            return surrogate, top1, mean_kl
+            return surrogate, top1, mean_kl, rung
         best = max(best, top1)
     raise FidelityGateError(
         f"best fidelity {best:.3f} across {len(ladder)} rungs, threshold {threshold} "

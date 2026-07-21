@@ -43,7 +43,7 @@ def test_deepen_ladder_retries_before_refusing():
             return object(), 0.5, 2.0
         return deepest_surrogate, 0.97, 0.05
 
-    surrogate, top1, mean_kl = distill_or_refuse(
+    surrogate, top1, mean_kl, rung = distill_or_refuse(
         ladder=ladder, threshold=threshold, fit_rung=passes_only_at_the_deepest
     )
 
@@ -51,3 +51,4 @@ def test_deepen_ladder_retries_before_refusing():
     assert surrogate is deepest_surrogate
     assert top1 == pytest.approx(0.97)
     assert mean_kl == pytest.approx(0.05)
+    assert rung == ladder[-1]  # the fit reports which rung it took, not the caller

@@ -2,7 +2,9 @@
 status. Attributions are marginal contributions *against this set*, so its
 composition is documented as an artifact, not assumed. Every non-empty stratum gets
 an even share first — SC and VSC laps are rare, and a proportional draw would all
-but erase exactly the states the interesting pit calls live in.
+but erase exactly the states the interesting pit calls live in. Whatever that even
+share cannot place, because thin strata run out, goes to whichever stratum has the
+most room left, one slot at a time.
 """
 
 import numpy as np
@@ -30,6 +32,7 @@ def stratified_background(records, size: int, *, early: float, late: float, seed
     keys = sorted(strata)
     counts = {key: min(size // len(keys), len(strata[key])) for key in keys}
     while sum(counts.values()) < size:
+        # most unused states first; the key name breaks ties so the draw is stable
         key = max(keys, key=lambda k: (len(strata[k]) - counts[k], k))
         counts[key] += 1
 

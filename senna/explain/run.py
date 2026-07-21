@@ -112,18 +112,17 @@ def _distill_one(head, n_class, train_records, holdout_records, X_train, X_hold,
     probs_train = np.stack([_unmasked(r, head) for r in train_records])
     policy_hold = np.stack([_masked(r, head) for r in holdout_records])
     masks_hold = np.stack([_head_mask(r, head) for r in holdout_records])
-    rungs = []
 
     def fit_rung(rung):
-        rungs.append(rung)
         booster = fit_head(X_train, probs_train, {**rung, "weight_floor": weight_floor},
                            num_class=n_class, seed=seed)
         top1, kl = masked_top1_and_kl(head_probs(booster, X_hold), policy_hold, masks_hold)
         return booster, top1, kl
 
-    booster, top1, mean_kl = distill_or_refuse(ladder=ladder, threshold=threshold,
-                                               fit_rung=fit_rung)
-    return {"booster": booster, "top1": top1, "mean_kl": mean_kl, "rung": rungs[-1]}
+    booster, top1, mean_kl, rung = distill_or_refuse(
+        ladder=ladder, threshold=threshold, fit_rung=fit_rung
+    )
+    return {"booster": booster, "top1": top1, "mean_kl": mean_kl, "rung": rung}
 
 
 def _unmasked(record, head):

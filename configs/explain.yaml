@@ -41,7 +41,9 @@ background:
 crosscheck:
   sample: 500                   # sourced 5.8.2 — decisions given GradientExplainer
                                 # attributions on the true network; the rank
-                                # correlation is the integrity statistic
+                                # correlation is the integrity statistic. Drawn from
+                                # the carded decisions, so a dev run narrowed with
+                                # RACES= must still card at least this many.
   background_subsample: 128     # stylised — background states handed to
                                 # GradientExplainer; its cost scales with background
                                 # x samples and the full 1,024 buys no extra honesty
