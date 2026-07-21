@@ -84,14 +84,14 @@ def physical_note(dim: int, value: float, scenario) -> str:
     if dim == 0:
         return f"about lap {value * scenario.total_laps:.0f}"
     if dim == 8:
-        return f"about {value * age_norm:.0f} laps old"
+        return f"about {_count(value * age_norm, 'lap')} old"
     if dim in (19, 21):
         # a signed delta: dropping the sign would report a rival 17 laps fresher as
         # 17 laps older, inverting the reason for the call
         laps = value * age_norm
-        return f"about {abs(laps):.0f} laps {'older' if laps >= 0 else 'fresher'}"
+        return f"about {_count(abs(laps), 'lap')} {'older' if laps >= 0 else 'fresher'}"
     if dim == 11:
-        return f"about {value * obs_cfg['max_stops_norm']:.0f} stops"
+        return f"about {_count(value * obs_cfg['max_stops_norm'], 'stop')}"
     if dim == 13:
         return f"about {value * scenario.race_fuel_kg:.0f} kg of fuel"
     if dim == 14:
@@ -106,3 +106,9 @@ def physical_note(dim: int, value: float, scenario) -> str:
         temp_c = obs_cfg["track_temp_min_c"] + value * obs_cfg["track_temp_span_c"]
         return f"about {temp_c:.0f} C track"
     return ""
+
+
+def _count(value: float, noun: str) -> str:
+    """"about 1 stops" on a recruiter-facing card reads as a machine talking."""
+    rounded = round(value)
+    return f"{rounded:.0f} {noun}" if rounded == 1 else f"{rounded:.0f} {noun}s"
