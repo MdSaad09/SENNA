@@ -176,23 +176,27 @@ def pit_policy_fn(policy):
     return pit_action
 
 
-def flip_lines_for(record, pit_top, scenario, policy_fn, mask_fn, *, per_card,
-                   sweep_points):
+def flip_lines_for(record, pit_shap_row, scenario, policy_fn, mask_fn, *, per_card,
+                   sweep_points, max_sweeps):
+    """Sweep the strongest drivers a physical sweep can actually cross. Ranking runs
+    over every dimension rather than the card's top five, because the top five are
+    usually one-hots — compound, track status, the override window — and no value
+    between "soft" and "medium" exists to sweep through. max_sweeps bounds the cost."""
+    order = np.argsort(-np.abs(np.asarray(pit_shap_row)), kind="stable")
+    candidates = [int(dim) for dim in order if int(dim) in SWEEPABLE][:max_sweeps]
+
     lines = []
-    dim_of = {name: i for i, name in enumerate(FEATURE_NAMES)}
-    for name, _ in pit_top:
+    for dim in candidates:
         if len(lines) == per_card:
             break
-        bounds = SWEEPABLE.get(dim_of[name])
-        if bounds is None:
-            continue  # a one-hot drove the call; there is nothing honest to sweep
+        bounds = SWEEPABLE[dim]
         grid = np.asarray(bounds) if len(bounds) == 3 else np.linspace(*bounds, sweep_points)
-        flip_at = find_flip(policy_fn, record.obs, dim_of[name], grid, mask_fn)
+        flip_at = find_flip(policy_fn, record.obs, dim, grid, mask_fn)
         if flip_at is None:
             continue
-        note = physical_note(dim_of[name], flip_at, scenario)
+        note = physical_note(dim, flip_at, scenario)
         suffix = f" ({note})" if note else ""
-        lines.append(f"the call flips if {name} crossed {flip_at:.2f}{suffix}")
+        lines.append(f"the call flips if {FEATURE_NAMES[dim]} crossed {flip_at:.2f}{suffix}")
     if not lines:
         lines.append("no single sweepable feature flips this call within its physical range")
     return lines
@@ -208,15 +212,18 @@ def race_cards(policy, env, circuit, seed, explainers, cfg, *, fidelity,
     top_k = config.get(cfg, "cards.top_k_drivers")
     per_card = config.get(cfg, "flip.features_per_card")
     sweep_points = config.get(cfg, "flip.sweep_points")
+    max_sweeps = config.get(cfg, "flip.max_sweeps")
     mask_fn = pit_mask_fn(env.scenario)
     policy_fn = pit_policy_fn(policy)
 
     cards = []
     for i, record in enumerate(records):
-        pit_top = top_drivers(pit_shap[i, :, record.pit_action], FEATURE_NAMES, top_k)
+        pit_row = pit_shap[i, :, record.pit_action]
+        pit_top = top_drivers(pit_row, FEATURE_NAMES, top_k)
         mode_top = top_drivers(mode_shap[i, :, record.mode_action], FEATURE_NAMES, top_k)
-        flips = flip_lines_for(record, pit_top, env.scenario, policy_fn, mask_fn,
-                               per_card=per_card, sweep_points=sweep_points)
+        flips = flip_lines_for(record, pit_row, env.scenario, policy_fn, mask_fn,
+                               per_card=per_card, sweep_points=sweep_points,
+                               max_sweeps=max_sweeps)
         cards.append(build_card(
             record, pit_drivers=pit_top, mode_drivers=mode_top, flip_lines=flips,
             fidelity=fidelity, model_version=model_version,
@@ -310,6 +317,9 @@ def main() -> None:
                         help="dev cap: card only the first N validation races")
     parser.add_argument("--skip-persist", action="store_true",
                         help="dev: skip the agent_decisions write")
+    parser.add_argument("--reuse-surrogate", action="store_true",
+                        help="rebuild cards from the surrogate already in "
+                             "models/explain/<version>/ instead of distilling again")
     args = parser.parse_args()
 
     cfg = config.load("explain")
@@ -320,34 +330,44 @@ def main() -> None:
     seed_base = config.get(cfg, "distill.rollout_seed_base")
     print(f"explaining {model_version} (config {env_config_hash[:12]})")
 
-    records, episodes = collect_distillation(
-        policy, circuits,
-        pairs_target=args.pairs or config.get(cfg, "distill.pairs"),
-        seed_base=seed_base, seed_floor=config.get(cfg, "distill.seed_floor"),
-    )
-    train, holdout = split_by_episode(
-        records, config.get(cfg, "distill.holdout_episode_frac"), seed=seed_base
-    )
-    n_pairs = len(records)
-    del records  # 200k records is a few hundred MB; the split owns them from here
-    print(f"distillation: {n_pairs} pairs from {episodes} episodes "
-          f"({len(holdout)} held out at episode level)")
+    dest = Path("models/explain") / model_version
+    if args.reuse_surrogate:
+        boosters, stored_version = load_surrogates(dest)
+        stored = json.loads((dest / "fidelity.json").read_text())
+        heads = {head: {"booster": boosters[head], **stored["heads"][head]}
+                 for head in boosters}
+        background = np.load(dest / "background.npz")["states"]
+        n_pairs, episodes = stored["pairs"], stored["episodes"]
+        n_holdout = stored["holdout_pairs"]
+        print(f"reusing the surrogate distilled from {n_pairs} pairs "
+              f"({stored_version})")
+    else:
+        records, episodes = collect_distillation(
+            policy, circuits,
+            pairs_target=args.pairs or config.get(cfg, "distill.pairs"),
+            seed_base=seed_base, seed_floor=config.get(cfg, "distill.seed_floor"),
+        )
+        train, holdout = split_by_episode(
+            records, config.get(cfg, "distill.holdout_episode_frac"), seed=seed_base
+        )
+        n_pairs, n_holdout = len(records), len(holdout)
+        del records  # 200k records is a few hundred MB; the split owns them from here
+        print(f"distillation: {n_pairs} pairs from {episodes} episodes "
+              f"({n_holdout} held out at episode level)")
 
-    heads = distill_heads(train, holdout, cfg, seed=seed_base)
+        heads = distill_heads(train, holdout, cfg, seed=seed_base)
+        thresholds = config.get(cfg, "background.phase_thresholds")
+        background, composition = stratified_background(
+            train, config.get(cfg, "background.size"),
+            early=thresholds["early"], late=thresholds["late"], seed=seed_base,
+        )
+        write_surrogate_artifacts(dest, heads=heads, background=background,
+                                  composition=composition, holdout_records=holdout,
+                                  model_version=model_version)
+
     for head, fit in heads.items():
         print(f"  {head}: top-1 {fit['top1']:.3f}, mean KL {fit['mean_kl']:.4f} "
               f"(depth {fit['rung']['max_depth']}, {fit['rung']['n_estimators']} trees)")
-
-    thresholds = config.get(cfg, "background.phase_thresholds")
-    background, composition = stratified_background(
-        train, config.get(cfg, "background.size"),
-        early=thresholds["early"], late=thresholds["late"], seed=seed_base,
-    )
-
-    dest = Path("models/explain") / model_version
-    write_surrogate_artifacts(dest, heads=heads, background=background,
-                              composition=composition, holdout_records=holdout,
-                              model_version=model_version)
     # read the version back out of the artifact the cards are about to be built
     # from: a stale models/explain/ is then caught by build_card, not trusted (E-15)
     _, surrogate_version = load_surrogates(dest)
@@ -385,7 +405,7 @@ def main() -> None:
         },
         "pairs": n_pairs,
         "episodes": episodes,
-        "holdout_pairs": len(holdout),
+        "holdout_pairs": n_holdout,
         "crosscheck": {"mean_spearman_rho": rho_mean, "sample": int(len(rhos))},
         "cards": sum(len(r["cards"]) for r in races),
         "card_races": len(races),

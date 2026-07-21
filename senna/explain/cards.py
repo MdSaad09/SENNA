@@ -52,9 +52,11 @@ def build_card(record, *, pit_drivers, mode_drivers, flip_lines, fidelity,
             "model_version": model_version,
             # the headline drivers and the flip line are the pit head's, so the
             # badge quoted in prose is the pit head's too
+            # one decimal: 0.997 rendered as "100%" is an overclaim, and overclaiming
+            # on the honesty footer is the one place it must never happen
             "statement": (
                 f"Attribution of the trained policy via a "
-                f"{fidelity['pit']:.0%}-faithful surrogate of its pit head; "
+                f"{fidelity['pit']:.1%}-faithful surrogate of its pit head; "
                 "not a causal claim."
             ),
         },

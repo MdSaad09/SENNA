@@ -53,5 +53,10 @@ cards:
 
 flip:
   sweep_points: 64              # stylised — grid resolution of a single-feature sweep
-  features_per_card: 2          # stylised — pit-head drivers probed per card; the
+  features_per_card: 2          # stylised — flip lines reported per card; the
                                 # 5.8.3 example card shows two flip conditions
+  max_sweeps: 6                 # stylised — sweepable dims tried, in attribution
+                                # order, before giving up. The strongest drivers are
+                                # usually one-hots (compound, track status), which no
+                                # physical sweep can cross, so a probe that only
+                                # looked at the top few found nothing on most cards.
