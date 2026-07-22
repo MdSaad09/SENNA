@@ -43,7 +43,8 @@ Hard rules:
 ## The interpretability contract (Saad's non-negotiable)
 Nothing is a black box. An inline constant in code is a defect. Every number lives in
 `configs/*.yaml` with a comment naming its origin: `sourced` (document + AR-id),
-`fitted` (which notebook produced it), or `stylised` (an explicit visual choice).
+`fitted` (which notebook produced it), `stylised` (an explicit visual choice), or
+`operational` (an engineering default — timeout, page size — with its sizing rationale).
 The spec-auditor agent enforces this on every diff — expect it.
 
 ## 2026 physics — regressions here fail the viva
