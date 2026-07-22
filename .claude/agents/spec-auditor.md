@@ -34,7 +34,9 @@ FORBIDDEN — grep the diff for each; any hit is a Blocker with file:line:
 
 REQUIRED — verify each and report pass / fail / not-applicable with evidence:
 - Every new numeric constant lives in configs/*.yaml with a provenance comment naming
-  sourced / fitted / stylised (interpretability contract, spec 0.4)
+  sourced / fitted / stylised / operational (interpretability contract, spec 0.4;
+  operational added 22 Jul 2026 — an engineering default must state its sizing
+  rationale, not just the tag)
 - Mask reason codes and per-lap reward decomposition are logged wherever the diff
   touches the env (spec 5.5.4–5.5.5)
 - VecNormalize statistics are saved and loaded with any checkpoint code [F-23]

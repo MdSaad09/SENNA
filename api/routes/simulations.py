@@ -1,0 +1,168 @@
+"""POST /simulations and the reads over its stored results (5.9.2). The POST draws a
+missing seed before the cache key exists, checks the E-15 key, writes the queued row
+and hands the race to the RQ worker — a request handler never simulates (F-26).
+Serving reads filter on status IS NOT NULL so F09's eval-card rows, which share these
+tables under their own purpose, 404 here instead of 500ing.
+"""
+
+import os
+import secrets
+from datetime import UTC, datetime
+
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.concurrency import run_in_threadpool
+from sqlalchemy import delete, insert, select
+
+from api.deps import serving_config
+from api.schemas import DecisionCard, JobAccepted, LapFrame, SimulationCreate, SimulationResult
+from senna.data.schema import AgentDecision, LapFrameRow, SimulationRun
+from senna.env.scenario import build_scenario
+from senna.serve.cache import sim_cache_key, ttl_seconds
+from senna.serve.loader import UnknownModelVersionError, read_manifest
+
+router = APIRouter()
+
+
+def run_is_stale(row, *, queue_cfg: dict) -> bool:
+    """A queued/running row older than the configured multiple of the job budget:
+    the work horse died before it could report (OOM, a platform SIGKILL), so its
+    cache key must stop answering and the WS must stop waiting (E-15)."""
+    if row.status not in ("queued", "running"):
+        return False
+    anchor = row.started_at or row.created_at
+    if anchor is None:
+        return True
+    age_s = (datetime.now(UTC).replace(tzinfo=None) - anchor).total_seconds()
+    return age_s > queue_cfg["stale_after_timeouts"] * queue_cfg["job_timeout_s"]
+
+
+def _validated_manifest(req: SimulationCreate) -> dict:
+    try:
+        # request > MODEL_VERSION env > the promoted headline (5.11.2)
+        manifest = read_manifest(version=req.model_version or os.environ.get("MODEL_VERSION"))
+    except UnknownModelVersionError as err:
+        raise HTTPException(422, str(err)) from err
+    try:
+        scenario = build_scenario(req.circuit_id, req.era)
+    except KeyError as err:
+        raise HTTPException(
+            404, f"no fitted circuit '{req.circuit_id}' — GET /api/v1/circuits lists the library"
+        ) from err
+    if req.grid_position > scenario.grid_size:
+        raise HTTPException(
+            422, f"grid_position {req.grid_position} exceeds the {req.era} grid "
+                 f"of {scenario.grid_size} cars"
+        )
+    return manifest
+
+
+async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
+                      extra_config: dict | None = None) -> JobAccepted:
+    # file+yaml IO off the event loop, which also owns every WS stream
+    manifest = await run_in_threadpool(_validated_manifest, req)
+    if req.seed is None:
+        # drawn before the key is built, so the echoed seed is the one that runs
+        bound = serving_config()["seeds"]["draw_bound"]
+        req = req.model_copy(update={"seed": secrets.randbelow(bound)})
+
+    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], req)
+    redis = request.app.state.redis
+    engine = request.app.state.engine
+    queue_cfg = serving_config()["queue"]
+
+    cached = await redis.get(key)
+    if cached is not None:
+        async with engine.connect() as conn:
+            hit = (await conn.execute(
+                select(SimulationRun).where(SimulationRun.id == int(cached))
+            )).first()
+        if hit is not None and hit.status == "complete":
+            return JobAccepted(run_id=hit.id)
+        if hit is not None and not run_is_stale(hit, queue_cfg=queue_cfg):
+            return JobAccepted(run_id=hit.id)  # queued/running and fresh: dedupe in flight
+        # the run behind the key is dead — failed, deleted, or a work horse that
+        # never reported. The key must not answer for it for 7 days (E-15).
+        await redis.delete(key)
+
+    async with engine.begin() as conn:
+        run_id = (await conn.execute(
+            insert(SimulationRun).values(
+                created_at=datetime.now(UTC).replace(tzinfo=None),
+                model_version=manifest["model_version"],
+                env_config_hash=manifest["fingerprint"],
+                status="queued", seed=req.seed, circuit=req.circuit_id, purpose=purpose,
+                config={**req.model_dump(), **(extra_config or {})},
+            ).returning(SimulationRun.id)
+        )).scalar_one()
+
+    prior = await redis.set(key, run_id, nx=True, ex=ttl_seconds(), get=True)
+    if prior is not None:
+        # an identical request won the NX race between our GET and SET: keep the
+        # winner, drop our orphan row, enqueue nothing
+        async with engine.begin() as conn:
+            await conn.execute(delete(SimulationRun).where(SimulationRun.id == run_id))
+        return JobAccepted(run_id=int(prior))
+
+    await run_in_threadpool(
+        request.app.state.queue.enqueue, "worker.jobs.run_simulation", run_id,
+        job_timeout=queue_cfg["job_timeout_s"],
+        result_ttl=queue_cfg["result_ttl_s"], failure_ttl=queue_cfg["result_ttl_s"],
+    )
+    return JobAccepted(run_id=run_id)
+
+
+@router.post("/simulations", response_model=JobAccepted, status_code=202)
+async def create_simulation(request: Request, req: SimulationCreate):
+    return await enqueue_run(request, req, purpose="serve")
+
+
+async def _serving_row(request: Request, run_id: int):
+    async with request.app.state.engine.connect() as conn:
+        row = (await conn.execute(
+            select(SimulationRun).where(SimulationRun.id == run_id,
+                                        SimulationRun.status.is_not(None))
+        )).first()
+    if row is None:
+        raise HTTPException(404, f"no simulation run {run_id}")
+    return row
+
+
+@router.get("/simulations/{run_id}", response_model=SimulationResult)
+async def simulation_result(request: Request, run_id: int):
+    row = await _serving_row(request, run_id)
+    return SimulationResult(
+        run_id=row.id, status=row.status, model_version=row.model_version,
+        env_config_hash=row.env_config_hash, circuit_id=row.circuit,
+        era=(row.config or {}).get("era"), seed=row.seed, config=row.config,
+        summary=row.summary, created_at=row.created_at, started_at=row.started_at,
+        finished_at=row.finished_at,
+    )
+
+
+@router.get("/simulations/{run_id}/frames", response_model=list[LapFrame])
+async def simulation_frames(request: Request, run_id: int,
+                            from_lap: int = 1, to_lap: int | None = None):
+    await _serving_row(request, run_id)
+    page_size = serving_config()["frames"]["page_size"]
+    if to_lap is None:
+        to_lap = from_lap + page_size - 1
+    to_lap = min(to_lap, from_lap + page_size - 1)
+    async with request.app.state.engine.connect() as conn:
+        frames = (await conn.execute(
+            select(LapFrameRow.frame)
+            .where(LapFrameRow.run_id == run_id,
+                   LapFrameRow.lap >= from_lap, LapFrameRow.lap <= to_lap)
+            .order_by(LapFrameRow.lap)
+        )).scalars().all()
+    return list(frames)
+
+
+@router.get("/simulations/{run_id}/decisions", response_model=list[DecisionCard])
+async def simulation_decisions(request: Request, run_id: int):
+    await _serving_row(request, run_id)
+    async with request.app.state.engine.connect() as conn:
+        cards = (await conn.execute(
+            select(AgentDecision.decision).where(AgentDecision.run_id == run_id)
+            .order_by(AgentDecision.lap_number)
+        )).scalars().all()
+    return list(cards)

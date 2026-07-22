@@ -11,8 +11,22 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY api/ api/
+COPY worker/ worker/
 COPY senna/ senna/
 COPY configs/ configs/
+COPY migrations/ migrations/
+COPY alembic.ini .
+COPY scripts/ scripts/
+# the frozen serving artifacts bake in (F-26): Railway filesystems are ephemeral,
+# so a redeploy must reproduce the exact triplet, surrogate and ribbons from the
+# repo — nothing is ever mounted. senna.config resolves REPO_ROOT to /app, so the
+# loader finds these at /app/models without any env override.
+COPY models/headline/ models/headline/
+COPY models/explain/ models/explain/
+COPY data/circuits/ data/circuits/
+
+RUN chmod +x scripts/start_api.sh scripts/start_worker.sh
 
 EXPOSE 8000
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# the worker runs this same image with scripts/start_worker.sh (5.11.1)
+CMD ["scripts/start_api.sh"]

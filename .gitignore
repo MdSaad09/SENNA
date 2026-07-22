@@ -12,9 +12,24 @@ build/
 .env.*
 !.env.example
 wandb/
-models/
+# models/ and data/circuits/ stay ignored except the frozen serving artifacts —
+# Railway builds the worker image from the repo, so the baked triplet, its surrogate
+# and the built ribbons must be committed (F-26; decision Q1, 22 Jul 2026). Training
+# and ablation run dirs never come in. `dir/*` + negations, not `dir/`: git will not
+# descend into a fully ignored directory to honour a re-include.
+models/*
+!models/headline
+!models/explain
+models/explain/*
+!models/explain/senna-ppo-6b6edb78d84e-C-00835584
+# the two evaluation-only arrays are reproducible from make explain and serve nothing
+models/explain/senna-ppo-6b6edb78d84e-C-00835584/holdout.npz
+models/explain/senna-ppo-6b6edb78d84e-C-00835584/crosscheck.npz
 data/cache/
-data/circuits/
+data/circuits/*
+!data/circuits/bahrain_grand_prix
+!data/circuits/hungarian_grand_prix
+!data/circuits/monaco_grand_prix
 fastf1_cache/
 *.parquet
 .DS_Store

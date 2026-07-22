@@ -151,8 +151,6 @@ class OpenF1Stint(Base):
 
 
 class SimulationRun(Base):
-    # minimal on purpose: F01 owns the table so the initial migration is the
-    # whole schema; F10 migrates in what serving needs (E-15 cache keys live here)
     __tablename__ = "simulation_runs"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -160,6 +158,28 @@ class SimulationRun(Base):
     env_config_hash: Mapped[str | None]
     model_version: Mapped[str | None]
     config: Mapped[dict | None] = mapped_column(JSONB)
+    # F10 serving columns, all nullable: F09's eval-card rows predate them (purpose
+    # lives inside config there) and serving reads filter on status IS NOT NULL,
+    # so the two populations share the table without either 500ing the other
+    status: Mapped[str | None]  # queued / running / complete / failed
+    seed: Mapped[int | None]
+    circuit: Mapped[str | None]
+    purpose: Mapped[str | None]  # serve / counterfactual
+    summary: Mapped[dict | None] = mapped_column(JSONB)
+    started_at: Mapped[datetime | None]
+    finished_at: Mapped[datetime | None]
+
+
+class LapFrameRow(Base):
+    # E-16 source of truth: the WS playback clock, /frames and /energy all serve
+    # from these rows — reconnect and scrub are reads, never re-simulations
+    __tablename__ = "lap_frames"
+    __table_args__ = (UniqueConstraint("run_id", "lap"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    run_id: Mapped[int] = mapped_column(ForeignKey("simulation_runs.id"))
+    lap: Mapped[int]
+    frame: Mapped[dict] = mapped_column(JSONB)
 
 
 class AgentDecision(Base):

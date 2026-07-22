@@ -19,8 +19,18 @@ jobs:
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
+      redis:
+        image: redis:7-alpine  # the F10 serving tests need the queue + cache (E-15)
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     env:
       DATABASE_URL: postgresql+asyncpg://senna:senna@localhost:5432/senna
+      REDIS_URL: redis://localhost:6379/0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -49,3 +59,12 @@ jobs:
       - run: npx tsc -b
       - run: npm run lint
       - run: npm test
+      - run: npm run build
+        env:
+          # production-shaped values so the bundle bakes what a browser must reach
+          VITE_API_BASE: https://example.invalid/api
+          VITE_WS_BASE: wss://example.invalid/ws
+      - name: F-27 build check
+        # the hostname shapes compose actually uses server-side; any of them in the
+        # browser bundle means a Docker-internal URL escaped into client config
+        run: "! grep -rE 'api:8000|redis://|postgres://|@postgres' dist/"

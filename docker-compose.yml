@@ -40,6 +40,21 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  worker:
+    # same image as the api (5.11.1); only the start command differs
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: scripts/start_worker.sh
+    environment:
+      DATABASE_URL: postgresql+asyncpg://senna:senna@postgres:5432/senna
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test:
         [
@@ -61,6 +76,10 @@ services:
       - /app/node_modules
     environment:
       VITE_API_BASE: /api
+      # ws:// straight at the published api port — master spec 5.11.2 wins over the
+      # feature spec's /ws proxy idea (plan divergence 6); browser-reachable, so no
+      # Docker hostname (F-27)
+      VITE_WS_BASE: ws://localhost:8000/ws
       # proxy target is server-side, so the compose service name is allowed (F-27)
       API_PROXY_TARGET: http://api:8000
     command: sh -c "npm ci && npm run dev -- --host --port 5173"

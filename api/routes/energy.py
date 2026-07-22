@@ -1,0 +1,36 @@
+"""GET /energy/{run_id}: the per-lap harvest/deploy/SOC ledger replayed from stored
+frames, with the per-event harvest cap from configs/circuits.yaml riding along
+(E-02) so the energy view draws the ceiling it was actually raced under.
+"""
+
+from fastapi import APIRouter, Request
+from sqlalchemy import select
+
+from api.routes.simulations import _serving_row
+from api.schemas import EnergyProfile
+from senna import config
+from senna.data.schema import LapFrameRow
+
+router = APIRouter()
+
+
+@router.get("/energy/{run_id}", response_model=EnergyProfile)
+async def energy_profile(request: Request, run_id: int):
+    row = await _serving_row(request, run_id)
+    async with request.app.state.engine.connect() as conn:
+        frames = (await conn.execute(
+            select(LapFrameRow.frame).where(LapFrameRow.run_id == run_id)
+            .order_by(LapFrameRow.lap)
+        )).scalars().all()
+
+    return EnergyProfile(
+        run_id=run_id, circuit_id=row.circuit,
+        h_max_mj=config.load("circuits")[row.circuit]["h_max_mj"],
+        laps=[
+            {"lap": frame["lap"],
+             "harvest_mj": frame["agent"]["harvest_mj"],
+             "deploy_mj": frame["agent"]["deploy_mj"],
+             "soc_mj": frame["agent"]["soc_mj"]}
+            for frame in frames
+        ],
+    )

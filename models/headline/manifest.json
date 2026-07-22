@@ -1,0 +1,87 @@
+{
+  "model_version": "senna-ppo-6b6edb78d84e-C-00835584",
+  "run_id": "headline-20260719-s331-6b6edb78d84e",
+  "run_tag": "headline",
+  "fingerprint": "6b6edb78d84e33bcc54b57ab708a4640aedf99f7a91d62e6e222d689c4f2b288",
+  "config_files": [
+    "env",
+    "circuits",
+    "physics_2026",
+    "physics_2024",
+    "physics_params",
+    "transforms",
+    "fits",
+    "rivals",
+    "training",
+    "curriculum",
+    "seeds"
+  ],
+  "git_commit": "ff0e885eb461054ea3a07e7d5815c7212d679ae3",
+  "stage": "C",
+  "global_step": 835584,
+  "stage_exit_reason": null,
+  "seed": 331,
+  "stage_seed": 2331,
+  "circuit_assignment": {
+    "0": [
+      "abu_dhabi_grand_prix",
+      "italian_grand_prix"
+    ],
+    "1": [
+      "australian_grand_prix",
+      "japanese_grand_prix"
+    ],
+    "2": [
+      "austrian_grand_prix",
+      "las_vegas_grand_prix"
+    ],
+    "3": [
+      "azerbaijan_grand_prix",
+      "mexico_city_grand_prix"
+    ],
+    "4": [
+      "bahrain_grand_prix",
+      "miami_grand_prix"
+    ],
+    "5": [
+      "belgian_grand_prix",
+      "monaco_grand_prix"
+    ],
+    "6": [
+      "british_grand_prix",
+      "qatar_grand_prix"
+    ],
+    "7": [
+      "canadian_grand_prix",
+      "saudi_arabian_grand_prix"
+    ],
+    "8": [
+      "chinese_grand_prix",
+      "singapore_grand_prix"
+    ],
+    "9": [
+      "dutch_grand_prix",
+      "spanish_grand_prix"
+    ],
+    "10": [
+      "emilia_romagna_grand_prix",
+      "s\u00e3o_paulo_grand_prix"
+    ],
+    "11": [
+      "hungarian_grand_prix",
+      "united_states_grand_prix"
+    ]
+  },
+  "dominance_ratio": 2.2210679364772172,
+  "wandb_run_id": "9x3vssoq",
+  "versions": {
+    "stable_baselines3": "2.9.0",
+    "sb3_contrib": "2.9.0",
+    "torch": "2.13.0",
+    "python": "3.11.9"
+  },
+  "resumed_from": null,
+  "saved_at": "2026-07-19T19:50:17.067057+00:00",
+  "model_zip_sha256": "ccc5de3b7b5a75ec0af8cbc014b6ce2ebb523e19de118c5fce89ef7422e72c9c",
+  "vecnormalize_sha256": "4c13d989a30b3e148a774d1a35ec21642245ca106f497a3cc6d4711dae831989"
+}
