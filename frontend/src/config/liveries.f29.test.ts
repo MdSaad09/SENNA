@@ -1,3 +1,6 @@
+// @vitest-environment node
+// the fs walk needs file: module URLs, which the default jsdom environment rewrites
+
 import { readFileSync, readdirSync } from "node:fs";
 import { basename, extname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
