@@ -147,14 +147,24 @@ class F1RaceEnv(Env):
             # 200 traces per gate check, and construction re-parses every physics yaml
             self._check_twin(options["twin"])
             self._twin = options["twin"]
+        pin = options.get("grid_position") if options else None
+        if pin is not None and self._twin is not None:
+            raise ValueError("grid_position cannot repin a twin replay — the trace owns the grid")
         self._rng = np.random.default_rng(seed)
         n = self.n_cars
+        if pin is not None and not 1 <= pin <= n:
+            raise ValueError(f"grid_position {pin} is outside this grid (1..{n})")
 
         if self._twin is not None:
             grid = self._twin.grid.copy()
             driver_s = self._twin.driver_s.copy()
         else:
             grid = self._rng.permutation(n) + 1  # a seeded starting order, ego is car 0
+            if pin is not None:
+                # swap rather than redraw: the field keeps its seeded order and every
+                # later draw stays byte-identical to the unpinned stream (F10 serving)
+                j = int(np.flatnonzero(grid == pin)[0])
+                grid[0], grid[j] = int(grid[j]), int(grid[0])
             driver_s = self._rng.normal(0.0, self.scenario.sigma_driver_s, n)
 
         self._state = RaceState(
