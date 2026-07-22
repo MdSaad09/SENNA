@@ -40,8 +40,12 @@ _MIGRATION_LOCK = 0x53454E4E41  # "SENNA" in hex
 def _run_sync_migrations(connection) -> None:
     from sqlalchemy import text
 
-    # session-scoped: released when this connection closes, even on a crash
+    # session-scoped: released when this connection closes, even on a crash. The
+    # commit matters — it ends the transaction the lock select implicitly opened,
+    # or alembic treats that transaction as caller-owned and never commits its own
+    # work (the upgrade then rolls back silently on close, exit code 0)
     connection.execute(text("select pg_advisory_lock(:key)"), {"key": _MIGRATION_LOCK})
+    connection.commit()
     context.configure(connection=connection, target_metadata=target_metadata)
     with context.begin_transaction():
         context.run_migrations()

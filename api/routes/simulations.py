@@ -16,10 +16,9 @@ from sqlalchemy import insert, select
 from api.deps import serving_config
 from api.schemas import DecisionCard, JobAccepted, LapFrame, SimulationCreate, SimulationResult
 from senna.data.schema import AgentDecision, LapFrameRow, SimulationRun
+from senna.env.scenario import build_scenario
 from senna.serve.cache import sim_cache_key, ttl_seconds
 from senna.serve.loader import UnknownModelVersionError, read_manifest
-from senna.serve.mapping import GridBoundError, UnknownCircuitError
-from senna.env.scenario import build_scenario
 
 router = APIRouter()
 

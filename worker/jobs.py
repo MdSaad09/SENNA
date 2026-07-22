@@ -5,7 +5,12 @@ streams from that store on its own clock, so a dropped socket never loses a race
 the same helpers that carded F09's evaluation races build the live cards here.
 """
 
-from worker import settings  # noqa: F401  (the OMP guard runs before torch/xgboost)
+import os
+
+# arm64 landmine: torch and xgboost each bundle libomp, and two OpenMP runtimes in
+# one process segfault — set before either loads. A bare statement, not an import
+# whose position a lint autofix can shuffle below the torch imports (it did).
+os.environ.setdefault("OMP_NUM_THREADS", "1")
 
 import asyncio
 from datetime import UTC, datetime
@@ -28,6 +33,7 @@ from senna.serve.frames import build_lap_frame
 from senna.serve.loader import ServingModel, load_serving_model
 from senna.serve.mapping import build_env
 from senna.train.evals import Sb3Policy
+from worker import settings
 
 _explainer_cache: dict[str, dict] = {}
 
