@@ -1,0 +1,22 @@
+# keep the build context to what the image copies: without this, `docker build`
+# ships the 12 GB FastF1 cache and every training run directory to the daemon
+.git
+.venv
+venv
+node_modules
+frontend/node_modules
+wandb
+__pycache__
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.mypy_cache
+fastf1_cache
+data/*
+!data/circuits
+models/*
+!models/headline
+!models/explain
+notebooks
+docs
+tests

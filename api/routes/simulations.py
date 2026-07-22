@@ -5,6 +5,7 @@ Serving reads filter on status IS NOT NULL so F09's eval-card rows, which share 
 tables under their own purpose, 404 here instead of 500ing.
 """
 
+import os
 import secrets
 from datetime import UTC, datetime
 
@@ -27,7 +28,8 @@ _SEED_BOUND = 2**31  # the repo-wide int32 seed domain (configs/seeds.yaml, deri
 
 def _validated_manifest(req: SimulationCreate) -> dict:
     try:
-        manifest = read_manifest(version=req.model_version)
+        # request > MODEL_VERSION env > the promoted headline (5.11.2)
+        manifest = read_manifest(version=req.model_version or os.environ.get("MODEL_VERSION"))
     except UnknownModelVersionError as err:
         raise HTTPException(422, str(err)) from err
     try:

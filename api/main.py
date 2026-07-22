@@ -25,7 +25,12 @@ from senna.serve.loader import read_manifest
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.model_version = read_manifest()["model_version"]
+    # MODEL_VERSION selects the baked triplet (5.11.2, F-26); unset and the local
+    # alias dev-latest both mean the promoted headline, and a version this image
+    # does not bake fails loudly at startup, never silently falls back
+    app.state.model_version = read_manifest(
+        version=os.environ.get("MODEL_VERSION")
+    )["model_version"]
     app.state.engine = engine_for(database_url())
     app.state.redis = redis.asyncio.from_url(redis_url(), decode_responses=True)
     rq_conn = redis.Redis.from_url(redis_url())

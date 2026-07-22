@@ -4,7 +4,7 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain report
+.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain report api worker up
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -98,6 +98,20 @@ eval:
 explain:
 	OMP_NUM_THREADS=1 python -m senna.explain.run $(if $(PAIRS),--pairs $(PAIRS)) \
 		$(if $(RACES),--card-races $(RACES)) $(if $(SKIP_PERSIST),--skip-persist)
+
+# local serving against compose postgres/redis (F10). `make api` migrates first and
+# reloads on edit; `make worker` is the same entrypoint Railway runs. Source .env
+# (or export DATABASE_URL/REDIS_URL) before either.
+api:
+	python -m alembic upgrade head
+	python -m uvicorn api.main:app --reload --port 8000
+
+worker:
+	./scripts/start_worker.sh
+
+# everything at once: postgres, redis, api, worker, frontend dev server
+up:
+	docker compose up --build
 
 report:
 	@echo "not yet: F14 owns make report"
