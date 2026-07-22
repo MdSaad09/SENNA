@@ -1,10 +1,16 @@
 # Deploying SENNA's serving layer
 
-Local compose is the development truth; Railway is the public skeleton (5.11.1).
-Both run the same image from `Dockerfile.api` — the api and the worker differ only
-in start command, and the frozen model triplet, its surrogate and the built ribbons
-are baked in at `/app/models` and `/app/data/circuits` (F-26: Railway filesystems
-are ephemeral, nothing is ever mounted).
+**Local compose is the supported, verified target** (decision, 22 Jul 2026 — INDEX
+decisions log): the dissertation deliverable is a reproducible codebase plus the
+presentation video, and a marker can run the full stack from a clean clone. The
+Railway section below keeps the layer deployment-ready per 5.11.1, but it has NOT
+been executed against a real Railway project — treat it as a runbook, not a record.
+
+Both targets run the same image from `Dockerfile.api` — the api and the worker
+differ only in start command, and the frozen model triplet, its surrogate and the
+built ribbons are baked in at `/app/models` and `/app/data/circuits` (F-26:
+ephemeral filesystems, nothing is ever mounted; also exactly what makes the
+clean-clone compose run work).
 
 ## Local (docker compose)
 
@@ -23,10 +29,11 @@ round trip:
     curl -s "localhost:8000/api/v1/simulations/<run_id>/frames?from_lap=1&to_lap=3"
     npx wscat -c ws://localhost:8000/ws/simulations/<run_id>    # sim:lap stream
 
-## Railway
+## Railway (unverified runbook — deploy deferred by decision)
 
 One project, four services. Saad drives the dashboard steps (account, plugins);
-the repo carries everything else.
+the repo carries everything else. Revisit only if a live URL is wanted before the
+viva.
 
 1. **Plugins**: add Railway Postgres and Railway Redis. They inject `DATABASE_URL`
    and `REDIS_URL` as service references.

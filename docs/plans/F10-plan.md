@@ -251,15 +251,21 @@ CI, not pytest: the F-27 build check (patterns above).
 - **E-13** — /circuits computes counts and coverage from ingested/built artifacts.
 
 ## Acceptance checklist (Done means)
-- [ ] POST /simulations -> worker -> frames -> WS round-trip streams locally (compose)
-- [ ] The same round-trip streams on Railway (railway up from the feature branch);
-      the public /api/v1/health URL is live — Saad drives the account/plugins step;
-      local compose is the demo fallback if Railway slips
-- [ ] The frozen triplet loads with training=False and matches training-eval actions
+- [x] POST /simulations -> worker -> frames -> WS round-trip streams locally (compose)
+- [~] Railway round-trip + public health URL — DEFERRED BY DECISION (Saad,
+      22 Jul 2026, INDEX decisions log): the dissertation deliverable is a
+      reproducible codebase plus the presentation video, so `docker compose up
+      --build` from a clean clone is the supported target. The layer stays
+      deployment-ready; docs/deploy.md marks the Railway runbook unverified in
+      production.
+- [x] The frozen triplet loads with training=False and matches training-eval actions
       on a fixed state (F-23 cross-check green)
-- [ ] Kill + redeploy the Railway services: nothing lost — no mounted models, no
-      local state; a changed MODEL_VERSION cold-starts its own cache namespace
-- [ ] Test battery above green; spec-auditor + code-reviewer findings addressed
+- [x] Redeploy loses nothing: artifacts baked, no mounted models, no local state; a
+      changed MODEL_VERSION cold-starts its own cache namespace (pinned by test).
+      Verified as a compose rebuild; the Railway kill-and-redeploy drill travels
+      with the deferred deploy.
+- [x] Test battery green; spec-auditor + code-reviewer findings addressed (one nit
+      rejected with reason, ship report 22 Jul 2026)
 
 ## Ship-process notes (Saad, 22 Jul 2026)
 - `rm -rf .ruff_cache && make lint` before the final gate — the warm-cache I001 trap
