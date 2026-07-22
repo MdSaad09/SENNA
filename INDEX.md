@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none — next session: `/plan-feature F10`
-**Next up:** F10, then F11
+**Active feature:** F10 — planned, next: `/ship F10` (same session)
+**Next up:** F11, then F12
 
 ## Feature ledger
 
@@ -21,7 +21,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Done 19 Jul 2026 | feature/F07-training | [F07](docs/learn/F07-training.md) |
 | F08 | Ablations & headline runs | F07 | Done 19 Jul 2026 | feature/F08-ablations | [F08](docs/learn/F08-ablations.md) |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Done 21 Jul 2026 | feature/F09-explainability | [F09](docs/learn/F09-explainability.md) |
-| F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Todo | | |
+| F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Planned | | |
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Todo | | |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Todo | | |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Todo | | |
