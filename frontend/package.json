@@ -17,6 +17,7 @@
     "d3": "^7.9.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-router-dom": "^6.30.4",
     "recharts": "^2.12.7",
     "three": "0.169.0",
     "zustand": "^4.5.5"

@@ -1,0 +1,157 @@
+// The one useFrame that owns replay playback. Per car: unwrap the per-lap s_track
+// fractions into monotone progress, interpolate at the playhead, place the
+// instance along the centreline by arc length and point it down the tangent.
+// Everything per-frame mutates refs — React re-renders once per lap for the label
+// set, never per frame. Mid-lap motion is synthesis, and the caption says so.
+
+import { useFrame } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
+import { InstancedMesh, Object3D, Quaternion, Vector3 } from "three";
+
+import type { CircuitDetail, LapFrame } from "../../api/types";
+import {
+  LABEL_HEIGHT_M,
+  LOD_DISTANCE_M,
+  PIT_LATERAL_OFFSET_M,
+  PIT_SCALE,
+} from "../../config/constants";
+import { labelledCars } from "../../lib/labels";
+import { monotoneCubic, unwrapProgress } from "../../lib/progress";
+import { useReplayStore } from "../../stores/replayStore";
+import CircuitRibbon, { useRibbon } from "../circuit/CircuitRibbon";
+import CarInstances, { type CarMeshRefs } from "./CarInstances";
+import CarLabels from "./CarLabels";
+
+interface ReplaySceneProps {
+  detail: CircuitDetail;
+  gltfUrl: string;
+  frames: LapFrame[];
+  nominalLapS: number;
+}
+
+interface CarTrack {
+  id: number;
+  progressAt(lap: number): number;
+}
+
+// frames arrive lap-quantised; a lap playhead maps to the frame index holding it
+function frameIndexAt(playheadLap: number, frames: LapFrame[]): number {
+  return Math.min(Math.max(Math.ceil(playheadLap) - 1, 0), frames.length - 1);
+}
+
+function buildTracks(frames: LapFrame[]): CarTrack[] {
+  const laps = frames.map((frame) => frame.lap);
+  return frames[0].cars.map((_, carId) => {
+    const fractions = frames.map((frame) => frame.cars[carId].s_track);
+    return { id: carId, progressAt: monotoneCubic(laps, unwrapProgress(fractions)) };
+  });
+}
+
+export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: ReplaySceneProps) {
+  const ribbon = useRibbon(gltfUrl);
+  const body = useRef<InstancedMesh | null>(null);
+  const fins = useRef<InstancedMesh | null>(null);
+  const sprites = useRef<InstancedMesh | null>(null);
+  const refs: CarMeshRefs = { body, detail: fins, sprites };
+
+  const tracks = useMemo(() => buildTracks(frames), [frames]);
+  const maxLap = frames[frames.length - 1].lap;
+  const lapLength = detail.lap_length_m ?? ribbon.centreline.total;
+  const [cx, cy, cz] = ribbon.centre;
+
+  const scratch = useRef({
+    carrier: new Object3D(),
+    camLocal: new Vector3(),
+    billboard: new Quaternion(),
+    forward: new Vector3(0, 1, 0),
+    heading: new Vector3(),
+    aside: new Vector3(),
+    up: new Vector3(0, 0, 1),
+    position: new Vector3(),
+  });
+  const positionsNow = useRef(new Map<number, [number, number, number]>());
+
+  useFrame(({ camera }, delta) => {
+    useReplayStore.getState().tick(delta, nominalLapS, maxLap);
+    const { playheadLap, selectedCarId } = useReplayStore.getState();
+
+    const bodyMesh = body.current;
+    const finMesh = fins.current;
+    const spriteMesh = sprites.current;
+    const parent = bodyMesh?.parent ?? null;
+    if (bodyMesh === null || finMesh === null || spriteMesh === null || parent === null) return;
+
+    const { carrier, camLocal, billboard, forward, heading, aside, up, position } =
+      scratch.current;
+    parent.worldToLocal(camLocal.copy(camera.position));
+    // billboard sprites in local space: undo the parent's world rotation, keep the camera's
+    parent.getWorldQuaternion(billboard).invert().multiply(camera.quaternion);
+
+    const atFrame = frames[frameIndexAt(playheadLap, frames)];
+    const labelled = new Set(labelledCars(atFrame.cars, selectedCarId));
+
+    for (const track of tracks) {
+      const progress = track.progressAt(playheadLap);
+      const s_m = (((progress % 1) + 1) % 1) * lapLength;
+      const [x, y, z] = ribbon.centreline.sampleAt(s_m);
+      const [tx, ty, tz] = ribbon.centreline.tangentAt(s_m);
+      heading.set(tx, ty, tz);
+      position.set(x - cx, y - cy, z - cz);
+
+      const inPit = atFrame.cars[track.id]?.in_pit ?? false;
+      if (inPit) {
+        // no pit spline exists (F04 gap, plan divergence 3): pull aside from the
+        // racing line and shrink; the transport caption owns the honesty
+        aside.copy(up).cross(heading).normalize();
+        position.addScaledVector(aside, PIT_LATERAL_OFFSET_M);
+      }
+
+      carrier.position.copy(position);
+      carrier.quaternion.setFromUnitVectors(forward, heading);
+      carrier.scale.setScalar(inPit ? PIT_SCALE : 1);
+      carrier.updateMatrix();
+      bodyMesh.setMatrixAt(track.id, carrier.matrix);
+
+      const nearEnough = camLocal.distanceTo(position) < LOD_DISTANCE_M;
+      if (!nearEnough) carrier.scale.setScalar(0);
+      carrier.updateMatrix();
+      finMesh.setMatrixAt(track.id, carrier.matrix);
+
+      carrier.position.set(position.x, position.y, position.z + LABEL_HEIGHT_M);
+      carrier.quaternion.copy(billboard);
+      carrier.scale.setScalar(nearEnough && !labelled.has(track.id) ? 1 : 0);
+      carrier.updateMatrix();
+      spriteMesh.setMatrixAt(track.id, carrier.matrix);
+
+      positionsNow.current.set(track.id, [position.x, position.y, position.z]);
+    }
+
+    bodyMesh.instanceMatrix.needsUpdate = true;
+    finMesh.instanceMatrix.needsUpdate = true;
+    spriteMesh.instanceMatrix.needsUpdate = true;
+  });
+
+  // once per lap, not per frame: the DOM label set follows the lap the playhead is in
+  const labelLapIndex = useReplayStore((state) => frameIndexAt(state.playheadLap, frames));
+  const selectedCarId = useReplayStore((state) => state.selectedCarId);
+  const selectCar = useReplayStore((state) => state.selectCar);
+
+  return (
+    <group>
+      <group position={[-cx, -cy, -cz]}>
+        <CircuitRibbon detail={detail} ribbon={ribbon} withCornerMarkers={false} />
+      </group>
+      {/* car matrices are written in recentred coordinates already */}
+      <CarInstances
+        count={tracks.length}
+        refs={refs}
+        onSelect={(carId) => selectCar(carId === selectedCarId ? null : carId)}
+      />
+      <CarLabels
+        cars={frames[labelLapIndex].cars}
+        selectedCarId={selectedCarId}
+        positionOf={(carId) => positionsNow.current.get(carId) ?? [0, 0, 0]}
+      />
+    </group>
+  );
+}

@@ -1,0 +1,97 @@
+// Start a simulation to replay: the SimulationCreate form posts, the run id lands
+// in ?run= so the URL survives a reload, and the view polls until the worker is
+// done. Era, weather and rival band keep their 5.9.2 schema defaults here — the
+// full matrix is F13's live view.
+
+import { useState, type FormEvent } from "react";
+
+import { apiPost } from "../../api/client";
+import { useCircuits } from "../../api/queries";
+import type { JobAccepted } from "../../api/types";
+
+export default function RunPicker({ onRun }: { onRun: (runId: number) => void }) {
+  const circuits = useCircuits();
+  const [slug, setSlug] = useState<string | null>(null);
+  const [gridPosition, setGridPosition] = useState(8);
+  const [seed, setSeed] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const withRibbon = (circuits.data ?? []).filter((circuit) => circuit.coverage.ribbon);
+  const chosen = slug ?? withRibbon[0]?.id ?? null;
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    if (chosen === null || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const accepted = await apiPost<JobAccepted>("/v1/simulations", {
+        circuit_id: chosen,
+        grid_position: gridPosition,
+        ...(seed.trim() !== "" ? { seed: Number(seed) } : {}),
+      });
+      const query = new URLSearchParams(window.location.search);
+      query.set("run", String(accepted.run_id));
+      window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
+      onRun(accepted.run_id);
+    } catch (thrown) {
+      setError(thrown instanceof Error ? thrown.message : String(thrown));
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="m-auto w-80 rounded border border-neutral-800 p-4">
+      <h2 className="text-sm font-semibold text-neutral-200">new replay</h2>
+
+      <label className="mt-3 block text-xs text-neutral-400">
+        circuit
+        <select
+          value={chosen ?? ""}
+          onChange={(event) => setSlug(event.target.value)}
+          className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
+        >
+          {withRibbon.map((circuit) => (
+            <option key={circuit.id} value={circuit.id}>
+              {circuit.id.replace(/_/g, " ")}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="mt-2 block text-xs text-neutral-400">
+        grid position
+        <input
+          type="number"
+          min={1}
+          max={22}
+          value={gridPosition}
+          onChange={(event) => setGridPosition(Number(event.target.value))}
+          className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
+        />
+      </label>
+
+      <label className="mt-2 block text-xs text-neutral-400">
+        seed (blank draws one server-side, echoed back for reproducibility)
+        <input
+          type="text"
+          inputMode="numeric"
+          value={seed}
+          onChange={(event) => setSeed(event.target.value)}
+          className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
+        />
+      </label>
+
+      {error !== null && <p className="mt-2 text-xs text-red-400">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={chosen === null || submitting}
+        className="mt-4 w-full rounded border border-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-800 disabled:opacity-50"
+      >
+        {submitting ? "queueing" : "simulate"}
+      </button>
+    </form>
+  );
+}
