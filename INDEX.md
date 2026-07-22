@@ -4,7 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F10 — in review on feature/F10-backend-serving; Saad reads the ship report and the lesson, then `/land F10`
+**Active feature:** none — next session: `/plan-feature F11`
 **Next up:** F11, then F12
 
 ## Feature ledger
@@ -21,7 +21,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F07 | Training: MaskablePPO + curriculum | F05, F06 | Done 19 Jul 2026 | feature/F07-training | [F07](docs/learn/F07-training.md) |
 | F08 | Ablations & headline runs | F07 | Done 19 Jul 2026 | feature/F08-ablations | [F08](docs/learn/F08-ablations.md) |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Done 21 Jul 2026 | feature/F09-explainability | [F09](docs/learn/F09-explainability.md) |
-| F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | In review | feature/F10-backend-serving | |
+| F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Done 22 Jul 2026 | feature/F10-backend-serving | [F10](docs/learn/F10-backend-serving.md) |
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Todo | | |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Todo | | |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Todo | | |
@@ -74,6 +74,21 @@ the work — resume with `claude --continue`, or start fresh and say
   validation races sit in `agent_decisions`. Evidence: docs/results/F09-explainability.md.
   A retrain invalidates all of it by construction (E-15) — `make explain` must re-run
   before F10 serves a new checkpoint.
+- **Railway deploy deferred (Saad, 22 Jul 2026):** 5.11.1's public deploy is not
+  executed. The dissertation deliverable is a reproducible codebase plus the
+  presentation video, so `docker compose up --build` is the supported target — a
+  marker can run the full stack from a clean clone, which is why the frozen triplet,
+  surrogate and ribbons are committed. The serving layer stays deployment-ready
+  (Dockerfile.api, start scripts, migrate-on-start, docs/deploy.md) but that runbook
+  is now unverified in production and says so. Revisit only if a live URL is wanted
+  before the viva.
+- **F10 spec divergences (22 Jul 2026):** seven deliberate, recorded with their
+  resolutions in docs/plans/F10-plan.md ("Flagged spec divergences") — the E-15 cache
+  key gains a scenario digest (the literal 5.9.3 key collides circuits), rival_band
+  passed explicitly, frames in a lap_frames JSONB table, era-2024 fields 20 cars,
+  cards ride sim:lap (no agent:decision event), local WS is ws://localhost:8000/ws
+  (no /ws proxy), one Dockerfile with two start commands. Also new: the fourth
+  provenance origin `operational` (configs/README.md) for stated engineering defaults.
 - **AR-10 race fuel (spec Part 8):** VERIFIED 16 Jul 2026 — the FIA 2026 regs cap fuel
   energy flow at 3,000 MJ/h (energy-based, replacing 100 kg/h) and the race allowance
   works out to ~70 kg with the Advanced Sustainable Fuel spec. Sources: Formula1.com
