@@ -30,7 +30,18 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+# both serving entrypoints migrate on start (5.11.1), and on a fresh deploy the api
+# and the worker boot together — without a lock they both read the old revision and
+# race the same ALTERs (found by the F10 compose smoke). Any constant identifies the
+# lock; it only has to be the same in every migrator.
+_MIGRATION_LOCK = 0x53454E4E41  # "SENNA" in hex
+
+
 def _run_sync_migrations(connection) -> None:
+    from sqlalchemy import text
+
+    # session-scoped: released when this connection closes, even on a crash
+    connection.execute(text("select pg_advisory_lock(:key)"), {"key": _MIGRATION_LOCK})
     context.configure(connection=connection, target_metadata=target_metadata)
     with context.begin_transaction():
         context.run_migrations()
