@@ -71,9 +71,16 @@ def drain_queue() -> None:
 
     from senna import config
 
+    class ThreadableWorker(SimpleWorker):
+        # signal handlers only install in the main thread, and the health-latency
+        # test drains from a thread on purpose — without this the drain dies at
+        # startup and "a job mid-flight" silently becomes "an empty queue"
+        def _install_signal_handlers(self) -> None:
+            pass
+
     queue_name = config.load("serving")["queue"]["name"]
     conn = redis.Redis.from_url(os.environ["REDIS_URL"])
-    SimpleWorker([Queue(queue_name, connection=conn)], connection=conn).work(burst=True)
+    ThreadableWorker([Queue(queue_name, connection=conn)], connection=conn).work(burst=True)
     conn.close()
 
 
