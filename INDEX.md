@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none — next session: `/plan-feature F11`
-**Next up:** F11, then F12
+**Active feature:** F11 — Planned, `/ship F11` next in this session
+**Next up:** F12, then F13
 
 ## Feature ledger
 
@@ -22,7 +22,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F08 | Ablations & headline runs | F07 | Done 19 Jul 2026 | feature/F08-ablations | [F08](docs/learn/F08-ablations.md) |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Done 21 Jul 2026 | feature/F09-explainability | [F09](docs/learn/F09-explainability.md) |
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Done 22 Jul 2026 | feature/F10-backend-serving | [F10](docs/learn/F10-backend-serving.md) |
-| F11 | Frontend shell + Views 1–2 | F04, F10 | Todo | | |
+| F11 | Frontend shell + Views 1–2 | F04, F10 | Planned | | |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Todo | | |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Todo | | |
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Todo | | |
@@ -89,6 +89,10 @@ the work — resume with `claude --continue`, or start fresh and say
   cards ride sim:lap (no agent:decision event), local WS is ws://localhost:8000/ws
   (no /ws proxy), one Dockerfile with two start commands. Also new: the fourth
   provenance origin `operational` (configs/README.md) for stated engineering defaults.
+- **Full ribbon library before the video (Saad, 22 Jul 2026):** after F11, run
+  `make circuits` across all ingested events and commit the GLBs (~100 KB each,
+  ~2.6 MB total) so the demo and a clean clone show the whole circuit library, not 3
+  circuits. Recorded in docs/plans/F11-plan.md decisions.
 - **AR-10 race fuel (spec Part 8):** VERIFIED 16 Jul 2026 — the FIA 2026 regs cap fuel
   energy flow at 3,000 MJ/h (energy-based, replacing 100 kg/h) and the race allowance
   works out to ~70 kg with the Advanced Sustainable Fuel spec. Sources: Formula1.com
