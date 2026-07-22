@@ -4,7 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F11 — Planned, `/ship F11` next in this session
+**Active feature:** F11 — In review; Saad reads the ship report and lesson, then `/land F11`
 **Next up:** F12, then F13
 
 ## Feature ledger
@@ -22,7 +22,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F08 | Ablations & headline runs | F07 | Done 19 Jul 2026 | feature/F08-ablations | [F08](docs/learn/F08-ablations.md) |
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Done 21 Jul 2026 | feature/F09-explainability | [F09](docs/learn/F09-explainability.md) |
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Done 22 Jul 2026 | feature/F10-backend-serving | [F10](docs/learn/F10-backend-serving.md) |
-| F11 | Frontend shell + Views 1–2 | F04, F10 | Planned | | |
+| F11 | Frontend shell + Views 1–2 | F04, F10 | In review | feature/F11-frontend-views-1-2 | |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Todo | | |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Todo | | |
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Todo | | |
