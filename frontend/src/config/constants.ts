@@ -22,3 +22,26 @@ export const RUN_STATUS_POLL_MS = 1000;
 export const ANNOTATION_LIFT_M = 0.2; // stylised — floats zone strips above the ribbon to dodge z-fighting
 
 export const PROVENANCE_LOG_CAP = 50; // operational — plenty for a session, bounded for memory
+
+export const DEV_OVERLAY_KEY = "`"; // operational — the backtick toggles the provenance overlay
+
+export const PERF_SAMPLE_MS = 500; // operational — 2 Hz keeps the probe invisible to the frame budget
+
+// stylised — camera framing for a 3-6 km ribbon; far plane clears the longest circuit
+export const CAMERA = { fov: 50, near: 1, far: 20_000, position: [0, 900, 900] as const };
+
+// stylised — the 2026 car footprint as a readable box, visual only
+export const CAR_DIMENSIONS_M = { length: 5.6, width: 2.0, height: 1.0 };
+
+// stylised — in-pit cars pull aside and shrink; there is no pit-lane spline in the
+// F04 artifacts (plan divergence 3), and the legend says so
+export const PIT_LATERAL_OFFSET_M = 9;
+export const PIT_SCALE = 0.7;
+
+export const LABEL_HEIGHT_M = 6; // stylised — labels hover clear of the car roofline
+export const SPRITE_LABEL_SIZE_M = 7; // stylised — sprite text quad edge at replay zoom
+
+// stylised — a restrained glow: highlights only, never bloom-the-whole-track
+export const BLOOM_STRENGTH = 0.35;
+export const BLOOM_RADIUS = 0.6;
+export const BLOOM_THRESHOLD = 0.85;
