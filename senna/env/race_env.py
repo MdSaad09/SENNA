@@ -250,6 +250,9 @@ class F1RaceEnv(Env):
         prev_position = int(state.positions()[state.ego])
         prev_ahead_car = self._car_ahead() if self._reward_mode == "v2" else None
         pit_ego, mode_ego = self._coerce(action)
+        # the executed (post-snap) action, kept for the serving frame — display honesty
+        # wants what ran, not what was asked for (F10; snapped counts track the delta)
+        self._ego_action = (pit_ego, mode_ego)
 
         red_flag, onset = self._resolve_track_status(lap_index)
         self._resolve_weather(lap_index)
