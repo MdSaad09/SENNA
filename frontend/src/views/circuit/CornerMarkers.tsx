@@ -42,6 +42,7 @@ export default function CornerMarkers({
   return (
     <group>
       <instancedMesh ref={posts} args={[undefined, undefined, corners.length]} frustumCulled={false}>
+        {/* operational — 8 radial segments: round enough at marker size, 16 tris */}
         <cylinderGeometry args={[POST_RADIUS_M, POST_RADIUS_M, POST_HEIGHT_M, 8]} />
         <meshStandardMaterial color="#e5e5e5" />
       </instancedMesh>

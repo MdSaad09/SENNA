@@ -97,6 +97,13 @@ export default function RaceReplayView() {
               : `run ${runId}: ${run.data?.status ?? "loading"}…`}
           </div>
         )}
+        {runComplete === true && detail.data !== undefined && detail.data.gltf_url === null && (
+          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+            {/* a deep-linked run on an unbuilt circuit: same honesty as View 1 (F-08) */}
+            ribbon not built for {detail.data.id.replace(/_/g, " ")} — the run exists but
+            cannot be drawn; run make circuits after ingesting the event
+          </div>
+        )}
       </section>
 
       {ready && frames.data !== undefined && (

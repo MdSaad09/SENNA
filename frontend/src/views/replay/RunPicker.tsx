@@ -12,6 +12,7 @@ import type { JobAccepted } from "../../api/types";
 export default function RunPicker({ onRun }: { onRun: (runId: number) => void }) {
   const circuits = useCircuits();
   const [slug, setSlug] = useState<string | null>(null);
+  // operational — a midfield default start makes the first demo run show overtakes
   const [gridPosition, setGridPosition] = useState(8);
   const [seed, setSeed] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -23,13 +24,20 @@ export default function RunPicker({ onRun }: { onRun: (runId: number) => void })
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (chosen === null || submitting) return;
+    const trimmedSeed = seed.trim();
+    if (trimmedSeed !== "" && !/^\d+$/.test(trimmedSeed)) {
+      // Number("abc") is NaN, which JSON turns into null — the server would then
+      // silently draw a random seed for garbage input
+      setError("seed must be a whole number, or blank");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
       const accepted = await apiPost<JobAccepted>("/v1/simulations", {
         circuit_id: chosen,
         grid_position: gridPosition,
-        ...(seed.trim() !== "" ? { seed: Number(seed) } : {}),
+        ...(trimmedSeed !== "" ? { seed: Number(trimmedSeed) } : {}),
       });
       const query = new URLSearchParams(window.location.search);
       query.set("run", String(accepted.run_id));
@@ -64,7 +72,7 @@ export default function RunPicker({ onRun }: { onRun: (runId: number) => void })
         grid position
         <input
           type="number"
-          min={1}
+          min={1} // sourced — SimulationCreate bounds, 5.9.2 (ge=1, le=22)
           max={22}
           value={gridPosition}
           onChange={(event) => setGridPosition(Number(event.target.value))}

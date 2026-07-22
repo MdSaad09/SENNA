@@ -3,6 +3,8 @@
 // data, not hardcoded copy (5.10.2 row 1).
 
 import type { CircuitDetail } from "../../api/types";
+import { ELEVATION_EXAGGERATION } from "../../config/constants";
+import { BRAKING_TINT, HARVEST_TINT, XMODE_TINT } from "./CircuitRibbon";
 
 function Swatch({ colour }: { colour: string }) {
   return (
@@ -20,7 +22,7 @@ function elevationCaveat(detail: CircuitDetail): string {
     const camber = flags.camber_deg !== undefined ? ` with ${flags.camber_deg} deg camber` : "";
     return `elevation ${flags.elevation ?? "stylised"} — no Z data, rendered flat${camber}`;
   }
-  return `elevation ${flags.elevation ?? "stylised"} — smoothed Z, exaggerated 1.5x`;
+  return `elevation ${flags.elevation ?? "stylised"} — smoothed Z, exaggerated ${ELEVATION_EXAGGERATION}x`;
 }
 
 export default function Legend({ detail }: { detail: CircuitDetail }) {
@@ -33,16 +35,16 @@ export default function Legend({ detail }: { detail: CircuitDetail }) {
       </h3>
       <ul className="mt-2 space-y-1">
         <li>
-          <Swatch colour="#d97706" />
+          <Swatch colour={BRAKING_TINT} />
           braking zones — inferred from telemetry speed drops
         </li>
         <li>
-          <Swatch colour="#0d9488" />
+          <Swatch colour={HARVEST_TINT} />
           harvest shown at braking zones — stylised; no official zone data, H_max{" "}
           {detail.h_max_mj} MJ per lap applies circuit-wide
         </li>
         <li>
-          <Swatch colour="#7c3aed" />
+          <Swatch colour={XMODE_TINT} />
           X-mode sections — {flags?.xmode ?? "stylised"}, inferred from full-throttle
           stretches, not official section data
         </li>

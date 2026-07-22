@@ -127,10 +127,12 @@ function jsonResponse(payload: unknown, status = 200): Response {
 }
 
 function framesPage(url: string, allFrames: LapFrameFixture[]): LapFrameFixture[] {
-  // three-lap fixtures fit in one page; later pages come back empty so any
-  // sequential page loop terminates
-  const page = new URL(url, "http://fixtures").searchParams.get("page") ?? "0";
-  return page === "0" ? allFrames : [];
+  // slice by the real from_lap/to_lap params (api/routes/simulations.py) so the
+  // client's sequential page loop is exercised against the actual wire contract
+  const params = new URL(url, "http://fixtures").searchParams;
+  const fromLap = Number(params.get("from_lap") ?? "1");
+  const toLap = Number(params.get("to_lap") ?? String(fromLap + 99));
+  return allFrames.filter((frame) => frame.lap >= fromLap && frame.lap <= toLap);
 }
 
 /** Replace global fetch with fixture routing keyed by URL substring; returns the

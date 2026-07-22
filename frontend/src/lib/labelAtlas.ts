@@ -42,6 +42,7 @@ export function buildAtlasCanvas(codes: string[], colours: string[]): HTMLCanvas
 
   context.textAlign = "center";
   context.textBaseline = "middle";
+  // stylised — 0.42 of the cell keeps three bold glyphs inside it with margin
   context.font = `bold ${Math.round(CELL_PX * 0.42)}px ui-monospace, monospace`;
   codes.forEach((code, index) => {
     const [u, v] = layout.uvOffset(index);

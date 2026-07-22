@@ -7,7 +7,7 @@ import { Canvas } from "@react-three/fiber";
 import { useState, type ReactNode } from "react";
 import type { WebGLRenderer } from "three";
 
-import { CAMERA } from "../config/constants";
+import { CAMERA, DPR_RANGE } from "../config/constants";
 import { bloomDefault } from "../lib/gpuHeuristic";
 import { useUiStore } from "../stores/uiStore";
 import Bloom from "./Bloom";
@@ -31,7 +31,7 @@ export default function CanvasHost({ children }: { children?: ReactNode }) {
   return (
     <div className="relative h-full w-full">
       <Canvas
-        dpr={[1, 2]}
+        dpr={DPR_RANGE}
         camera={{
           fov: CAMERA.fov,
           near: CAMERA.near,
@@ -47,6 +47,8 @@ export default function CanvasHost({ children }: { children?: ReactNode }) {
           );
         }}
       >
+        {/* stylised — flat two-light rig: enough ambient to keep shadowed ribbon
+            readable, one keylight for car-body shading; nothing physical */}
         <ambientLight intensity={0.7} />
         <directionalLight position={[600, 900, 400]} intensity={1.1} />
         <group rotation={[-Math.PI / 2, 0, 0]}>{children}</group>

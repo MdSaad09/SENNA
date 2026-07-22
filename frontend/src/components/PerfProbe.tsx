@@ -15,7 +15,18 @@ export default function PerfProbe() {
   const deltas = useRef<number[]>([]);
   const warned = useRef(false);
 
+  // with bloom on, the composer renders several passes per frame and autoReset
+  // would zero the counters at each one — reset once per frame here instead, so
+  // the interval below always reads a full frame's total
+  useEffect(() => {
+    gl.info.autoReset = false;
+    return () => {
+      gl.info.autoReset = true;
+    };
+  }, [gl]);
+
   useFrame((_, delta) => {
+    gl.info.reset();
     deltas.current.push(delta);
     if (deltas.current.length > FPS_WINDOW) deltas.current.shift();
   });

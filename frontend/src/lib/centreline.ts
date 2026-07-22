@@ -21,14 +21,16 @@ function ringLerp(points: Vec3[], cumS: Float32Array, total: number, s_m: number
   const s = ((s_m % total) + total) % total;
   const n = points.length;
 
-  // cumS is sorted; find the segment [i, i+1] holding s (the last segment closes the ring)
-  let i = n - 1;
-  for (let station = 1; station < n; station++) {
-    if (cumS[station] > s) {
-      i = station - 1;
-      break;
-    }
+  // binary search for the segment holding s — the replay samples every car every
+  // frame, and a linear scan over ~2700 stations is the loop's biggest CPU item
+  let lo = 0;
+  let hi = n - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (cumS[mid] <= s) lo = mid;
+    else hi = mid - 1;
   }
+  const i = lo; // the last segment (i === n - 1) closes the ring
   const from = points[i];
   const to = points[(i + 1) % n];
   const segmentStart = cumS[i];

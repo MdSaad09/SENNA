@@ -4,7 +4,7 @@
 // car's code out of one atlas texture. Colours are written before first render —
 // three 0.169 will not retrofit instanceColor onto a compiled program quietly.
 
-import { useLayoutEffect, useMemo, type MutableRefObject } from "react";
+import { useEffect, useLayoutEffect, useMemo, type MutableRefObject } from "react";
 import {
   CanvasTexture,
   Color,
@@ -30,17 +30,24 @@ const SPRITE_VERTEX = /* glsl */ `
   uniform vec2 uCellSize;
   varying vec2 vUv;
   void main() {
-    vUv = aUvOffset + uv * uCellSize;
+    // flipY is off, so texel v grows down the canvas while the quad's uv.y grows
+    // up — mirror v or every code renders upside down
+    vUv = aUvOffset + vec2(uv.x, 1.0 - uv.y) * uCellSize;
     gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
   }
 `;
 
+// operational — alpha-discard threshold: kills the glyph antialiasing fringe that
+// would otherwise z-fight between overlapping labels
+const SPRITE_ALPHA_CUTOFF = 0.15;
+
 const SPRITE_FRAGMENT = /* glsl */ `
   uniform sampler2D uAtlas;
+  uniform float uAlphaCutoff;
   varying vec2 vUv;
   void main() {
     vec4 texel = texture2D(uAtlas, vUv);
-    if (texel.a < 0.15) discard;
+    if (texel.a < uAlphaCutoff) discard;
     gl_FragColor = texel;
   }
 `;
@@ -67,6 +74,7 @@ export default function CarInstances({ count, refs, onSelect }: CarInstancesProp
         uniforms: {
           uAtlas: { value: texture },
           uCellSize: { value: [layout.cellU, layout.cellV] },
+          uAlphaCutoff: { value: SPRITE_ALPHA_CUTOFF },
         },
         transparent: true,
         depthWrite: false,
@@ -74,6 +82,16 @@ export default function CarInstances({ count, refs, onSelect }: CarInstancesProp
       }),
     };
   }, [count]);
+
+  // args-passed materials sit outside R3F's auto-dispose: free the program and
+  // the atlas texture when the replay unmounts or the grid size changes
+  useEffect(
+    () => () => {
+      (spriteMaterial.material.uniforms.uAtlas.value as CanvasTexture).dispose();
+      spriteMaterial.material.dispose();
+    },
+    [spriteMaterial],
+  );
 
   useLayoutEffect(() => {
     const body = refs.body.current;
@@ -119,6 +137,8 @@ export default function CarInstances({ count, refs, onSelect }: CarInstancesProp
         <meshStandardMaterial />
       </instancedMesh>
       <instancedMesh ref={refs.detail} args={[undefined, undefined, count]} frustumCulled={false}>
+        {/* stylised — the LOD detail fin: a narrow airbox spine over the body,
+            proportions relative to CAR_DIMENSIONS_M, visual only */}
         <boxGeometry args={[width * 0.3, length * 0.4, height * 0.8]} />
         <meshStandardMaterial />
       </instancedMesh>

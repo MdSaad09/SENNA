@@ -54,7 +54,11 @@ export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: Re
   const sprites = useRef<InstancedMesh | null>(null);
   const refs: CarMeshRefs = { body, detail: fins, sprites };
 
-  const tracks = useMemo(() => buildTracks(frames), [frames]);
+  const positionsNow = useRef(new Map<number, [number, number, number]>());
+  const tracks = useMemo(() => {
+    positionsNow.current.clear(); // a 20-car run must not label a ghost from a 22-car one
+    return buildTracks(frames);
+  }, [frames]);
   const maxLap = frames[frames.length - 1].lap;
   const lapLength = detail.lap_length_m ?? ribbon.centreline.total;
   const [cx, cy, cz] = ribbon.centre;
@@ -69,11 +73,22 @@ export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: Re
     up: new Vector3(0, 0, 1),
     position: new Vector3(),
   });
-  const positionsNow = useRef(new Map<number, [number, number, number]>());
+
+  // once per lap, not per frame: the DOM label set follows the lap the playhead
+  // is in, and the frame loop reads the memoised Set through a ref
+  const labelLapIndex = useReplayStore((state) => frameIndexAt(state.playheadLap, frames));
+  const selectedCarId = useReplayStore((state) => state.selectedCarId);
+  const selectCar = useReplayStore((state) => state.selectCar);
+  const labelled = useMemo(
+    () => new Set(labelledCars(frames[labelLapIndex].cars, selectedCarId)),
+    [frames, labelLapIndex, selectedCarId],
+  );
+  const labelledRef = useRef(labelled);
+  labelledRef.current = labelled;
 
   useFrame(({ camera }, delta) => {
     useReplayStore.getState().tick(delta, nominalLapS, maxLap);
-    const { playheadLap, selectedCarId } = useReplayStore.getState();
+    const { playheadLap } = useReplayStore.getState();
 
     const bodyMesh = body.current;
     const finMesh = fins.current;
@@ -88,7 +103,7 @@ export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: Re
     parent.getWorldQuaternion(billboard).invert().multiply(camera.quaternion);
 
     const atFrame = frames[frameIndexAt(playheadLap, frames)];
-    const labelled = new Set(labelledCars(atFrame.cars, selectedCarId));
+    const labelled = labelledRef.current;
 
     for (const track of tracks) {
       const progress = track.progressAt(playheadLap);
@@ -130,11 +145,6 @@ export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: Re
     finMesh.instanceMatrix.needsUpdate = true;
     spriteMesh.instanceMatrix.needsUpdate = true;
   });
-
-  // once per lap, not per frame: the DOM label set follows the lap the playhead is in
-  const labelLapIndex = useReplayStore((state) => frameIndexAt(state.playheadLap, frames));
-  const selectedCarId = useReplayStore((state) => state.selectedCarId);
-  const selectCar = useReplayStore((state) => state.selectCar);
 
   return (
     <group>

@@ -36,7 +36,7 @@ export function useSimulation(runId: number | null) {
   });
 }
 
-async function fetchAllFrames(runId: number): Promise<LapFrame[]> {
+export async function fetchAllFrames(runId: number): Promise<LapFrame[]> {
   const frames: LapFrame[] = [];
   for (let fromLap = 1; ; fromLap += FRAMES_PAGE_SIZE) {
     const toLap = fromLap + FRAMES_PAGE_SIZE - 1;

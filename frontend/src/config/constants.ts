@@ -30,6 +30,14 @@ export const PERF_SAMPLE_MS = 500; // operational — 2 Hz keeps the probe invis
 // stylised — camera framing for a 3-6 km ribbon; far plane clears the longest circuit
 export const CAMERA = { fov: 50, near: 1, far: 20_000, position: [0, 900, 900] as const };
 
+// operational — device-pixel-ratio clamp: retina sharpness without paying 3x pixels
+// on high-density laptop panels (the classic hidden fps cost)
+export const DPR_RANGE: [number, number] = [1, 2];
+
+// sourced — mirrors configs/ribbon.yaml elevation_exaggeration; the legend quotes it
+// (the value is baked into the committed GLBs, so a yaml retune requires make circuits)
+export const ELEVATION_EXAGGERATION = 1.5;
+
 // stylised — the 2026 car footprint as a readable box, visual only
 export const CAR_DIMENSIONS_M = { length: 5.6, width: 2.0, height: 1.0 };
 

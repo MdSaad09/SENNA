@@ -17,19 +17,20 @@ export default function TransportControls({ maxLap }: { maxLap: number }) {
   const slider = useRef<HTMLInputElement | null>(null);
   const lapReadout = useRef<HTMLSpanElement | null>(null);
 
-  useEffect(
-    () =>
-      useReplayStore.subscribe(
-        (state) => state.playheadLap,
-        (playheadLap) => {
-          if (slider.current !== null) slider.current.value = String(playheadLap);
-          if (lapReadout.current !== null) {
-            lapReadout.current.textContent = `lap ${Math.max(1, Math.ceil(playheadLap))} / ${maxLap}`;
-          }
-        },
-      ),
-    [maxLap],
-  );
+  useEffect(() => {
+    let shownLap = 0;
+    return useReplayStore.subscribe(
+      (state) => state.playheadLap,
+      (playheadLap) => {
+        if (slider.current !== null) slider.current.value = String(playheadLap);
+        const lap = Math.max(1, Math.ceil(playheadLap));
+        if (lap !== shownLap && lapReadout.current !== null) {
+          shownLap = lap;
+          lapReadout.current.textContent = `lap ${lap} / ${maxLap}`;
+        }
+      },
+    );
+  }, [maxLap]);
 
   return (
     <div className="border-t border-neutral-800 px-4 py-2">
@@ -63,7 +64,7 @@ export default function TransportControls({ maxLap }: { maxLap: number }) {
           type="range"
           min={0}
           max={maxLap}
-          step={0.01}
+          step={0.01} // operational — a hundredth of a lap: smooth scrub, exact ends
           defaultValue={0}
           onChange={(event) => scrubTo(Number(event.target.value), maxLap)}
           aria-label="scrub laps"
@@ -72,8 +73,8 @@ export default function TransportControls({ maxLap }: { maxLap: number }) {
       </div>
       <p className="mt-1 text-xs text-neutral-600">
         mid-lap positions are illustrative — the simulator is lap-quantised, motion
-        between laps is spline-interpolated from gap-to-leader (stylised); in-pit cars
-        pull aside, there is no modelled pit lane
+        between laps is spline-interpolated from gap-to-leader (stylised); the pit
+        pull-aside is stylised too, there is no modelled pit lane
       </p>
     </div>
   );

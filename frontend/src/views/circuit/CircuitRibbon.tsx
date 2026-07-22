@@ -1,11 +1,12 @@
 // The ribbon and its zone overlays, built from the raw GLB POSITION array rather
-// than by mounting gltf.scene — the geometry here is ours, so route unmounts
-// dispose it and drei's GLTF cache never fights React over lifetimes. Harvest has
-// no zone data of its own (plan divergence 2): it renders as a narrower strip over
-// the braking zones, and the legend labels that choice stylised.
+// than by mounting gltf.scene — the geometry here is ours (an effect below
+// disposes it; R3F only auto-disposes declaratively created children), and drei's
+// GLTF cache never fights React over lifetimes. Harvest has no zone data of its
+// own (plan divergence 2): it renders as a narrower strip over the braking zones,
+// and the legend labels that choice stylised.
 
 import { useGLTF } from "@react-three/drei";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { BufferAttribute, BufferGeometry, DoubleSide, Group, Mesh } from "three";
 
 import type { CircuitDetail } from "../../api/types";
@@ -14,15 +15,26 @@ import { buildCentreline, type Centreline } from "../../lib/centreline";
 import { buildStrip, type StripGeometry, type StripZone } from "../../lib/ribbonStrips";
 import CornerMarkers from "./CornerMarkers";
 
-// stylised — zone tints: braking amber, X-mode violet, harvest teal over braking
-const BRAKING_TINT = "#d97706";
-const XMODE_TINT = "#7c3aed";
-const HARVEST_TINT = "#0d9488";
+// stylised — zone tints: braking amber, X-mode violet, harvest teal over braking;
+// exported so the Legend's swatches can never drift from the canvas
+export const BRAKING_TINT = "#d97706";
+export const XMODE_TINT = "#7c3aed";
+export const HARVEST_TINT = "#0d9488";
 const DECK_TINT = "#404040";
+
+// stylised — overlay opacities: braking and X-mode translucent so the deck reads
+// through, harvest nearly solid because it is the narrowest strip
+const BRAKING_OPACITY = 0.55;
+const XMODE_OPACITY = 0.5;
+const HARVEST_OPACITY = 0.8;
 
 // stylised — strip widths as ribbon fractions; harvest sits inside its braking zone
 const ZONE_WIDTH_FRACTION = 0.92;
 const HARVEST_WIDTH_FRACTION = 0.45;
+// stylised — stacking order above the deck in ANNOTATION_LIFT_M steps: zones,
+// then harvest, then the start line on top
+const HARVEST_LIFT_STEPS = 2;
+const START_LINE_LIFT_STEPS = 3;
 // stylised — the start line is a short full-width band at s = 0
 const START_LINE_LENGTH_M = 8;
 
@@ -119,16 +131,25 @@ export default function CircuitRibbon({
       deck: ribbonGeometry(positions),
       braking: zoneStrip(braking, ZONE_WIDTH_FRACTION, ANNOTATION_LIFT_M),
       // harvest happens under braking (MGU-K), so its stylised strip rides the
-      // same zones, narrower and a little higher so both stay visible
-      harvest: zoneStrip(braking, HARVEST_WIDTH_FRACTION, ANNOTATION_LIFT_M * 2),
+      // same zones, narrower and a step higher so both stay visible
+      harvest: zoneStrip(braking, HARVEST_WIDTH_FRACTION, ANNOTATION_LIFT_M * HARVEST_LIFT_STEPS),
       xmode: zoneStrip(xmode, ZONE_WIDTH_FRACTION, ANNOTATION_LIFT_M),
       startLine: zoneStrip(
         [{ start_m: 0, end_m: START_LINE_LENGTH_M }],
         1,
-        ANNOTATION_LIFT_M * 3,
+        ANNOTATION_LIFT_M * START_LINE_LIFT_STEPS,
       ),
     };
   }, [positions, centreline, detail]);
+
+  // prop-attached geometries are outside R3F's auto-dispose; free the GPU buffers
+  // when the circuit changes or the route unmounts
+  useEffect(
+    () => () => {
+      for (const geometry of Object.values(geometries)) geometry.dispose();
+    },
+    [geometries],
+  );
 
   return (
     <group>
@@ -136,13 +157,28 @@ export default function CircuitRibbon({
         <meshStandardMaterial color={DECK_TINT} side={DoubleSide} />
       </mesh>
       <mesh geometry={geometries.braking}>
-        <meshBasicMaterial color={BRAKING_TINT} transparent opacity={0.55} side={DoubleSide} />
+        <meshBasicMaterial
+          color={BRAKING_TINT}
+          transparent
+          opacity={BRAKING_OPACITY}
+          side={DoubleSide}
+        />
       </mesh>
       <mesh geometry={geometries.harvest}>
-        <meshBasicMaterial color={HARVEST_TINT} transparent opacity={0.8} side={DoubleSide} />
+        <meshBasicMaterial
+          color={HARVEST_TINT}
+          transparent
+          opacity={HARVEST_OPACITY}
+          side={DoubleSide}
+        />
       </mesh>
       <mesh geometry={geometries.xmode}>
-        <meshBasicMaterial color={XMODE_TINT} transparent opacity={0.5} side={DoubleSide} />
+        <meshBasicMaterial
+          color={XMODE_TINT}
+          transparent
+          opacity={XMODE_OPACITY}
+          side={DoubleSide}
+        />
       </mesh>
       <mesh geometry={geometries.startLine}>
         <meshBasicMaterial color="#e5e5e5" side={DoubleSide} />

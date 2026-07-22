@@ -21,7 +21,8 @@ export default function App() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== DEV_OVERLAY_KEY) return;
-      if (event.target instanceof HTMLInputElement) return; // typing a seed, not toggling
+      // typing in a form control, not toggling
+      if ((event.target as HTMLElement).closest?.("input, select, textarea") != null) return;
       toggleDevOverlay();
     };
     window.addEventListener("keydown", onKeyDown);
