@@ -8,11 +8,15 @@ from api.ws import frame_delay_s
 from senna import config
 
 
-def test_frame_delay_is_lap_time_over_speed_for_every_offered_speed():
+def test_the_wall_clock_spent_per_lap_is_speed_invariant():
+    # delay * speed reconstructs the simulated lap for every 5.9.3 speed — the
+    # invariant, not a restatement of the division (review finding)
     speeds = config.load("serving")["playback"]["speeds"]
     assert speeds == [1, 5, 10, 30]  # the 5.9.3 client:speed set
-    for speed in speeds:
-        assert frame_delay_s(93.4, speed) == pytest.approx(93.4 / speed)
+    delays = [frame_delay_s(93.4, speed) for speed in speeds]
+    assert delays == sorted(delays, reverse=True)  # faster playback, shorter waits
+    for speed, delay in zip(speeds, delays, strict=True):
+        assert delay * speed == pytest.approx(93.4)
 
 
 def test_one_x_plays_a_lap_in_its_simulated_seconds():

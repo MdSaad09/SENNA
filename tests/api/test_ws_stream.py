@@ -129,6 +129,28 @@ def test_seek_replays_from_the_requested_lap(stream, monkeypatch):
     assert lap_numbers[lap_numbers.index(2):] == list(range(2, RACE_LAPS + 1))
 
 
+def test_a_mid_stream_speed_change_takes_effect_immediately(stream, monkeypatch):
+    client, run_id = stream
+    recorder = SleepRecorder(0.02)  # real (tiny) delays so the switch lands mid-stream
+    monkeypatch.setattr(client.app.state, "playback_sleep", recorder, raising=False)
+    nominal = client.get(f"/api/v1/simulations/{run_id}").json()["summary"]["nominal_lap_s"]
+
+    with client.websocket_connect(f"/ws/simulations/{run_id}") as ws:
+        seen = 0
+        for _ in range(_MAX_MESSAGES):
+            if ws.receive_json()["type"] == "sim:lap":
+                seen += 1
+                if seen == 3:
+                    break
+        ws.send_json({"type": "client:speed", "speed": 30})
+        _collect(ws)
+
+    # started at the 1x default, ended at 30x — and the switch may not wait out an
+    # in-flight 1x tick (at real speed that tick is a whole lap of wall clock)
+    assert recorder.delays[0] == pytest.approx(nominal / 1)
+    assert recorder.delays[-1] == pytest.approx(nominal / 30)
+
+
 def test_pause_halts_the_playback_clock(stream, monkeypatch):
     client, run_id = stream
     recorder = SleepRecorder(0.02)

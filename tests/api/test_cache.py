@@ -71,6 +71,61 @@ def test_the_cache_key_names_the_served_model_and_env_hash(client, fresh_schema,
     assert seed == str(SEED)
 
 
+def test_a_new_model_version_is_a_cache_miss(client, fresh_schema, flush_redis, monkeypatch):
+    # E-15's whole point: deploying a retrained model must cold-start its own
+    # namespace. No drain needed — the POST-time key already dedupes.
+    body = {"circuit_id": CIRCUIT, "grid_position": 5, "seed": SEED}
+    first = client.post("/api/v1/simulations", json=body).json()["run_id"]
+    assert client.post("/api/v1/simulations", json=body).json()["run_id"] == first
+
+    import api.routes.simulations as simulations
+
+    real_read = simulations.read_manifest
+
+    def retrained(models_dir=None, version=None):
+        manifest = dict(real_read(models_dir, version))
+        manifest["model_version"] = manifest["model_version"] + "-retrain"
+        manifest["fingerprint"] = "f" * 64
+        return manifest
+
+    monkeypatch.setattr(simulations, "read_manifest", retrained)
+    assert client.post("/api/v1/simulations", json=body).json()["run_id"] != first
+
+
+def test_a_stranded_key_for_a_dead_run_is_a_miss(client, fresh_schema, flush_redis):
+    # a work horse killed hard never reaches _finish_redis: the row sticks at
+    # "running" and the key would answer with the corpse for 7 days (review finding)
+    import asyncio
+    from datetime import UTC, datetime, timedelta
+
+    from sqlalchemy import update
+    from sqlalchemy.ext.asyncio import create_async_engine
+
+    from senna.data.schema import SimulationRun
+    from tests.api.conftest import db_url
+
+    body = {"circuit_id": CIRCUIT, "grid_position": 5, "seed": SEED}
+    stuck = client.post("/api/v1/simulations", json=body).json()["run_id"]
+
+    queue_cfg = config.load("serving")["queue"]
+    beyond = timedelta(seconds=queue_cfg["stale_after_timeouts"] * queue_cfg["job_timeout_s"] + 60)
+    # rows carry naive UTC (the persist convention) — local now() would be off by
+    # the timezone and could land the backdate in the future
+    long_ago = datetime.now(UTC).replace(tzinfo=None) - beyond
+
+    async def strand():
+        engine = create_async_engine(db_url())
+        async with engine.begin() as conn:
+            await conn.execute(
+                update(SimulationRun).where(SimulationRun.id == stuck)
+                .values(status="running", started_at=long_ago)
+            )
+        await engine.dispose()
+
+    asyncio.run(strand())
+    assert client.post("/api/v1/simulations", json=body).json()["run_id"] != stuck
+
+
 @pytest.mark.slow
 def test_the_cache_entry_carries_the_seven_day_ttl(client, fresh_schema, flush_redis):
     create_and_drain(client, {"circuit_id": CIRCUIT, "grid_position": 5, "seed": SEED})

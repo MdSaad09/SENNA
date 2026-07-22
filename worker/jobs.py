@@ -63,6 +63,10 @@ async def _run(run_id: int) -> str:
         req = _request_from(row.config)
         serving = load_serving_model(version=row.model_version)
         frames, cards, summary = _simulate(req, serving)
+        if "era_matched_model" in (row.config or {}):
+            # the summary is what screenshots quote — the pending-F14 caveat rides
+            # there too, not only in the request config (decision Q3)
+            summary["era_matched_model"] = row.config["era_matched_model"]
 
         async with engine.begin() as conn:
             # rewrite, never append: a retried job lands on the same rows

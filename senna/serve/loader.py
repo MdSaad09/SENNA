@@ -63,11 +63,14 @@ def read_manifest(models_dir=None, version: str | None = None) -> dict:
 
 
 def load_serving_model(*, models_dir=None, version: str | None = None) -> ServingModel:
-    return _load(str(models_root(models_dir)), version)
+    root = models_root(models_dir)
+    # resolve before caching: None, "dev-latest" and the explicit baked version all
+    # name one directory and must share one cache entry
+    return _load(str(root), str(resolve_version(root, version)))
 
 
 @lru_cache(maxsize=4)
-def _load(root: str, version: str | None) -> ServingModel:
+def _load(root: str, triplet: str) -> ServingModel:
     # heavy imports stay inside: the API imports this module for read_manifest and
     # must never pull torch into its process (plan; verified by tests/serve)
     from stable_baselines3.common.vec_env import DummyVecEnv
@@ -77,7 +80,7 @@ def _load(root: str, version: str | None) -> ServingModel:
     from senna.train.checkpoints import load_triplet
     from senna.train.seeds import load_banks
 
-    triplet_dir = resolve_version(Path(root), version)
+    triplet_dir = Path(triplet)
     manifest = json.loads((triplet_dir / "manifest.json").read_text())
     model_version = manifest["model_version"]
 

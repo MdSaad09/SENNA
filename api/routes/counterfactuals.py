@@ -5,7 +5,7 @@ consumer can mistake the preview for the thesis result (decision Q3).
 """
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select
 
 from api.routes.simulations import enqueue_run
@@ -18,6 +18,8 @@ router = APIRouter()
 
 
 class CounterfactualCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     year: int
     round: int
     driver: str

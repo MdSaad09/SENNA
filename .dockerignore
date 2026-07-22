@@ -17,6 +17,9 @@ data/*
 models/*
 !models/headline
 !models/explain
+# evaluation-only arrays: in the local tree but never in the image (plan bake list)
+models/explain/*/holdout.npz
+models/explain/*/crosscheck.npz
 notebooks
 docs
 tests

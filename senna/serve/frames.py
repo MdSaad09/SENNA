@@ -27,6 +27,7 @@ class LapSnapshot:
     pit_count: np.ndarray
     track_status: str
     weather: str
+    s_track: np.ndarray
 
 
 def build_lap_frame(env, info: dict, prev: LapSnapshot | None) -> tuple[dict, LapSnapshot]:
@@ -42,10 +43,14 @@ def build_lap_frame(env, info: dict, prev: LapSnapshot | None) -> tuple[dict, La
         gaps[car] = state.cumulative_time_s[car] - state.cumulative_time_s[ahead]
 
     # (1 - gap_to_leader / nominal) mod 1: the leader reads 0.0 fresh across the
-    # line and a lapped car wraps instead of going negative
+    # line and a lapped car wraps instead of going negative. A retired car keeps
+    # the fraction it died with — its clock froze, and letting the formula run
+    # would send the wreck orbiting the ribbon
     leader_time = state.cumulative_time_s[by_rank[0]]
     to_leader = state.cumulative_time_s - leader_time
     s_track = (1.0 - to_leader / env.scenario.t0_s) % 1.0
+    parked = prev.s_track if prev is not None else np.zeros(n)
+    s_track = np.where(state.retired, parked, s_track)
 
     stopped = (state.pit_count > (prev.pit_count if prev is not None else 0))
     cars = [
@@ -55,7 +60,10 @@ def build_lap_frame(env, info: dict, prev: LapSnapshot | None) -> tuple[dict, La
             "position": int(rank[car]),
             "compound": COMPOUNDS[int(state.compound[car])],
             "tyre_age": int(state.tyre_age[car]),
-            "gap_ahead_s": None if rank[car] == 1 else float(gaps[car]),
+            # None for the leader — and for a retired car, whose frozen clock would
+            # otherwise print a nonsense (even negative) gap
+            "gap_ahead_s": (None if rank[car] == 1 or state.retired[car]
+                            else float(gaps[car])),
             "in_pit": bool(stopped[car]),
         }
         for car in range(n)
@@ -80,6 +88,7 @@ def build_lap_frame(env, info: dict, prev: LapSnapshot | None) -> tuple[dict, La
         pit_count=state.pit_count.copy(),
         track_status=info["track_status"],
         weather=info["events"]["weather"],
+        s_track=s_track,
     )
     return frame, snapshot
 

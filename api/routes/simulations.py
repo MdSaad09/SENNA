@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from sqlalchemy import insert, select
+from sqlalchemy import delete, insert, select
 
 from api.deps import serving_config
 from api.schemas import DecisionCard, JobAccepted, LapFrame, SimulationCreate, SimulationResult
@@ -22,7 +22,18 @@ from senna.serve.loader import UnknownModelVersionError, read_manifest
 
 router = APIRouter()
 
-_SEED_BOUND = 2**31  # the repo-wide int32 seed domain (configs/seeds.yaml, derived_seeds)
+
+def run_is_stale(row, *, queue_cfg: dict) -> bool:
+    """A queued/running row older than the configured multiple of the job budget:
+    the work horse died before it could report (OOM, a platform SIGKILL), so its
+    cache key must stop answering and the WS must stop waiting (E-15)."""
+    if row.status not in ("queued", "running"):
+        return False
+    anchor = row.started_at or row.created_at
+    if anchor is None:
+        return True
+    age_s = (datetime.now(UTC).replace(tzinfo=None) - anchor).total_seconds()
+    return age_s > queue_cfg["stale_after_timeouts"] * queue_cfg["job_timeout_s"]
 
 
 def _validated_manifest(req: SimulationCreate) -> dict:
@@ -47,18 +58,32 @@ def _validated_manifest(req: SimulationCreate) -> dict:
 
 async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
                       extra_config: dict | None = None) -> JobAccepted:
-    manifest = _validated_manifest(req)
+    # file+yaml IO off the event loop, which also owns every WS stream
+    manifest = await run_in_threadpool(_validated_manifest, req)
     if req.seed is None:
         # drawn before the key is built, so the echoed seed is the one that runs
-        req = req.model_copy(update={"seed": secrets.randbelow(_SEED_BOUND)})
+        bound = serving_config()["seeds"]["draw_bound"]
+        req = req.model_copy(update={"seed": secrets.randbelow(bound)})
 
     key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], req)
     redis = request.app.state.redis
+    engine = request.app.state.engine
+    queue_cfg = serving_config()["queue"]
+
     cached = await redis.get(key)
     if cached is not None:
-        return JobAccepted(run_id=int(cached))
+        async with engine.connect() as conn:
+            hit = (await conn.execute(
+                select(SimulationRun).where(SimulationRun.id == int(cached))
+            )).first()
+        if hit is not None and hit.status == "complete":
+            return JobAccepted(run_id=hit.id)
+        if hit is not None and not run_is_stale(hit, queue_cfg=queue_cfg):
+            return JobAccepted(run_id=hit.id)  # queued/running and fresh: dedupe in flight
+        # the run behind the key is dead — failed, deleted, or a work horse that
+        # never reported. The key must not answer for it for 7 days (E-15).
+        await redis.delete(key)
 
-    engine = request.app.state.engine
     async with engine.begin() as conn:
         run_id = (await conn.execute(
             insert(SimulationRun).values(
@@ -70,11 +95,14 @@ async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
             ).returning(SimulationRun.id)
         )).scalar_one()
 
-    # NX: a racing identical request keeps the first run; the worker refreshes on
-    # success and deletes on failure so a retry can re-run (E-15)
-    await redis.set(key, run_id, nx=True, ex=ttl_seconds())
+    prior = await redis.set(key, run_id, nx=True, ex=ttl_seconds(), get=True)
+    if prior is not None:
+        # an identical request won the NX race between our GET and SET: keep the
+        # winner, drop our orphan row, enqueue nothing
+        async with engine.begin() as conn:
+            await conn.execute(delete(SimulationRun).where(SimulationRun.id == run_id))
+        return JobAccepted(run_id=int(prior))
 
-    queue_cfg = serving_config()["queue"]
     await run_in_threadpool(
         request.app.state.queue.enqueue, "worker.jobs.run_simulation", run_id,
         job_timeout=queue_cfg["job_timeout_s"],

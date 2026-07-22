@@ -52,8 +52,11 @@ def test_the_replay_runs_on_2024_physics_with_the_pending_caveat(client, fresh_s
     run = client.get(f"/api/v1/simulations/{run_id}").json()
     assert run["status"] == "complete"
     assert run["era"] == "2024"
-    # Q3: the frozen 2026 model on 2024 physics until F14 delivers the era-matched model
+    # Q3: the frozen 2026 model on 2024 physics until F14 delivers the era-matched
+    # model — recorded in the request config AND echoed in the summary, because the
+    # summary is what screenshots quote
     assert run["config"]["era_matched_model"] == "pending-F14"
+    assert run["summary"]["era_matched_model"] == "pending-F14"
 
     frames = client.get(f"/api/v1/simulations/{run_id}/frames").json()
     assert frames

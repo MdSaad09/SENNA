@@ -7,10 +7,13 @@ summary, honesty) and in the X-Model-Version header, never in new top-level fiel
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SimulationCreate(BaseModel):
+    # forbid, or a typo like "wether_profile" silently becomes a dry race
+    model_config = ConfigDict(extra="forbid")
+
     circuit_id: str
     era: Literal["2024", "2026"] = "2026"
     grid_position: int = Field(ge=1, le=22)
