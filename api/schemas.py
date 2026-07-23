@@ -106,6 +106,8 @@ class CircuitDetail(CircuitSummary):
     corners: list | None
     braking_zones: list | None
     xmode_sections: list | None
+    flags: dict | None            # meta.json stylised/inferred flags, verbatim — the
+                                  # View 1 legend derives its caveats from these (F11)
 
 
 class RaceDetail(BaseModel):

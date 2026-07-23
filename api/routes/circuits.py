@@ -50,4 +50,5 @@ def circuit_detail(slug: str):
         corners=meta.get("corners"),
         braking_zones=meta.get("braking_zones"),
         xmode_sections=meta.get("xmode_sections"),
+        flags=meta.get("flags"),
     )

@@ -76,3 +76,21 @@ def test_an_unbuilt_circuit_has_no_ribbon_url(client):
     )
     detail = client.get(f"/api/v1/circuits/{unbuilt}").json()
     assert detail["gltf_url"] is None
+
+
+@_built_guard
+def test_detail_passes_the_meta_flags_through_verbatim(client):
+    # F11 divergence 1: the View 1 legend derives its stylised/inferred caveats
+    # from these flags instead of hardcoded copy (5.9.2, 5.10.2 row 1)
+    meta = json.loads((BUILT_DIR / "meta.json").read_text())
+    detail = client.get(f"/api/v1/circuits/{CIRCUIT}").json()
+    assert detail["flags"] == meta["flags"]
+
+
+def test_a_circuit_without_meta_reports_null_flags(client):
+    no_meta = next(
+        slug for slug in config.load("circuits")
+        if not (config.REPO_ROOT / "data" / "circuits" / slug / "meta.json").is_file()
+    )
+    detail = client.get(f"/api/v1/circuits/{no_meta}").json()
+    assert detail["flags"] is None
