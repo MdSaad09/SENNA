@@ -53,3 +53,19 @@ export const SPRITE_LABEL_SIZE_M = 7; // stylised — sprite text quad edge at r
 export const BLOOM_STRENGTH = 0.35;
 export const BLOOM_RADIUS = 0.6;
 export const BLOOM_THRESHOLD = 0.85;
+
+// The tyre surface's temperature axis. The fit is age-only (T5), so the temperature
+// dimension is stylised and the on-view label says so — see docs/plans/F12-plan.md
+// divergence 1. sourced — obs #32 normaliser (T - 15) / 45 spans a 15-60 C range.
+export const TYRE_TEMP_AXIS_MIN_C = 15;
+export const TYRE_TEMP_AXIS_MAX_C = 60;
+// stylised — the readout slice, mirrors configs/env.yaml track_temp_dry_c; the surface
+// equals the served fitted curve exactly here, and every hover number is read off it
+export const TYRE_TEMP_REF_C = 30;
+// stylised — how far the stylised temperature response may bend grip from the fitted
+// slice, at the axis extremes; understated on purpose, the label owns the honesty
+export const TYRE_TEMP_GRIP_PENALTY = 0.08;
+// operational — surface tessellation; one grid mesh in a single draw call either way,
+// so the density is only a smoothness-vs-vertex-count choice
+export const GRIP_AGE_SAMPLES = 64;
+export const GRIP_TEMP_SAMPLES = 33;

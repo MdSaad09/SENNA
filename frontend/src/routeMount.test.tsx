@@ -52,8 +52,8 @@ test("navigation swaps the canvas and never stacks a second one (F-28)", async (
 
   const hops: [string, number][] = [
     ["/replay?run=7", 1],
-    ["/energy", 0],
-    ["/tyres", 0],
+    ["/energy", 0], // the energy view is 2D recharts (decision 2), no canvas
+    ["/tyres", 1], // the tyre surface owns a CanvasHost
     ["/circuit", 1],
   ];
   for (const [path, expected] of hops) {

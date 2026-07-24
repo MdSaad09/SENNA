@@ -86,6 +86,50 @@ export const simulationResult = {
   finished_at: "2026-07-22T10:00:05Z",
 };
 
+// A deploy-heavy ledger for run 7: several laps deploy well past 4 MJ (the car
+// harvests mid-lap, so this is legal — F-02), yet SOC never leaves [0, usable].
+// Lap 4 is a pit lap (pit != 0). Every harvest stays under the 8.5 MJ cap line.
+export const energyProfile = {
+  run_id: 7,
+  circuit_id: "bahrain_grand_prix",
+  h_max_mj: 8.5,
+  usable_soc_mj: 4.0,
+  // a valid ledger from a 2.0 MJ start: soc = clip(prev + harvest - deploy, 0, 4).
+  // Lap 5 harvests past the ceiling and clips to 4.0 — realistic, not a bug.
+  laps: [
+    { lap: 1, harvest_mj: 3.0, deploy_mj: 1.0, soc_mj: 4.0, mode: 1, pit: 0 },
+    { lap: 2, harvest_mj: 2.0, deploy_mj: 5.5, soc_mj: 0.5, mode: 2, pit: 0 },
+    { lap: 3, harvest_mj: 6.0, deploy_mj: 5.0, soc_mj: 1.5, mode: 2, pit: 0 },
+    { lap: 4, harvest_mj: 4.5, deploy_mj: 4.8, soc_mj: 1.2, mode: 2, pit: 3 },
+    { lap: 5, harvest_mj: 7.0, deploy_mj: 3.0, soc_mj: 4.0, mode: 1, pit: 0 },
+    { lap: 6, harvest_mj: 2.0, deploy_mj: 5.2, soc_mj: 0.8, mode: 3, pit: 0 },
+  ],
+};
+
+// One circuit's fitted surfaces spanning the three honesty states the flag must tell
+// apart: a strong direct fit, a thin direct fit (low_confidence, no donors), and a
+// 2026 cluster transfer (low_confidence with source_circuit donors). cliff_age is the
+// served value — max_age_seen (or the 40-lap fallback) plus the 3-lap failure margin.
+export const degradationCurves = [
+  {
+    circuit_id: "bahrain_grand_prix", era: "2024", compound: "HARD",
+    a: 0.000878, b: 1.0671, low_confidence: false,
+    max_age_seen: 30, n_laps: 999, source_circuit: null, cliff_age: 33,
+  },
+  {
+    circuit_id: "bahrain_grand_prix", era: "2024", compound: "MEDIUM",
+    a: 0.00075, b: 1.13, low_confidence: true,
+    max_age_seen: 18, n_laps: 40, source_circuit: null, cliff_age: 21,
+  },
+  {
+    circuit_id: "bahrain_grand_prix", era: "2026", compound: "HARD",
+    a: 0.000414, b: 1.653, low_confidence: true,
+    max_age_seen: null, n_laps: null,
+    source_circuit: "australian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix",
+    cliff_age: 43,
+  },
+];
+
 function lapFrames(carCount: number, laps: number): LapFrameFixture[] {
   // an affine permutation keeps positions shuffled but deterministic; 7 is coprime
   // with both grid sizes, so every rank appears exactly once
@@ -150,6 +194,12 @@ export function installFetchStub(overrides: Record<string, unknown> = {}): () =>
     }
     if (url.includes("/frames")) return jsonResponse(framesPage(url, lapFrames22));
     if (url.includes("/v1/simulations/7")) return jsonResponse(simulationResult);
+    if (url.includes("/v1/energy/")) return jsonResponse(energyProfile);
+    // french_grand_prix has no fitted block — the 404 the honest empty state renders
+    if (url.includes("/v1/tyres/french_grand_prix")) {
+      return jsonResponse({ detail: "no degradation fits for 'french_grand_prix'" }, 404);
+    }
+    if (url.includes("/v1/tyres/")) return jsonResponse(degradationCurves);
     if (url.includes(`/v1/circuits/${circuitDetailNoRibbon.id}`)) {
       return jsonResponse(circuitDetailNoRibbon);
     }

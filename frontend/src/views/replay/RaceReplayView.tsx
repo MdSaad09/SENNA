@@ -10,9 +10,9 @@ import { Suspense, useEffect, useState } from "react";
 import { useCircuit, useRunFrames, useSimulation } from "../../api/queries";
 import { EGO_CAR_ID } from "../../config/constants";
 import CanvasHost from "../../components/CanvasHost";
+import RunPicker from "../../components/RunPicker";
 import { useReplayStore } from "../../stores/replayStore";
 import ReplayScene from "./ReplayScene";
-import RunPicker from "./RunPicker";
 import TransportControls from "./TransportControls";
 
 function runIdFromLocation(): number | null {

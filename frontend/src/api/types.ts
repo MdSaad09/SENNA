@@ -109,3 +109,33 @@ export interface LapFrame {
   agent: AgentState;
   events: RaceEvent[];
 }
+
+export interface EnergyLap {
+  lap: number;
+  harvest_mj: number;
+  deploy_mj: number;
+  soc_mj: number;
+  mode: number;
+  pit: number; // 0 stayed out; 1-5 pitted for compound code + 1
+}
+
+export interface EnergyProfile {
+  run_id: number;
+  circuit_id: string;
+  h_max_mj: number; // per-event harvest cap — the bars panel ceiling, never a deploy cap
+  usable_soc_mj: number; // the 4 MJ store; the SOC axis top, served not hardcoded
+  laps: EnergyLap[];
+}
+
+export interface DegradationCurve {
+  circuit_id: string;
+  era: string;
+  compound: string;
+  a: number;
+  b: number;
+  low_confidence: boolean;
+  max_age_seen: number | null;
+  n_laps: number | null;
+  source_circuit: string | null; // T5 donor circuits; null for a direct fit
+  cliff_age: number; // the failure cliff the sim enforces
+}

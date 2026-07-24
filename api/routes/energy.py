@@ -7,7 +7,7 @@ from fastapi import APIRouter, Request
 from sqlalchemy import select
 
 from api.routes.simulations import _serving_row
-from api.schemas import EnergyProfile
+from api.schemas import EnergyLap, EnergyProfile
 from senna import config
 from senna.data.schema import LapFrameRow
 
@@ -26,11 +26,16 @@ async def energy_profile(request: Request, run_id: int):
     return EnergyProfile(
         run_id=run_id, circuit_id=row.circuit,
         h_max_mj=config.load("circuits")[row.circuit]["h_max_mj"],
+        usable_soc_mj=config.load("physics_2026")["energy_store"]["usable_capacity_mj"],
         laps=[
-            {"lap": frame["lap"],
-             "harvest_mj": frame["agent"]["harvest_mj"],
-             "deploy_mj": frame["agent"]["deploy_mj"],
-             "soc_mj": frame["agent"]["soc_mj"]}
+            EnergyLap(
+                lap=frame["lap"],
+                harvest_mj=frame["agent"]["harvest_mj"],
+                deploy_mj=frame["agent"]["deploy_mj"],
+                soc_mj=frame["agent"]["soc_mj"],
+                mode=frame["agent"]["mode"],
+                pit=frame["agent"]["action"]["pit"],
+            )
             for frame in frames
         ],
     )

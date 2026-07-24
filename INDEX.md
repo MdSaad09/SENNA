@@ -4,7 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F12 — planned; next: `/ship F12` in this same session
+**Active feature:** none — next session: `/plan-feature F13`
 **Next up:** F13, then F14
 
 ## Feature ledger
@@ -23,7 +23,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F09 | Explainability: surrogate, SHAP, cards | F07 | Done 21 Jul 2026 | feature/F09-explainability | [F09](docs/learn/F09-explainability.md) |
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Done 22 Jul 2026 | feature/F10-backend-serving | [F10](docs/learn/F10-backend-serving.md) |
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Done 23 Jul 2026 | feature/F11-frontend-views-1-2 | [F11](docs/learn/F11-frontend-views-1-2.md) |
-| F12 | Views 3–4: Energy, Tyre Surface | F11 | Planned | | |
+| F12 | Views 3–4: Energy, Tyre Surface | F11 | Done 24 Jul 2026 | feature/F12-views-energy-tyre | [F12](docs/learn/F12-views-energy-tyre.md) |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Todo | | |
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Todo | | |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Todo | | |
@@ -111,7 +111,8 @@ the work — resume with `claude --continue`, or start fresh and say
   capacity" — total cell energy is unregulated and larger — so SOC in [0, 4] models the
   regulated window exactly. Bonus: the 2014–2025 "max 4MJ/lap from ES to MGUK" diagram
   label is absent from the 2026 text, which is primary-source confirmation of F-02.
-  /ship F12 should refresh the usable_capacity_mj provenance comment to cite C5.2.9.
+  The configs/physics_2026.yaml usable_capacity_mj comment now cites Art 5.4.9 / C5.2.9
+  (done in F12, 24 Jul 2026).
 - **Harvest-cap refinement to re-check before F14 (found during AR-04, 24 Jul 2026):**
   the FIA's 20 Apr 2026 refinements cut maximum permitted recharge from 8 MJ to 7 MJ
   (Issue 18 Art C5.2.10; floor of 5 MJ in qualifying; +0.5 MJ Manual Override under

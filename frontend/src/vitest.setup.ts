@@ -9,3 +9,14 @@ globalThis.Request = class extends NativeRequest {
     super(input, init?.signal != null ? { ...init, signal: null } : init);
   }
 } as typeof Request;
+
+// recharts measures its container through ResizeObserver, which jsdom does not ship.
+// The energy view's assertions read the honesty captions and axis labels (real DOM),
+// not the SVG paths, so a no-op observer is all the chart needs to mount.
+if (typeof globalThis.ResizeObserver === "undefined") {
+  globalThis.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as typeof ResizeObserver;
+}
