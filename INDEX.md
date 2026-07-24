@@ -100,6 +100,24 @@ the work — resume with `claude --continue`, or start fresh and say
   The assumption stands as written ("about 70 kg, energy-flow limited"); next fits
   session may lift the grade-C flag per the register's close-out rule.
 
+- **AR-04 energy store (spec Part 8):** VERIFIED 24 Jul 2026 — official FIA regulation
+  text. FIA 2026 Formula 1 Technical Regulations Issue 8 (24 Jun 2024), Art 5.4.9: "The
+  difference between the maximum and the minimum state of charge of the ES may not
+  exceed 4MJ at any time the car is on the track" — unchanged in the consolidated 2026
+  Section C Issue 18 (7 May 2026) as Art C5.2.9. The rule is continuous in substance
+  since 2014, though the 2025 regs carry it in the Art 5.3.2 energy-flow diagram, not
+  prose (the register's "Art 5.4" pointer resolves to 5.4.9 in the 2026 issue the spec
+  cites). Precision for the viva: the regs regulate a max–min delta SoC, not "usable
+  capacity" — total cell energy is unregulated and larger — so SOC in [0, 4] models the
+  regulated window exactly. Bonus: the 2014–2025 "max 4MJ/lap from ES to MGUK" diagram
+  label is absent from the 2026 text, which is primary-source confirmation of F-02.
+  /ship F12 should refresh the usable_capacity_mj provenance comment to cite C5.2.9.
+- **Harvest-cap refinement to re-check before F14 (found during AR-04, 24 Jul 2026):**
+  the FIA's 20 Apr 2026 refinements cut maximum permitted recharge from 8 MJ to 7 MJ
+  (Issue 18 Art C5.2.10; floor of 5 MJ in qualifying; +0.5 MJ Manual Override under
+  B7.2). Every circuits.yaml h_max_mj is still the 8.5 default — exactly the E-02 case.
+  Re-verify per-event values against C5.2.10 before F14's headline runs.
+
 ## Timeline anchor (spec Part 6.2, start 8 Jul 2026)
 F00 by 11 Jul · F01 by 21 Jul · F02–F04 by 4 Aug · F05–F06 by 25 Aug ·
 F07–F08 by 15 Sep · F09 by 22 Sep · F10 by 6 Oct · F11–F13 by 3 Nov · F14–F15 by 17 Nov.
