@@ -19,7 +19,9 @@ power_unit:
   mgu_h: false                 # sourced (A) — abolished for 2026, FIA regs
 
 energy_store:
-  usable_capacity_mj: 4.0      # sourced AR-04 (A) — unchanged from 2024; NOT 8 (F-03)
+  usable_capacity_mj: 4.0      # sourced AR-04 (A) — FIA 2026 Technical Regulations Art 5.4.9
+                               # (consolidated C5.2.9): max-min delta SoC <= 4 MJ, verified
+                               # 24 Jul 2026. A state-of-charge window, not cell capacity; NOT 8 (F-03)
   per_lap_deploy_cap_mj: null  # F-02: no such rule exists. Deployment is limited by SOC
                                # plus the per-circuit deployable-energy integral (T1).
 
