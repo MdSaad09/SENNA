@@ -35,14 +35,14 @@ export default function TyreSurfaceView() {
   }, [slug, circuits.data]);
 
   const curves = useDegradationCurves(slug);
-  const data = curves.data ?? [];
+  const served = curves.data ?? [];
 
-  const eras = unique(data.map((curve) => curve.era));
+  const eras = unique(served.map((curve) => curve.era));
   const activeEra = era !== null && eras.includes(era) ? era : (eras[0] ?? null);
-  const compounds = data.filter((curve) => curve.era === activeEra).map((curve) => curve.compound);
+  const compounds = served.filter((curve) => curve.era === activeEra).map((curve) => curve.compound);
   const activeCompound =
     compound !== null && compounds.includes(compound) ? compound : (compounds[0] ?? null);
-  const curve = data.find((c) => c.era === activeEra && c.compound === activeCompound) ?? null;
+  const curve = served.find((c) => c.era === activeEra && c.compound === activeCompound) ?? null;
 
   function changeCircuit(next: string) {
     const query = new URLSearchParams(window.location.search);

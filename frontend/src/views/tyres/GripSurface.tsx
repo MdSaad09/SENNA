@@ -16,8 +16,8 @@ import {
 } from "../../config/constants";
 import { buildGripSurface } from "../../lib/gripSurface";
 
-// stylised — world size of the surface: age runs along X, temperature along Z (the
-// CanvasHost group is Z-up), grip lifts the height. Visual framing only.
+// stylised — world size of the surface: age runs along X, temperature along Y, grip
+// lifts Z (the height). Visual framing only.
 const AGE_AXIS_M = 320;
 const TEMP_AXIS_M = 320;
 const GRIP_HEIGHT_M = 140;
@@ -27,6 +27,8 @@ const GRIP_HEIGHT_M = 140;
 const HIGH_GRIP_TINT = "#22c55e";
 const LOW_GRIP_TINT = "#dc2626";
 const CLIFF_TINT = "#f59e0b";
+// stylised — how strongly the extrapolation zone washes amber past the fitted support
+const EXTRAPOLATION_WASH = 0.45;
 
 const SURFACE_VERTEX = /* glsl */ `
   uniform float uA;
@@ -60,13 +62,14 @@ const SURFACE_FRAGMENT = /* glsl */ `
   uniform vec3 uLowTint;
   uniform vec3 uCliffTint;
   uniform float uSupportFrac;
+  uniform float uExtrapolationWash;
   varying float vGrip;
   varying float vAgeFrac;
   void main() {
     vec3 gripColour = mix(uLowTint, uHighTint, vGrip);
     // step to 1 once age passes the fitted support — everything beyond is extrapolation
     float beyond = step(uSupportFrac, vAgeFrac);
-    vec3 colour = mix(gripColour, uCliffTint, beyond * 0.45);
+    vec3 colour = mix(gripColour, uCliffTint, beyond * uExtrapolationWash);
     gl_FragColor = vec4(colour, 1.0);
   }
 `;
@@ -99,6 +102,7 @@ export default function GripSurface({ curve }: { curve: DegradationCurve }) {
         uTempPenalty: { value: TYRE_TEMP_GRIP_PENALTY },
         uHeight: { value: GRIP_HEIGHT_M },
         uSupportFrac: { value: supportFrac },
+        uExtrapolationWash: { value: EXTRAPOLATION_WASH },
         uHighTint: { value: new Color(HIGH_GRIP_TINT) },
         uLowTint: { value: new Color(LOW_GRIP_TINT) },
         uCliffTint: { value: new Color(CLIFF_TINT) },

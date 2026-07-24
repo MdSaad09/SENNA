@@ -35,8 +35,16 @@ test("a deploy-heavy run draws harvest against H_max with no 4 MJ cap marker (F-
   // harvests mid-lap, and the bars panel must never draw a cap that says otherwise
   renderView();
   const bars = await screen.findByTestId("energy-bars");
-  expect(within(bars).getByText(/harvest cap 8\.5 MJ per lap/i)).toBeInTheDocument();
-  // R-03: no deploy plane, no per-lap cap, no 4 MJ line anywhere in the bars panel
+
+  // the bars panel draws exactly one reference line, and it is the served harvest cap
+  // (8.5), never the fictional 4 MJ deploy plane (F-02, R-03)
+  const lines = within(within(bars).getByTestId("bars-reference-lines")).getAllByRole("listitem");
+  expect(lines).toHaveLength(1);
+  expect(lines[0]).toHaveAttribute("data-mj", "8.5");
+  expect(lines[0]).toHaveTextContent(/harvest cap 8\.5 MJ per lap/i);
+  expect(lines.some((line) => line.getAttribute("data-mj") === "4")).toBe(false);
+
+  // and nothing else in the panel marks a 4 MJ ceiling
   expect(within(bars).queryByText(/4\s*MJ/i)).toBeNull();
   expect(within(bars).queryByText(/deploy cap|per-lap cap|deploy plane/i)).toBeNull();
 });

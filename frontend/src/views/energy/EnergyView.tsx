@@ -43,7 +43,13 @@ export default function EnergyView() {
       <section className="relative min-h-0 flex-1 overflow-y-auto">
         {runId === null && (
           <div className="absolute inset-0 flex">
-            <RunPicker onRun={setRunId} heading="energy — pick a run" />
+            {/* energy needs a runnable sim, which needs fitted degradation to build a
+                scenario — the ribbon (View 1's 3D model) is irrelevant here */}
+            <RunPicker
+              onRun={setRunId}
+              heading="energy — pick a run"
+              includeCircuit={(circuit) => circuit.coverage.deg_fit}
+            />
           </div>
         )}
 
@@ -52,6 +58,12 @@ export default function EnergyView() {
             {run.data?.status === "failed"
               ? `run ${runId} failed — check the worker logs`
               : `run ${runId}: ${run.data?.status ?? "loading"}…`}
+          </div>
+        )}
+
+        {runComplete === true && energy.isError && (
+          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+            run {runId} finished, but its energy ledger could not be loaded
           </div>
         )}
 

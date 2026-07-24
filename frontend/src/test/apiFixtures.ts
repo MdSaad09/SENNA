@@ -94,13 +94,15 @@ export const energyProfile = {
   circuit_id: "bahrain_grand_prix",
   h_max_mj: 8.5,
   usable_soc_mj: 4.0,
+  // a valid ledger from a 2.0 MJ start: soc = clip(prev + harvest - deploy, 0, 4).
+  // Lap 5 harvests past the ceiling and clips to 4.0 — realistic, not a bug.
   laps: [
-    { lap: 1, harvest_mj: 5.0, deploy_mj: 2.0, soc_mj: 3.0, mode: 1, pit: 0 },
-    { lap: 2, harvest_mj: 6.5, deploy_mj: 5.5, soc_mj: 4.0, mode: 2, pit: 0 },
-    { lap: 3, harvest_mj: 3.0, deploy_mj: 6.0, soc_mj: 1.0, mode: 2, pit: 0 },
-    { lap: 4, harvest_mj: 4.5, deploy_mj: 4.8, soc_mj: 0.7, mode: 2, pit: 3 },
-    { lap: 5, harvest_mj: 7.0, deploy_mj: 3.0, soc_mj: 3.9, mode: 1, pit: 0 },
-    { lap: 6, harvest_mj: 2.0, deploy_mj: 5.2, soc_mj: 1.2, mode: 3, pit: 0 },
+    { lap: 1, harvest_mj: 3.0, deploy_mj: 1.0, soc_mj: 4.0, mode: 1, pit: 0 },
+    { lap: 2, harvest_mj: 2.0, deploy_mj: 5.5, soc_mj: 0.5, mode: 2, pit: 0 },
+    { lap: 3, harvest_mj: 6.0, deploy_mj: 5.0, soc_mj: 1.5, mode: 2, pit: 0 },
+    { lap: 4, harvest_mj: 4.5, deploy_mj: 4.8, soc_mj: 1.2, mode: 2, pit: 3 },
+    { lap: 5, harvest_mj: 7.0, deploy_mj: 3.0, soc_mj: 4.0, mode: 1, pit: 0 },
+    { lap: 6, harvest_mj: 2.0, deploy_mj: 5.2, soc_mj: 0.8, mode: 3, pit: 0 },
   ],
 };
 
