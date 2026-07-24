@@ -1,7 +1,10 @@
 """The 5.9.2 response and request shapes, verbatim. These models are the API's
 contract with the frontend and the spec — change the spec before changing a shape
-(api/CLAUDE.md). Extra serving detail travels in the open dict fields (config,
-summary, honesty) and in the X-Model-Version header, never in new top-level fields.
+(api/CLAUDE.md). Most serving detail travels in the open dict fields (config, summary,
+honesty) and in the X-Model-Version header. F12 is the exception: EnergyProfile and
+DegradationCurve gain additive fields (usable_soc_mj, the typed EnergyLap, source_circuit,
+cliff_age) recorded as an approved 5.9.2 divergence in docs/plans/F12-plan.md, the same
+way F10 and F11 recorded theirs — additive only, so no existing consumer breaks.
 """
 
 from datetime import datetime
@@ -126,11 +129,21 @@ class ModelVersion(BaseModel):
     promoted_at: str | None
 
 
+class EnergyLap(BaseModel):
+    lap: int
+    harvest_mj: float
+    deploy_mj: float
+    soc_mj: float                 # clipped to [0, usable_soc_mj] in the sim (E-01)
+    mode: int                     # 0-3: conserve, balanced, attack, defend
+    pit: int                      # 0 = stayed out; 1-5 = pitted for compound code + 1
+
+
 class EnergyProfile(BaseModel):
     run_id: int
     circuit_id: str
-    h_max_mj: float
-    laps: list
+    h_max_mj: float               # per-event harvest cap, the bars panel's ceiling (E-02)
+    usable_soc_mj: float          # the 4 MJ store, so the SOC axis is served not hardcoded
+    laps: list[EnergyLap]
 
 
 class DegradationCurve(BaseModel):
@@ -142,3 +155,5 @@ class DegradationCurve(BaseModel):
     low_confidence: bool
     max_age_seen: int | None
     n_laps: int | None
+    source_circuit: str | None    # T5 cluster-transfer donors; None for a direct fit
+    cliff_age: int                # the failure cliff the sim enforces (scenario.cliff_age_laps)

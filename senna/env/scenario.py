@@ -24,6 +24,18 @@ def compound_code(name: str) -> int:
     return COMPOUNDS.index(name)
 
 
+def cliff_age_laps(max_age_seen: int | None, env_cfg: dict) -> int:
+    """The tyre-failure cliff the sim enforces: cliff_age_margin_laps past a compound's
+    fitted max_age_seen (race_env.py:429). A cluster transfer never saw a cliff, so it
+    falls back to the tyre_age_norm_laps horizon — the same fallback build_scenario uses
+    for deg_max_age below. Both numbers live in configs/env.yaml; the /tyres endpoint
+    reads this so View 4 draws the exact cliff the sim runs, not a literal of its own."""
+    horizon = env_cfg["obs"]["tyre_age_norm_laps"]
+    margin = env_cfg["tyre_failure"]["cliff_age_margin_laps"]
+    base = horizon if max_age_seen is None else max_age_seen
+    return int(base) + int(margin)
+
+
 @dataclass(frozen=True)
 class CircuitScenario:
     circuit: str
