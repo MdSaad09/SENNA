@@ -8,6 +8,7 @@ import os
 import pytest
 
 from senna import config
+from senna.env.scenario import cliff_age_laps
 from tests.api.conftest import CIRCUIT, SEED, create_and_drain
 
 pytestmark = [
@@ -43,8 +44,6 @@ def test_tyres_mirror_the_fitted_degradation_surfaces(client):
 
 def test_tyres_serve_cliff_age_and_transfer_donors(client):
     env_cfg = config.load("env")
-    margin = env_cfg["tyre_failure"]["cliff_age_margin_laps"]
-    fallback = env_cfg["obs"]["tyre_age_norm_laps"]
     fitted = config.load("physics_params")["circuits"][CIRCUIT]["degradation"]
     curves = client.get(f"/api/v1/tyres/{CIRCUIT}").json()
 
@@ -52,9 +51,9 @@ def test_tyres_serve_cliff_age_and_transfer_donors(client):
         params = fitted[int(curve["era"])][curve["compound"]]
         # the T5 donor string survives to the dashboard, or is null for a direct fit
         assert curve["source_circuit"] == params.get("source_circuit")
-        # the served cliff is the sim's boundary, built from configs — never a literal;
-        # a transfer with no max_age_seen falls back to the horizon (E-09)
-        assert curve["cliff_age"] == params.get("max_age_seen", fallback) + margin
+        # the served cliff is exactly the boundary the sim enforces — same rule, from
+        # configs, so a transfer with no max_age_seen falls back to the horizon (E-09)
+        assert curve["cliff_age"] == cliff_age_laps(params.get("max_age_seen"), env_cfg)
 
 
 def test_tyres_404_for_a_circuit_without_a_fitted_block(client):
