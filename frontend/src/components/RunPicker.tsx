@@ -1,15 +1,26 @@
-// Start a simulation to replay: the SimulationCreate form posts, the run id lands
-// in ?run= so the URL survives a reload, and the view polls until the worker is
-// done. Era, weather and rival band keep their 5.9.2 schema defaults here — the
-// full matrix is F13's live view.
+// Start a simulation to inspect or replay: the SimulationCreate form posts, the run id
+// lands in ?run= so the URL survives a reload, and the caller polls until the worker is
+// done. Shared by the replay and energy views — the heading and which circuits are
+// offered are props; era, weather and rival band keep their 5.9.2 defaults (the full
+// matrix is F13's live view).
 
 import { useState, type FormEvent } from "react";
 
-import { apiPost } from "../../api/client";
-import { useCircuits } from "../../api/queries";
-import type { JobAccepted } from "../../api/types";
+import { apiPost } from "../api/client";
+import { useCircuits } from "../api/queries";
+import type { CircuitSummary, JobAccepted } from "../api/types";
 
-export default function RunPicker({ onRun }: { onRun: (runId: number) => void }) {
+interface RunPickerProps {
+  onRun: (runId: number) => void;
+  heading?: string;
+  includeCircuit?: (circuit: CircuitSummary) => boolean;
+}
+
+export default function RunPicker({
+  onRun,
+  heading = "new replay",
+  includeCircuit = (circuit) => circuit.coverage.ribbon,
+}: RunPickerProps) {
   const circuits = useCircuits();
   const [slug, setSlug] = useState<string | null>(null);
   // operational — a midfield default start makes the first demo run show overtakes
@@ -18,8 +29,8 @@ export default function RunPicker({ onRun }: { onRun: (runId: number) => void })
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const withRibbon = (circuits.data ?? []).filter((circuit) => circuit.coverage.ribbon);
-  const chosen = slug ?? withRibbon[0]?.id ?? null;
+  const offered = (circuits.data ?? []).filter(includeCircuit);
+  const chosen = slug ?? offered[0]?.id ?? null;
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -51,7 +62,7 @@ export default function RunPicker({ onRun }: { onRun: (runId: number) => void })
 
   return (
     <form onSubmit={submit} className="m-auto w-80 rounded border border-neutral-800 p-4">
-      <h2 className="text-sm font-semibold text-neutral-200">new replay</h2>
+      <h2 className="text-sm font-semibold text-neutral-200">{heading}</h2>
 
       <label className="mt-3 block text-xs text-neutral-400">
         circuit
@@ -60,7 +71,7 @@ export default function RunPicker({ onRun }: { onRun: (runId: number) => void })
           onChange={(event) => setSlug(event.target.value)}
           className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
         >
-          {withRibbon.map((circuit) => (
+          {offered.map((circuit) => (
             <option key={circuit.id} value={circuit.id}>
               {circuit.id.replace(/_/g, " ")}
             </option>

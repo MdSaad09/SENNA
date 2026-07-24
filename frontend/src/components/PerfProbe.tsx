@@ -50,7 +50,14 @@ export default function PerfProbe() {
         );
       }
     }, PERF_SAMPLE_MS);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      // the canvas is gone (e.g. navigating to the 2D energy route) — zero the bus so
+      // the dev overlay never shows the last route's draw calls as if they were live
+      const cleared: PerfSnapshot = { calls: 0, triangles: 0, fps: 0 };
+      publishPerf(cleared);
+      (globalThis as Record<string, unknown>).__SENNA_PERF = cleared;
+    };
   }, [gl]);
 
   return null;

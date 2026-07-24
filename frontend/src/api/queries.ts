@@ -6,7 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 
 import { FRAMES_PAGE_SIZE, RUN_STATUS_POLL_MS } from "../config/constants";
 import { apiGet } from "./client";
-import type { CircuitDetail, CircuitSummary, LapFrame, SimulationResult } from "./types";
+import type {
+  CircuitDetail,
+  CircuitSummary,
+  DegradationCurve,
+  EnergyProfile,
+  LapFrame,
+  SimulationResult,
+} from "./types";
 
 export function useCircuits() {
   return useQuery({
@@ -54,5 +61,24 @@ export function useRunFrames(runId: number | null, runComplete: boolean) {
     queryFn: () => fetchAllFrames(runId as number),
     enabled: runId !== null && runComplete,
     staleTime: Infinity, // stored frames never change for a finished run (E-16)
+  });
+}
+
+export function useEnergyProfile(runId: number | null, runComplete: boolean) {
+  return useQuery({
+    queryKey: ["energy", runId],
+    queryFn: () => apiGet<EnergyProfile>(`/v1/energy/${runId}`),
+    enabled: runId !== null && runComplete,
+    staleTime: Infinity, // the ledger is fixed once the run finishes (E-16)
+  });
+}
+
+export function useDegradationCurves(slug: string | null) {
+  return useQuery({
+    queryKey: ["tyres", slug],
+    queryFn: () => apiGet<DegradationCurve[]>(`/v1/tyres/${slug}`),
+    enabled: slug !== null,
+    retry: false, // a 404 is an honest "no fits", not a flake to retry
+    staleTime: Infinity, // fitted surfaces are config, not per-run
   });
 }

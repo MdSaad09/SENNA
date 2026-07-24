@@ -51,6 +51,7 @@ test("the footer states the modelled-calibrated honesty line (F-13)", async () =
 test("the SOC panel bounds its axis at the served usable store, not a hardcoded number", async () => {
   // E-01: the 4 MJ store is real and belongs on the SOC axis; it is served, never a
   // frontend literal — the fixture's usable_soc_mj is what must appear
+  renderView();
   const soc = await screen.findByTestId("energy-soc");
   expect(within(soc).getByText(/4 MJ usable store/i)).toBeInTheDocument();
 });
@@ -67,7 +68,8 @@ test("an in-flight run reports its status instead of an empty chart (E-16)", asy
     "/v1/simulations/7": { ...simulationResult, status: "running", finished_at: null },
   });
   renderView();
-  expect(await screen.findByText(/running/i)).toBeInTheDocument();
+  // status shows in both the header and the body message — either is the honest signal
+  expect((await screen.findAllByText(/running/i)).length).toBeGreaterThan(0);
   // no chart, so no honesty footer yet
   expect(screen.queryByText(/modelled, calibrated/i)).toBeNull();
   // the fixture keeps its data reachable, but the guard is status, not presence
