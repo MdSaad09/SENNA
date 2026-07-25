@@ -56,35 +56,62 @@ def _validated_manifest(req: SimulationCreate) -> dict:
     return manifest
 
 
+def draw_seed(req: SimulationCreate) -> SimulationCreate:
+    """A missing seed is drawn before the cache key is built, so the echoed seed is
+    the one that runs. Shared with the counterfactual pair path — the seed must be
+    drawn exactly once per pair or the E-15 key and the runs disagree."""
+    if req.seed is not None:
+        return req
+    bound = serving_config()["seeds"]["draw_bound"]
+    return req.model_copy(update={"seed": secrets.randbelow(bound)})
+
+
+async def fresh_cache_hit(request: Request, key: str):
+    """The run row a live E-15 key answers with, or None after clearing a dead key.
+    One implementation for every enqueue path — a fork here is where a stale-cache
+    bug would hide (F13 plan)."""
+    cached = await request.app.state.redis.get(key)
+    if cached is None:
+        return None
+    async with request.app.state.engine.connect() as conn:
+        hit = (await conn.execute(
+            select(SimulationRun).where(SimulationRun.id == int(cached))
+        )).first()
+    if hit is not None and hit.status == "complete":
+        return hit
+    if hit is not None and not run_is_stale(hit, queue_cfg=serving_config()["queue"]):
+        return hit  # queued/running and fresh: dedupe in flight
+    # the run behind the key is dead — failed, deleted, or a work horse that
+    # never reported. The key must not answer for it for 7 days (E-15).
+    await request.app.state.redis.delete(key)
+    return None
+
+
+async def claim_key_or_yield(request: Request, key: str, run_ids: tuple[int, ...]) -> int | None:
+    """SET NX the key to run_ids[0]; on losing the race, delete every orphan row we
+    just inserted and return the winner's id so the caller answers with it."""
+    prior = await request.app.state.redis.set(key, run_ids[0], nx=True,
+                                              ex=ttl_seconds(), get=True)
+    if prior is None:
+        return None
+    async with request.app.state.engine.begin() as conn:
+        await conn.execute(delete(SimulationRun).where(SimulationRun.id.in_(run_ids)))
+    return int(prior)
+
+
 async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
                       extra_config: dict | None = None) -> JobAccepted:
     # file+yaml IO off the event loop, which also owns every WS stream
     manifest = await run_in_threadpool(_validated_manifest, req)
-    if req.seed is None:
-        # drawn before the key is built, so the echoed seed is the one that runs
-        bound = serving_config()["seeds"]["draw_bound"]
-        req = req.model_copy(update={"seed": secrets.randbelow(bound)})
-
+    req = draw_seed(req)
     key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], req)
-    redis = request.app.state.redis
-    engine = request.app.state.engine
     queue_cfg = serving_config()["queue"]
 
-    cached = await redis.get(key)
-    if cached is not None:
-        async with engine.connect() as conn:
-            hit = (await conn.execute(
-                select(SimulationRun).where(SimulationRun.id == int(cached))
-            )).first()
-        if hit is not None and hit.status == "complete":
-            return JobAccepted(run_id=hit.id)
-        if hit is not None and not run_is_stale(hit, queue_cfg=queue_cfg):
-            return JobAccepted(run_id=hit.id)  # queued/running and fresh: dedupe in flight
-        # the run behind the key is dead — failed, deleted, or a work horse that
-        # never reported. The key must not answer for it for 7 days (E-15).
-        await redis.delete(key)
+    hit = await fresh_cache_hit(request, key)
+    if hit is not None:
+        return JobAccepted(run_id=hit.id)
 
-    async with engine.begin() as conn:
+    async with request.app.state.engine.begin() as conn:
         run_id = (await conn.execute(
             insert(SimulationRun).values(
                 created_at=datetime.now(UTC).replace(tzinfo=None),
@@ -95,13 +122,9 @@ async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
             ).returning(SimulationRun.id)
         )).scalar_one()
 
-    prior = await redis.set(key, run_id, nx=True, ex=ttl_seconds(), get=True)
-    if prior is not None:
-        # an identical request won the NX race between our GET and SET: keep the
-        # winner, drop our orphan row, enqueue nothing
-        async with engine.begin() as conn:
-            await conn.execute(delete(SimulationRun).where(SimulationRun.id == run_id))
-        return JobAccepted(run_id=int(prior))
+    winner = await claim_key_or_yield(request, key, (run_id,))
+    if winner is not None:
+        return JobAccepted(run_id=winner)
 
     await run_in_threadpool(
         request.app.state.queue.enqueue, "worker.jobs.run_simulation", run_id,

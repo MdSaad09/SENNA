@@ -32,6 +32,8 @@ from senna.serve.cache import events_channel, sim_cache_key, ttl_seconds
 from senna.serve.frames import build_lap_frame
 from senna.serve.loader import ServingModel, load_serving_model
 from senna.serve.mapping import build_env
+from senna.strategy.plans import PitPlan
+from senna.strategy.replay import RealStrategyReplay
 from senna.train.evals import Sb3Policy
 from worker import settings
 
@@ -46,6 +48,100 @@ def run_simulation(run_id: int) -> None:
         _finish_redis(run_id, key, ok=False)
         raise
     _finish_redis(run_id, key, ok=True)
+
+
+def run_counterfactual(agent_run_id: int, baseline_run_id: int) -> None:
+    """The F13 pair job: record the real-strategy episode once, then twin-roll both
+    legs on its EventTrace, so any difference between the two frame streams is
+    strategy, never luck (F-24; the evals.py recorded-baseline convention). A failure
+    anywhere fails BOTH rows — a one-legged comparison must never look complete."""
+    try:
+        key = asyncio.run(_run_pair(agent_run_id, baseline_run_id))
+    except Exception as err:
+        key = asyncio.run(_mark_failed(agent_run_id, err))
+        asyncio.run(_mark_failed(baseline_run_id, err))
+        _finish_redis(agent_run_id, key, ok=False)
+        _finish_redis(baseline_run_id, None, ok=False)
+        raise
+    _finish_redis(agent_run_id, key, ok=True)
+    _finish_redis(baseline_run_id, None, ok=True)
+
+
+async def _run_pair(agent_run_id: int, baseline_run_id: int) -> str:
+    engine = engine_for(database_url())
+    try:
+        async with engine.begin() as conn:
+            agent_row = (await conn.execute(
+                select(SimulationRun).where(SimulationRun.id == agent_run_id)
+            )).one()
+            baseline_row = (await conn.execute(
+                select(SimulationRun).where(SimulationRun.id == baseline_run_id)
+            )).one()
+            for run_id in (agent_run_id, baseline_run_id):
+                await conn.execute(
+                    update(SimulationRun).where(SimulationRun.id == run_id)
+                    .values(status="running", started_at=_now())
+                )
+
+        req = _request_from(agent_row.config)
+        serving = load_serving_model(version=agent_row.model_version)
+        plan = PitPlan(stops=tuple(
+            (int(lap), str(name)) for lap, name in agent_row.config["real_stops"]
+        ))
+
+        # the replay side records live and donates the trace: seed-only pairing would
+        # let the two legs diverge in weather and SC after the first different stop,
+        # because the RNG stream consumes variates policy-dependently (INDEX 19 Jul)
+        recording_env = build_env(req, record=True)
+        replay = RealStrategyReplay(plan, recording_env.scenario,
+                                    config.load("baselines")["replay"])
+        _episode(recording_env, replay, seed=req.seed,
+                 reset_options={"grid_position": req.grid_position})
+        trace = recording_env.recorded_trace()  # raises loudly on a DNF'd recording
+
+        baseline_frames, baseline_summary = _episode(
+            build_env(req), replay, seed=req.seed, reset_options={"twin": trace})
+        baseline_summary["snapped_stops"] = int(replay.snapped)  # A-07 honesty counter
+
+        agent_env = build_env(req)
+        policy = Sb3Policy(serving.model, serving.venv.normalize_obs)
+        logger = DecisionLogger(policy, circuit=req.circuit_id, seed=req.seed)
+        agent_frames, agent_summary = _episode(agent_env, logger, seed=req.seed,
+                                               reset_options={"twin": trace})
+        cards = _cards_for(logger.records, agent_env, policy, serving)
+        if "era_matched_model" in (agent_row.config or {}):
+            # the summary is what screenshots quote (decision Q3) — the pair path
+            # must carry the caveat exactly as the single-run path does
+            agent_summary["era_matched_model"] = agent_row.config["era_matched_model"]
+
+        async with engine.begin() as conn:
+            # rewrite, never append, both legs in one transaction: a retried job
+            # lands on the same rows and the frontend never sees a half-built pair
+            for run_id, run_frames, summary in (
+                (agent_run_id, agent_frames, agent_summary),
+                (baseline_run_id, baseline_frames, baseline_summary),
+            ):
+                await conn.execute(delete(LapFrameRow).where(LapFrameRow.run_id == run_id))
+                await conn.execute(
+                    delete(AgentDecision).where(AgentDecision.run_id == run_id))
+                await conn.execute(
+                    insert(LapFrameRow),
+                    [{"run_id": run_id, "lap": frame["lap"], "frame": frame}
+                     for frame in run_frames],
+                )
+                await conn.execute(
+                    update(SimulationRun).where(SimulationRun.id == run_id)
+                    .values(status="complete", finished_at=_now(), summary=summary)
+                )
+            if cards:
+                await conn.execute(
+                    insert(AgentDecision),
+                    [{"run_id": agent_run_id, "lap_number": card["lap"], "decision": card}
+                     for card in cards],
+                )
+        return sim_cache_key(serving.model_version, serving.env_config_hash, req)
+    finally:
+        await engine.dispose()
 
 
 async def _run(run_id: int) -> str:
@@ -91,18 +187,17 @@ async def _run(run_id: int) -> str:
         await engine.dispose()
 
 
-def _simulate(req: SimulationCreate, serving: ServingModel):
-    env = build_env(req)
-    policy = Sb3Policy(serving.model, serving.venv.normalize_obs)
-    logger = DecisionLogger(policy, circuit=req.circuit_id, seed=req.seed)
-
-    obs, info = env.reset(seed=req.seed, options={"grid_position": req.grid_position})
-    logger.reset(obs, info, rng=None)
+def _episode(env, actor, *, seed: int, reset_options: dict):
+    """One race, one frame/summary assembly path — the serve run, the counterfactual
+    recording roll and both twin rolls all come through here, so a summary field
+    cannot exist on one leg and silently miss on another (F13 plan)."""
+    obs, info = env.reset(seed=seed, options=reset_options)
+    actor.reset(obs, info, rng=None)
     frames: list[dict] = []
     snapshot = None
     terminated = False
     while not terminated:
-        action = np.asarray(logger.act(obs, info, env.action_masks()))
+        action = np.asarray(actor.act(obs, info, env.action_masks()))
         obs, _, terminated, _, info = env.step(action)
         frame, snapshot = build_lap_frame(env, info, snapshot)
         frames.append(frame)
@@ -121,6 +216,15 @@ def _simulate(req: SimulationCreate, serving: ServingModel):
         "n_cars": env.n_cars,
         "total_laps": env.total_laps,
     }
+    return frames, summary
+
+
+def _simulate(req: SimulationCreate, serving: ServingModel):
+    env = build_env(req)
+    policy = Sb3Policy(serving.model, serving.venv.normalize_obs)
+    logger = DecisionLogger(policy, circuit=req.circuit_id, seed=req.seed)
+    frames, summary = _episode(env, logger, seed=req.seed,
+                               reset_options={"grid_position": req.grid_position})
     return frames, _cards_for(logger.records, env, policy, serving), summary
 
 
