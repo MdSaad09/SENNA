@@ -58,6 +58,63 @@ export interface SimulationCreate {
 
 export interface JobAccepted {
   run_id: number;
+  // set only by POST /counterfactuals: the replay leg of the pair (additive 5.9.2
+  // divergence, F13 plan)
+  baseline_run_id?: number | null;
+}
+
+export interface CounterfactualCreate {
+  year: number;
+  round: number;
+  driver: string;
+  seed?: number | null; // optional so a demo deep link can pin the pair (F13 plan)
+}
+
+// A-03: the decision card exactly as senna/explain/cards.py build_card emits it
+export interface DecisionCard {
+  circuit: string;
+  lap: number;
+  track_status: string;
+  state: Record<string, number>;
+  masks: { pit: boolean[]; mode: boolean[]; reasons: Record<string, string> };
+  action: { pit: number; mode: number };
+  decision: string;
+  probs: { pit: number[]; mode: number[] };
+  drivers: { pit: [string, number][]; mode: [string, number][] }; // top-5 SHAP, served order
+  flip: string[]; // populated on pit-call laps only (serving.yaml flip_on_pit_only)
+  plain_language: string;
+  honesty: { fidelity: Record<string, number>; model_version: string; statement: string };
+}
+
+export interface RaceResultRow {
+  driver_abbrev: string;
+  team_name: string | null;
+  grid_position: number | null;
+  position: number | null;
+  status: string | null;
+  points: number | null;
+}
+
+export interface RaceLapRow {
+  driver: string;
+  driver_number: number | null;
+  lap_number: number;
+  lap_time_s: number | null;
+  lap_time_imputed: boolean;
+  position: number | null;
+  compound: string | null;
+  tyre_life: number | null;
+  stint: number | null;
+  pit_in_time_s: number | null;
+  pit_out_time_s: number | null;
+}
+
+export interface RaceDetail {
+  year: number;
+  round: number;
+  event_name: string;
+  results: RaceResultRow[];
+  laps: RaceLapRow[];
 }
 
 export type RunStatus = "queued" | "running" | "complete" | "failed";

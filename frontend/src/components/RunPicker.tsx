@@ -1,31 +1,41 @@
 // Start a simulation to inspect or replay: the SimulationCreate form posts, the run id
 // lands in ?run= so the URL survives a reload, and the caller polls until the worker is
-// done. Shared by the replay and energy views — the heading and which circuits are
-// offered are props; era, weather and rival band keep their 5.9.2 defaults (the full
-// matrix is F13's live view).
+// done. Shared by the replay, energy and live views — the heading and which circuits
+// are offered are props. fullMatrix adds the era / weather / rival-band selects the
+// 5.9.2 body accepts (F12 deferred the matrix to F13's live view; here it is).
 
 import { useState, type FormEvent } from "react";
 
 import { apiPost } from "../api/client";
 import { useCircuits } from "../api/queries";
-import type { CircuitSummary, JobAccepted } from "../api/types";
+import type { CircuitSummary, JobAccepted, SimulationCreate } from "../api/types";
+import { DEFAULT_GRID_POSITION } from "../config/constants";
 
 interface RunPickerProps {
   onRun: (runId: number) => void;
   heading?: string;
   includeCircuit?: (circuit: CircuitSummary) => boolean;
+  fullMatrix?: boolean;
 }
+
+// sourced — the SimulationCreate literals and defaults, 5.9.2 (api/schemas.py)
+const ERAS = ["2026", "2024"] as const;
+const WEATHER_PROFILES = ["dry", "mixed", "wet_risk"] as const;
+const RIVAL_BANDS = ["test", "train"] as const;
 
 export default function RunPicker({
   onRun,
   heading = "new replay",
   includeCircuit = (circuit) => circuit.coverage.ribbon,
+  fullMatrix = false,
 }: RunPickerProps) {
   const circuits = useCircuits();
   const [slug, setSlug] = useState<string | null>(null);
-  // operational — a midfield default start makes the first demo run show overtakes
-  const [gridPosition, setGridPosition] = useState(8);
+  const [gridPosition, setGridPosition] = useState(DEFAULT_GRID_POSITION);
   const [seed, setSeed] = useState<string>("");
+  const [era, setEra] = useState<(typeof ERAS)[number]>("2026");
+  const [weather, setWeather] = useState<(typeof WEATHER_PROFILES)[number]>("dry");
+  const [rivalBand, setRivalBand] = useState<(typeof RIVAL_BANDS)[number]>("test");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -45,11 +55,17 @@ export default function RunPicker({
     setSubmitting(true);
     setError(null);
     try {
-      const accepted = await apiPost<JobAccepted>("/v1/simulations", {
+      const body: SimulationCreate = {
         circuit_id: chosen,
         grid_position: gridPosition,
         ...(trimmedSeed !== "" ? { seed: Number(trimmedSeed) } : {}),
-      });
+        // omit the defaults so the request body stays byte-identical to F11/F12's
+        // and the E-15 cache key namespace does not fork on equivalent requests
+        ...(era !== "2026" ? { era } : {}),
+        ...(weather !== "dry" ? { weather_profile: weather } : {}),
+        ...(rivalBand !== "test" ? { rival_band: rivalBand } : {}),
+      };
+      const accepted = await apiPost<JobAccepted>("/v1/simulations", body);
       const query = new URLSearchParams(window.location.search);
       query.set("run", String(accepted.run_id));
       window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
@@ -101,6 +117,57 @@ export default function RunPicker({
           className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
         />
       </label>
+
+      {fullMatrix && (
+        <>
+          <label className="mt-2 block text-xs text-neutral-400">
+            era
+            <select
+              value={era}
+              onChange={(event) => setEra(event.target.value as (typeof ERAS)[number])}
+              className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
+            >
+              {ERAS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="mt-2 block text-xs text-neutral-400">
+            weather profile
+            <select
+              value={weather}
+              onChange={(event) =>
+                setWeather(event.target.value as (typeof WEATHER_PROFILES)[number])
+              }
+              className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
+            >
+              {WEATHER_PROFILES.map((option) => (
+                <option key={option} value={option}>
+                  {option.replace("_", " ")}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="mt-2 block text-xs text-neutral-400">
+            rival band (test = held out, the honest demo band)
+            <select
+              value={rivalBand}
+              onChange={(event) =>
+                setRivalBand(event.target.value as (typeof RIVAL_BANDS)[number])
+              }
+              className="mt-1 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200"
+            >
+              {RIVAL_BANDS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+        </>
+      )}
 
       {error !== null && <p className="mt-2 text-xs text-red-400">{error}</p>}
 

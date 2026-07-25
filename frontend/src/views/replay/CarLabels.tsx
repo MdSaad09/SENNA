@@ -15,13 +15,24 @@ import { labelledCars } from "../../lib/labels";
 
 interface CarLabelsProps {
   cars: CarState[];
-  selectedCarId: number | null;
+  selectedCarId?: number | null;
+  // the caller may hand the decided list so scene sprites and DOM labels agree;
+  // View 6's baseline pane also clears the badge — its car 0 replays the real
+  // strategy and must never read "agent" (F-24 honesty)
+  labelledIds?: number[];
+  egoBadge?: string | null;
   positionOf?: (carId: number) => [number, number, number];
 }
 
-export default function CarLabels({ cars, selectedCarId, positionOf }: CarLabelsProps) {
+export default function CarLabels({
+  cars,
+  selectedCarId = null,
+  labelledIds,
+  egoBadge = "agent",
+  positionOf,
+}: CarLabelsProps) {
   const slots = useRef(new Map<number, Group>());
-  const shown = labelledCars(cars, selectedCarId);
+  const shown = labelledIds ?? labelledCars(cars, selectedCarId);
 
   useFrame(() => {
     if (positionOf === undefined) return;
@@ -51,7 +62,7 @@ export default function CarLabels({ cars, selectedCarId, positionOf }: CarLabels
               >
                 {livery.code}
                 {car !== undefined && ` P${car.position}`}
-                {carId === EGO_CAR_ID && " agent"}
+                {carId === EGO_CAR_ID && egoBadge !== null && ` ${egoBadge}`}
               </div>
             </Html>
           </group>
