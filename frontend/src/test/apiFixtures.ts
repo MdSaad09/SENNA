@@ -355,7 +355,7 @@ export const counterfactualAgentRun = {
     driver: "C07",
     era_matched_model: "pending-F14",
     baseline_run_id: 42,
-    real_stops: [{ lap: 5, compound: "HARD" }],
+    real_stops: [[5, "HARD"]], // list-of-pairs, the counterfactuals.py wire shape
     pairing: "event_trace",
   },
   summary: { nominal_lap_s: 92.0, era_matched_model: "pending-F14", n_cars: 20, total_laps: 6 },
@@ -380,7 +380,7 @@ export const counterfactualBaselineRun = {
   },
   summary: {
     nominal_lap_s: 92.0,
-    snapped_stops: [{ lap: 5, compound: "HARD" }],
+    snapped_stops: 1, // the A-07 honesty counter is an int (worker/jobs.py), not a list
     n_cars: 20,
     total_laps: 6,
   },

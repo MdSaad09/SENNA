@@ -36,7 +36,7 @@ def run_is_stale(row, *, queue_cfg: dict) -> bool:
     return age_s > queue_cfg["stale_after_timeouts"] * queue_cfg["job_timeout_s"]
 
 
-def _validated_manifest(req: SimulationCreate) -> dict:
+def validated_manifest(req: SimulationCreate) -> dict:
     try:
         # request > MODEL_VERSION env > the promoted headline (5.11.2)
         manifest = read_manifest(version=req.model_version or os.environ.get("MODEL_VERSION"))
@@ -102,9 +102,10 @@ async def claim_key_or_yield(request: Request, key: str, run_ids: tuple[int, ...
 async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
                       extra_config: dict | None = None) -> JobAccepted:
     # file+yaml IO off the event loop, which also owns every WS stream
-    manifest = await run_in_threadpool(_validated_manifest, req)
+    manifest = await run_in_threadpool(validated_manifest, req)
     req = draw_seed(req)
-    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], req)
+    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], req,
+                        purpose=purpose)
     queue_cfg = serving_config()["queue"]
 
     hit = await fresh_cache_hit(request, key)

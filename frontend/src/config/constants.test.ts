@@ -24,6 +24,7 @@ import {
   TYRE_TEMP_AXIS_MIN_C,
   TYRE_TEMP_GRIP_PENALTY,
   TYRE_TEMP_REF_C,
+  WS_CLOSE_CODES_TERMINAL,
   WS_RECONNECT_BASE_MS,
   WS_RECONNECT_FACTOR,
   WS_RECONNECT_MAX_MS,
@@ -59,6 +60,7 @@ test("the live-socket constants hold their sized values", () => {
   expect(WS_RECONNECT_FACTOR).toBe(2); // plain doubling, at the cap in four retries
   expect(WS_RECONNECT_MAX_MS).toBe(8000); // the demo stakes itself on reconnect
   expect(WS_STATUS_OPEN).toBe(101); // HTTP 101 Switching Protocols, the WS-open status
+  expect(WS_CLOSE_CODES_TERMINAL).toEqual([4404, 4500]); // mirrors api/ws.py close codes
   expect(DEFAULT_GRID_POSITION).toBe(8); // hoisted from RunPicker's midfield default
 });
 

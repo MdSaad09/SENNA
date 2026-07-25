@@ -141,7 +141,8 @@ async def _run_pair(agent_run_id: int, baseline_run_id: int) -> str:
                     [{"run_id": agent_run_id, "lap_number": card["lap"], "decision": card}
                      for card in cards],
                 )
-        return sim_cache_key(serving.model_version, serving.env_config_hash, req)
+        return sim_cache_key(serving.model_version, serving.env_config_hash, req,
+                             purpose="counterfactual")
     finally:
         await engine.dispose()
 
@@ -184,7 +185,8 @@ async def _run(run_id: int) -> str:
                 update(SimulationRun).where(SimulationRun.id == run_id)
                 .values(status="complete", finished_at=_now(), summary=summary)
             )
-        return sim_cache_key(serving.model_version, serving.env_config_hash, req)
+        return sim_cache_key(serving.model_version, serving.env_config_hash, req,
+                             purpose=row.purpose or "serve")
     finally:
         await engine.dispose()
 
@@ -297,7 +299,7 @@ async def _mark_failed(run_id: int, err: Exception) -> str | None:
         if row is None or not (row.model_version and row.env_config_hash and row.config):
             return None
         return sim_cache_key(row.model_version, row.env_config_hash,
-                             _request_from(row.config))
+                             _request_from(row.config), purpose=row.purpose or "serve")
     finally:
         await engine.dispose()
 

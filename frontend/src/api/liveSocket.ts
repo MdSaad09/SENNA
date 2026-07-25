@@ -7,6 +7,7 @@
 // the store's insertFrame drops it.
 
 import {
+  WS_CLOSE_CODES_TERMINAL,
   WS_RECONNECT_BASE_MS,
   WS_RECONNECT_FACTOR,
   WS_RECONNECT_MAX_MS,
@@ -31,7 +32,12 @@ interface ServerMessage {
   summary?: Record<string, unknown>;
 }
 
-const TERMINAL_CLOSES = new Set([4404, 4500]); // no run / broken summary — retrying cannot help
+const TERMINAL_CLOSES = new Set(WS_CLOSE_CODES_TERMINAL);
+
+// sourced — the provenance log speaks HTTP statuses: 200 is a stream that reached
+// sim:complete, 500 one that ended in sim:failed
+const WS_STATUS_COMPLETE = 200;
+const WS_STATUS_FAILED = 500;
 
 export class LiveSocket {
   private readonly runId: number;
@@ -89,7 +95,7 @@ export class LiveSocket {
       recordProvenance({
         method: "WS",
         path: this.path,
-        status: 200,
+        status: WS_STATUS_COMPLETE,
         xModelVersion: null,
         runId: this.runId,
       });
@@ -98,7 +104,7 @@ export class LiveSocket {
       recordProvenance({
         method: "WS",
         path: this.path,
-        status: 500,
+        status: WS_STATUS_FAILED,
         xModelVersion: null,
         runId: this.runId,
       });

@@ -38,7 +38,12 @@ def plan_from_rows(rows, *, sim_total_laps: int, real_total_laps: int) -> PitPla
         if not any(pit_in is not None for _, _, pit_in in current):
             continue
         out_lap_real, compound, _ = following[0]
-        stops.append((round(out_lap_real * sim_total_laps / real_total_laps), str(compound)))
+        # a null compound passes through as None so the caller can 404 with a
+        # message naming the gap, instead of a "None" tyre dying in the worker
+        stops.append((
+            round(out_lap_real * sim_total_laps / real_total_laps),
+            None if compound is None else str(compound),
+        ))
 
     # a shortened sim can rescale two out-laps onto one lap; nudging apart keeps every
     # real stop represented (dropping one would understate the strategy), and the

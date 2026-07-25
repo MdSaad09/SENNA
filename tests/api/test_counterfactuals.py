@@ -68,6 +68,16 @@ def test_a_driver_whose_laps_carry_no_stints_is_a_404_naming_the_gap(client, fre
     assert "stint" in response.json()["detail"].lower()
 
 
+def test_a_stint_without_compound_data_is_a_404_not_a_worker_crash(client, fresh_schema,
+                                                                   flush_redis):
+    # ALO's stints carry null compounds: the replay cannot pick a tyre, and that must
+    # surface at POST time with the gap named, never as a runtime pair failure
+    seed_2024_bahrain()
+    response = _post_pair(client, driver="ALO")
+    assert response.status_code == 404, response.text
+    assert "compound" in response.json()["detail"].lower()
+
+
 def test_the_post_answers_with_a_linked_pair_of_queued_runs(client, fresh_schema, flush_redis):
     seed_2024_bahrain()
     accepted = _post_pair(client)

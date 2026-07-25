@@ -24,6 +24,9 @@ function runIdFromLocation(): number | null {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
+const subscribeReplayPlayhead = (listener: (playheadLap: number) => void) =>
+  useReplayStore.subscribe((state) => state.playheadLap, listener);
+
 export default function RaceReplayView() {
   const [runId, setRunId] = useState<number | null>(runIdFromLocation);
   const run = useSimulation(runId);
@@ -121,9 +124,7 @@ export default function RaceReplayView() {
           onPlayPause={setPlaying}
           onSpeed={setSpeed}
           onScrub={(lap) => scrubTo(lap, frames.data![frames.data!.length - 1].lap)}
-          subscribePlayhead={(listener) =>
-            useReplayStore.subscribe((state) => state.playheadLap, listener)
-          }
+          subscribePlayhead={subscribeReplayPlayhead}
           caption={ILLUSTRATIVE_MOTION_CAPTION}
         />
       )}

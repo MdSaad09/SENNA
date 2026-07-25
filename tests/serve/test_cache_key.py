@@ -66,6 +66,17 @@ def test_every_scenario_field_moves_the_digest():
         assert moved != baseline, overrides
 
 
+def test_purpose_moves_the_digest_so_a_pair_never_answers_a_plain_run():
+    # F13: the counterfactual agent leg is twin-rolled on the replay's recorded
+    # events — identical scenario and seed, different physics realisation. One
+    # namespace would serve those frames to POST /simulations (and dedupe a pair
+    # down to one leg), so purpose is part of the digest.
+    serve = sim_cache_key(MODEL_VERSION, ENV_HASH, _request())
+    pair = sim_cache_key(MODEL_VERSION, ENV_HASH, _request(), purpose="counterfactual")
+    assert _digest_of(serve) != _digest_of(pair)
+    assert serve.split(":")[4] == pair.split(":")[4]  # same seed segment either way
+
+
 def test_the_env_hash_passes_through_untouched():
     other_hash = "ab" * 32
     key = sim_cache_key(MODEL_VERSION, other_hash, _request())

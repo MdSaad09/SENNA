@@ -27,6 +27,10 @@ export const WS_RECONNECT_MAX_MS = 8000;
 // provenance log, which only speaks HTTP statuses
 export const WS_STATUS_OPEN = 101;
 
+// sourced — api/ws.py's close codes: 4404 no simulation run, 4500 run summary
+// lacks nominal_lap_s; both mean retrying cannot help, so the client must not
+export const WS_CLOSE_CODES_TERMINAL = [4404, 4500];
+
 // operational — the midfield default start (first demo run shows overtakes), hoisted
 // so RunPicker and the /live deep link cannot drift apart
 export const DEFAULT_GRID_POSITION = 8;

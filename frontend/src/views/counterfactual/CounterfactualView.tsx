@@ -32,6 +32,17 @@ function intParam(query: URLSearchParams, name: string): number | null {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
+// seed 0 is a legal server draw (secrets.randbelow), so ?seed=0 must round-trip
+function seedParam(query: URLSearchParams): number | null {
+  const raw = query.get("seed");
+  if (raw === null) return null;
+  const parsed = Number(raw);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
+}
+
+const subscribeSharedPlayhead = (listener: (playheadLap: number) => void) =>
+  useReplayStore.subscribe((state) => state.playheadLap, listener);
+
 function configNumber(run: SimulationResult | undefined, key: string): number | null {
   const value = run?.config?.[key];
   return typeof value === "number" ? value : null;
@@ -58,7 +69,7 @@ export default function CounterfactualView() {
     const driver = query.get("driver");
     if (year === null || round === null || driver === null) return;
     posted.current = true;
-    const seed = intParam(query, "seed");
+    const seed = seedParam(query);
     apiPost<JobAccepted>("/v1/counterfactuals", {
       year,
       round,
@@ -168,13 +179,20 @@ export default function CounterfactualView() {
   const setSpeed = useReplayStore((state) => state.setSpeed);
   const scrubTo = useReplayStore((state) => state.scrubTo);
 
+  // a stale deep link 404s rather than resolving; the leg's row says so instead
+  // of an eternal "loading" (the demo stakes itself on links that always land)
+  const legLine = (label: string, query: { data?: { status: string }; isError: boolean; error: unknown }) =>
+    query.isError
+      ? `${label}: ${query.error instanceof Error ? query.error.message : String(query.error)}`
+      : `${label}: ${query.data?.status ?? "loading"}…`;
+
   const waitingRows =
     agentRunId !== null && (!agentComplete || !baselineComplete) ? (
       <div className="absolute inset-0 z-20 grid place-items-center text-sm text-neutral-400">
         <div className="space-y-1 rounded border border-neutral-800 bg-neutral-950/80 p-4">
-          <p>agent run {agentRunId}: {agentRun.data?.status ?? "loading"}…</p>
+          <p>{legLine(`agent run ${agentRunId}`, agentRun)}</p>
           {baselineRunId !== null && (
-            <p>baseline run {baselineRunId}: {baselineRun.data?.status ?? "loading"}…</p>
+            <p>{legLine(`baseline run ${baselineRunId}`, baselineRun)}</p>
           )}
         </div>
       </div>
@@ -291,9 +309,7 @@ export default function CounterfactualView() {
             onPlayPause={setPlaying}
             onSpeed={setSpeed}
             onScrub={(lap) => scrubTo(lap, comparison!.sharedMaxLap)}
-            subscribePlayhead={(listener) =>
-              useReplayStore.subscribe((state) => state.playheadLap, listener)
-            }
+            subscribePlayhead={subscribeSharedPlayhead}
             caption={SPLIT_CAPTION}
           />
           <DeltaChartPanel

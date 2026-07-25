@@ -169,6 +169,20 @@ def seed_2024_bahrain() -> None:
                     )
                     lap += 1
             await conn.execute(insert(Lap), ham_laps)
+            # ALO's laps carry stints but no compounds — the F13 compound-less 404
+            # case reads them (FastF1 drops compound on some historic loads too)
+            await conn.execute(
+                insert(Lap),
+                [
+                    {"session_id": session_id, "driver": "ALO", "driver_number": "14",
+                     "lap_number": lap, "stint": 1 if lap <= 20 else 2, "compound": None,
+                     "tyre_life": float(lap if lap <= 20 else lap - 20),
+                     "lap_time_s": 96.5 + 0.05 * lap, "lap_time_imputed": False,
+                     "position": 8, "era": "2024", "source": "real_2024",
+                     "pit_in_time_s": 4300.0 if lap == 20 else None}
+                    for lap in range(1, 58)
+                ],
+            )
         await engine.dispose()
 
     asyncio.run(seed())

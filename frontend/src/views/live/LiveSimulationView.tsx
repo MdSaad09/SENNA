@@ -29,6 +29,17 @@ function positiveIntParam(query: URLSearchParams, name: string): number | null {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
+// seed 0 is a legal server draw (secrets.randbelow), so ?seed=0 must round-trip
+function seedParam(query: URLSearchParams): number | null {
+  const raw = query.get("seed");
+  if (raw === null) return null;
+  const parsed = Number(raw);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
+}
+
+const subscribeLivePlayhead = (listener: (playheadLap: number) => void) =>
+  useLiveStore.subscribe((state) => state.playheadLap, listener);
+
 function writeRunBack(runId: number): void {
   // keep circuit and seed visible: the deep link stays shareable after it resolves
   const query = new URLSearchParams(window.location.search);
@@ -50,7 +61,7 @@ export default function LiveSimulationView() {
     const circuit = query.get("circuit");
     if (circuit === null) return;
     posted.current = true;
-    const seed = positiveIntParam(query, "seed");
+    const seed = seedParam(query);
     apiPost<JobAccepted>("/v1/simulations", {
       circuit_id: circuit,
       grid_position: positiveIntParam(query, "grid") ?? DEFAULT_GRID_POSITION,
@@ -94,6 +105,8 @@ export default function LiveSimulationView() {
   const setSpeed = useLiveStore((state) => state.setSpeed);
   const scrubTo = useLiveStore((state) => state.scrubTo);
 
+  // nominal_lap_s rides the 1 s status poll; the plan's refetch-on-first-frame was
+  // dropped as redundant — the poll converges within one frame even at 1x
   const nominalLapS = run.data?.summary?.nominal_lap_s;
   const sceneReady =
     frames.length > 0 && detail.data?.gltf_url != null && typeof nominalLapS === "number";
@@ -165,10 +178,16 @@ export default function LiveSimulationView() {
             </div>
           )}
           {runId !== null && frames.length === 0 && (
-            <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
-              {streamFailed
-                ? `run ${runId} failed mid-simulation — check the worker logs`
-                : `run ${runId}: waiting for the stream…`}
+            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-neutral-400">
+              {run.isError
+                ? // a stale deep link after a data reset: the 404 detail is the
+                  // honest answer, not an eternal "waiting"
+                  run.error instanceof Error
+                  ? run.error.message
+                  : String(run.error)
+                : streamFailed
+                  ? `run ${runId} failed mid-simulation — check the worker logs`
+                  : `run ${runId}: waiting for the stream…`}
             </div>
           )}
         </section>
@@ -198,9 +217,7 @@ export default function LiveSimulationView() {
           onPlayPause={handlePlayPause}
           onSpeed={handleSpeed}
           onScrub={scrubTo}
-          subscribePlayhead={(listener) =>
-            useLiveStore.subscribe((state) => state.playheadLap, listener)
-          }
+          subscribePlayhead={subscribeLivePlayhead}
           caption={ILLUSTRATIVE_MOTION_CAPTION}
         >
           {following ? (

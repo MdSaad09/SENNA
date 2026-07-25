@@ -17,10 +17,10 @@ from sqlalchemy import func, insert, select, update
 
 from api.deps import serving_config
 from api.routes.simulations import (
-    _validated_manifest,
     claim_key_or_yield,
     draw_seed,
     fresh_cache_hit,
+    validated_manifest,
 )
 from api.schemas import JobAccepted, SimulationCreate
 from senna.data.schema import Event, Lap, Session, SessionResult, SimulationRun
@@ -61,6 +61,11 @@ async def _real_plan(conn, session_id: int, driver: str, sim_total_laps: int):
     )).scalar_one()
     plan = plan_from_rows(rows, sim_total_laps=sim_total_laps,
                           real_total_laps=int(real_total_laps))
+    if any(name is None for _, name in plan.stops):
+        raise HTTPException(
+            404, f"{driver}'s ingested laps carry a stint without compound data — "
+                 "the replay cannot pick a tyre; re-ingest the event with compounds populated"
+        )
     return [[lap, name] for lap, name in plan.stops]
 
 
@@ -98,9 +103,10 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
         rival_band="test",
         seed=req.seed,
     )
-    manifest = await run_in_threadpool(_validated_manifest, sim)
+    manifest = await run_in_threadpool(validated_manifest, sim)
     sim = draw_seed(sim)
-    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], sim)
+    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], sim,
+                        purpose="counterfactual")
 
     hit = await fresh_cache_hit(request, key)
     if hit is not None:
