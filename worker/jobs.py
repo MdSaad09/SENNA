@@ -74,7 +74,9 @@ async def _run_pair(agent_run_id: int, baseline_run_id: int) -> str:
             agent_row = (await conn.execute(
                 select(SimulationRun).where(SimulationRun.id == agent_run_id)
             )).one()
-            baseline_row = (await conn.execute(
+            # .one() is the existence check: a pair job pointed at a missing leg
+            # must die loudly here, not half-run
+            (await conn.execute(
                 select(SimulationRun).where(SimulationRun.id == baseline_run_id)
             )).one()
             for run_id in (agent_run_id, baseline_run_id):
