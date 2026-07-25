@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
 
-import { MAX_HTML_LABELS } from "../config/constants";
+import { EGO_CAR_ID, MAX_HTML_LABELS } from "../config/constants";
 import { mulberry32 } from "../test/prng";
-import { labelledCars } from "./labels";
+import { egoOnlyLabels, labelledCars } from "./labels";
 
 interface GridCar {
   id: number;
@@ -89,4 +89,20 @@ test("no selection, or an id not in the grid, shows just the podium", () => {
     expect(labelledCars(cars, null), `size ${size}`).toHaveLength(Math.min(3, size));
     expect(labelledCars(cars, ABSENT_ID), `size ${size}`).toHaveLength(Math.min(3, size));
   }
+});
+
+// F13: each counterfactual pane DOM-labels only the ego (plan, View 6 labels)
+
+test("egoOnlyLabels labels exactly the ego, whatever else is selected", () => {
+  for (const size of [20, 22]) {
+    const cars = shuffledGrid(size, mulberry32(BASE_SEED + 70_000 + size));
+    expect(egoOnlyLabels(cars, null), `size ${size}`).toEqual([EGO_CAR_ID]);
+    // a selection must not widen the pane's list past the ego
+    expect(egoOnlyLabels(cars, 5), `size ${size}`).toEqual([EGO_CAR_ID]);
+  }
+});
+
+test("two panes of ego-only labels fit the F-28 budget together", () => {
+  const cars = shuffledGrid(20, mulberry32(BASE_SEED + 80_000));
+  expect(2 * egoOnlyLabels(cars, null).length).toBeLessThanOrEqual(MAX_HTML_LABELS);
 });

@@ -1,5 +1,7 @@
 import { expect, test } from "vitest";
 
+import { PLAYBACK_SPEEDS } from "../config/constants";
+import { mulberry32 } from "../test/prng";
 import { advancePlayhead } from "./replayStore";
 
 const NOMINAL_LAP_S = 90;
@@ -32,4 +34,36 @@ test("advancing from the final lap stays there, still stopped", () => {
 test("a backwards scrub can never drag the playhead negative", () => {
   const next = advancePlayhead(0.02, -10, 1, NOMINAL_LAP_S, MAX_LAP);
   expect(next.playheadLap).toBe(0);
+});
+
+// Both counterfactual panes read one playhead driven through this function, so its
+// composition law IS the synced-clocks spec test at the root (F13 plan, test 13).
+test("composed over random delta and speed sequences the clock is monotone, additive and clamps", () => {
+  for (let trial = 0; trial < 100; trial++) {
+    const seed = 7_300 + trial;
+    const rng = mulberry32(seed);
+    const label = `seed ${seed}`;
+    const steps = 5 + Math.floor(rng() * 60);
+
+    let playheadLap = 0;
+    let playing = true;
+    let summed = 0;
+    for (let step = 0; step < steps && playing; step++) {
+      const deltaS = rng() * 5;
+      const speed = PLAYBACK_SPEEDS[Math.floor(rng() * PLAYBACK_SPEEDS.length)];
+      const next = advancePlayhead(playheadLap, deltaS, speed, NOMINAL_LAP_S, MAX_LAP);
+      expect(next.playheadLap, label).toBeGreaterThanOrEqual(playheadLap);
+      summed += (deltaS * speed) / NOMINAL_LAP_S;
+      playheadLap = next.playheadLap;
+      playing = next.playing;
+    }
+
+    expect(playheadLap, label).toBeCloseTo(Math.min(MAX_LAP, summed), 9);
+    if (summed >= MAX_LAP) {
+      expect(playheadLap, label).toBe(MAX_LAP);
+      expect(playing, label).toBe(false);
+    } else {
+      expect(playing, label).toBe(true);
+    }
+  }
 });

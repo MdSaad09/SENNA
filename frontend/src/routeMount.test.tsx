@@ -5,6 +5,7 @@ import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { routes } from "./routes";
 import { installFetchStub } from "./test/apiFixtures";
+import { installFakeWebSocket } from "./test/fakeSocket";
 
 // jsdom has no WebGL: Canvas becomes a bare <canvas> that swallows its children,
 // which is exactly the observable F-28 cares about — how many are mounted
@@ -12,14 +13,18 @@ vi.mock("@react-three/fiber", async () => (await import("./test/mockR3F")).fiber
 vi.mock("@react-three/drei", async () => (await import("./test/mockR3F")).dreiMock());
 
 let restoreFetch: () => void;
+let restoreSocket: () => void;
 
 beforeEach(() => {
   restoreFetch = installFetchStub();
+  // mounting /live opens a WebSocket; the fake keeps jsdom from throwing on it
+  restoreSocket = installFakeWebSocket();
 });
 
 afterEach(() => {
   cleanup();
   restoreFetch();
+  restoreSocket();
 });
 
 function canvasCount(): number {
@@ -53,7 +58,9 @@ test("navigation swaps the canvas and never stacks a second one (F-28)", async (
   const hops: [string, number][] = [
     ["/replay?run=7", 1],
     ["/energy", 0], // the energy view is 2D recharts (decision 2), no canvas
+    ["/live", 1], // F13: CanvasHost mounts unconditionally, picker or stream
     ["/tyres", 1], // the tyre surface owns a CanvasHost
+    ["/counterfactual", 1], // F13: two panes, still one canvas (F-28)
     ["/circuit", 1],
   ];
   for (const [path, expected] of hops) {
@@ -71,16 +78,4 @@ test("the root path redirects to the circuit explorer", async () => {
   const router = renderRouterAt("/");
   await waitFor(() => expect(router.state.location.pathname).toBe("/circuit"));
   await waitFor(() => expect(canvasCount()).toBe(1));
-});
-
-test("the live and counterfactual stubs resolve without mounting a canvas", async () => {
-  const router = renderRouterAt("/live");
-  await waitFor(() => expect(router.state.location.pathname).toBe("/live"));
-  expect(canvasCount()).toBe(0);
-
-  await act(async () => {
-    await router.navigate("/counterfactual");
-  });
-  await waitFor(() => expect(router.state.location.pathname).toBe("/counterfactual"));
-  expect(canvasCount()).toBe(0);
 });
