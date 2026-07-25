@@ -4,7 +4,7 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F13 — planned, ready for `/ship F13`
+**Active feature:** F13 — in review on its branch; `/land F13` is the approval button
 **Next up:** F14, then F15
 
 ## Feature ledger
@@ -24,7 +24,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F10 | Backend: API, worker, WS, deploy skeleton | F07, F09 | Done 22 Jul 2026 | feature/F10-backend-serving | [F10](docs/learn/F10-backend-serving.md) |
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Done 23 Jul 2026 | feature/F11-frontend-views-1-2 | [F11](docs/learn/F11-frontend-views-1-2.md) |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Done 24 Jul 2026 | feature/F12-views-energy-tyre | [F12](docs/learn/F12-views-energy-tyre.md) |
-| F13 | Views 5–6: Live, Counterfactual | F11 | Planned | | |
+| F13 | Views 5–6: Live, Counterfactual | F11 | In review | feature/F13-views-live-counterfactual | |
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Todo | | |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Todo | | |
 
