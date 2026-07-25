@@ -18,7 +18,7 @@ export const EGO_CAR_ID = 0; // sourced — F10 CarState contract (api/schemas.p
 
 // operational — reconnect backoff: first retry no more eager than the server's own
 // 0.5 s store poll (serving.yaml ws.status_poll_s), doubling to a cap that keeps the
-// worst gap under what a demo audience tolerates (the F13 spec stakes the demo on it)
+// worst gap under what a demo viewer tolerates (the F13 spec stakes the demo on it)
 export const WS_RECONNECT_BASE_MS = 500;
 export const WS_RECONNECT_FACTOR = 2;
 export const WS_RECONNECT_MAX_MS = 8000;
