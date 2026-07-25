@@ -11,9 +11,10 @@ import { Navigate, type RouteObject } from "react-router-dom";
 
 import App from "./App";
 import CircuitExplorerView from "./views/circuit/CircuitExplorerView";
+import CounterfactualView from "./views/counterfactual/CounterfactualView";
 import EnergyView from "./views/energy/EnergyView";
+import LiveSimulationView from "./views/live/LiveSimulationView";
 import RaceReplayView from "./views/replay/RaceReplayView";
-import StubView from "./views/StubView";
 import TyreSurfaceView from "./views/tyres/TyreSurfaceView";
 
 export const routes: RouteObject[] = [
@@ -26,8 +27,8 @@ export const routes: RouteObject[] = [
       { path: "replay", element: <RaceReplayView /> },
       { path: "energy", element: <EnergyView /> },
       { path: "tyres", element: <TyreSurfaceView /> },
-      { path: "live", element: <StubView title="Live Simulation" arrives="F13" /> },
-      { path: "counterfactual", element: <StubView title="Counterfactual" arrives="F13" /> },
+      { path: "live", element: <LiveSimulationView /> },
+      { path: "counterfactual", element: <CounterfactualView /> },
     ],
   },
 ];

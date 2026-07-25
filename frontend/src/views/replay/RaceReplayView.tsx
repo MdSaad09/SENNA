@@ -11,9 +11,11 @@ import { useCircuit, useRunFrames, useSimulation } from "../../api/queries";
 import { EGO_CAR_ID } from "../../config/constants";
 import CanvasHost from "../../components/CanvasHost";
 import RunPicker from "../../components/RunPicker";
+import TransportControls, {
+  ILLUSTRATIVE_MOTION_CAPTION,
+} from "../../components/TransportControls";
 import { useReplayStore } from "../../stores/replayStore";
 import ReplayScene from "./ReplayScene";
-import TransportControls from "./TransportControls";
 
 function runIdFromLocation(): number | null {
   const raw = new URLSearchParams(window.location.search).get("run");
@@ -22,6 +24,9 @@ function runIdFromLocation(): number | null {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
+const subscribeReplayPlayhead = (listener: (playheadLap: number) => void) =>
+  useReplayStore.subscribe((state) => state.playheadLap, listener);
+
 export default function RaceReplayView() {
   const [runId, setRunId] = useState<number | null>(runIdFromLocation);
   const run = useSimulation(runId);
@@ -29,6 +34,11 @@ export default function RaceReplayView() {
   const frames = useRunFrames(runId, runComplete === true);
   const detail = useCircuit(run.data?.circuit_id ?? null);
   const reset = useReplayStore((state) => state.reset);
+  const playing = useReplayStore((state) => state.playing);
+  const speed = useReplayStore((state) => state.speed);
+  const setPlaying = useReplayStore((state) => state.setPlaying);
+  const setSpeed = useReplayStore((state) => state.setSpeed);
+  const scrubTo = useReplayStore((state) => state.scrubTo);
   const hudLap = useReplayStore((state) =>
     Math.min(Math.max(Math.ceil(state.playheadLap), 1), frames.data?.length ?? 1),
   );
@@ -107,7 +117,16 @@ export default function RaceReplayView() {
       </section>
 
       {ready && frames.data !== undefined && (
-        <TransportControls maxLap={frames.data[frames.data.length - 1].lap} />
+        <TransportControls
+          playing={playing}
+          speed={speed}
+          maxLap={frames.data[frames.data.length - 1].lap}
+          onPlayPause={setPlaying}
+          onSpeed={setSpeed}
+          onScrub={(lap) => scrubTo(lap, frames.data![frames.data!.length - 1].lap)}
+          subscribePlayhead={subscribeReplayPlayhead}
+          caption={ILLUSTRATIVE_MOTION_CAPTION}
+        />
       )}
     </div>
   );

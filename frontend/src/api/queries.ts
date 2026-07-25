@@ -12,6 +12,7 @@ import type {
   DegradationCurve,
   EnergyProfile,
   LapFrame,
+  RaceDetail,
   SimulationResult,
 } from "./types";
 
@@ -70,6 +71,17 @@ export function useEnergyProfile(runId: number | null, runComplete: boolean) {
     queryFn: () => apiGet<EnergyProfile>(`/v1/energy/${runId}`),
     enabled: runId !== null && runComplete,
     staleTime: Infinity, // the ledger is fixed once the run finishes (E-16)
+  });
+}
+
+export function useRace(year: number | null, round: number | null) {
+  return useQuery({
+    queryKey: ["race", year, round],
+    queryFn: () => apiGet<RaceDetail>(`/v1/races/${year}/${round}`),
+    enabled: year !== null && round !== null,
+    // the honesty header needs results only; the per-driver laps ride along unread
+    select: (race) => ({ ...race, laps: [] }),
+    staleTime: Infinity, // ingested history is fixed
   });
 }
 

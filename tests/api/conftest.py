@@ -24,6 +24,12 @@ RACE_SEASON = 2024
 RACE_ROUND = 1
 RACE_NAME = "Bahrain Grand Prix"
 
+# HAM's seeded race carries stints so the F13 real-strategy extraction has something
+# real to read: three stints over the full 57 laps — the same distance as the sim's
+# bahrain scenario, so the extracted plan is an identity rescale of these out-laps
+HAM_STINTS = ((17, "SOFT"), (20, "HARD"), (20, "HARD"))
+HAM_REAL_STOPS = [[18, "HARD"], [38, "HARD"]]  # the out-lap and compound of stints 2 and 3
+
 # the serving namespaces (configs/serving.yaml prefixes) plus rq's bookkeeping —
 # never a blanket FLUSHDB on what may be a shared redis
 _SERVING_KEY_PATTERNS = ("sim:*", "events:*", "rq:*")
@@ -93,8 +99,9 @@ def create_and_drain(client, body: dict) -> int:
 
 
 def seed_2024_bahrain() -> None:
-    """Minimal ingested rows for one real 2024 race: enough for /races and the
-    counterfactual year/round/driver lookup, nothing more."""
+    """Minimal ingested rows for one real 2024 race: enough for /races, the
+    counterfactual year/round/driver lookup and the F13 real-strategy extraction.
+    HAM's laps carry stints; VER's stay stint-less on purpose (the extraction 404)."""
     from sqlalchemy import insert
     from sqlalchemy.ext.asyncio import create_async_engine
 
@@ -134,6 +141,7 @@ def seed_2024_bahrain() -> None:
                      "position": 8, "status": "Finished", "points": 4.0},
                 ],
             )
+            # VER's laps carry no stint column — the F13 stint-less 404 case reads them
             await conn.execute(
                 insert(Lap),
                 [
@@ -143,6 +151,36 @@ def seed_2024_bahrain() -> None:
                      "tyre_life": float(lap), "position": 1, "era": "2024",
                      "source": "real_2024"}
                     for lap in (1, 2, 3)
+                ],
+            )
+            ham_laps, lap = [], 1
+            for stint_number, (stint_laps, compound) in enumerate(HAM_STINTS, start=1):
+                for age in range(1, stint_laps + 1):
+                    # pit_in_time_s is non-null only on the lap HAM peeled in — how a
+                    # stint that ended in a stop is told apart from the chequered flag
+                    boxed = age == stint_laps and stint_number < len(HAM_STINTS)
+                    ham_laps.append(
+                        {"session_id": session_id, "driver": "HAM", "driver_number": "44",
+                         "lap_number": lap, "stint": stint_number, "compound": compound,
+                         "tyre_life": float(age), "lap_time_s": 96.0 + 0.05 * lap,
+                         "lap_time_imputed": False, "position": 3, "era": "2024",
+                         "source": "real_2024",
+                         "pit_in_time_s": 4200.0 + lap if boxed else None},
+                    )
+                    lap += 1
+            await conn.execute(insert(Lap), ham_laps)
+            # ALO's laps carry stints but no compounds — the F13 compound-less 404
+            # case reads them (FastF1 drops compound on some historic loads too)
+            await conn.execute(
+                insert(Lap),
+                [
+                    {"session_id": session_id, "driver": "ALO", "driver_number": "14",
+                     "lap_number": lap, "stint": 1 if lap <= 20 else 2, "compound": None,
+                     "tyre_life": float(lap if lap <= 20 else lap - 20),
+                     "lap_time_s": 96.5 + 0.05 * lap, "lap_time_imputed": False,
+                     "position": 8, "era": "2024", "source": "real_2024",
+                     "pit_in_time_s": 4300.0 if lap == 20 else None}
+                    for lap in range(1, 58)
                 ],
             )
         await engine.dispose()

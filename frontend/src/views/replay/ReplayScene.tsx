@@ -15,18 +15,36 @@ import {
   PIT_LATERAL_OFFSET_M,
   PIT_SCALE,
 } from "../../config/constants";
-import { labelledCars } from "../../lib/labels";
+import { egoOnlyLabels, labelledCars } from "../../lib/labels";
 import { monotoneCubic, unwrapProgress } from "../../lib/progress";
 import { useReplayStore } from "../../stores/replayStore";
 import CircuitRibbon, { useRibbon } from "../circuit/CircuitRibbon";
 import CarInstances, { type CarMeshRefs } from "./CarInstances";
 import CarLabels from "./CarLabels";
 
+// what the scene needs from a playback store: View 2 hands the replay singleton,
+// View 5 the live buffer store, View 6's panes share one clock and never tick
+export interface PlaybackSlice {
+  playheadLap: number;
+  selectedCarId: number | null;
+  selectCar(id: number | null): void;
+  tick(deltaS: number, nominalLapS: number, maxLap: number): void;
+}
+
+export interface PlaybackStore {
+  <T>(selector: (state: PlaybackSlice) => T): T;
+  getState(): PlaybackSlice;
+}
+
 interface ReplaySceneProps {
   detail: CircuitDetail;
   gltfUrl: string;
   frames: LapFrame[];
   nominalLapS: number;
+  store?: PlaybackStore;
+  driveClock?: boolean; // View 6 mounts two scenes on one clock: exactly one driver
+  labelPolicy?: "podium" | "ego";
+  egoBadge?: string | null;
 }
 
 interface CarTrack {
@@ -47,7 +65,16 @@ function buildTracks(frames: LapFrame[]): CarTrack[] {
   });
 }
 
-export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: ReplaySceneProps) {
+export default function ReplayScene({
+  detail,
+  gltfUrl,
+  frames,
+  nominalLapS,
+  store = useReplayStore,
+  driveClock = true,
+  labelPolicy = "podium",
+  egoBadge = "agent",
+}: ReplaySceneProps) {
   const ribbon = useRibbon(gltfUrl);
   const body = useRef<InstancedMesh | null>(null);
   const fins = useRef<InstancedMesh | null>(null);
@@ -76,19 +103,23 @@ export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: Re
 
   // once per lap, not per frame: the DOM label set follows the lap the playhead
   // is in, and the frame loop reads the memoised Set through a ref
-  const labelLapIndex = useReplayStore((state) => frameIndexAt(state.playheadLap, frames));
-  const selectedCarId = useReplayStore((state) => state.selectedCarId);
-  const selectCar = useReplayStore((state) => state.selectCar);
-  const labelled = useMemo(
-    () => new Set(labelledCars(frames[labelLapIndex].cars, selectedCarId)),
-    [frames, labelLapIndex, selectedCarId],
+  const labelLapIndex = store((state) => frameIndexAt(state.playheadLap, frames));
+  const selectedCarId = store((state) => state.selectedCarId);
+  const selectCar = store((state) => state.selectCar);
+  const shownLabels = useMemo(
+    () =>
+      labelPolicy === "ego"
+        ? egoOnlyLabels(frames[labelLapIndex].cars, selectedCarId)
+        : labelledCars(frames[labelLapIndex].cars, selectedCarId),
+    [frames, labelLapIndex, selectedCarId, labelPolicy],
   );
+  const labelled = useMemo(() => new Set(shownLabels), [shownLabels]);
   const labelledRef = useRef(labelled);
   labelledRef.current = labelled;
 
   useFrame(({ camera }, delta) => {
-    useReplayStore.getState().tick(delta, nominalLapS, maxLap);
-    const { playheadLap } = useReplayStore.getState();
+    if (driveClock) store.getState().tick(delta, nominalLapS, maxLap);
+    const { playheadLap } = store.getState();
 
     const bodyMesh = body.current;
     const finMesh = fins.current;
@@ -159,7 +190,8 @@ export default function ReplayScene({ detail, gltfUrl, frames, nominalLapS }: Re
       />
       <CarLabels
         cars={frames[labelLapIndex].cars}
-        selectedCarId={selectedCarId}
+        labelledIds={shownLabels}
+        egoBadge={egoBadge}
         positionOf={(carId) => positionsNow.current.get(carId) ?? [0, 0, 0]}
       />
     </group>

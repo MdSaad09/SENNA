@@ -22,11 +22,16 @@ def _serving() -> dict:
     return config.load("serving")
 
 
-def sim_cache_key(model_version: str, env_hash: str, req) -> str:
+def sim_cache_key(model_version: str, env_hash: str, req, *, purpose: str = "serve") -> str:
     if req.seed is None:
         raise ValueError("seed must be drawn before the cache key is built — "
                          "two anonymous requests would otherwise share a 'None' key")
     scenario = {name: getattr(req, name) for name in _SCENARIO_FIELDS}
+    # purpose keeps the namespaces apart (F13): a counterfactual agent leg is
+    # twin-rolled on the replay's recorded events, so its frames must never answer
+    # a plain POST /simulations for the same scenario and seed — and a plain run
+    # holding the key must never dedupe a pair down to one leg
+    scenario["purpose"] = purpose
     digest = hashlib.sha256(
         json.dumps(scenario, sort_keys=True).encode()
     ).hexdigest()[:16]

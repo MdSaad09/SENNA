@@ -164,7 +164,7 @@ class SimulationRun(Base):
     status: Mapped[str | None]  # queued / running / complete / failed
     seed: Mapped[int | None]
     circuit: Mapped[str | None]
-    purpose: Mapped[str | None]  # serve / counterfactual
+    purpose: Mapped[str | None]  # serve / counterfactual / counterfactual_baseline
     summary: Mapped[dict | None] = mapped_column(JSONB)
     started_at: Mapped[datetime | None]
     finished_at: Mapped[datetime | None]

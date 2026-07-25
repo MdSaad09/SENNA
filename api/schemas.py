@@ -30,6 +30,9 @@ class SimulationCreate(BaseModel):
 
 class JobAccepted(BaseModel):
     run_id: int
+    # set only by POST /counterfactuals: the replay leg of the pair (additive 5.9.2
+    # divergence, F13 plan)
+    baseline_run_id: int | None = None
 
 
 class CarState(BaseModel):

@@ -11,7 +11,17 @@ import time
 import pytest
 
 from senna import config
-from tests.api.conftest import CIRCUIT, SEED, create_and_drain, flush_serving_keys, reset_schema
+from tests.api.conftest import (
+    CIRCUIT,
+    RACE_ROUND,
+    RACE_SEASON,
+    SEED,
+    create_and_drain,
+    drain_queue,
+    flush_serving_keys,
+    reset_schema,
+    seed_2024_bahrain,
+)
 
 pytestmark = [
     pytest.mark.skipif(
@@ -179,3 +189,29 @@ def test_reconnect_after_a_drop_replays_with_zero_frames_lost(stream, monkeypatc
         laps, _, complete = _collect(ws)
     assert [m["frame"]["lap"] for m in laps] == list(range(1, RACE_LAPS + 1))
     assert complete["type"] == "sim:complete"
+
+
+def test_a_baseline_run_streams_card_null_laps_and_a_normal_complete(stream, monkeypatch):
+    # the F13 replay baseline stores frames but no cards — its socket must still be a
+    # first-class stream: sim:lap every lap with card null (E-15 honesty, the same
+    # empty state the card panel renders), then an ordinary sim:complete
+    client, _ = stream
+    seed_2024_bahrain()
+    accepted = client.post(
+        "/api/v1/counterfactuals",
+        json={"year": RACE_SEASON, "round": RACE_ROUND, "driver": "HAM", "seed": SEED},
+    )
+    assert accepted.status_code == 202, accepted.text
+    baseline_id = accepted.json()["baseline_run_id"]
+    drain_queue()
+
+    monkeypatch.setattr(client.app.state, "playback_sleep", SleepRecorder(), raising=False)
+    with client.websocket_connect(f"/ws/simulations/{baseline_id}") as ws:
+        ws.send_json({"type": "client:speed", "speed": 30})
+        laps, _, complete = _collect(ws)
+
+    assert laps
+    assert [m["frame"]["lap"] for m in laps] == list(range(1, len(laps) + 1))
+    assert all(m["card"] is None for m in laps)
+    assert complete["type"] == "sim:complete"
+    assert "summary" in complete

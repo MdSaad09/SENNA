@@ -17,7 +17,7 @@ class GridBoundError(ValueError):
     """grid_position exceeds the era's grid (20 cars in 2024 — plan divergence 4)."""
 
 
-def build_env(req, *, configs_dir=None) -> F1RaceEnv:
+def build_env(req, *, configs_dir=None, record: bool = False) -> F1RaceEnv:
     try:
         scenario = build_scenario(req.circuit_id, req.era, configs_dir=configs_dir)
     except KeyError as err:
@@ -31,7 +31,7 @@ def build_env(req, *, configs_dir=None) -> F1RaceEnv:
         )
     weather = config.load("serving")["weather_profiles"][req.weather_profile]
     return F1RaceEnv(req.circuit_id, req.era, rival_band=req.rival_band,
-                     weather=weather, configs_dir=configs_dir)
+                     weather=weather, record=record, configs_dir=configs_dir)
 
 
 def circuit_slug(event_name: str) -> str:

@@ -17,6 +17,12 @@ export function fiberMock() {
 
 export function dreiMock() {
   const useGLTF = Object.assign(() => gltfStub, { preload: () => undefined });
+  // drei's View tunnels its children into the root canvas; here both ends collapse —
+  // the pane is a plain div and its scene contents vanish with the mocked canvas
+  const View = Object.assign(
+    (_props: { children?: ReactNode }) => <div data-testid="drei-view" />,
+    { Port: () => null },
+  );
   return {
     Html: ({ children }: { children?: ReactNode }) => (
       <div data-testid="html-label">{children}</div>
@@ -24,5 +30,6 @@ export function dreiMock() {
     Text: () => null,
     OrbitControls: () => null,
     useGLTF,
+    View,
   };
 }

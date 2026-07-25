@@ -2,6 +2,9 @@ import { expect, test } from "vitest";
 
 import {
   ANNOTATION_LIFT_M,
+  DEFAULT_GRID_POSITION,
+  DIVERGENCE_FLASH_MS,
+  DIVERGENCE_FLASH_TINT,
   EGO_CAR_ID,
   FPS_FLOOR,
   FPS_TARGET,
@@ -11,6 +14,9 @@ import {
   LOD_DISTANCE_M,
   MAX_DRAW_CALLS_REPLAY,
   MAX_HTML_LABELS,
+  MODE_ACTION_LABELS,
+  PANE_BACKGROUND,
+  PIT_ACTION_LABELS,
   PLAYBACK_SPEEDS,
   PROVENANCE_LOG_CAP,
   RUN_STATUS_POLL_MS,
@@ -18,6 +24,11 @@ import {
   TYRE_TEMP_AXIS_MIN_C,
   TYRE_TEMP_GRIP_PENALTY,
   TYRE_TEMP_REF_C,
+  WS_CLOSE_CODES_TERMINAL,
+  WS_RECONNECT_BASE_MS,
+  WS_RECONNECT_FACTOR,
+  WS_RECONNECT_MAX_MS,
+  WS_STATUS_OPEN,
 } from "./constants";
 
 // Not in the plan's numbered test list: the module contract says these values are
@@ -41,6 +52,36 @@ test("the operational defaults hold their sized values", () => {
   expect(RUN_STATUS_POLL_MS).toBe(1000);
   expect(ANNOTATION_LIFT_M).toBeCloseTo(0.2, 9);
   expect(PROVENANCE_LOG_CAP).toBe(50);
+});
+
+test("the live-socket constants hold their sized values", () => {
+  // operational — first retry no more eager than the server's own 0.5 s store poll
+  expect(WS_RECONNECT_BASE_MS).toBe(500);
+  expect(WS_RECONNECT_FACTOR).toBe(2); // plain doubling, at the cap in four retries
+  expect(WS_RECONNECT_MAX_MS).toBe(8000); // the demo stakes itself on reconnect
+  expect(WS_STATUS_OPEN).toBe(101); // HTTP 101 Switching Protocols, the WS-open status
+  expect(WS_CLOSE_CODES_TERMINAL).toEqual([4404, 4500]); // mirrors api/ws.py close codes
+  expect(DEFAULT_GRID_POSITION).toBe(8); // hoisted from RunPicker's midfield default
+});
+
+test("the counterfactual styling constants hold their stylised values", () => {
+  expect(DIVERGENCE_FLASH_MS).toBe(900); // long enough to register at 30x
+  expect(DIVERGENCE_FLASH_TINT).toBe("#f43f5e"); // rose — clashes with no team colour
+  expect(PANE_BACKGROUND).toBe("#0a0a0a"); // scissored panes must clear explicitly
+});
+
+test("the action labels mirror cards.py verbatim (A-03)", () => {
+  // senna/explain/cards.py _PIT_CALLS and _MODE_CALLS, transcribed by hand — the
+  // card's probability arrays arrive unlabelled and these strings are their names
+  expect(PIT_ACTION_LABELS).toEqual([
+    "stay out",
+    "pit for Soft",
+    "pit for Medium",
+    "pit for Hard",
+    "pit for Intermediate",
+    "pit for Wet",
+  ]);
+  expect(MODE_ACTION_LABELS).toEqual(["conserve energy", "run balanced", "attack", "defend"]);
 });
 
 test("the tyre-surface axis and tessellation constants hold their provenance values", () => {

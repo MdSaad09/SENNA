@@ -16,6 +16,47 @@ export const FRAMES_PAGE_SIZE = 100;
 
 export const EGO_CAR_ID = 0; // sourced — F10 CarState contract (api/schemas.py)
 
+// operational — reconnect backoff: first retry no more eager than the server's own
+// 0.5 s store poll (serving.yaml ws.status_poll_s), doubling to a cap that keeps the
+// worst gap under what a demo viewer tolerates (the F13 spec stakes the demo on it)
+export const WS_RECONNECT_BASE_MS = 500;
+export const WS_RECONNECT_FACTOR = 2;
+export const WS_RECONNECT_MAX_MS = 8000;
+
+// sourced — HTTP 101 Switching Protocols: the status a WS open represents in the
+// provenance log, which only speaks HTTP statuses
+export const WS_STATUS_OPEN = 101;
+
+// sourced — api/ws.py's close codes: 4404 no simulation run, 4500 run summary
+// lacks nominal_lap_s; both mean retrying cannot help, so the client must not
+export const WS_CLOSE_CODES_TERMINAL = [4404, 4500];
+
+// operational — the midfield default start (first demo run shows overtakes), hoisted
+// so RunPicker and the /live deep link cannot drift apart
+export const DEFAULT_GRID_POSITION = 8;
+
+// sourced — mirrors senna/explain/cards.py _PIT_CALLS / _MODE_CALLS verbatim: the
+// card's probability arrays arrive unlabelled and these strings are their names (A-03)
+export const PIT_ACTION_LABELS = [
+  "stay out",
+  "pit for Soft",
+  "pit for Medium",
+  "pit for Hard",
+  "pit for Intermediate",
+  "pit for Wet",
+];
+export const MODE_ACTION_LABELS = ["conserve energy", "run balanced", "attack", "defend"];
+
+// stylised — the divergence flash: long enough to register at 30x, rose because no
+// team colour or series tint claims it (liveries.ts, SocPanel, CircuitRibbon)
+export const DIVERGENCE_FLASH_MS = 900;
+export const DIVERGENCE_FLASH_TINT = "#f43f5e";
+
+// stylised — the app's neutral-950 backdrop; drei's scissored views never clear
+// unless the pane scene sets an explicit background, so the CSS show-through trick
+// the full-canvas views use cannot work there
+export const PANE_BACKGROUND = "#0a0a0a";
+
 // operational — half as eager as the server's own 0.5 s run poll (serving.yaml ws.status_poll_s)
 export const RUN_STATUS_POLL_MS = 1000;
 

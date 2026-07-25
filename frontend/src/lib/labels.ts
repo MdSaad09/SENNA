@@ -1,6 +1,8 @@
 // The F-28 label budget as a pure decision: DOM labels go to the podium plus the
 // selected car, nobody else. Everyone outside this list gets instanced sprite text.
 
+import { EGO_CAR_ID } from "../config/constants";
+
 export function labelledCars(
   cars: { id: number; position: number }[],
   selectedId: number | null,
@@ -10,4 +12,13 @@ export function labelledCars(
     if (cars.some((car) => car.id === selectedId)) shown.push(selectedId);
   }
   return shown;
+}
+
+// F13 View 6: each counterfactual pane labels only the ego, so two panes spend two
+// of the four-label budget however the viewer clicks (F-28)
+export function egoOnlyLabels(
+  _cars: { id: number; position: number }[],
+  _selectedId: number | null,
+): number[] {
+  return [EGO_CAR_ID];
 }
