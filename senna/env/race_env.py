@@ -201,6 +201,7 @@ class F1RaceEnv(Env):
         self._ego_pit_laps: list[int] = []
         self._ego_pit_compounds: list[str] = []
         self._ego_derate_count = 0
+        self._ego_derated_now = False
         self._ego_harvest_total = 0.0
         self._ego_deploy_total = 0.0
         self._forced_pit_now = False
@@ -306,7 +307,8 @@ class F1RaceEnv(Env):
         ego = state.ego
         self._ego_harvest_total += float(harvest_mj[ego])
         self._ego_deploy_total += float(delivered[ego])
-        if derate[ego] > 0:
+        self._ego_derated_now = bool(derate[ego] > 0)
+        if self._ego_derated_now:
             self._ego_derate_count += 1
 
         terminated = bool(state.lap >= self.total_laps or state.retired[ego])
@@ -761,6 +763,7 @@ class F1RaceEnv(Env):
                 "harvest_mj": float(state.last_harvest_mj[state.ego]),
                 "deploy_mj": float(state.last_deploy_mj[state.ego]),
                 "soc_mj": float(state.soc_mj[state.ego]),
+                "derated": self._ego_derated_now,  # M4 reports derates per lap, not just a total
             },
             "mask": {
                 "pit": self._mask.pit.tolist(),
