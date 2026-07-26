@@ -21,7 +21,10 @@ from senna.strategy.oracle import solo_reference
 from senna.strategy.rollout import EpisodeResult, run_episode
 from senna.train.gates import PairedRace, StageAEval, StageCEval
 
-_ERA = "2026"  # the curriculum trains the 2026 problem (5.7); 2024 is F14's era-matched study
+# Era is a parameter rather than a module constant: the curriculum trains the 2026 problem
+# (5.7), and the F14 era-matched fine-tune runs the same loop over the 2024 constants
+# (F-24, A-10). Every caller that omits it gets the world the headline was trained in.
+_DEFAULT_ERA = "2026"
 
 
 @dataclass(frozen=True)
@@ -32,17 +35,18 @@ class RecordedRace:
     baseline: EpisodeResult | None
 
 
-def stage_a_reference(circuit: str, *, configs_dir=None):
+def stage_a_reference(circuit: str, *, configs_dir=None, era: str = _DEFAULT_ERA):
     """The Stage A bar: solo_reference on the circuit's scenario with the F06 oracle
     config — deterministic, so one call per run is enough."""
-    scenario = build_scenario(circuit, _ERA, configs_dir=configs_dir)
+    scenario = build_scenario(circuit, era, configs_dir=configs_dir)
     return solo_reference(scenario, cfg=config.load("baselines", configs_dir)["oracle"])
 
 
-def run_stage_a_eval(policy, *, step: int, circuit: str, seeds, configs_dir=None) -> StageAEval:
+def run_stage_a_eval(policy, *, step: int, circuit: str, seeds, configs_dir=None,
+                     era: str = _DEFAULT_ERA) -> StageAEval:
     """Mean return and race time over the frozen solo bank. One env, reset per seed —
     a pure function of the policy, which is what makes plateau comparisons honest."""
-    env = F1RaceEnv(circuit, _ERA, solo=True, weather="dry", hazards="none",
+    env = F1RaceEnv(circuit, era, solo=True, weather="dry", hazards="none",
                     configs_dir=configs_dir)
     results = [run_episode(env, policy, seed=seed) for seed in seeds]
     return StageAEval(
@@ -54,13 +58,13 @@ def run_stage_a_eval(policy, *, step: int, circuit: str, seeds, configs_dir=None
 
 
 def record_stage_b_traces(*, banks: dict, overflow, configs_dir=None, recorder=None,
-                          traces_dir=None):
+                          traces_dir=None, era: str = _DEFAULT_ERA):
     """One RecordedRace per frozen Stage B seed. A recording run that never reaches the
     flag (recorded_trace refuses it) is replaced by the next unused overflow seed, in
     order, and the substitution is returned for the gate log; an exhausted overflow
     raises — silence would bias the finish-ahead rate."""
     if recorder is None:
-        recorder = _live_recorder(configs_dir)
+        recorder = _live_recorder(configs_dir, era)
 
     recorded, replaced = [], []
     spare = iter(overflow)
@@ -83,7 +87,7 @@ def record_stage_b_traces(*, banks: dict, overflow, configs_dir=None, recorder=N
     return recorded, replaced
 
 
-def _live_recorder(configs_dir):
+def _live_recorder(configs_dir, era: str = _DEFAULT_ERA):
     """Record the EngineerHeuristic live in the Stage B world (dry, SC/VSC, train band),
     then roll the same policy on the twin for the stored baseline result."""
     heuristic_cfg = config.load("baselines", configs_dir)["heuristic"]
@@ -91,9 +95,9 @@ def _live_recorder(configs_dir):
 
     def record(circuit: str, seed: int) -> RecordedRace:
         if circuit not in envs:
-            live = F1RaceEnv(circuit, _ERA, rival_band="train", record=True,
+            live = F1RaceEnv(circuit, era, rival_band="train", record=True,
                              weather="dry", hazards="sc_vsc", configs_dir=configs_dir)
-            replay = F1RaceEnv(circuit, _ERA, configs_dir=configs_dir)
+            replay = F1RaceEnv(circuit, era, configs_dir=configs_dir)
             envs[circuit] = (live, replay, EngineerHeuristic(live.scenario, heuristic_cfg))
         live, replay, heuristic = envs[circuit]
 
@@ -107,7 +111,8 @@ def _live_recorder(configs_dir):
 
 
 def run_stage_b_eval(policy, recorded, *, configs_dir=None,
-                     env_cache: dict | None = None) -> list[PairedRace]:
+                     env_cache: dict | None = None,
+                     era: str = _DEFAULT_ERA) -> list[PairedRace]:
     """Replay the agent on every recorded twin and pair it with the stored baseline
     roll. One env per circuit; the twin is swapped per race through reset options.
     Pass env_cache to keep the envs across eval calls — construction re-parses every
@@ -116,7 +121,7 @@ def run_stage_b_eval(policy, recorded, *, configs_dir=None,
     pairs = []
     for race in recorded:
         if race.circuit not in envs:
-            envs[race.circuit] = F1RaceEnv(race.circuit, _ERA, configs_dir=configs_dir)
+            envs[race.circuit] = F1RaceEnv(race.circuit, era, configs_dir=configs_dir)
         env = envs[race.circuit]
         env.reset(seed=race.seed, options={"twin": race.trace})
         agent = run_episode(env, policy, seed=race.seed)
@@ -129,14 +134,19 @@ def run_stage_b_eval(policy, recorded, *, configs_dir=None,
 
 
 def run_stage_c_eval(policy, *, step: int, banks: dict, configs_dir=None,
-                     env_cache: dict | None = None) -> StageCEval:
+                     env_cache: dict | None = None, era: str = _DEFAULT_ERA,
+                     circuits=None) -> StageCEval:
     """Mean points over the validation bank on the full stochastic env — weather,
     red flags, rival draws from the train band (E-06; the test band is F14's)."""
     envs = env_cache if env_cache is not None else {}
     points = []
     for circuit, seeds in banks.items():
+        # an era-matched run trains a subset of circuits, so the bank is narrowed to the
+        # stage's own list rather than scored on scenarios that stage never saw
+        if circuits is not None and circuit not in circuits:
+            continue
         if circuit not in envs:
-            envs[circuit] = F1RaceEnv(circuit, _ERA, rival_band="train",
+            envs[circuit] = F1RaceEnv(circuit, era, rival_band="train",
                                       configs_dir=configs_dir)
         points.extend(run_episode(envs[circuit], policy, seed=seed).points
                       for seed in seeds)

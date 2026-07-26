@@ -117,7 +117,10 @@ def test_finetune_overlay_mutates_only_era_circuits_and_budget(tmp_path):
         key for key in set(stage_c) | set(source_c)
         if stage_c.get(key, _MISSING) != source_c.get(key, _MISSING)
     }
-    assert moved == {"era", "circuits", "budget_steps", "eval_every_steps"}
+    # the blast radius, not the write list: eval_every_steps is rewritten too but carries
+    # the same Stage C cadence, so it only shows up here if someone retunes one of the two
+    assert moved <= {"era", "circuits", "budget_steps", "eval_every_steps"}
+    assert {"era", "circuits", "budget_steps"} <= moved
 
     finetune = eval_cfg["era_finetune"]
     assert stage_c["era"] == finetune["era"]
