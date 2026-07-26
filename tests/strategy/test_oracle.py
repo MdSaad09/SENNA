@@ -179,12 +179,16 @@ def test_the_greedy_energy_rule_never_picks_a_worse_priced_mode(
     assert _mode_price_s(chosen, soc_mj, track_status, scenario) <= best_price_s + 1e-9
 
 
-def test_the_oracle_refuses_a_wet_trace(scenario, green_trace):
-    # slick-only enumeration cannot price the rain; scoring it would be meaningless (M3),
-    # so the oracle refuses rather than return a wrong ceiling (the wet extension is F14)
+def test_the_oracle_prices_a_wet_trace(scenario, green_trace):
+    # F06 left the oracle refusing the rain rather than returning a slick-only ceiling that
+    # would have been meaningless (M3). F14 enumerates the wet compounds, so the refusal is
+    # gone and a soaked race gets a real answer; the legality of what it enumerates is
+    # pinned in test_oracle_wet.py
     green_trace.wetness[20:] = 0.9
-    with pytest.raises(NotImplementedError):
-        solve_oracle(scenario, green_trace, cfg=_small_oracle_cfg())
+    result = solve_oracle(scenario, green_trace, cfg=_small_oracle_cfg())
+
+    assert result.plan is not None
+    assert np.isfinite(result.race_time_s)
 
 
 def test_the_solo_reference_is_deterministic_across_calls(scenario):

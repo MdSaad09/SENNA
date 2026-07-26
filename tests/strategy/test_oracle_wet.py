@@ -110,7 +110,7 @@ def test_stage1_pit_charge_is_status_aware(scenario, green_trace):
         other term, so what is left is exactly what stage 1 charges for the stop."""
         plan = PitPlan(stops=((out_lap, "HARD"),))
         stints_s = tables[medium][1, out_lap] + tables[hard][out_lap + 1, trace.n_laps]
-        return _plan_table_cost(plan, tables, scenario, trace.n_laps) - stints_s
+        return _plan_table_cost(plan, tables, scenario, trace) - stints_s
 
     under_sc_s = charged_pit_loss_s(29)  # the out-lap runs under the safety car
     on_green_s = charged_pit_loss_s(34)
