@@ -51,10 +51,44 @@ class StochasticSb3Policy:
         self.head_entropies = []
 
     def act(self, obs, info, mask) -> np.ndarray:
+        observation = self.normalize_obs(obs)
+        masks = np.asarray(mask)
         action, _ = self.model.predict(
-            self.normalize_obs(obs), action_masks=np.asarray(mask), deterministic=False
+            observation, action_masks=masks, deterministic=False
         )
+        entropy = _masked_head_entropy(self.model, observation, masks)
+        if entropy is not None:
+            self.head_entropies.append(entropy)
         return action
+
+    @property
+    def mean_head_entropy(self) -> float:
+        """How wide the probe was, in nats per decision, over the episode just rolled.
+        nan when nothing was recorded, which reads as "unknown" rather than "collapsed"."""
+        return float(np.mean(self.head_entropies)) if self.head_entropies else float("nan")
+
+
+def _masked_head_entropy(model, obs, mask) -> float | None:
+    """Entropy of the masked joint head — pit plus mode, in nats — for the one decision
+    predict() just sampled. Every decision is measured rather than sub-sampled: this is a
+    second forward pass through a small MLP, which does not register next to the lap the
+    env then simulates for it.
+
+    None when the model carries no SB3 policy, as a stand-in in tests does not. M11's
+    decomposition is the metric and the entropy is the context printed beside it; context
+    that can take a six-hour eval run down is worse than no context.
+    """
+    policy = getattr(model, "policy", None)
+    if policy is None or not hasattr(policy, "get_distribution"):
+        return None
+
+    import torch as th  # local: the estimator half of this module stays importable without it
+
+    with th.no_grad():
+        tensor, _ = policy.obs_to_tensor(obs)
+        dist = policy.get_distribution(tensor)
+        dist.apply_masking(th.as_tensor(np.asarray(mask, dtype=bool)).unsqueeze(0))
+        return float(dist.entropy()[0])
 
 
 def variance_components(grid) -> dict:
@@ -95,10 +129,16 @@ def variance_components(grid) -> dict:
     }
 
 
-def luck_share(grids_by_circuit, *, cfg) -> dict:
+def luck_share(grids_by_circuit, *, cfg, head_entropies=()) -> dict:
     """Per-circuit shares plus the headline mean, with an interval from resampling
     circuits. Circuits whose grid never varied carry no share and are excluded from the
-    mean with their flag kept, so an undefined split cannot quietly read as zero luck."""
+    mean with their flag kept, so an undefined split cannot quietly read as zero luck.
+
+    head_entropies is one StochasticSb3Policy.mean_head_entropy per rolled episode. Its
+    mean is published with the share because a share measured under a near-collapsed head
+    is a different claim from one measured under a hesitant one, and eval.yaml's m11
+    gaming_note promises the reader that number.
+    """
     per_circuit = {circuit: variance_components(grid)
                    for circuit, grid in grids_by_circuit.items()}
     shares = [block["share"] for block in per_circuit.values()
@@ -108,10 +148,14 @@ def luck_share(grids_by_circuit, *, cfg) -> dict:
         shares, level=cfg["bootstrap"]["ci_level"],
         resamples=cfg["m11"]["bootstrap_resamples"], seed=cfg["bootstrap"]["seed"],
     )
+    probe = np.asarray(list(head_entropies), dtype=float)
+    probe = probe[~np.isnan(probe)]
     return {
         "per_circuit": per_circuit,
         "mean_share": interval.mean,
         "ci_low": interval.low,
         "ci_high": interval.high,
         "n_circuits": len(per_circuit),
+        "mean_head_entropy_nats": float(probe.mean()) if probe.size else float("nan"),
+        "n_entropy_episodes": int(probe.size),
     }

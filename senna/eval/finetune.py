@@ -57,7 +57,7 @@ def run_finetune(*, seed: int | None = None, configs_dir=None, models_dir=None,
                  workers: int | None = None, vec: str = "subproc") -> Path:
     """Warm-start the frozen headline onto the 2024 constants and promote the result."""
     from senna.train.ledger import RunLedger, close_run
-    from senna.train.run import train_run
+    from senna.train.run import CONFIG_FILES, run_identity, train_run
     from senna.train.selection import promote_headline, read_candidate
 
     cfg = config.load("eval", configs_dir)
@@ -74,18 +74,27 @@ def run_finetune(*, seed: int | None = None, configs_dir=None, models_dir=None,
     log.info("fine-tuning %s onto era %s for %s steps",
              resume.name, finetune["era"], finetune["budget_steps"])
 
+    # the fingerprint train_run will compute from the overlay, needed up front so the
+    # ledger row exists while the run is live rather than only if it survives
+    fingerprint = config.fingerprint([*CONFIG_FILES, "eval"], overlay)
+    run_id = run_identity(seed=seed, fingerprint=fingerprint, run_tag=_RUN_TAG)
+    ledger = RunLedger(models / "runs.json")
+    ledger.record_start(
+        run_id=run_id, kind="era_finetune", seed=seed, fingerprint=fingerprint,
+        budget_steps=finetune["budget_steps"], wandb_run_id=None,
+    )
+
     run_dir = train_run(
         seed=seed, from_stage="C", to_stage="C", resume=resume, configs_dir=overlay,
-        models_dir=models, run_tag=_RUN_TAG, wandb_mode=wandb_mode,
+        models_dir=models, run_tag=_RUN_TAG, run_id=run_id, wandb_mode=wandb_mode,
         total_steps=256 if dry_run else None, workers=workers, vec=vec,
         extra_config_files=("eval",),
     )
 
+    close_run(ledger, run_id, run_dir, stage="C")
     candidate = read_candidate(run_dir)
     promotion = promote_headline(candidate, models / "era2024")
-    ledger = RunLedger(models / "runs.json")
-    close_run(ledger, candidate.run_id, run_dir, stage="C")
-    ledger.annotate(candidate.run_id, promoted=True, era=finetune["era"],
+    ledger.annotate(run_id, promoted=True, era=finetune["era"],
                     model_version=promotion["model_version"])
     log.info("promoted %s to models/era2024", promotion["model_version"])
     return run_dir

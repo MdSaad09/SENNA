@@ -32,7 +32,7 @@ from tests.eval.conftest import CIRCUIT, SEED
 _M6_CFG = {
     "tolerance_laps": 3,
     "target_share": 0.72,
-    "bootstrap": {"seed": SEED, "resamples": 200},
+    "bootstrap": {"seed": SEED, "resamples": 200, "ci_level": 0.95},
 }
 
 

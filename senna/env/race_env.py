@@ -25,13 +25,13 @@ from senna.env.masks import SLICK_ACTIONS, UNFITTED_COMPOUND, ActionMask, build_
 from senna.env.observation import NO_DEG_A, NO_DEG_B
 from senna.env.pitlane import resolve_pit_lane
 from senna.env.reward import pace_shaping, shaping_step, terminal_points
-from senna.env.scenario import COMPOUNDS, build_scenario, compound_code
+from senna.env.scenario import COMPOUNDS, START_COMPOUND, build_scenario, compound_code
 from senna.env.state import RaceState
 from senna.env.twin import EventTrace
 
 _STATUS_NAMES = {events.GREEN: "green", events.VSC: "vsc", events.SC: "sc", events.RED: "red"}
 _BALANCED = 1
-_START_COMPOUND = compound_code("MEDIUM")
+_START_COMPOUND = compound_code(START_COMPOUND)
 
 
 class F1RaceEnv(Env):

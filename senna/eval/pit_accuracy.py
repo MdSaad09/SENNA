@@ -14,13 +14,12 @@ sweep would confidently name the wrong lap. A roll is a few milliseconds; the ac
 worth more.
 """
 
-from senna.env.scenario import compound_code
+from senna.env.scenario import START_COMPOUND, compound_code
 from senna.eval.bootstrap import share_interval
 from senna.strategy.oracle import legal_codes_at
 from senna.strategy.policy import ScriptedActions
 from senna.strategy.rollout import run_episode
 
-_START_COMPOUND = "MEDIUM"  # the env puts the whole grid on MEDIUM (5.5)
 _VARIANT_SEED = 0  # twin rolls are deterministic; the seed only anchors the policy stream
 
 
@@ -39,7 +38,7 @@ def stop_corridor(race, index: int, *, scenario, trace) -> list:
     n_laps = trace.n_laps
 
     previous_out = stops[index - 1] if index > 0 else 1
-    previous_compound = compounds[index - 1] if index > 0 else _START_COMPOUND
+    previous_compound = compounds[index - 1] if index > 0 else START_COMPOUND
     next_out = stops[index + 1] if index + 1 < len(stops) else None
     compound = compounds[index]
     code = compound_code(compound)
@@ -98,7 +97,7 @@ def pit_window_accuracy(rows, *, cfg) -> dict:
         hits.append(nearest <= cfg["tolerance_laps"])
 
     interval = share_interval(
-        hits, level=cfg["bootstrap"].get("ci_level", 0.95),
+        hits, level=cfg["bootstrap"]["ci_level"],
         resamples=cfg["bootstrap"]["resamples"], seed=cfg["bootstrap"]["seed"],
     ) if hits else None
 

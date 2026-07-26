@@ -26,6 +26,12 @@ def paired_position_delta(pairs, *, cfg) -> dict:
                      pair.baseline_position, pair.baseline_dnf)
         for pair in pairs
     ]
+    if not outcomes:
+        raise ValueError(
+            "M1 was handed zero pairs — every paired race was dropped, so read "
+            "pairing.paired_races' drop reasons before trusting the rest of the report"
+        )
+
     deltas = [float(delta) for _, delta in outcomes]
     interval = mean_interval(deltas, level=cfg["ci_level"], resamples=cfg["resamples"],
                              seed=cfg["seed"])
@@ -131,6 +137,10 @@ def tyre_failure_rate(races) -> dict:
     return {
         "failures_per_100": 100.0 * failed / n_races if n_races else 0.0,
         "n_races": n_races,
+        # races, not failures: a race that loses two tyres counts once, matching the
+        # denominator. n_failures stays as an alias — report.py and every payload already
+        # written to the store read it by that name
+        "n_races_with_failure": failed,
         "n_failures": failed,
         "stint_laps": {
             "mean": sum(stints) / len(stints) if stints else 0.0,
