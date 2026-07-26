@@ -4,7 +4,7 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain report api worker up
+.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain finetune suite report api worker up
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -113,5 +113,19 @@ worker:
 up:
 	docker compose up --build
 
+# the era-matched Stage C fine-tune (F-24 / OQ-9): warm-starts models/headline onto the
+# 2024 constants and promotes the result to models/era2024. Needs the frozen headline.
+# DRY=1 proves the wiring on a tiny budget in seconds.
+finetune:
+	OMP_NUM_THREADS=1 python -m senna.eval.finetune $(if $(SEED),--seed $(SEED)) \
+		$(if $(DRY),--dry-run) $(if $(WORKERS),--workers $(WORKERS)) $(if $(VEC),--vec $(VEC))
+
+# roll every M1-M11 battery on the held-out seeds and rival band (5.12) and rewrite both
+# stores. Local only: needs models/headline. ONLY=m1,m4 narrows; SMOKE=1 does two circuits.
+suite:
+	OMP_NUM_THREADS=1 python -m senna.eval.run $(if $(ONLY),--only $(ONLY)) $(if $(SMOKE),--smoke)
+
+# regenerate the Chapter 7 tables and figures from the committed store. A pure function of
+# docs/results/F14/store — no model, no database, no GPU — so a clean clone can rerun it.
 report:
-	@echo "not yet: F14 owns make report"
+	python -m senna.eval.report
