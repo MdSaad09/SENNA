@@ -4,8 +4,9 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F14 — In review on `feature/F14-evaluation`; the metric suite is built
-and green, but the headline numbers and M2 still need a clean run (see the ship report)
+**Active feature:** F14 — In review on `feature/F14-evaluation`. All M1-M11 numbers are
+computed and committed (docs/results/F14-evaluation.md); four of eleven targets are met and
+the misses are the interesting half. See the ship report before landing.
 **Next up:** F15
 
 ## Feature ledger
@@ -101,6 +102,22 @@ the work — resume with `claude --continue`, or start fresh and say
   The assumption stands as written ("about 70 kg, energy-flow limited"); next fits
   session may lift the grade-C flag per the register's close-out rule.
 
+- **F14 era-matched fine-tune (26 Jul 2026):** `senna-ppo-db031aead155-C-02211840`
+  (seed 331, warm-started from the headline, 2M Stage C steps on the 2024 constants)
+  promoted to `models/era2024/`. On identical 2024 validation banks it scores **6.336
+  mean points against the frozen 2026 headline's 3.802** — the F-24 regulation confound
+  measured: a 2026-physics agent scored on 2024 races loses ~2.5 points to the car, not
+  to its strategy. The serving flip is wired but still reports `pending-F14` because the
+  2024 surrogate has not been fitted; `make explain` against that triplet clears it
+  (Saad's decision 3 named the flip the designated cut).
+- **F14 headline results (26 Jul 2026):** M1 **+2.08 places** over 480 paired seeds,
+  CI [1.71, 2.48] — met. M10 clean over 480 races. Missed: M2 (-0.60, sign test 4W/5L/1T,
+  p=1.0), M4 (0.649 against a 0.914 attainable ceiling), M5 (SC precision 0.942 but recall
+  0.308; **VSC recall 0.000 — the agent never once pits under a virtual safety car across
+  311 windows**), M6 (0.228), M8 (0/4 circuits, the F03 transform miss), M9 (**37.3 tyre
+  failures per 100 races**, mean stint 29.4 laps, max 76). M11 luck share **0.758**
+  CI [0.68, 0.82] at a mean head entropy of 0.605 nats. Read M1 with M9: the agent buys
+  track position by over-running tyres. Evidence: docs/results/F14-evaluation.md.
 - **AR-04 energy store (spec Part 8):** VERIFIED 24 Jul 2026 — official FIA regulation
   text. FIA 2026 Formula 1 Technical Regulations Issue 8 (24 Jun 2024), Art 5.4.9: "The
   difference between the maximum and the minimum state of charge of the ES may not
