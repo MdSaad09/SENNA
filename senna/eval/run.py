@@ -272,7 +272,7 @@ def _luck(model, venv, banks, cfg, configs_dir, *, smoke: bool) -> dict:
 
     reps = 3 if smoke else cfg["m11"]["decision_reps"]
     stream = cfg["m11"]["decision_stream"]
-    grids = {}
+    grids, entropies = {}, []
     for circuit, seeds in banks.items():
         env = F1RaceEnv(circuit, "2026", rival_band="test", configs_dir=configs_dir)
         grid = []
@@ -283,10 +283,12 @@ def _luck(model, venv, banks, cfg, configs_dir, *, smoke: bool) -> dict:
                     model, venv.normalize_obs,
                     decision_seed=decision_seed(int(seed), rep, stream=stream))
                 row.append(run_episode(env, sampled, seed=int(seed)).final_position)
+                # how wide the probe was: the share only means something relative to it
+                entropies.append(sampled.mean_head_entropy)
             grid.append(row)
         grids[circuit] = grid
 
-    payload = luck_share(grids, cfg=cfg)
+    payload = luck_share(grids, cfg=cfg, head_entropies=entropies)
     payload["per_circuit"] = {c: variance_components(g) for c, g in grids.items()}
     payload["decision_reps"] = reps
     return payload

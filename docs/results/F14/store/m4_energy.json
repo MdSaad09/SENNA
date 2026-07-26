@@ -1,0 +1,38 @@
+{
+  "envelope": {
+    "config_hash": "6b6edb78d84e33bcc54b57ab708a4640aedf99f7a91d62e6e222d689c4f2b288",
+    "git_commit": "bccc8a85153129b444c0f76c00d4be4ecb6c52ac",
+    "model_versions": {
+      "headline": "senna-ppo-6b6edb78d84e-C-00835584"
+    },
+    "scope": {
+      "batteries": [
+        "bands",
+        "m1",
+        "m10",
+        "m11",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6",
+        "m7",
+        "m9"
+      ],
+      "circuits": 24,
+      "seeds_per_circuit": 20,
+      "smoke": false
+    },
+    "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
+  },
+  "payload": {
+    "attainable_ceiling": 0.9140851070639615,
+    "derate_share": 0.07963917525773195,
+    "max_derate_share": 0.05,
+    "met": false,
+    "n_green_laps": 27160,
+    "target": 0.9,
+    "utilisation": 0.6493427241063658,
+    "utilisation_of_attainable": 0.7103744707011502
+  }
+}

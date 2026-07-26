@@ -1,0 +1,88 @@
+{
+  "model_version": "senna-ppo-db031aead155-C-02211840",
+  "run_id": "era2024-20260726-s331-db031aead155",
+  "run_tag": "era2024",
+  "era": "2024",
+  "fingerprint": "db031aead15538673402a22f2e2221c16cab44fbe328f3972abd8e5fbcbe85f0",
+  "config_files": [
+    "env",
+    "circuits",
+    "physics_2026",
+    "physics_2024",
+    "physics_params",
+    "transforms",
+    "fits",
+    "rivals",
+    "training",
+    "curriculum",
+    "seeds",
+    "eval"
+  ],
+  "git_commit": "c2ac7738f20ab42043006afa7fcc4ab4802ebe55",
+  "stage": "C",
+  "global_step": 2211840,
+  "stage_exit_reason": null,
+  "seed": 331,
+  "stage_seed": 2331,
+  "circuit_assignment": {
+    "0": [
+      "abu_dhabi_grand_prix",
+      "japanese_grand_prix"
+    ],
+    "1": [
+      "australian_grand_prix",
+      "las_vegas_grand_prix"
+    ],
+    "2": [
+      "austrian_grand_prix",
+      "mexico_city_grand_prix"
+    ],
+    "3": [
+      "azerbaijan_grand_prix",
+      "miami_grand_prix"
+    ],
+    "4": [
+      "bahrain_grand_prix",
+      "monaco_grand_prix"
+    ],
+    "5": [
+      "belgian_grand_prix",
+      "qatar_grand_prix"
+    ],
+    "6": [
+      "british_grand_prix",
+      "saudi_arabian_grand_prix"
+    ],
+    "7": [
+      "chinese_grand_prix",
+      "singapore_grand_prix"
+    ],
+    "8": [
+      "dutch_grand_prix",
+      "spanish_grand_prix"
+    ],
+    "9": [
+      "emilia_romagna_grand_prix",
+      "s\u00e3o_paulo_grand_prix"
+    ],
+    "10": [
+      "hungarian_grand_prix",
+      "united_states_grand_prix"
+    ],
+    "11": [
+      "italian_grand_prix"
+    ]
+  },
+  "dominance_ratio": 1.2702858947301345,
+  "wandb_run_id": "7zad9isj",
+  "versions": {
+    "stable_baselines3": "2.9.0",
+    "sb3_contrib": "2.9.0",
+    "torch": "2.13.0",
+    "python": "3.11.9"
+  },
+  "resumed_from": "/Users/saad/senna/models/headline",
+  "saved_at": "2026-07-26T16:13:42.215517+00:00",
+  "model_zip_sha256": "ac8d163a19e3fe870bee033f04277dc3c4e114f85acf1d400006326ce9e4ff1a",
+  "vecnormalize_sha256": "5f77bba78fe2cce691568d5689cd3b180af764aec89f7901fed467f889d254ad"
+}

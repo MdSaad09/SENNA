@@ -54,13 +54,23 @@ def build_report(store_dir=None, *, configs_dir=None, figures: bool = True) -> s
     cfg = config.load("eval", configs_dir)
     store_dir = Path(store_dir) if store_dir else config.REPO_ROOT / cfg["store"]["committed_dir"]
 
-    rows, envelope = [], None
+    from senna.eval.sim_to_real import sim_to_real
+
+    rows, envelope, versions = [], None, {}
     for name, builder in _ROWS:
+        if name == "_m8":  # not a store file: read back from the committed synth summary
+            rows.extend(_m8(sim_to_real(configs_dir), cfg))
+            continue
         payload = _read(store_dir, name)
         if payload is None:
             continue
         envelope = envelope or payload["envelope"]
+        # every battery names the model it ran, and M2 runs the era-matched one, so the
+        # provenance block has to union them rather than trust whichever landed first
+        versions.update(payload["envelope"].get("model_versions", {}))
         rows.extend(builder(payload["payload"], cfg))
+    if envelope is not None:
+        envelope = {**envelope, "model_versions": versions}
 
     body = [_HEADER, _provenance(envelope, store_dir), _METHOD, _table(rows), _notes(rows, cfg)]
     if figures:
@@ -155,6 +165,36 @@ def _m1(payload, cfg):
     }]
 
 
+def _m2(payload, cfg):
+    sign = payload["sign_test"]
+    era = payload.get("era_matched_model", "unknown")
+    pending = era == "pending-F14"
+    return [{
+        "id": "M2", "name": "counterfactual vs actual", "block": "m2",
+        "value": (f"{sign['wins']}W/{sign['losses']}L/{sign['ties']}T, p={sign['p_value']:.3f} "
+                  f"(mean {_fmt(payload['mean_delta'], 2)} places over "
+                  f"{payload['n_races']} races)"
+                  + (" — NOT era-matched, ran the 2026 model" if pending else "")),
+        # the sign test is the claim at n=10; the interval is description and says so
+        "ci": (f"[{_fmt(payload['ci_low'], 2)}, {_fmt(payload['ci_high'], 2)}] descriptive"),
+        "target": f">= +{_fmt(payload['target'], 1)}, sign test p < 0.05",
+        "verdict": _verdict(payload["met"] and sign["significant"]),
+    }]
+
+
+def _m8(payload, cfg):
+    if not payload.get("available"):
+        return []
+    return [{
+        "id": "M8", "name": "sim-to-real", "block": "m8",
+        "value": (f"{payload['n_within_target']}/{payload['n_circuits']} circuits within "
+                  f"KS {payload['ks_target']}, worst {_fmt(payload['worst_ks'])}"),
+        "ci": f"held-out rounds {payload['validation_rounds_from']}+",
+        "target": f"KS < {payload['ks_target']} per circuit",
+        "verdict": _verdict(payload["met"]),
+    }]
+
+
 def _m3(payload, cfg):
     time = payload["time_regret_s"]
     return [{
@@ -170,7 +210,9 @@ def _m3(payload, cfg):
 def _m4(payload, cfg):
     return [{
         "id": "M4", "name": "energy utilisation", "block": "m4",
-        "value": (f"{_fmt(payload['utilisation'])} deployed/E_dep, "
+        "value": (f"{_fmt(payload['utilisation'])} deployed/E_dep "
+                  f"(ceiling {_fmt(payload.get('attainable_ceiling'))}, "
+                  f"{_fmt(payload.get('utilisation_of_attainable'))} of attainable), "
                   f"derates {_fmt(payload['derate_share'])} of green laps"),
         "ci": "-",
         "target": f">= {payload['target']} and derates <= {payload['max_derate_share']}",
@@ -246,11 +288,13 @@ def _m11(payload, cfg):
 
 _ROWS = (
     ("m1_pairs", _m1),
+    ("m2_races", _m2),
     ("m3_regret", _m3),
     ("m4_energy", _m4),
     ("m5_windows", _m5),
     ("m6_pits", _m6),
     ("m7_entropy", _m7),
+    ("_m8", None),
     ("m9_failures", _m9),
     ("m10_legality", _m10),
     ("m11_decomposition", _m11),

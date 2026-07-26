@@ -127,6 +127,11 @@ def run_counterfactual(race_cfg, inputs, *, policy, era: str, cfg, configs_dir=N
         rows.append({
             "seed": int(seed), "agent_position": agent.final_position,
             "baseline_position": baseline.final_position, "delta": delta,
+            # a retirement and a slow race both read as a bad position; only one of them
+            # is a strategy result, so the store keeps them apart
+            "agent_dnf": agent.dnf, "baseline_dnf": baseline.dnf,
+            "agent_stops": [[lap, name] for lap, name
+                            in zip(agent.pit_laps, agent.compounds, strict=True)],
             "snapped_stops": baseline_policy.snapped,
         })
 
