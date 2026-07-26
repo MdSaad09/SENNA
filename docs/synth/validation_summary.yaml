@@ -9,6 +9,20 @@ austrian_grand_prix:
   pit_delta_within_1s: true  # |sim 22.2 - real 21.9| <= 1.0
   sim_minus_real_median_s: -4.073  # headline sim-to-real lap-time offset
   stint_emd_laps: 14.246  # earth-mover distance, sim vs real stint lengths
+barcelona_grand_prix:
+  derate_deficit_mj: 0.627  # T4 energy shortfall — higher means more straight-line derate
+  ks_within_target: false  # 5.4.1 target met
+  lap_time_ks: 0.7043  # KS vs real held-out green laps; target < 0.15
+  pit_delta_within_1s: true  # |sim 22.8 - real 22.8| <= 1.0
+  sim_minus_real_median_s: -3.708  # headline sim-to-real lap-time offset
+  stint_emd_laps: 25.62  # earth-mover distance, sim vs real stint lengths
+belgian_grand_prix:
+  derate_deficit_mj: 0.738  # T4 energy shortfall — higher means more straight-line derate
+  ks_within_target: false  # 5.4.1 target met
+  lap_time_ks: 0.946  # KS vs real held-out green laps; target < 0.15
+  pit_delta_within_1s: false  # |sim 23.5 - real 26.1| <= 1.0
+  sim_minus_real_median_s: -6.124  # headline sim-to-real lap-time offset
+  stint_emd_laps: 13.066  # earth-mover distance, sim vs real stint lengths
 british_grand_prix:
   derate_deficit_mj: 1.49  # T4 energy shortfall — higher means more straight-line derate
   ks_within_target: false  # 5.4.1 target met
