@@ -20,10 +20,13 @@ from senna.train.gates import PairedRace
 
 
 def paired_races(agent_policy, *, banks, era: str = "2026", rival_band: str = "test",
-                 configs_dir=None, baseline_factory=None, circuits=None) -> list:
-    """One PairedRace per (circuit, seed): the baseline records, both legs replay it."""
+                 configs_dir=None, baseline_factory=None, circuits=None) -> tuple:
+    """One PairedRace per (circuit, seed): the baseline records, both legs replay it.
+
+    Returns the pairs and the seeds that produced none, so the published denominator can
+    be checked against the bank rather than trusted."""
     heuristic_cfg = config.load("baselines", configs_dir)["heuristic"]
-    pairs = []
+    pairs, dropped = [], []
     for circuit, seeds in banks.items():
         if circuits is not None and circuit not in circuits:
             continue
@@ -39,7 +42,12 @@ def paired_races(agent_policy, *, banks, era: str = "2026", rival_band: str = "t
             try:
                 trace = live.recorded_trace()
             except RuntimeError:
-                continue  # the baseline retired; excluded counts are reported by record.py
+                # the baseline retired before the flag, so there is no trace to pair on.
+                # Counted here rather than inferred from another battery: a silently
+                # dropped seed biases the finish-ahead rate, which is what the Stage B
+                # gate refuses for the same reason
+                dropped.append({"circuit": circuit, "seed": seed, "reason": "baseline_dnf"})
+                continue
 
             replay.reset(seed=seed, options={"twin": trace})
             baseline_result = run_episode(replay, baseline, seed=seed)
@@ -52,7 +60,7 @@ def paired_races(agent_policy, *, banks, era: str = "2026", rival_band: str = "t
                 baseline_position=baseline_result.final_position,
                 baseline_dnf=baseline_result.dnf,
             ))
-    return pairs
+    return pairs, dropped
 
 
 def band_robustness(*, banks, era: str = "2026", configs_dir=None, circuits=None) -> dict:

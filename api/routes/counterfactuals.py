@@ -27,7 +27,11 @@ from api.schemas import JobAccepted, SimulationCreate
 from senna.data.schema import Event, Lap, Session, SessionResult, SimulationRun
 from senna.env.scenario import build_scenario
 from senna.serve.cache import sim_cache_key
-from senna.serve.loader import UnknownModelVersionError, era_model_version
+from senna.serve.loader import (
+    UnknownModelVersionError,
+    era_model_version,
+    read_manifest,
+)
 from senna.serve.mapping import circuit_slug
 from senna.strategy.extract import plan_from_rows
 
@@ -111,10 +115,14 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
     # the run config — the dashboard reads that string and prints the caveat itself
     try:
         era_matched = await run_in_threadpool(era_model_version, sim.era)
+        served = await run_in_threadpool(read_manifest, None, era_matched)
     except UnknownModelVersionError:
-        era_matched = "pending-F14"
+        era_matched, served = "pending-F14", manifest
     sim = draw_seed(sim)
-    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], sim,
+    # E-15: the key names the model that actually produces the frames, so baking the
+    # era-matched triplet cold-starts its own namespace instead of answering a new
+    # request with a pre-bake run labelled era-matched
+    key = sim_cache_key(served["model_version"], served["fingerprint"], sim,
                         purpose="counterfactual")
 
     hit = await fresh_cache_hit(request, key)
@@ -133,7 +141,7 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
         baseline_id = (await conn.execute(
             insert(SimulationRun).values(
                 created_at=now, model_version=None,
-                env_config_hash=manifest["fingerprint"],
+                env_config_hash=served["fingerprint"],
                 status="queued", seed=sim.seed, circuit=slug,
                 purpose="counterfactual_baseline",
                 config={**sim.model_dump(), **identity, "policy": "real_replay"},
@@ -142,9 +150,8 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
         agent_id = (await conn.execute(
             insert(SimulationRun).values(
                 created_at=now,
-                model_version=(era_matched if era_matched != "pending-F14"
-                               else manifest["model_version"]),
-                env_config_hash=manifest["fingerprint"],
+                model_version=served["model_version"],
+                env_config_hash=served["fingerprint"],
                 status="queued", seed=sim.seed, circuit=slug, purpose="counterfactual",
                 config={**sim.model_dump(), **identity,
                         "era_matched_model": era_matched,

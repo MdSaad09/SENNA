@@ -27,7 +27,7 @@ from senna.eval.sc_quality import sc_decision_quality, window_verdict
 
 log = logging.getLogger(__name__)
 
-_BATTERIES = ("m1", "m3", "m4", "m5", "m6", "m7", "m9", "m10", "m11", "bands")
+_BATTERIES = ("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m9", "m10", "m11", "bands")
 
 
 def load_frozen_policy(triplet_dir: Path):
@@ -49,7 +49,6 @@ def load_frozen_policy(triplet_dir: Path):
 def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=None) -> dict:
     cfg = config.load("eval", configs_dir)
     models = Path(models_dir) if models_dir else config.REPO_ROOT / "models"
-    committed = config.REPO_ROOT / cfg["store"]["committed_dir"]
     raw = models / "eval"
     wanted = set(only or _BATTERIES)
 
@@ -57,11 +56,17 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
     banks = record.test_bank(configs_dir)
     if smoke:
         banks = {c: seeds[:2] for c, seeds in list(banks.items())[:2]}
+    # a smoke run never writes where the report reads: its rows would carry the same
+    # provenance as a full run and print under the full run's claim
+    committed = config.REPO_ROOT / cfg["store"]["committed_dir"] / ("smoke" if smoke else "")
 
     envelope = store.envelope(
         model_versions={"headline": manifest["model_version"]},
         config_hash=manifest["fingerprint"],
         seeds_fingerprint=config.fingerprint(["seeds"], configs_dir),
+        scope={"smoke": bool(smoke), "circuits": len(banks),
+               "seeds_per_circuit": max(len(s) for s in banks.values()),
+               "batteries": sorted(wanted)},
     )
     raw.mkdir(parents=True, exist_ok=True)
     written = {}
@@ -73,9 +78,11 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
     log.info("recorded %d races (%d excluded)", len(races), len(excluded))
 
     if "m1" in wanted:
-        pairs = pairing.paired_races(policy, banks=banks, configs_dir=configs_dir)
+        pairs, dropped = pairing.paired_races(policy, banks=banks,
+                                              configs_dir=configs_dir)
         payload = metrics.paired_position_delta(pairs, cfg={**cfg["m1"], **cfg["bootstrap"]})
-        payload["excluded_races"] = excluded
+        payload["dropped_pairs"] = dropped
+        payload["recording_exclusions"] = excluded
         payload["per_pair"] = [
             {"circuit": p.circuit, "seed": p.seed, "agent": p.agent_position,
              "baseline": p.baseline_position, "agent_dnf": p.agent_dnf,
@@ -87,7 +94,12 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
 
     if "m4" in wanted:
         written["m4_energy"] = store.write_metric(
-            committed, "m4_energy", metrics.energy_utilisation(races, cfg=cfg["m4"]),
+            committed, "m4_energy",
+            metrics.energy_utilisation(
+                races,
+                cfg={**cfg["m4"],
+                     "intra_lap_share": config.load("env", configs_dir)["harvest"]
+                     ["intra_lap_share"]}),
             envelope=envelope)
 
     if "m9" in wanted:
@@ -105,7 +117,8 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
 
     if "m5" in wanted:
         written["m5_windows"] = store.write_metric(
-            committed, "m5_windows", _sc_quality(races, cfg, configs_dir), envelope=envelope)
+            committed, "m5_windows", _sc_quality(races, cfg, policy, configs_dir),
+            envelope=envelope)
 
     if "m6" in wanted:
         written["m6_pits"] = store.write_metric(
@@ -121,6 +134,13 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
             committed, "m11_decomposition",
             _luck(model, venv, banks, cfg, configs_dir, smoke=smoke), envelope=envelope)
 
+    if "m2" in wanted:
+        payload, era_version = _counterfactuals(cfg, models, configs_dir)
+        written["m2_races"] = store.write_metric(
+            committed, "m2_races", payload,
+            envelope={**envelope,
+                      "model_versions": {**envelope["model_versions"], "era2024": era_version}})
+
     if "bands" in wanted:
         written["band_robustness"] = store.write_metric(
             committed, "band_robustness",
@@ -130,31 +150,85 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
     return written
 
 
-def _sc_quality(races, cfg, configs_dir) -> dict:
+def _counterfactuals(cfg, models, configs_dir) -> tuple:
+    """M2 over the ten frozen races. Runs on the era-matched model where one has been
+    baked; falls back to the frozen 2026 headline and records that in the payload, because
+    a counterfactual scored by the wrong-era model is a different claim (F-24)."""
+    import asyncio
+
+    from senna.data.db import database_url, engine_for
+    from senna.eval import harness
+
+    era = cfg["era_finetune"]["era"]
+    triplet = models / "era2024"
+    if triplet.exists():
+        policy, _, _, manifest = load_frozen_policy(triplet)
+        era_version = manifest["model_version"]
+    else:
+        policy, _, _, manifest = load_frozen_policy(models / "headline")
+        era_version = "pending-F14"
+        log.warning("no era-matched triplet: M2 falls back to the 2026 headline")
+
+    async def gather() -> list:
+        engine = engine_for(database_url())
+        rows = []
+        try:
+            async with engine.connect() as conn:
+                for race_cfg in cfg["m2"]["races"]:
+                    inputs = await harness.load_race(
+                        conn, season=race_cfg["season"], round_number=race_cfg["round"])
+                    rows.append(harness.run_counterfactual(
+                        race_cfg, inputs, policy=policy, era=era, cfg=cfg,
+                        configs_dir=configs_dir))
+                    log.info("counterfactual %s %s %s: mean delta %+.2f",
+                             race_cfg["season"], race_cfg["circuit"], race_cfg["driver"],
+                             rows[-1]["mean_delta"])
+        finally:
+            await engine.dispose()
+        return rows
+
+    payload = harness.summarise(asyncio.run(gather()), cfg=cfg)
+    payload["era_matched_model"] = era_version
+    return payload, era_version
+
+
+def _sc_quality(races, cfg, policy, configs_dir) -> dict:
     from senna.env import F1RaceEnv
 
-    verdicts = []
+    verdicts, envs = [], {}
     for race in races:
-        env = F1RaceEnv(race.circuit, "2026", twin=race.trace, configs_dir=configs_dir)
+        # one env per circuit, not per race: construction re-parses every physics yaml and
+        # the twin swaps through reset options anyway
+        if race.circuit not in envs:
+            envs[race.circuit] = F1RaceEnv(race.circuit, "2026", configs_dir=configs_dir)
+        env = envs[race.circuit]
+        env.reset(seed=race.seed, options={"twin": race.trace})
         for window in neutralisation_windows(race.trace, last_lap=len(race.twin.actions)):
             verdicts.append(window_verdict(window, race=race.twin, scenario=env.scenario,
-                                           env=env, cfg=cfg["m5"]))
+                                           env=env, cfg=cfg["m5"], tail_policy=policy))
     payload = sc_decision_quality(verdicts, cfg=cfg["m5"])
     payload["per_window"] = verdicts
     return payload
 
 
 def _pit_accuracy(races, cfg, configs_dir) -> dict:
-    from senna.env import F1RaceEnv
+    from senna.env import F1RaceEnv, events
 
-    rows = []
+    rows, envs = [], {}
     for race in races:
-        env = F1RaceEnv(race.circuit, "2026", twin=race.trace, configs_dir=configs_dir)
+        if race.circuit not in envs:
+            envs[race.circuit] = F1RaceEnv(race.circuit, "2026", configs_dir=configs_dir)
+        env = envs[race.circuit]
+        env.reset(seed=race.seed, options={"twin": race.trace})
         for index, stop_lap in enumerate(race.twin.pit_laps):
-            optima = stop_optima(race.twin, index, scenario=env.scenario,
-                                 trace=race.trace, env=env)
+            # a stop under a red flag is a free tyre change, not a timing decision (E-04)
+            red = bool(race.trace.status[stop_lap - 1] == events.RED)
+            optima = ([] if red else
+                      stop_optima(race.twin, index, scenario=env.scenario,
+                                  trace=race.trace, env=env))
             rows.append({"circuit": race.circuit, "seed": race.seed, "stop_lap": stop_lap,
-                         "optimal_laps": optima, "excluded": None})
+                         "optimal_laps": optima,
+                         "excluded": "red_flag" if red else None})
     payload = pit_window_accuracy(rows, cfg={**cfg["m6"], "bootstrap": cfg["bootstrap"]})
     payload["per_stop"] = rows
     return payload
@@ -167,16 +241,27 @@ def _diversity(policy, banks, cfg, configs_dir, *, smoke: bool) -> dict:
     import numpy as np
 
     per_circuit = 20 if smoke else cfg["m7"]["races_per_circuit"]
+    stream = cfg["m7"]["seed_stream"]
     races_by_circuit = {}
     for circuit in banks:
-        seeds = np.random.SeedSequence([abs(hash(circuit)) % (2**31), 7]).generate_state(
+        seeds = np.random.SeedSequence([_circuit_key(circuit), stream]).generate_state(
             per_circuit)
         races_by_circuit[circuit] = record.roll_live_batch(
             policy, circuit=circuit, seeds=seeds.tolist(), configs_dir=configs_dir)
     payload = metrics.strategy_diversity(races_by_circuit)
-    payload["seed_derivation"] = "SeedSequence([hash(circuit) % 2**31, 7]) — disjoint by stream"
+    payload["seed_derivation"] = (
+        f"SeedSequence([sha256(circuit)[:4], {stream}]) — a stable key, so the draw "
+        "reproduces across processes, and its own stream so it stays off the frozen banks")
     payload["races_per_circuit"] = per_circuit
     return payload
+
+
+def _circuit_key(circuit: str) -> int:
+    """A stable integer per circuit. Python's hash() is salted per process, so a run
+    seeded from it could not be reproduced — the one thing a seed derivation must do."""
+    import hashlib
+
+    return int.from_bytes(hashlib.sha256(circuit.encode()).digest()[:4], "big")
 
 
 def _luck(model, venv, banks, cfg, configs_dir, *, smoke: bool) -> dict:

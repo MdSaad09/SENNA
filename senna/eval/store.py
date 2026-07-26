@@ -24,12 +24,17 @@ def repo_commit() -> str:
     return result.stdout.strip() or "unknown"
 
 
-def envelope(*, model_versions: dict, config_hash: str, seeds_fingerprint: str) -> dict:
+def envelope(*, model_versions: dict, config_hash: str, seeds_fingerprint: str,
+             scope: dict | None = None) -> dict:
+    """Provenance for one stored metric. `scope` says how much of the bank produced it —
+    without it a two-circuit smoke row and a full 480-race row are indistinguishable on
+    disk, and the report would print the smoke number under the full run's claim."""
     return {
         "model_versions": dict(model_versions),
         "config_hash": config_hash,
         "seeds_fingerprint": seeds_fingerprint,
         "git_commit": repo_commit(),
+        "scope": dict(scope or {}),
     }
 
 

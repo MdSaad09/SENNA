@@ -48,6 +48,8 @@ def energy_utilisation(races, *, cfg) -> dict:
     and counting it would let a lucky safety car move the number. Reported as a pair with
     the derate share because either alone is gameable."""
     deployed_mj, budget_mj, green_laps, derated = 0.0, 0.0, 0, 0
+    deliverable_mj = 0.0
+    intra_lap_share = cfg.get("intra_lap_share", 1.0)
     for race in races:
         for lap in race.laps:
             if lap["track_status"] in _NEUTRALISED:
@@ -56,11 +58,21 @@ def energy_utilisation(races, *, cfg) -> dict:
             deployed_mj += float(lap["deploy_mj"])
             budget_mj += float(race.e_dep_mj)
             derated += bool(lap["derated"])
+            # what the store and this lap's harvest could physically have delivered:
+            # at several circuits E_dep exceeds it, so the 0.90 bar is unreachable there
+            # by construction and a miss must not read as the agent declining to deploy
+            deliverable_mj += min(
+                float(race.e_dep_mj),
+                float(lap["soc_mj"]) + intra_lap_share * float(lap["harvest_mj"]),
+            )
 
     utilisation = deployed_mj / budget_mj if budget_mj else 0.0
+    ceiling = deliverable_mj / budget_mj if budget_mj else 0.0
     derate_share = derated / green_laps if green_laps else 0.0
     return {
         "utilisation": utilisation,
+        "attainable_ceiling": ceiling,
+        "utilisation_of_attainable": deployed_mj / deliverable_mj if deliverable_mj else 0.0,
         "derate_share": derate_share,
         "target": cfg["target_utilisation"],
         "max_derate_share": cfg["max_derate_share"],
@@ -101,14 +113,30 @@ def strategy_diversity(races_by_circuit) -> dict:
 
 def tyre_failure_rate(races) -> dict:
     """M9. Races that lost at least one tyre, per hundred races — a race that loses two
-    still counts once, because the denominator is races. Read jointly with M1 and the
-    stint lengths: never stretching a stint drives this to zero for free."""
+    still counts once, because the denominator is races.
+
+    The stint-length distribution ships with the rate because 5.12 says to read them
+    together: never stretching a stint drives failures to zero for free, so a low rate
+    means nothing on its own, and a high one is only interpretable next to how long the
+    agent was running its tyres.
+    """
     failed = sum(1 for race in races if any(lap["forced_pit"] for lap in race.laps))
     n_races = len(races)
+
+    stints = []
+    for race in races:
+        marks = [0, *race.agent.pit_laps, len(race.laps)]
+        stints.extend(end - start for start, end in zip(marks[:-1], marks[1:], strict=True))
+
     return {
         "failures_per_100": 100.0 * failed / n_races if n_races else 0.0,
         "n_races": n_races,
         "n_failures": failed,
+        "stint_laps": {
+            "mean": sum(stints) / len(stints) if stints else 0.0,
+            "max": max(stints) if stints else 0,
+            "n_stints": len(stints),
+        },
     }
 
 

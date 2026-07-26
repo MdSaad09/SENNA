@@ -121,6 +121,11 @@ m6:                                 # pit window accuracy
 
 m7:                                 # strategy diversity
   races_per_circuit: 1000           # sourced 5.12 — "across 1000 eval races, per circuit"
+  seed_stream: 7                    # operational — M7 draws its own seeds because 20 races is
+                                    # too few for an entropy estimate. Its own stream id keeps
+                                    # the draw off every frozen bank, and the circuit key is a
+                                    # sha256 digest rather than hash(), which is salted per
+                                    # process and would make the run irreproducible
   gaming_note: >-
     Dithering fakes diversity, so this is a sanity metric and never a headline. v2's 2.1-nat
     target was dropped as arbitrary; the entropy is reported per circuit with its stop-count

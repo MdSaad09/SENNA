@@ -11,17 +11,20 @@ The denominator: one decision opportunity is one window offering at least one in
 decision lap. A stop on the onset lap was chosen against a mask built before the safety car
 existed, so it is neither a call nor a miss — it is not a decision about this window at all.
 
-The alternative's continuation: variants replay the agent's realised actions after the
-window, changing only what happens inside it. This is the same coordinate-wise information
-set M6 uses, and it keeps the label a property of the race rather than of the policy. The
-cost, stated rather than hidden: a stop whose value would only show up under a different
-follow-up plan is priced conservatively here.
+The alternative's continuation: a variant replays the agent's own actions up to the window,
+takes the alternative decision inside it, and then hands the race back to the agent's policy
+for the run to the flag. Anything else biases the answer. Replaying the realised action list
+through the tail would keep every stop the agent went on to make, so a pit-now variant would
+carry an extra stop and be charged a whole green pit loss against a materiality margin of one
+second. The cost of the choice, stated rather than hidden: the label is policy-dependent, so
+an agent that follows a stop up badly partly excuses its own decision to stay out.
 
 Precision and recall are reported together and per status type. Recall alone is the
 gameable half — an always-pit call sheet never misses an opportunity — which is exactly
 what 5.12 replaced v2's single "SC exploitation" number to avoid.
 """
 
+from senna.eval.afterstate import SplicedPolicy
 from senna.strategy.oracle import legal_codes_at
 from senna.strategy.policy import ScriptedActions
 from senna.strategy.rollout import run_episode
@@ -30,8 +33,19 @@ _STATUS_KEYS = ("sc", "vsc")
 _VARIANT_SEED = 0  # twin rolls are deterministic; this only anchors the unused policy stream
 
 
-def window_verdict(window, *, race, scenario, env, cfg) -> dict:
-    """Label one window by re-rolling its alternatives on the frozen trace."""
+def window_verdict(window, *, race, scenario, env, cfg, tail_policy=None) -> dict:
+    """Label one window by re-rolling its alternatives on the frozen trace.
+
+    `tail_policy` is the agent itself: after the window the alternative hands control back
+    to it, which is what makes the comparison "pit now versus pit later" rather than
+    "N stops versus N+1". Replaying the realised action list instead would keep every stop
+    the agent went on to make, charging a pit-now variant an extra green pit loss — a bias
+    of roughly 25 s against a label whose materiality margin is 1 s.
+
+    With no tail policy the continuation falls back to the realised actions, which is only
+    sound for the stay-out side and for a race whose later plan is unaffected; the caller
+    that passes None owns that caveat.
+    """
     actions = [action.copy() for action in race.actions]
     decision_laps = window.decision_laps(len(actions))
     verdict = {
@@ -45,12 +59,18 @@ def window_verdict(window, *, race, scenario, env, cfg) -> dict:
         return {**verdict, "label": "immaterial", "best_pit_time_s": None,
                 "stay_time_s": None, "margin_s": None, "excluded": "no_informed_lap"}
 
-    stay_time_s = _roll(env, actions, decision_laps, pit_lap=None, compound=None)
+    stay_time_s, _ = _roll(env, actions, decision_laps, pit_lap=None, compound=None,
+                           tail_policy=tail_policy)
 
     best_pit_time_s = None
     for lap in decision_laps:
         for code in legal_codes_at(scenario, env.twin, lap):
-            rolled = _roll(env, actions, decision_laps, pit_lap=lap, compound=code)
+            rolled, executed = _roll(env, actions, decision_laps, pit_lap=lap, compound=code,
+                                     tail_policy=tail_policy)
+            # the mask can refuse a stop the enumerator thought legal; scoring the race it
+            # ran instead would file one variant's time under another variant's label
+            if lap not in executed:
+                continue
             if best_pit_time_s is None or rolled < best_pit_time_s:
                 best_pit_time_s = rolled
 
@@ -70,11 +90,12 @@ def window_verdict(window, *, race, scenario, env, cfg) -> dict:
             "excluded": "immaterial" if label == "immaterial" else None}
 
 
-def _roll(env, actions, decision_laps, *, pit_lap, compound) -> float:
-    """One variant: the realised action list with the window's decisions rewritten. The
-    twin is sticky on the env, so run_episode's own reset replays the same race; the seed
-    only picks the policy stream, which a scripted policy never draws from."""
-    variant = [action.copy() for action in actions]
+def _roll(env, actions, decision_laps, *, pit_lap, compound, tail_policy=None) -> tuple:
+    """One variant: the prefix up to the window, the window's decision rewritten, then the
+    agent again. The twin is sticky on the env, so run_episode's own reset replays the same
+    race; the seed only picks the policy stream a scripted prefix never draws from."""
+    last_window_lap = max(decision_laps)
+    variant = [action.copy() for action in actions[:last_window_lap]]
     for lap in decision_laps:
         index = lap - 1
         if index < len(variant):
@@ -82,7 +103,13 @@ def _roll(env, actions, decision_laps, *, pit_lap, compound) -> float:
     if pit_lap is not None:
         variant[pit_lap - 1][0] = compound + 1  # pit head: 0 stay, else compound code + 1
 
-    return run_episode(env, ScriptedActions(variant), seed=_VARIANT_SEED).race_time_s
+    if tail_policy is None:
+        variant += [action.copy() for action in actions[last_window_lap:]]
+        policy = ScriptedActions(variant)
+    else:
+        policy = SplicedPolicy(prefix_actions=variant, tail_policy=tail_policy)
+    result = run_episode(env, policy, seed=_VARIANT_SEED)
+    return result.race_time_s, set(result.pit_laps)
 
 
 def sc_decision_quality(verdicts, *, cfg) -> dict:

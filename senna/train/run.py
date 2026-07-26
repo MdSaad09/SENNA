@@ -239,6 +239,9 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
                 "model_version": model_version(fingerprint, stage, step),
                 "run_id": run_id,
                 "run_tag": run_tag,
+                # the serving registry resolves a triplet by era (F-24); without it the
+                # counterfactual route cannot tell the era-matched model from the headline
+                "era": stage_cfg.get("era", "2026"),
                 "fingerprint": fingerprint,
                 "config_files": config_files,
                 "git_commit": _git_commit(),
