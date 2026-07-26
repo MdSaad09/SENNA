@@ -24,6 +24,10 @@ SESSION_SLOTS = range(1, 6)
 CAR_CHANNELS = ["Speed", "Throttle", "Brake", "nGear", "RPM", "DRS"]
 
 
+class MissingPositionDataError(LookupError):
+    """The chosen lap has no X/Y/Z channel — the session cannot yield a ribbon."""
+
+
 def enable_cache(cache_dir: str | Path) -> None:
     Path(cache_dir).mkdir(parents=True, exist_ok=True)
     fastf1.Cache.enable_cache(str(cache_dir))
@@ -94,7 +98,16 @@ def load_fastest_lap_geometry(
     session.load(laps=True, telemetry=True, weather=False, messages=False)
     lap = session.laps.pick_accurate().pick_fastest()
 
-    centreline, _ = clean_pos_data(lap.get_pos_data(), zscore_max)
+    pos = lap.get_pos_data()
+    if pos.empty or "X" not in pos.columns:
+        # some archive sessions carry laps but no position channel; the caller
+        # skips the event and its coverage flag stays honest (F-08), instead of a
+        # KeyError killing the whole library build
+        raise MissingPositionDataError(
+            f"{season} round {round_number} {session_name}: fastest accurate lap "
+            "has no position data — the ribbon cannot be built from this session"
+        )
+    centreline, _ = clean_pos_data(pos, zscore_max)
     car = lap.get_car_data().add_distance()
     geometry = {
         "x_m": centreline["X"].to_numpy(),
