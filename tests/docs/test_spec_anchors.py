@@ -19,12 +19,14 @@ def test_old_name_absent_from_prose():
     # assembled at runtime, case-insensitively, so this file passes its own scan.
     old_name = ("f1" + "sip").casefold()
     tracked = subprocess.run(
-        ["git", "ls-files"],
+        # -z: NUL-separated, so a non-ASCII path (são_paulo_grand_prix) arrives as
+        # itself instead of git's quoted-octal form that no filesystem call accepts
+        ["git", "ls-files", "-z"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
         check=True,
-    ).stdout.splitlines()
+    ).stdout.rstrip("\0").split("\0")
 
     offenders = [path for path in tracked if old_name in path.casefold()]
     for path in tracked:
