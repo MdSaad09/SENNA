@@ -1,0 +1,224 @@
+# SENNA — the evaluation suite (F14 — 5.12, A-05 to A-08, F-24).
+#
+# Every metric row below carries its target AND the way it can be gamed or misread. That
+# pairing is the point: 5.12 is "the honest core of Chapter 7", and a target without its
+# gaming note is a number pretending to be evidence. The notes travel from here into the
+# generated report verbatim, so this file is the single source for both.
+#
+# Origins: sourced (a spec section or the FIA regs, with the id), fitted (which notebook),
+# stylised (an explicit modelling choice), operational (an engineering default with its
+# sizing rationale). See configs/README.md.
+
+bootstrap:
+  seed: 20260726                    # stylised — frozen the day F14 was planned; every CI in the
+                                    # report derives from it, so a rerun reproduces byte-for-byte
+  resamples: 10000                  # operational — percentile CI noise at n=480 is well under the
+                                    # 0.1-position resolution the table prints
+  ci_level: 0.95                    # sourced 5.12 M1 — "bootstrap 95% CI"
+
+m1:                                 # paired position delta vs the rule-based baseline
+  n_pairs: 480                      # sourced 5.12 says 500; the frozen bank holds 24 circuits x 20
+                                    # seeds = 480 (configs/seeds.yaml eval.stage_c.test). Minting 20
+                                    # more seeds after the split froze would be the contamination the
+                                    # bank exists to prevent, so the deviation is reported instead
+  target_mean_delta: 1.0            # sourced 5.12 — "mean at least +1.0 with CI excluding 0"
+  baseline: heuristic               # sourced A-07 — the engineer heuristic is the rule-based baseline
+  gaming_note: >-
+    Weak rivals inflate it. Rivals are fitted to data and evaluation uses the held-out rival
+    band (E-06); the scripted baselines are also scored against that band so opponent
+    difficulty is separable from the agent's own gap. Also reported against replayed-real
+    strategies (M2).
+
+m2:                                 # counterfactual vs actual, era-matched (F-24)
+  target_mean_delta: 1.0            # sourced 5.12 — v2's +1.5 kept as the stretch below
+  stretch_mean_delta: 1.5           # sourced 5.12
+  seeds_per_race: 5                 # stylised — the events are pinned by the real-race trace, so these
+                                    # seeds vary only pit service and driver offsets; five is enough to
+                                    # show a per-race delta is not one lucky service draw
+  sign_test_alpha: 0.05             # sourced — standard two-sided level; at n=10 the exact paired sign
+                                    # test needs 9/10 wins to clear it, and that bar is declared before
+                                    # the first roll (a bootstrap CI at n=10 is descriptive, not a claim)
+  trace:
+    wet_after_laps: 3               # stylised — consecutive rainfall samples before the synthesized
+                                    # trace targets full WET rather than DAMP; the crossover lap this
+                                    # implies is the E-08 ambiguity the write-up states out loud
+  races:                            # sourced — the ten counterfactual races (Saad, 26 Jul 2026), frozen
+                                    # before the first M2 roll and never re-picked on results. Every
+                                    # circuit carries native 2024 joint-pace and degradation fits, so no
+                                    # entry silently borrows 2026 physics (scenario.py era fallback);
+                                    # Canada 2024 is excluded for exactly that reason despite its race
+    - {season: 2024, round: 1,  circuit: bahrain_grand_prix,   driver: VER, red_flag: false, wet: false,
+       rationale: "the reference dry two-stopper; already extracted in F06"}
+    - {season: 2024, round: 12, circuit: british_grand_prix,   driver: HAM, red_flag: false, wet: true,
+       rationale: "the wet-crossover anchor (E-08): slick-inter-slick timing decided the win"}
+    - {season: 2024, round: 16, circuit: italian_grand_prix,   driver: LEC, red_flag: false, wet: false,
+       rationale: "the one-stop gamble against a field on two stops"}
+    - {season: 2024, round: 14, circuit: belgian_grand_prix,   driver: RUS, red_flag: false, wet: false,
+       rationale: "one-stop track position won on the road; disqualified post-race for underweight,
+                   which does not touch the in-simulator strategy comparison"}
+    - {season: 2024, round: 13, circuit: hungarian_grand_prix, driver: PIA, red_flag: false, wet: false,
+       rationale: "undercut into the lead at a track where track position is nearly decisive"}
+    - {season: 2024, round: 8,  circuit: monaco_grand_prix,    driver: LEC, red_flag: true,  wet: false,
+       rationale: "the lap-1 red flag and its free tyre change (E-04) — the case that inverts strategy"}
+    - {season: 2023, round: 13, circuit: dutch_grand_prix,     driver: VER, red_flag: true,  wet: true,
+       rationale: "double wet crossover plus a red flag: the hardest event mix in the set"}
+    - {season: 2023, round: 21, circuit: las_vegas_grand_prix, driver: VER, red_flag: false, wet: false,
+       rationale: "safety-car shaped: the neutralisation reordered the strategic problem mid-race"}
+    - {season: 2023, round: 10, circuit: british_grand_prix,   driver: NOR, red_flag: false, wet: false,
+       rationale: "the late-safety-car pit-or-stay call, from the front"}
+    - {season: 2023, round: 7,  circuit: spanish_grand_prix,   driver: VER, red_flag: false, wet: false,
+       rationale: "a dry degradation-led two-stopper: the control case with no event drama"}
+  gaming_note: >-
+    Sim optimism: the agent optimised the very simulator it is scored in, while the real teams
+    optimised reality. Framed as an in-simulator counterfactual under stated assumptions and
+    read alongside the M8 sim-to-real error. The replay baseline's snapped-stop count is
+    reported with it — a strategy the mask had to alter is a weaker comparison.
+
+m3:                                 # oracle regret against the full-information DP strategist
+  report_only: true                 # sourced 5.12 — "report distribution; no hard target in run 1"
+  gaming_note: >-
+    An easy oracle flatters the agent. The oracle's search space and its seven assumptions are
+    published verbatim with the distribution (senna/strategy/oracle.py), the agent's own realised
+    plan is entered as a contender so the oracle can only tie or beat it on the pit dimension,
+    and negative regrets are reported rather than clipped — they are the greedy-energy assumption
+    showing, not a bug.
+
+m4:                                 # energy utilisation
+  target_utilisation: 0.90          # sourced 5.12 — "at least 0.90"
+  max_derate_share: 0.05            # sourced 5.12 — "derates under 5% of laps"
+  gaming_note: >-
+    Trivially maxed by always attacking, so it is only meaningful jointly with M1/M2 and is
+    always printed as a pair with the derate rate. Green laps only: deployment under a
+    neutralisation is not a strategic choice.
+
+m5:                                 # SC/VSC decision quality against the ex-post afterstate optimum
+  precision_target: 0.75            # sourced 5.12 — "both at least 0.75"
+  recall_target: 0.75               # sourced 5.12
+  label_margin_s: 1.0               # stylised — a window counts as a real decision only when pitting and
+                                    # staying out differ by more than this. The genuine signal is about
+                                    # half a pit loss (roughly 5-12 s under VSC/SC), so 1.0 s sits far
+                                    # below signal but above tie-breaking dust; in-band windows are
+                                    # excluded from both precision and recall AND counted in the report
+  gaming_note: >-
+    Always-pit inflates recall, so precision is reported jointly and VSC and SC are kept apart
+    (E-03) because they are different opportunities. The denominator is published: one decision
+    opportunity is one neutralisation window offering at least one informed in-window decision
+    lap. A pit on the onset lap was decided before the neutralisation was visible and is not
+    counted as a call. The ex-post label is policy-dependent — alternatives continue under the
+    agent's own policy — so an agent that follows a stop up badly partly excuses its own
+    stay-out calls; that is stated, not corrected.
+
+m6:                                 # pit window accuracy
+  tolerance_laps: 3                 # sourced 5.12 — "within 3 laps of the post-hoc optimal lap" (v2)
+  target_share: 0.72                # sourced 5.12 — "at least 0.72" (v2 kept)
+  gaming_note: >-
+    The optimum depends on the search's information set, so the information set is stated: a
+    post-hoc, coordinate-wise argmin over feasible laps for one stop on the frozen event trace,
+    holding the other stops, the compound sequence and the energy actions fixed. The agent
+    decided with no future event knowledge; the search sees the whole race. The 3-lap tolerance
+    is the allowance for that asymmetry. Reactive pitting the lap after a neutralisation scores
+    well here, so read it with M5.
+
+m7:                                 # strategy diversity
+  races_per_circuit: 1000           # sourced 5.12 — "across 1000 eval races, per circuit"
+  gaming_note: >-
+    Dithering fakes diversity, so this is a sanity metric and never a headline. v2's 2.1-nat
+    target was dropped as arbitrary; the entropy is reported per circuit with its stop-count
+    and first-compound histogram so the shape is visible, not just the scalar.
+
+m8:                                 # sim-to-real — targets stay in synth.yaml, the suite's own source
+  gaming_note: >-
+    Calibrating on the test rounds would make this circular, so the split was frozen before any
+    fitting (E-14, configs/data_split.yaml): rounds 1-6 calibrate, 7+ are held out and read only
+    through senna/physics/synth/heldout.py. The pit-loss comparison is a definition gap as much
+    as a model gap — the simulated number is net pit loss, the real number is OpenF1 stationary
+    duration — and a near miss should be read that way.
+
+m9:                                 # tyre failure rate
+  max_failures_per_100: 2.0         # sourced 5.12 — "under 2.0 per 100 eval races" (v2's ">" was reversed)
+  gaming_note: >-
+    Trivially zero by never stretching a stint, so it is read jointly with M1 and the
+    stint-length distribution, both of which are reported beside it.
+
+m10:                                # regulatory legality
+  target_illegal_actions: 0         # sourced 5.12 / A-01 — 100% legality by construction
+  gaming_note: >-
+    Nothing to game — that is the point of moving compliance out of the reward (F-16). The
+    standing 100k-random-action property test covers the action space; this row covers the
+    other half of the claim, that no eval log contains a coerced or illegal executed action.
+
+m11:                                # luck share — the variance decomposition (A-08)
+  decision_reps: 25                 # operational — with 20 event seeds per circuit the between-seed
+                                    # degrees of freedom (19) bound the precision, so reps past ~25 buy
+                                    # almost nothing; 25 keeps the within-seed estimate comfortable
+  decision_stream: 173              # stylised — the sub-stream id for decision sampling, disjoint from
+                                    # the rollout policy stream (91) so the two never collide
+  bootstrap_resamples: 2000         # operational — the CI here is over 20 seeds, far coarser than M1's,
+                                    # so more resamples would only polish noise
+  gaming_note: >-
+    It depends on event-model realism, so the per-circuit event rates are validated first (5.4.1).
+    Two honest caveats ride with the number. The served policy is deterministic, so the split only
+    exists under some decision distribution and the natural one is the policy's own head — mean
+    head entropy is reported alongside for context. And because the env consumes randomness
+    policy-dependently, re-sampled decisions also shift the events they meet; that entangled
+    variance is charged to the decision side, which makes the published luck share a conservative
+    lower bound on what the event draws explain.
+
+era_finetune:                       # the F-24 / OQ-9 era-matched Stage C fine-tune
+  era: "2024"                       # sourced F-24 — same env code, the 2024 constants file (A-10)
+  resume: models/headline           # operational — warm start from the frozen 2026 headline triplet;
+                                    # its VecNormalize statistics carry in and keep adapting (F-23)
+  budget_steps: 2000000             # stylised — half the Stage C ceiling. A warm start adapts a policy
+                                    # to 20 cars, 100 kg of fuel and a 2 MJ per-lap budget; it does not
+                                    # rediscover strategy. A ceiling, never a schedule (R-12)
+  eval_every_steps: 98304           # sourced — the Stage C cadence from curriculum.yaml
+  stagnation_steps: 1000000         # sourced 5.7 — the Stage C stop rule, unchanged
+  circuits:                         # sourced — the 23 circuits with native 2024 joint-pace and
+                                    # degradation fits. Canada and France are absent on purpose: they
+                                    # have no 2024 fit, and build_scenario would silently serve 2026
+                                    # constants under an era-2024 label
+    - abu_dhabi_grand_prix
+    - australian_grand_prix
+    - austrian_grand_prix
+    - azerbaijan_grand_prix
+    - bahrain_grand_prix
+    - belgian_grand_prix
+    - british_grand_prix
+    - chinese_grand_prix
+    - dutch_grand_prix
+    - emilia_romagna_grand_prix
+    - hungarian_grand_prix
+    - italian_grand_prix
+    - japanese_grand_prix
+    - las_vegas_grand_prix
+    - mexico_city_grand_prix
+    - miami_grand_prix
+    - monaco_grand_prix
+    - qatar_grand_prix
+    - saudi_arabian_grand_prix
+    - singapore_grand_prix
+    - spanish_grand_prix
+    - são_paulo_grand_prix
+    - united_states_grand_prix
+
+sensitivity:                        # the harvest-cap robustness pass (E-02; Saad, 26 Jul 2026)
+  harvest_cap:
+    h_max_mj: 7.0                   # sourced — FIA 2026 Technical Regulations Issue 18 Art C5.2.10
+                                    # (20 Apr 2026 refinement) cut maximum permitted recharge from 8 to
+                                    # 7 MJ. circuits.yaml still carries the 8.5 baseline the headline
+                                    # model trained under, and correcting it there would desync the
+                                    # served fingerprint from the frozen triplet, so this runs as an
+                                    # eval-only overlay. It measures the FROZEN agent's robustness under
+                                    # a 7 MJ cap, never what a model re-optimised for 7 MJ would do
+    races_per_circuit: 5            # operational — enough to move the utilisation and derate means off
+                                    # noise; the comparison is against the same seeds at 8.5
+  energy_coefficients:              # the borrowed 2024 fitted: block (scenario.py) — M2's stated assumption
+    perturbation: 0.5               # stylised — re-run M2 with the borrowed coefficients at +/-50%. If M2
+                                    # moves less than its own spread, "borrowed from the 2026 fit" is a
+                                    # documented coarseness rather than a load-bearing unknown
+
+store:
+  committed_dir: docs/results/F14/store   # operational — the deterministic input to make report. models/
+                                          # is gitignored, so the raw episode store cannot be the thing
+                                          # the report reproduces from
+  raw_dir: models/eval                    # operational — episode-grain jsonl and traces, rebuilt by make suite
