@@ -42,18 +42,49 @@ def models_root(models_dir=None) -> Path:
     return Path(os.environ.get("MODELS_DIR", config.REPO_ROOT / "models"))
 
 
+def baked_triplets(models_dir, *, configs_dir=None) -> dict:
+    """The version each baked triplet carries, keyed by version string. A listed directory
+    that is absent is skipped rather than fatal: a clone that never ran the era-matched
+    fine-tune still has to serve the headline."""
+    root = Path(models_dir)
+    found = {}
+    for name in config.load("serving", configs_dir)["baked_models"]:
+        manifest = root / name / "manifest.json"
+        if manifest.exists():
+            found[json.loads(manifest.read_text())["model_version"]] = root / name
+    return found
+
+
 def resolve_version(models_dir, version: str | None) -> Path:
     """None and 5.11.2's local alias "dev-latest" mean the promoted headline; an
     explicit version must name what this image actually bakes."""
     headline = Path(models_dir) / "headline"
     if version in (None, "dev-latest"):
         return headline
-    baked = json.loads((headline / "manifest.json").read_text())["model_version"]
-    if version == baked:
-        return headline
+    baked = baked_triplets(models_dir)
+    if version in baked:
+        return baked[version]
     raise UnknownModelVersionError(
         f"model_version '{version}' names no baked triplet — this image serves "
-        f"{baked} (GET /api/v1/agents lists what is deployable)"
+        f"{', '.join(sorted(baked)) or 'nothing'} "
+        "(GET /api/v1/agents lists what is deployable)"
+    )
+
+
+def era_model_version(era: str, *, models_dir=None, configs_dir=None) -> str:
+    """The version string of the triplet baked for this era. The counterfactual route
+    stamps it into every run so a screenshot says which model produced the comparison."""
+    root = models_root(models_dir)
+    for name in config.load("serving", configs_dir)["baked_models"]:
+        manifest = root / name / "manifest.json"
+        if not manifest.exists():
+            continue
+        payload = json.loads(manifest.read_text())
+        if str(payload.get("era", "2026")) == str(era):
+            return payload["model_version"]
+    raise UnknownModelVersionError(
+        f"no baked triplet for era {era} — run make finetune, or the counterfactual "
+        "route falls back to the frozen headline and says so (F-24)"
     )
 
 

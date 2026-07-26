@@ -62,3 +62,10 @@ weather_profiles: # sourced — the 5.9.2 request literals, mapped onto the env'
 seeds:
   draw_bound: 2147483648 # operational — server-drawn seeds land in the signed-int32
                          # SimulationRun.seed column, so the draw stays below 2**31
+
+baked_models:                       # F-24 — the triplets this image can serve
+  - headline                        # operational — the frozen 2026 headline (F08), the default
+  - era2024                         # operational — the era-matched fine-tune the counterfactual
+                                    # route serves (F-24). Absent until make finetune has run;
+                                    # the loader skips what it cannot find so a fresh clone
+                                    # still serves the headline
