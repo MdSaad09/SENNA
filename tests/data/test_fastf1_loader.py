@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from senna.data.fastf1_loader import plan_sessions
 
@@ -72,3 +73,30 @@ def test_planned_sessions_carry_season_agnostic_keys_and_slot_matched_dates():
     sprint = next(e for e in planned if e["round"] == 4 and e["session_name"] == "Sprint")
     assert sprint["event_name"] == "Azerbaijan Grand Prix"
     assert sprint["session_date_utc"] == shootout_row["Session4DateUtc"]
+
+
+def test_a_lap_without_position_data_raises_the_typed_skip(monkeypatch):
+    # some archive sessions carry laps but no pos channel; the ribbon build must
+    # skip such an event with its coverage flag off (F-08), never KeyError mid-library
+    import senna.data.fastf1_loader as loader
+
+    class StubLap:
+        def get_pos_data(self):
+            return pd.DataFrame()
+
+    class StubLaps:
+        def pick_accurate(self):
+            return self
+
+        def pick_fastest(self):
+            return StubLap()
+
+    class StubSession:
+        laps = StubLaps()
+
+        def load(self, **kwargs):
+            pass
+
+    monkeypatch.setattr(loader.fastf1, "get_session", lambda *args: StubSession())
+    with pytest.raises(loader.MissingPositionDataError, match="no position data"):
+        loader.load_fastest_lap_geometry(2024, 1, "Race", zscore_max=3.0)

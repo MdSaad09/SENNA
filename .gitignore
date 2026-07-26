@@ -26,10 +26,8 @@ models/explain/*
 models/explain/senna-ppo-6b6edb78d84e-C-00835584/holdout.npz
 models/explain/senna-ppo-6b6edb78d84e-C-00835584/crosscheck.npz
 data/cache/
-data/circuits/*
-!data/circuits/bahrain_grand_prix
-!data/circuits/hungarian_grand_prix
-!data/circuits/monaco_grand_prix
+# the ribbon library is a committed artifact (INDEX decision 22 Jul 2026): a clean
+# clone must show every buildable circuit, so nothing under data/circuits is ignored
 fastf1_cache/
 *.parquet
 .DS_Store

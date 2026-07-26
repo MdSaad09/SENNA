@@ -13,6 +13,7 @@ Run it: python -m senna.circuits.build   (or `make circuits`)
 
 import argparse
 import asyncio
+import json
 import logging
 import re
 from pathlib import Path
@@ -158,14 +159,29 @@ async def run_build(output_dir: Path) -> dict:
             log.info("skip %s: no dry session ingested yet", event_name)
             continue
 
-        channels, corners = fastf1_loader.load_fastest_lap_geometry(
-            chosen["season"],
-            chosen["round"],
-            chosen["session_name"],
-            zscore_max=zscore_max,
-        )
-        vertices, meta = build_ribbon(channels, corners, ribbon_cfg)
         slug = slugify_event(event_name)
+        try:
+            channels, corners = fastf1_loader.load_fastest_lap_geometry(
+                chosen["season"],
+                chosen["round"],
+                chosen["session_name"],
+                zscore_max=zscore_max,
+            )
+        except fastf1_loader.MissingPositionDataError as err:
+            # F-08: the library reports what it cannot build; without an earlier
+            # good ribbon the coverage flag stays off and the frontend shows the
+            # honest state
+            log.warning("skip %s: %s", event_name, err)
+            entries.extend(_kept_entry(output_dir, slug))
+            continue
+        vertices, meta = build_ribbon(channels, corners, ribbon_cfg)
+        if geometry.ribbon_self_intersects(vertices):
+            # E-17 is a shipping gate, not only a unit test: a crossing edge means
+            # this lap's geometry defeated the half-width clamp, and nothing that
+            # crosses itself ships — the existing ribbon, if any, stays
+            log.warning("skip %s: ribbon self-intersects after clamping (E-17)", slug)
+            entries.extend(_kept_entry(output_dir, slug))
+            continue
         meta = {"slug": slug, "event_name": event_name, **meta}
 
         circuit_dir = output_dir / slug
@@ -193,6 +209,23 @@ async def run_build(output_dir: Path) -> dict:
     export.write_metadata(output_dir / "index.json", index)
     log.info("wrote %s (%d circuits)", output_dir / "index.json", index["count"])
     return index
+
+
+def _kept_entry(output_dir: Path, slug: str) -> list[dict]:
+    """A previously built ribbon survives a session that cannot rebuild it — the
+    most recent dry session changing (or degrading) must not evict a good ribbon
+    from the library index."""
+    meta_path = output_dir / slug / "meta.json"
+    if not (meta_path.exists() and (output_dir / slug / "ribbon.glb").exists()):
+        return []
+    meta = json.loads(meta_path.read_text())
+    log.info("keeping the existing %s ribbon (built from an earlier session)", slug)
+    return [{
+        "slug": slug,
+        "event_name": meta.get("event_name", slug),
+        "has_elevation": meta["flags"]["source"] == "smoothed_z_exaggerated",
+        "lap_length_ok": meta["lap_length_ok"],
+    }]
 
 
 def _fit_window(window: int, station_count: int) -> int:
