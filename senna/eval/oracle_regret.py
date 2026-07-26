@@ -28,17 +28,27 @@ log = logging.getLogger(__name__)
 _ORACLE_SEED = 0  # the seed solve_oracle rolls its contenders on; the twin is deterministic
 
 
-def race_regret(race, *, configs_dir=None) -> dict:
+def race_regret(race, *, configs_dir=None, env_cache=None, scenarios=None) -> dict:
     """Time and position regret for one recorded eval race."""
     from senna import config
 
-    scenario = build_scenario(race.circuit, "2026", configs_dir=configs_dir)
+    if scenarios is None:
+        scenarios = {}
+    if race.circuit not in scenarios:
+        scenarios[race.circuit] = build_scenario(race.circuit, "2026", configs_dir=configs_dir)
+    scenario = scenarios[race.circuit]
     cfg = config.load("baselines", configs_dir)["oracle"]
     agent_plan = PitPlan(stops=tuple(zip(race.twin.pit_laps, race.twin.compounds,
                                          strict=True)))
 
-    oracle = solve_oracle(scenario, race.trace, cfg=cfg, baselines=(agent_plan,))
-    env = F1RaceEnv(race.circuit, "2026", twin=race.trace, configs_dir=configs_dir)
+    if env_cache is None:
+        env_cache = {}
+    oracle = solve_oracle(scenario, race.trace, cfg=cfg, baselines=(agent_plan,),
+                          env_cache=env_cache)
+    if race.circuit not in env_cache:
+        env_cache[race.circuit] = F1RaceEnv(race.circuit, "2026", configs_dir=configs_dir)
+    env = env_cache[race.circuit]
+    env.reset(seed=_ORACLE_SEED, options={"twin": race.trace})
     oracle_race = run_episode(
         env, PlanPolicy(oracle.plan, mode="greedy", scenario=scenario), seed=_ORACLE_SEED
     )

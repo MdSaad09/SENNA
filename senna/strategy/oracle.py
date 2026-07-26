@@ -187,7 +187,8 @@ def _plan_codes(scenario, trace: EventTrace, plans: list) -> set:
     return codes
 
 
-def solve_oracle(scenario, trace: EventTrace, *, cfg: dict, baselines=()) -> OracleResult:
+def solve_oracle(scenario, trace: EventTrace, *, cfg: dict, baselines=(),
+                 env_cache: dict | None = None) -> OracleResult:
     plans = enumerate_plans(scenario, trace, cfg["max_stops"])
     codes = _plan_codes(scenario, trace, plans) | {
         compound_code(name) for plan in baselines for _, name in plan.stops
@@ -198,9 +199,18 @@ def solve_oracle(scenario, trace: EventTrace, *, cfg: dict, baselines=()) -> Ora
     finalists = ranked[: cfg["top_k_rolls"]]
     contenders = finalists + [plan for plan in baselines if plan not in finalists]
 
+    # one env for every contender: construction re-parses every physics yaml (~140 ms) and
+    # the twin is sticky across resets, so building one per plan spent about an hour of the
+    # M3 battery on parsing the same constants 24,000 times
+    env = env_cache.get(trace.circuit) if env_cache is not None else None
+    if env is None:
+        env = _twin_env(trace)
+        if env_cache is not None:
+            env_cache[trace.circuit] = env
+    env.reset(seed=0, options={"twin": trace})
+
     best_plan, best_time = None, np.inf
     for plan in contenders:
-        env = _twin_env(trace)
         result = run_episode(env, PlanPolicy(plan, mode="greedy", scenario=scenario), seed=0)
         if result.race_time_s < best_time:
             best_plan, best_time = plan, result.race_time_s

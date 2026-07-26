@@ -111,7 +111,9 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
             committed, "m10_legality", metrics.legality_audit(races), envelope=envelope)
 
     if "m3" in wanted:
-        rows = [race_regret(race, configs_dir=configs_dir) for race in races]
+        oracle_envs, oracle_scenarios = {}, {}
+        rows = [race_regret(race, configs_dir=configs_dir, env_cache=oracle_envs,
+                            scenarios=oracle_scenarios) for race in races]
         written["m3_regret"] = store.write_metric(
             committed, "m3_regret", regret_distribution(rows), envelope=envelope)
 
