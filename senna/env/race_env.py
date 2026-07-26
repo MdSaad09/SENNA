@@ -319,6 +319,13 @@ class F1RaceEnv(Env):
         self._mask = self._ego_mask()
         return self._observe(), terms["total"], terminated, False, self._info(terms)
 
+    @property
+    def twin(self) -> EventTrace | None:
+        """The trace this env is replaying, if any. The M5/M6 searches need it to ask what
+        the mask would have allowed on a given lap, and reaching into a private for that
+        would make every afterstate caller fragile to a rename."""
+        return self._twin
+
     def action_masks(self) -> np.ndarray:
         if self._constraints == "penalty":
             # the learner sees no fence; the true mask still runs inside as the
