@@ -104,10 +104,13 @@ def _provenance(envelope, store_dir) -> str:
         | | |
         |---|---|
         | Models | {versions} |
-        | Env config hash | `{envelope['config_hash'][:12]}` — the training manifest's fingerprint; overlay studies below print their own |
+        | Env config hash | `{envelope['config_hash'][:12]}` (the training manifest's) |
         | Seed manifest | `{envelope['seeds_fingerprint'][:12]}` |
         | Commit | `{envelope['git_commit'][:12]}` |
         | Store | `{_display_path(store_dir)}` |
+
+        The overlay studies at the end of this page mutate a config on purpose, so
+        each prints its own hash beside its table.
         """)
 
 

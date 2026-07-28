@@ -16,10 +16,13 @@ reachable from training: the seed loader refuses every consumer but this suite, 
 | | |
 |---|---|
 | Models | era2024 `senna-ppo-db031aead155-C-02211840`, headline `senna-ppo-6b6edb78d84e-C-00835584` |
-| Env config hash | `6b6edb78d84e` — the training manifest's fingerprint; overlay studies below print their own |
+| Env config hash | `6b6edb78d84e` (the training manifest's) |
 | Seed manifest | `b112935601b2` |
 | Commit | `bccc8a851531` |
 | Store | `docs/results/F14/store` |
+
+The overlay studies at the end of this page mutate a config on purpose, so
+each prints its own hash beside its table.
 
 
 ## How to read these numbers

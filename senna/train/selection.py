@@ -84,7 +84,8 @@ def promote_headline(candidate: HeadlineCandidate, dest: Path) -> dict:
 
 
 def score_triplet(triplet_dir: Path, *, configs_dir=None) -> float:
-    """Re-score a saved triplet on the validation banks — the make rescore path (make eval until F15). One
+    """Re-score a saved triplet on the validation banks — the make rescore path
+    (named make eval until F15 reclaimed that name for the A-09 suite). One
     throwaway env provides the spaces, the frozen statistics come from the triplet,
     and the bank is rolled exactly as a Stage C gate evaluation would (E-06: train
     band; the test bank stays reserved)."""
