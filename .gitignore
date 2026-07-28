@@ -19,6 +19,7 @@ wandb/
 # descend into a fully ignored directory to honour a re-include.
 models/*
 !models/headline
+!models/era2024
 !models/explain
 models/explain/*
 !models/explain/senna-ppo-6b6edb78d84e-C-00835584

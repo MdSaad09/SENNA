@@ -48,3 +48,10 @@ montecarlo:
 validation:
   ks_target: 0.15            # sourced 5.4.1 — lap-time KS bound per held-out circuit
   pit_tolerance_s: 1.0       # sourced 5.4.1 — sim pit delta vs OpenF1 mean
+  slug_aliases:              # sourced — the same circuit under a renamed event
+    barcelona_grand_prix: spanish_grand_prix
+                             # F1 renamed the Circuit de Barcelona-Catalunya round for 2026,
+                             # so the ingested 2026 slug stops matching the fitted one and
+                             # the whole held-out round 7 was silently skipped from the
+                             # sim-to-real numbers (found in F14). Aliasing here rather than
+                             # in circuits.yaml keeps the training fingerprint untouched

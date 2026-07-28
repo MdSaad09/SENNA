@@ -68,16 +68,17 @@ def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log
     also appends its numbers to curriculum_gates.json (F-21)."""
     policy = Sb3Policy(model, venv.normalize_obs)
     gate = stage_cfg["gate"]
+    era = stage_cfg.get("era", "2026")  # only the F14 era-matched overlay sets this
 
     if stage == "A":
         circuit = stage_cfg["circuits"][0]
-        _, reference_time_s = stage_a_reference(circuit, configs_dir=configs_dir)
+        _, reference_time_s = stage_a_reference(circuit, configs_dir=configs_dir, era=era)
         history = []
 
         def evaluate(step):
             history.append(run_stage_a_eval(
                 policy, step=step, circuit=circuit, seeds=banks.stage_a,
-                configs_dir=configs_dir,
+                configs_dir=configs_dir, era=era,
             ))
             decision = stage_a_gate(
                 history, reference_time_s=reference_time_s,
@@ -98,7 +99,7 @@ def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log
         traces_dir.mkdir(parents=True, exist_ok=True)
         recorded, replaced = record_stage_b_traces(
             banks=banks.stage_b, overflow=banks.stage_b_overflow,
-            configs_dir=configs_dir, traces_dir=traces_dir,
+            configs_dir=configs_dir, traces_dir=traces_dir, era=era,
         )
         gate_log.record_recording(stage, replaced_seeds=replaced,
                                   traces_dir=str(traces_dir))
@@ -107,7 +108,7 @@ def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log
 
         def evaluate(step):
             pairs = run_stage_b_eval(policy, recorded, configs_dir=configs_dir,
-                                     env_cache=replay_envs)
+                                     env_cache=replay_envs, era=era)
             decision = stage_b_gate(
                 pairs, finish_ahead_min=gate["finish_ahead_min"],
                 median_delta_min=gate["median_delta_min"], n_required=gate["n_pairs"],
@@ -124,7 +125,7 @@ def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log
     def evaluate(step):
         history.append(run_stage_c_eval(
             policy, step=step, banks=banks.stage_c_validation, configs_dir=configs_dir,
-            env_cache=eval_envs,
+            env_cache=eval_envs, era=era, circuits=stage_cfg["circuits"],
         ))
         decision = stage_c_stop(
             history, current_step=step, stagnation_steps=gate["stagnation_steps"],
@@ -238,6 +239,9 @@ def train_run(*, seed: int, from_stage: str = "A", to_stage: str = "C",
                 "model_version": model_version(fingerprint, stage, step),
                 "run_id": run_id,
                 "run_tag": run_tag,
+                # the serving registry resolves a triplet by era (F-24); without it the
+                # counterfactual route cannot tell the era-matched model from the headline
+                "era": stage_cfg.get("era", "2026"),
                 "fingerprint": fingerprint,
                 "config_files": config_files,
                 "git_commit": _git_commit(),

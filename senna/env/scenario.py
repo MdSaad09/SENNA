@@ -18,6 +18,7 @@ from senna import config
 # Observation one-hot order (#4-8) and the pit head's compound choices (1..5).
 COMPOUNDS = ("SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET")
 SLICKS = ("SOFT", "MEDIUM", "HARD")
+START_COMPOUND = "MEDIUM"  # the grid rule (5.5): the whole field starts here
 
 
 def compound_code(name: str) -> int:

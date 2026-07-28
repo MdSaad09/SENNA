@@ -4,8 +4,12 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F14 — planned 26 Jul 2026 (docs/plans/F14-plan.md); next: `/ship F14` in this session
-**Next up:** F15
+**Active feature:** none — next session: `/plan-feature F15`
+**Next up:** F15 (demo, docs, reproducibility pack & freeze) — the last feature. It
+inherits three F14 cuts: the serving flip (`make explain` for the 2024 triplet, which
+clears the `pending-F14` caveat in the counterfactual view), the extract writer, and the
+M2 energy-coefficient sensitivity. Also still open: the live-view 3D canvas recheck in
+real Chrome before the video.
 
 ## Feature ledger
 
@@ -25,7 +29,7 @@ workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Done 23 Jul 2026 | feature/F11-frontend-views-1-2 | [F11](docs/learn/F11-frontend-views-1-2.md) |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Done 24 Jul 2026 | feature/F12-views-energy-tyre | [F12](docs/learn/F12-views-energy-tyre.md) |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Done 25 Jul 2026 | feature/F13-views-live-counterfactual | [F13](docs/learn/F13-views-live-counterfactual.md) |
-| F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Planned | | |
+| F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Todo | | |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
@@ -100,6 +104,35 @@ the work — resume with `claude --continue`, or start fresh and say
   The assumption stands as written ("about 70 kg, energy-flow limited"); next fits
   session may lift the grade-C flag per the register's close-out rule.
 
+- **F14 era-matched fine-tune (26 Jul 2026):** `senna-ppo-db031aead155-C-02211840`
+  (seed 331, warm-started from the headline, 2M Stage C steps on the 2024 constants)
+  promoted to `models/era2024/`. On identical 2024 validation banks it scores **6.336
+  mean points against the frozen 2026 headline's 3.802** — the F-24 regulation confound
+  measured: a 2026-physics agent scored on 2024 races loses ~2.5 points to the car, not
+  to its strategy. The serving flip is wired but still reports `pending-F14` because the
+  2024 surrogate has not been fitted; `make explain` against that triplet clears it
+  (Saad's decision 3 named the flip the designated cut).
+- **F14 headline results (26 Jul 2026):** M1 **+2.08 places** over 480 paired seeds,
+  CI [1.71, 2.48] — met. M10 clean over 480 races. Missed: M2 (-0.60, sign test 4W/5L/1T,
+  p=1.0), M4 (0.649 against a 0.914 attainable ceiling), M5 (SC precision 0.942 but recall
+  0.308; **VSC recall 0.000 — the agent never once pits under a virtual safety car across
+  311 windows**), M6 (0.228), M8 (0/4 circuits, the F03 transform miss), M9 (**37.3 tyre
+  failures per 100 races**, mean stint 29.4 laps, max 76). M11 luck share **0.758**
+  CI [0.68, 0.82] at a mean head entropy of 0.605 nats. Read M1 with M9: the agent buys
+  track position by over-running tyres. Evidence: docs/results/F14-evaluation.md.
+- **DB-wipe guard (F14, 28 Jul 2026):** `senna/data/db.py::require_disposable` refuses to
+  drop tables on any database not named `*_test`, resolving the name the way the driver
+  does (a `?database=` query parameter overrides the URL path, which was a live bypass).
+  All three destructive test modules call it, CI's ephemeral Postgres is renamed
+  `senna_test`, and compose provisions it on first boot. The escape hatch names the
+  database out loud (`SENNA_ALLOW_DESTRUCTIVE_DB=senna`) so it cannot be left armed.
+  Closes the recurring wipe hazard — the store was lost three times, twice in one session.
+- **E-02 harvest cap MEASURED (F14, 28 Jul 2026):** under the FIA's refined 7 MJ cap
+  (Issue 18 Art C5.2.10) the frozen agent loses **0.13 places** and its derate share goes
+  **0.078 -> 0.182**. It keeps its results and runs out of energy more than twice as
+  often. This is the frozen agent's robustness, NOT a model re-optimised for 7 MJ.
+  circuits.yaml stays at 8.5 with a header explaining why; AR-05 carries the verification.
+  Reproduce with `make sensitivity`.
 - **AR-04 energy store (spec Part 8):** VERIFIED 24 Jul 2026 — official FIA regulation
   text. FIA 2026 Formula 1 Technical Regulations Issue 8 (24 Jun 2024), Art 5.4.9: "The
   difference between the maximum and the minimum state of charge of the ES may not

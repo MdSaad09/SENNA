@@ -25,13 +25,13 @@ from senna.env.masks import SLICK_ACTIONS, UNFITTED_COMPOUND, ActionMask, build_
 from senna.env.observation import NO_DEG_A, NO_DEG_B
 from senna.env.pitlane import resolve_pit_lane
 from senna.env.reward import pace_shaping, shaping_step, terminal_points
-from senna.env.scenario import COMPOUNDS, build_scenario, compound_code
+from senna.env.scenario import COMPOUNDS, START_COMPOUND, build_scenario, compound_code
 from senna.env.state import RaceState
 from senna.env.twin import EventTrace
 
 _STATUS_NAMES = {events.GREEN: "green", events.VSC: "vsc", events.SC: "sc", events.RED: "red"}
 _BALANCED = 1
-_START_COMPOUND = compound_code("MEDIUM")
+_START_COMPOUND = compound_code(START_COMPOUND)
 
 
 class F1RaceEnv(Env):
@@ -201,6 +201,7 @@ class F1RaceEnv(Env):
         self._ego_pit_laps: list[int] = []
         self._ego_pit_compounds: list[str] = []
         self._ego_derate_count = 0
+        self._ego_derated_now = False
         self._ego_harvest_total = 0.0
         self._ego_deploy_total = 0.0
         self._forced_pit_now = False
@@ -306,7 +307,8 @@ class F1RaceEnv(Env):
         ego = state.ego
         self._ego_harvest_total += float(harvest_mj[ego])
         self._ego_deploy_total += float(delivered[ego])
-        if derate[ego] > 0:
+        self._ego_derated_now = bool(derate[ego] > 0)
+        if self._ego_derated_now:
             self._ego_derate_count += 1
 
         terminated = bool(state.lap >= self.total_laps or state.retired[ego])
@@ -316,6 +318,13 @@ class F1RaceEnv(Env):
         terms = self._reward(prev_position, pace_time_s, terminated, v2_lap)
         self._mask = self._ego_mask()
         return self._observe(), terms["total"], terminated, False, self._info(terms)
+
+    @property
+    def twin(self) -> EventTrace | None:
+        """The trace this env is replaying, if any. The M5/M6 searches need it to ask what
+        the mask would have allowed on a given lap, and reaching into a private for that
+        would make every afterstate caller fragile to a rename."""
+        return self._twin
 
     def action_masks(self) -> np.ndarray:
         if self._constraints == "penalty":
@@ -761,6 +770,7 @@ class F1RaceEnv(Env):
                 "harvest_mj": float(state.last_harvest_mj[state.ego]),
                 "deploy_mj": float(state.last_deploy_mj[state.ego]),
                 "soc_mj": float(state.soc_mj[state.ego]),
+                "derated": self._ego_derated_now,  # M4 reports derates per lap, not just a total
             },
             "mask": {
                 "pit": self._mask.pit.tolist(),

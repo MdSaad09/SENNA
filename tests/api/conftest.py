@@ -44,10 +44,17 @@ def db_url() -> str:
 
 def reset_schema() -> None:
     """Drop and recreate every table senna.data.schema declares — the tests/data
-    pattern; the alembic migration itself is CI's `make migrate` concern."""
+    pattern; the alembic migration itself is CI's `make migrate` concern.
+
+    require_disposable is the reason this cannot silently eat the ingested store: it
+    refuses any database not named as disposable, which is the mistake that cost the
+    real one three times."""
     from sqlalchemy.ext.asyncio import create_async_engine
 
+    from senna.data.db import require_disposable
     from senna.data.schema import Base
+
+    require_disposable(db_url())
 
     async def rebuild():
         engine = create_async_engine(db_url())

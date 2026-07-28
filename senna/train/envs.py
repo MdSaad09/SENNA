@@ -60,6 +60,9 @@ def stage_venv(stage_cfg: dict, *, workers: int, stage_seed: int, vec: str,
     assignment = assign_circuits(stage_cfg["circuits"], workers)
     env_kwargs = dict(stage_cfg["env"])
     band = stage_cfg["rival_band"]
+    # the curriculum trains the 2026 problem; only the F14 era-matched overlay sets this,
+    # so the committed configs keep their fingerprint and the default path is unchanged
+    era = stage_cfg.get("era", "2026")
     if band != "train":
         # E-06: the test band is held out for F14 — a curriculum edit must not be
         # enough to train on it, mirroring the seed bank's mechanical refusal
@@ -68,7 +71,7 @@ def stage_venv(stage_cfg: dict, *, workers: int, stage_seed: int, vec: str,
     def worker(circuits):
         def make():
             envs = [
-                F1RaceEnv(circuit, "2026", rival_band=band, configs_dir=configs_dir,
+                F1RaceEnv(circuit, era, rival_band=band, configs_dir=configs_dir,
                           **env_kwargs)
                 for circuit in circuits
             ]

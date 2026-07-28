@@ -80,7 +80,7 @@ async def run_validation(args: argparse.Namespace) -> dict:
     for slug in sorted(real_laps["slug"].unique()) if not real_laps.empty else []:
         real = real_laps[real_laps["slug"] == slug]
         n_laps = int(real["lap_number"].max())  # the real held-out race distance
-        spec = _mc_spec(slug, transforms, params, n_laps)
+        spec = _mc_spec(_canonical(slug, synth_cfg), transforms, params, n_laps)
         if spec is None:
             log.info("validate %s: no transform/fit inputs, skipped", slug)
             continue
@@ -95,8 +95,10 @@ async def run_validation(args: argparse.Namespace) -> dict:
         sim_green = draw[draw["is_green"]]["lap_time_s"].to_numpy()
         ks = ks_distance(sim_green, real_green)
         emd = _stint_emd(draw, real)
-        pit_ok, sim_pit, real_pit = _pit_check(slug, spec, real_pits, pit_tol)
-        deficit = _param(transforms, slug, "t4_energy", "deficit_mj")
+        pit_ok, sim_pit, real_pit = _pit_check(_canonical(slug, synth_cfg), spec, real_pits,
+                                               pit_tol)
+        deficit = _param(transforms, _canonical(slug, synth_cfg), "t4_energy",
+                         "deficit_mj")
         summary[slug] = {
             "lap_time_ks": (round(ks, 4), f"KS vs real held-out green laps; target < {ks_target}"),
             "ks_within_target": (bool(ks < ks_target), "5.4.1 target met"),
@@ -120,6 +122,12 @@ async def run_validation(args: argparse.Namespace) -> dict:
     )
     log.info("wrote %s (%d held-out circuits)", args.summary_out, len(summary))
     return summary
+
+
+def _canonical(slug: str, synth_cfg: dict) -> str:
+    """The slug the configs know this circuit by. A renamed event otherwise reads as a
+    circuit with no fits and drops out of the held-out set without saying so."""
+    return synth_cfg["validation"].get("slug_aliases", {}).get(slug, slug)
 
 
 def _mc_spec(slug: str, transforms: dict, params: dict, n_laps: int) -> dict | None:

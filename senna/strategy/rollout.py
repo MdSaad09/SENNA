@@ -22,19 +22,26 @@ class EpisodeResult:
     total_reward: float
     actions: list
     snapped: int  # times a policy's proposal was altered to stay legal (replay honesty)
+    laps: tuple = ()  # per-lap rows, only when the caller asks (F14 M4/M9/M10)
 
 
-def run_episode(env, policy, *, seed) -> EpisodeResult:
+def run_episode(env, policy, *, seed, capture: bool = False) -> EpisodeResult:
+    """capture=True keeps a per-lap row per step — the energy, status and legality detail
+    the metric suite needs and the terminal info dict flattens away. It is off by default
+    because the training gates roll millions of these and would pay for a list they never
+    read."""
     obs, info = env.reset(seed=seed)
     policy.reset(obs, info, rng=np.random.default_rng([seed, _POLICY_STREAM]))
 
-    actions, total_reward = [], 0.0
+    actions, laps, total_reward = [], [], 0.0
     terminated = False
     while not terminated:
         action = np.asarray(policy.act(obs, info, env.action_masks()))
         actions.append(action)
         obs, reward, terminated, _, info = env.step(action)
         total_reward += float(reward)
+        if capture:
+            laps.append(_lap_row(info))
 
     return EpisodeResult(
         final_position=info["final_position"],
@@ -46,4 +53,21 @@ def run_episode(env, policy, *, seed) -> EpisodeResult:
         total_reward=total_reward,
         actions=actions,
         snapped=int(getattr(policy, "snapped", 0)),
+        laps=tuple(laps),
     )
+
+
+def _lap_row(info: dict) -> dict:
+    """The metric-facing view of one lap. Violations collapse to a count: which rule was
+    broken matters while training a penalty variant, but M10 only asks how many."""
+    energy = info["energy"]
+    return {
+        "lap": info["lap"],
+        "track_status": info["track_status"],
+        "harvest_mj": energy["harvest_mj"],
+        "deploy_mj": energy["deploy_mj"],
+        "soc_mj": energy["soc_mj"],
+        "derated": energy["derated"],
+        "forced_pit": info["events"]["forced_pit"],
+        "violations": sum(info["violations"].values()),
+    }

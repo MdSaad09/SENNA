@@ -1,9 +1,10 @@
 """POST /counterfactuals (F-24): one POST answers with a linked, event-paired run
 pair — the frozen agent and the driver's actual strategy replayed in the same
-simulator. Until F14 delivers the Stage-C 2024 fine-tune, the agent leg runs the
-frozen 2026 model on 2024 physics and the run config says so loudly —
-era_matched_model: pending-F14 — so no consumer can mistake the preview for the
-thesis result (decision Q3). The real stops are extracted from the driver's
+simulator. The agent leg runs the era-matched model where one is baked, so the
+comparison separates better strategy from a different car; where none is baked
+the route falls back to the frozen 2026 model on 2024 physics and the run config
+says so loudly — era_matched_model: pending-F14 — so no consumer can mistake the
+preview for the thesis result. The real stops are extracted from the driver's
 ingested laps here at POST time and frozen into the run config, so the worker
 never reads laps and a retry replays the identical plan.
 """
@@ -26,6 +27,11 @@ from api.schemas import JobAccepted, SimulationCreate
 from senna.data.schema import Event, Lap, Session, SessionResult, SimulationRun
 from senna.env.scenario import build_scenario
 from senna.serve.cache import sim_cache_key
+from senna.serve.loader import (
+    UnknownModelVersionError,
+    era_model_version,
+    read_manifest,
+)
 from senna.serve.mapping import circuit_slug
 from senna.strategy.extract import plan_from_rows
 
@@ -104,8 +110,19 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
         seed=req.seed,
     )
     manifest = await run_in_threadpool(validated_manifest, sim)
+    # F-24: the agent leg should be the era-matched model, not the 2026 headline driving a
+    # 2024 car. Until make finetune has baked one, fall back to the headline and say so in
+    # the run config — the dashboard reads that string and prints the caveat itself
+    try:
+        era_matched = await run_in_threadpool(era_model_version, sim.era)
+        served = await run_in_threadpool(read_manifest, None, era_matched)
+    except UnknownModelVersionError:
+        era_matched, served = "pending-F14", manifest
     sim = draw_seed(sim)
-    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], sim,
+    # E-15: the key names the model that actually produces the frames, so baking the
+    # era-matched triplet cold-starts its own namespace instead of answering a new
+    # request with a pre-bake run labelled era-matched
+    key = sim_cache_key(served["model_version"], served["fingerprint"], sim,
                         purpose="counterfactual")
 
     hit = await fresh_cache_hit(request, key)
@@ -124,7 +141,7 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
         baseline_id = (await conn.execute(
             insert(SimulationRun).values(
                 created_at=now, model_version=None,
-                env_config_hash=manifest["fingerprint"],
+                env_config_hash=served["fingerprint"],
                 status="queued", seed=sim.seed, circuit=slug,
                 purpose="counterfactual_baseline",
                 config={**sim.model_dump(), **identity, "policy": "real_replay"},
@@ -132,11 +149,12 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
         )).scalar_one()
         agent_id = (await conn.execute(
             insert(SimulationRun).values(
-                created_at=now, model_version=manifest["model_version"],
-                env_config_hash=manifest["fingerprint"],
+                created_at=now,
+                model_version=served["model_version"],
+                env_config_hash=served["fingerprint"],
                 status="queued", seed=sim.seed, circuit=slug, purpose="counterfactual",
                 config={**sim.model_dump(), **identity,
-                        "era_matched_model": "pending-F14",
+                        "era_matched_model": era_matched,
                         "baseline_run_id": baseline_id, "real_stops": real_stops,
                         "pairing": "event_trace"},
             ).returning(SimulationRun.id)
