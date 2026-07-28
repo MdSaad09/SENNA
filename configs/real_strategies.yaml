@@ -1,15 +1,20 @@
 # SENNA — recorded real race strategies for the replayed-real baseline (F06, A-07, M2).
-# One entry per circuit: the race winner's stops, extracted from the ingested Postgres
-# store and mapped to the simulator's lap distance. Checked in so a rollout — and CI —
-# never touches the database.
+# One entry per recorded race, keyed season_circuit_driver: M2's frozen ten carry two
+# British GPs (2024 HAM, 2023 NOR), so a circuit key alone cannot hold the set. Season,
+# circuit and driver are explicit fields — the key is derivable, never load-bearing
+# alone. Checked in so a rollout — and CI — never touches the database.
 #
-# Origin: sourced. Extracted by `python -m senna.strategy.extract --season <s> --circuit <c>`
-# (senna/strategy/extract.py). Stops are (out-lap, compound taken). The start compound is
-# not replayed — the env fixes everyone on MEDIUM (5.5) — so a stops-only plan replays the
-# tyre sequence, run on balanced modes (a 2024 strategy carries no 2026 energy decision).
+# Origin: sourced. Extracted by `python -m senna.strategy.extract --season <s>
+# --circuit <c> [--driver <ABC>] --write` (senna/strategy/extract.py). Stops are
+# (out-lap, compound taken). The start compound is not replayed — the env fixes everyone
+# on MEDIUM (5.5) — so a stops-only plan replays the tyre sequence, run on balanced
+# modes (an earlier era's strategy carries no 2026 energy decision).
 
-bahrain_grand_prix:
-  source: "FastF1 2024 Bahrain Grand Prix, race winner (VER) — senna.strategy.extract"
+2024_bahrain_grand_prix_VER:
+  season: 2024
+  circuit: bahrain_grand_prix
+  driver: VER
+  source: "FastF1 2024 Bahrain Grand Prix, VER (race winner) — senna.strategy.extract"
   real_total_laps: 57      # sourced — the 2024 race distance
   sim_total_laps: 57       # sourced circuits.yaml — the 2026 Bahrain distance (identity map)
   stops:

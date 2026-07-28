@@ -12,12 +12,33 @@ from senna.env.scenario import compound_code
 from senna.strategy.plans import _MODE_BY_NAME, PitPlan
 
 
-def load_real_plan(circuit: str, era: str, *, configs_dir=None) -> PitPlan:
-    """The recorded strategy for a circuit from configs/real_strategies.yaml (checked in, so
-    a rollout never needs the database). Stops are stored already mapped to the sim distance."""
+def load_real_plan(circuit: str, *, season: int | None = None, driver: str | None = None,
+                   configs_dir=None) -> PitPlan:
+    """A recorded strategy from configs/real_strategies.yaml (checked in, so a rollout
+    never needs the database). Entries are keyed season_circuit_driver because M2 carries
+    two British GPs; a bare circuit resolves only while it is unambiguous, and an
+    ambiguous one is refused with the candidate keys — silently picking either race
+    would replay the wrong strategy under the right name. Stops are stored already
+    mapped to the sim distance."""
     from senna import config
 
-    entry = config.load("real_strategies", configs_dir)[circuit]
+    recorded = config.load("real_strategies", configs_dir)
+    matches = {
+        key: entry for key, entry in recorded.items()
+        if entry["circuit"] == circuit
+        and (season is None or entry["season"] == season)
+        and (driver is None or entry["driver"] == driver)
+    }
+    if not matches:
+        wanted = "_".join(str(part) for part in (season, circuit, driver) if part)
+        raise LookupError(f"real_strategies.yaml records no race matching {wanted} — "
+                          "run senna.strategy.extract --write for it")
+    if len(matches) > 1:
+        raise LookupError(
+            f"{circuit} has {len(matches)} recorded races ({', '.join(sorted(matches))}) — "
+            "pass season= and driver= to pick one"
+        )
+    (entry,) = matches.values()
     return PitPlan(stops=tuple((int(lap), str(name)) for lap, name in entry["stops"]))
 
 

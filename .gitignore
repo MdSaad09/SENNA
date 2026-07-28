@@ -23,9 +23,12 @@ models/*
 !models/explain
 models/explain/*
 !models/explain/senna-ppo-6b6edb78d84e-C-00835584
+!models/explain/senna-ppo-db031aead155-C-02211840
 # the two evaluation-only arrays are reproducible from make explain and serve nothing
 models/explain/senna-ppo-6b6edb78d84e-C-00835584/holdout.npz
 models/explain/senna-ppo-6b6edb78d84e-C-00835584/crosscheck.npz
+models/explain/senna-ppo-db031aead155-C-02211840/holdout.npz
+models/explain/senna-ppo-db031aead155-C-02211840/crosscheck.npz
 data/cache/
 # the ribbon library is a committed artifact (INDEX decision 22 Jul 2026): a clean
 # clone must show every buildable circuit, so nothing under data/circuits is ignored

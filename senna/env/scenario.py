@@ -6,8 +6,9 @@ harvest cap and fuel come from the era file; the 2026 synthetic layer (transform
 supplies the per-circuit 2026 pace and energy integrals, falling back to the fitted
 2024 dispersion where a circuit was never run in 2026 — exactly the precedence the
 F03 validator uses. The fine energy-mode coefficients (attack gain, derate, dirty-air,
-SOC floor) are the 2026 fit; the 2024 counterfactual borrows them pending its own fit,
-a documented coarseness (F14 refines it).
+SOC floor) are the 2026 fit; the 2024 counterfactual borrows them, a documented
+coarseness that F15 keeps and prices — senna/eval/coefficients.py re-rolls M2 with
+the borrowed block at +/-50% and the report prints the spread beside the metric.
 """
 
 from dataclasses import dataclass, field

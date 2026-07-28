@@ -218,9 +218,10 @@ sensitivity:                        # the harvest-cap robustness pass (E-02; Saa
     races_per_circuit: 5            # operational — enough to move the utilisation and derate means off
                                     # noise; the comparison is against the same seeds at 8.5
   energy_coefficients:              # the borrowed 2024 fitted: block (scenario.py) — M2's stated assumption
-    perturbation: 0.5               # stylised — DEFERRED TO F15, no reader yet. The intent: re-run M2 with
-                                    # the borrowed coefficients at +/-50%, so that if M2 moves less than its
-                                    # own spread, "borrowed from the 2026 fit" is a documented coarseness
+    perturbation: 0.5               # stylised — read by senna/eval/coefficients.py (make sensitivity-m2):
+                                    # M2 re-rolls with the borrowed coefficients at +/-50%, so if M2 moves
+                                    # less than its own spread, "borrowed from the 2026 fit" is a documented
+                                    # coarseness; if more, the borrow is load-bearing and the write-up says so
                                     # rather than a load-bearing unknown. M2 is a wash at n=10 either way,
                                     # so this changes no current claim
 

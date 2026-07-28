@@ -1,5 +1,13 @@
 # SENNA — 2024-era constants, used only for era-matched counterfactuals (F-24 / A-10).
 # Same env code, different constants file. Origins as in physics_2026.yaml.
+#
+# borrowed: this file deliberately carries no fitted energy-mode block. The four
+# coefficients (conserve_pace_cost_s_per_mj, attack_pace_gain_s, derate_penalty_s_per_mj,
+# attack_soc_floor_mj) come from physics_2026.yaml's fitted block for BOTH eras
+# (senna/env/scenario.py) — no 2024 fit of them exists. The borrow is priced, not
+# assumed: `make sensitivity-m2` re-rolls the ten M2 races with the block at +/-50%
+# (configs/eval.yaml sensitivity.energy_coefficients; senna/eval/coefficients.py) and
+# the report prints the spread beside M2.
 
 era: "2024"
 
