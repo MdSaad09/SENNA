@@ -4,10 +4,12 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F14 — In review on `feature/F14-evaluation`, complete. All M1-M11
-numbers computed and committed (docs/results/F14-evaluation.md), the E-02 harvest-cap
-sensitivity measured, and the DB-wipe guard landed. `/land F14` when you have read it.
-**Next up:** F15
+**Active feature:** none — next session: `/plan-feature F15`
+**Next up:** F15 (demo, docs, reproducibility pack & freeze) — the last feature. It
+inherits three F14 cuts: the serving flip (`make explain` for the 2024 triplet, which
+clears the `pending-F14` caveat in the counterfactual view), the extract writer, and the
+M2 energy-coefficient sensitivity. Also still open: the live-view 3D canvas recheck in
+real Chrome before the video.
 
 ## Feature ledger
 
@@ -27,7 +29,7 @@ sensitivity measured, and the DB-wipe guard landed. `/land F14` when you have re
 | F11 | Frontend shell + Views 1–2 | F04, F10 | Done 23 Jul 2026 | feature/F11-frontend-views-1-2 | [F11](docs/learn/F11-frontend-views-1-2.md) |
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Done 24 Jul 2026 | feature/F12-views-energy-tyre | [F12](docs/learn/F12-views-energy-tyre.md) |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Done 25 Jul 2026 | feature/F13-views-live-counterfactual | [F13](docs/learn/F13-views-live-counterfactual.md) |
-| F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | In review | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
+| F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Todo | | |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
