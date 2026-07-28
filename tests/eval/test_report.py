@@ -134,6 +134,51 @@ def test_an_empty_store_says_so_rather_than_rendering_a_blank_table(tmp_path):
     assert "make suite" in page
 
 
+def _harvest_payload():
+    return {
+        "arms": {"trained": {"h_max_mj": 8.5, "utilisation": 0.648,
+                             "derate_share": 0.078, "mean_position": 4.81},
+                 "refined": {"h_max_mj": 7.0, "utilisation": 0.627,
+                             "derate_share": 0.182, "mean_position": 4.94}},
+        "delta": {"utilisation": -0.021, "derate_share": 0.104,
+                  "mean_position": 0.13, "failures_per_100": 0.0},
+        "trained_h_max_mj": 8.5, "refined_h_max_mj": 7.0,
+        "reading": "the frozen agent's robustness under a 7.0 MJ cap",
+    }
+
+
+def test_report_attributes_each_sections_own_hash(store):
+    """The harvest study fingerprints its own overlay inputs at run time, so its
+    envelope hash legitimately differs from the suite's — and a report that prints
+    only the suite hash above both invites an examiner to mis-attribute it."""
+    write_metric(store, "harvest_sensitivity", _harvest_payload(), envelope=envelope(
+        model_versions={"headline": HEADLINE},
+        config_hash="7e" * 32, seeds_fingerprint="cd" * 32,
+        scope={"smoke": False, "subset": False, "circuits": 24, "seeds_per_circuit": 5},
+    ))
+
+    page = build_report(store, figures=False)
+
+    assert ("ab" * 32)[:12] in page  # the suite envelope's hash, as before
+    assert ("7e" * 32)[:12] in page  # the sensitivity run's own hash
+
+
+def test_report_renders_m2_sensitivity_section(store):
+    without = build_report(store, figures=False)
+    assert "energy-coefficient sensitivity" not in without  # absent file, no section
+
+    write_metric(store, "m2_sensitivity", {
+        "perturbation": 0.5,
+        "arms": {"up": {"mean_delta": 1.23, "n_races": 10},
+                 "down": {"mean_delta": -0.45, "n_races": 10}},
+    }, envelope=_envelope())
+    page = build_report(store, figures=False)
+
+    assert "energy-coefficient sensitivity" in page
+    assert "50%" in page  # the perturbation, rendered as the +/-50% it is
+    assert "1.23" in page and "-0.45" in page  # both arms reach the page
+
+
 def test_figures_render_identically_on_a_rerun(store, tmp_path):
     """The PNGs are committed beside the document, so a creation-date stamp would make
     every regeneration a spurious diff."""

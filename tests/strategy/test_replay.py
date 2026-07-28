@@ -7,6 +7,8 @@ no database.
 """
 
 import pandas as pd
+import pytest
+import yaml
 
 from senna import config
 from senna.env import events
@@ -40,7 +42,7 @@ def _stint_frame(stints):
 def test_a_recorded_real_strategy_replays_its_stops_at_the_recorded_laps(
     make_env, green_trace
 ):
-    plan = load_real_plan(CIRCUIT, "2026")
+    plan = load_real_plan(CIRCUIT)
     env = make_env(twin=green_trace)
     policy = RealStrategyReplay(plan, env.scenario, config.load("baselines")["replay"])
     result = run_episode(env, policy, seed=SEED)
@@ -80,6 +82,61 @@ def test_the_extractor_compiles_stints_into_a_plain_plan():
     # a shortened sim rounds each real out-lap: 21*40/57 -> 15, 41*40/57 -> 29
     shortened = compile_plan(frame, sim_total_laps=40, real_total_laps=57)
     assert shortened.stops == ((15, "HARD"), (29, "SOFT"))
+
+
+def _entry(season, circuit, driver, stops):
+    """One re-keyed real_strategies.yaml entry (F15): season, circuit and driver are
+    explicit fields, so the top-level key is derivable and never load-bearing alone."""
+    return {
+        "season": season, "circuit": circuit, "driver": driver,
+        "source": f"FastF1 {season} {circuit}, {driver} — test fixture",
+        "real_total_laps": 52, "sim_total_laps": 52,
+        "stops": [list(stop) for stop in stops],
+    }
+
+
+def _strategies_dir(tmp_path, entries):
+    (tmp_path / "real_strategies.yaml").write_text(yaml.safe_dump(entries, sort_keys=False))
+    return tmp_path
+
+
+def test_a_bare_circuit_with_one_recorded_race_needs_no_selector(tmp_path):
+    configs = _strategies_dir(tmp_path, {
+        "2024_bahrain_grand_prix_VER": _entry(
+            2024, "bahrain_grand_prix", "VER", ((18, "HARD"), (38, "SOFT"))),
+    })
+
+    plan = load_real_plan("bahrain_grand_prix", configs_dir=configs)
+    assert plan.stops == ((18, "HARD"), (38, "SOFT"))
+
+
+def test_two_recorded_races_on_one_circuit_are_refused_naming_both(tmp_path):
+    # M2 carries two British GPs by design (2024 HAM, 2023 NOR) — a bare-circuit
+    # lookup has no honest answer there, and the refusal must hand over the keys
+    configs = _strategies_dir(tmp_path, {
+        "2024_british_grand_prix_HAM": _entry(
+            2024, "british_grand_prix", "HAM", ((28, "HARD"),)),
+        "2023_british_grand_prix_NOR": _entry(
+            2023, "british_grand_prix", "NOR", ((34, "SOFT"),)),
+    })
+
+    with pytest.raises(LookupError) as refused:
+        load_real_plan("british_grand_prix", configs_dir=configs)
+    assert "2024_british_grand_prix_HAM" in str(refused.value)
+    assert "2023_british_grand_prix_NOR" in str(refused.value)
+
+
+def test_season_and_driver_select_between_two_recorded_races(tmp_path):
+    configs = _strategies_dir(tmp_path, {
+        "2024_british_grand_prix_HAM": _entry(
+            2024, "british_grand_prix", "HAM", ((28, "HARD"),)),
+        "2023_british_grand_prix_NOR": _entry(
+            2023, "british_grand_prix", "NOR", ((34, "SOFT"),)),
+    })
+
+    plan = load_real_plan("british_grand_prix", season=2023, driver="NOR",
+                          configs_dir=configs)
+    assert plan.stops == ((34, "SOFT"),)
 
 
 def test_a_replayed_strategy_runs_balanced_modes_everywhere(make_env, green_trace):

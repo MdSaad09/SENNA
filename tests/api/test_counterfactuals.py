@@ -1,17 +1,20 @@
-"""POST /counterfactuals as of F13: one POST answers with a linked pair — the frozen
-agent's run and a real-strategy replay baseline — both on 2024 physics with the
-pending-F14 caveat recorded so loudly no consumer can miss it (plan Q3). The pair is
-event-paired, not seed-paired: the baseline's recorded EventTrace drives both twin
-rolls, so any difference between the two frame streams is strategy, never luck
-(plan decision 2).
+"""POST /counterfactuals: one POST answers with a linked pair — the agent's run and a
+real-strategy replay baseline — both on 2024 physics. From F15 the agent leg runs the
+era-matched 2024 model wherever its surrogate is baked; a root without the surrogate
+degrades to the frozen 2026 headline with era_matched_model: pending-F14 recorded so
+loudly no consumer can miss it (F-24, E-15). The pair is event-paired, not
+seed-paired: the baseline's recorded EventTrace drives both twin rolls, so any
+difference between the two frame streams is strategy, never luck (plan decision 2).
 """
 
+import json
 import os
 import time
 
 import pytest
 import redis
 
+from senna import config
 from senna.serve.cache import events_channel
 from senna.strategy.replay import RealStrategyReplay
 from tests.api.conftest import (
@@ -22,6 +25,45 @@ from tests.api.conftest import (
     drain_queue,
     seed_2024_bahrain,
 )
+
+# stand-in versions, deliberately not the repo's real ones: a route that ignored
+# MODELS_DIR and read the committed models/ would fail on these strings
+FAKE_HEADLINE_VERSION = "senna-ppo-feedfacecafe-C-00000064"
+FAKE_ERA2024_VERSION = "senna-ppo-1187ab0c9d4e-C-00204800"
+
+
+def _bake(models_dir, name, model_version, *, era=None):
+    triplet = models_dir / name
+    triplet.mkdir(parents=True)
+    manifest = {"model_version": model_version,
+                "fingerprint": model_version.split("-")[2], "stage": "C"}
+    if era:
+        manifest["era"] = era
+    (triplet / "manifest.json").write_text(json.dumps(manifest))
+
+
+@pytest.fixture
+def baked_era_root(tmp_path, monkeypatch):
+    """A models root after make explain ran against the era triplet: weights baked
+    and the surrogate dir present, so the era model is actually servable (E-15)."""
+    root = tmp_path / "models"
+    _bake(root, "headline", FAKE_HEADLINE_VERSION)
+    _bake(root, "era2024", FAKE_ERA2024_VERSION, era="2024")
+    (root / "explain" / FAKE_ERA2024_VERSION).mkdir(parents=True)
+    monkeypatch.setenv("MODELS_DIR", str(root))
+    return root
+
+
+@pytest.fixture
+def unbaked_era_root(tmp_path, monkeypatch):
+    """The same root before make explain: era weights without their surrogate. A
+    worker asked to serve this model would fail the E-15 pairing check mid-job, so
+    the route must degrade at POST time instead."""
+    root = tmp_path / "models"
+    _bake(root, "headline", FAKE_HEADLINE_VERSION)
+    _bake(root, "era2024", FAKE_ERA2024_VERSION, era="2024")
+    monkeypatch.setenv("MODELS_DIR", str(root))
+    return root
 
 pytestmark = [
     pytest.mark.skipif(
@@ -78,7 +120,8 @@ def test_a_stint_without_compound_data_is_a_404_not_a_worker_crash(client, fresh
     assert "compound" in response.json()["detail"].lower()
 
 
-def test_the_post_answers_with_a_linked_pair_of_queued_runs(client, fresh_schema, flush_redis):
+def test_the_post_answers_with_a_linked_pair_of_queued_runs(client, fresh_schema,
+                                                            flush_redis, baked_era_root):
     seed_2024_bahrain()
     accepted = _post_pair(client)
     assert accepted.status_code == 202, accepted.text
@@ -93,13 +136,34 @@ def test_the_post_answers_with_a_linked_pair_of_queued_runs(client, fresh_schema
     # the pairing is persisted both ways so reloads and cache hits can recover it
     assert agent["config"]["baseline_run_id"] == baseline_id
     assert agent["config"]["pairing"] == "event_trace"
-    assert agent["config"]["era_matched_model"] == "pending-F14"
+    # the served version is read off the baked artifact's own manifest, never a
+    # literal: with the surrogate baked, the caveat is gone and the era model runs
+    era_manifest = json.loads(
+        (baked_era_root / "era2024" / "manifest.json").read_text())
+    assert agent["config"]["era_matched_model"] == era_manifest["model_version"]
+    assert agent["model_version"] == era_manifest["model_version"]
     # the real stops frozen into the config at POST time — identity rescale, because
     # the seeded race runs the same 57 laps as the sim's bahrain scenario
     assert agent["config"]["real_stops"] == HAM_REAL_STOPS
     assert baseline["config"]["agent_run_id"] == agent_id
     assert baseline["config"]["policy"] == "real_replay"
     assert baseline["model_version"] is None  # no policy network runs the replay
+
+
+def test_counterfactual_route_degrades_to_pending_when_unbaked(client, fresh_schema,
+                                                               flush_redis,
+                                                               unbaked_era_root):
+    """The graceful degrade F14 specced and never tested: a clone whose era triplet
+    has no surrogate still answers, on the headline, and says so (F-24)."""
+    seed_2024_bahrain()
+    accepted = _post_pair(client)
+    assert accepted.status_code == 202, accepted.text
+
+    agent = client.get(f"/api/v1/simulations/{accepted.json()['run_id']}").json()
+    headline = json.loads(
+        (unbaked_era_root / "headline" / "manifest.json").read_text())
+    assert agent["config"]["era_matched_model"] == "pending-F14"
+    assert agent["model_version"] == headline["model_version"]  # the honest fallback
 
 
 def test_a_seeded_post_dedupes_to_the_same_pair(client, fresh_schema, flush_redis):
@@ -117,6 +181,11 @@ def test_a_seeded_post_dedupes_to_the_same_pair(client, fresh_schema, flush_redi
 def test_the_pair_completes_with_identical_sc_events_and_an_honest_baseline(client, fresh_schema,
                                                                             flush_redis):
     seed_2024_bahrain()
+    # this test drains real jobs, so it runs against the committed models root — the
+    # served version is read off the era triplet's own manifest, never a literal
+    era_version = json.loads(
+        (config.REPO_ROOT / "models" / "era2024" / "manifest.json").read_text()
+    )["model_version"]
     # the pairing assertion only discriminates on a race that actually threw a safety
     # car; the loop is insurance against a freak all-green seed (ws-stream precedent)
     for attempt in range(4):
@@ -132,10 +201,11 @@ def test_the_pair_completes_with_identical_sc_events_and_an_honest_baseline(clie
         assert baseline["status"] == "complete"
         assert agent["era"] == "2024"
         assert baseline["era"] == "2024"
-        # Q3: pending-F14 recorded in the config AND echoed in the summary — the
-        # summary is what screenshots quote, re-pinned so the pair path cannot drop it
-        assert agent["config"]["era_matched_model"] == "pending-F14"
-        assert agent["summary"]["era_matched_model"] == "pending-F14"
+        # the era-matched model recorded in the config AND echoed in the summary —
+        # the summary is what screenshots quote, so the pair path cannot drop it
+        assert agent["config"]["era_matched_model"] == era_version
+        assert agent["summary"]["era_matched_model"] == era_version
+        assert agent["model_version"] == era_version
         # E-15 honesty: the replay ran no policy network, so it must have no cards
         assert client.get(f"/api/v1/simulations/{agent_id}/decisions").json()
         assert client.get(f"/api/v1/simulations/{baseline_id}/decisions").json() == []
