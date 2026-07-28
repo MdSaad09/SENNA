@@ -353,7 +353,7 @@ a box that already exists:
 
 ## Try it yourself
 
-1. Run `make train`, then predict what `make eval` prints before running it. Check
+1. Run `make train`, then predict what `make rescore` prints before running it. Check
    the Makefile to see the A-09 pattern: stubs that name their owner instead of doing
    nothing. You'll know it worked when both commands print "not yet:" with the right
    feature number.

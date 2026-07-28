@@ -42,6 +42,7 @@ jobs:
       - run: alembic upgrade head  # the migration itself must apply cleanly (F01)
       - run: alembic check  # and match schema.py — drift would hide behind create_all tests
       - run: pytest -m "not slow"
+      - run: make verify  # F15: the chapter regenerates byte-for-byte and no public link rots
 
   frontend:
     runs-on: ubuntu-latest

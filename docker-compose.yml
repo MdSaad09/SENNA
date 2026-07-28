@@ -58,12 +58,16 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
+      # operational — the worker runs `rq worker`, no HTTP server; the F10 probe hit
+      # port 8000 in this container and reported unhealthy since first boot (F15).
+      # An rq worker registers itself in Redis, so registration is the honest liveness
+      # signal compose can see; count>0 suffices because compose runs exactly one.
       test:
         [
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')",
+          "import os; from redis import Redis; from rq import Worker; assert Worker.count(connection=Redis.from_url(os.environ['REDIS_URL'])) > 0",
         ]
       interval: 10s
       timeout: 5s
