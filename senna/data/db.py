@@ -1,8 +1,23 @@
-"""Engine construction — the one place the package touches asyncpg."""
+"""Engine construction — the one place the package touches asyncpg — and the guard that
+keeps a destructive test off the ingested store.
+
+The guard is here rather than in the test tree because the rule is about the database, not
+about pytest: dropping every table is only ever safe on a database someone has declared
+disposable. The ingest takes minutes from a warm FastF1 cache and hours without one, so the
+cost of getting this wrong is real, and it has been paid three times.
+"""
 
 import os
+from urllib.parse import urlsplit
 
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+
+_DISPOSABLE_SUFFIX = "_test"
+_OVERRIDE = "SENNA_ALLOW_DESTRUCTIVE_DB"
+
+
+class ProductionDatabaseError(RuntimeError):
+    """A drop-and-recreate was aimed at a database that is not marked disposable."""
 
 
 def engine_for(db_url: str) -> AsyncEngine:
@@ -17,3 +32,31 @@ def database_url() -> str:
             "`docker compose up postgres`, and export it (or source .env)"
         )
     return url
+
+
+def database_name(url: str) -> str:
+    return urlsplit(url).path.lstrip("/")
+
+
+def require_disposable(url: str | None = None) -> str:
+    """Refuse a destructive operation unless the database is named as a disposable one.
+
+    A name ending in `_test` is the signal. The escape hatch deliberately makes the
+    operator name the database they are authorising rather than setting a bare flag: a
+    blanket "yes" is the kind of thing that gets exported once and then forgotten in a
+    shell that later runs the whole suite against the real store.
+    """
+    url = url or database_url()
+    name = database_name(url)
+    if name.endswith(_DISPOSABLE_SUFFIX) or os.environ.get(_OVERRIDE) == name:
+        return url
+
+    raise ProductionDatabaseError(
+        f"refusing to drop every table on '{name}': destructive tests run against a "
+        f"database whose name ends in '{_DISPOSABLE_SUFFIX}'. Create one and point the "
+        f"tests at it:\n"
+        f"    createdb -U senna {name}{_DISPOSABLE_SUFFIX}\n"
+        f"    DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/"
+        f"{name}{_DISPOSABLE_SUFFIX} .venv/bin/python -m pytest tests/api\n"
+        f"If '{name}' really is disposable, say so by name: {_OVERRIDE}={name}"
+    )

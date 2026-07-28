@@ -38,6 +38,9 @@ def _db_url() -> str:
 
 
 async def _fresh_schema(db_url: str) -> None:
+    from senna.data.db import require_disposable
+
+    require_disposable(db_url)
     engine = create_async_engine(db_url)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
