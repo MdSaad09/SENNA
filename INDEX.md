@@ -4,12 +4,11 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none — next session: `/plan-feature F15`
-**Next up:** F15 (demo, docs, reproducibility pack & freeze) — the last feature. It
-inherits three F14 cuts: the serving flip (`make explain` for the 2024 triplet, which
-clears the `pending-F14` caveat in the counterfactual view), the extract writer, and the
-M2 energy-coefficient sensitivity. Also still open: the live-view 3D canvas recheck in
-real Chrome before the video.
+**Active feature:** F15 (demo, docs, reproducibility pack & freeze) — Planned; next:
+`/ship F15` in this same session. The plan (docs/plans/F15-plan.md) carries the three
+inherited F14 cuts (serving flip, extract writer, M2 energy-coefficient sensitivity)
+and the live-view 3D canvas recheck in real Chrome before the video.
+**Next up:** nothing — F15 is the last feature.
 
 ## Feature ledger
 
@@ -30,7 +29,7 @@ real Chrome before the video.
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Done 24 Jul 2026 | feature/F12-views-energy-tyre | [F12](docs/learn/F12-views-energy-tyre.md) |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Done 25 Jul 2026 | feature/F13-views-live-counterfactual | [F13](docs/learn/F13-views-live-counterfactual.md) |
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
-| F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Todo | | |
+| F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Planned | | |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
