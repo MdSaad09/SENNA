@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import DevOverlay from "./components/DevOverlay";
 import QualityToggle from "./components/QualityToggle";
@@ -17,6 +17,9 @@ const VIEWS = [
 
 export default function App() {
   const toggleDevOverlay = useUiStore((state) => state.toggleDevOverlay);
+  // the current query rides every view switch (5.13): ?run= survives one click to
+  // the counterfactual view, and each view reads what it needs and ignores the rest
+  const { search } = useLocation();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -37,7 +40,7 @@ export default function App() {
           {VIEWS.map((view) => (
             <NavLink
               key={view.path}
-              to={view.path}
+              to={{ pathname: view.path, search }}
               className={({ isActive }) =>
                 `rounded px-2.5 py-1 ${
                   isActive
@@ -59,9 +62,12 @@ export default function App() {
         <Outlet />
       </main>
 
-      {/* R-07: the unofficial-project footer stays on every view */}
+      {/* R-07: the unofficial-project footer stays on every view. The wording is the
+          canonical F15 disclaimer — it also fronts the README and the video end
+          card, and the three may never drift apart */}
       <footer className="border-t border-neutral-800 px-5 py-1.5 text-xs text-neutral-600">
-        Unofficial student project — not affiliated with F1, the FIA or any team
+        SENNA is an unofficial project and is not associated in any way with the Formula 1
+        companies, the FIA or any team
       </footer>
 
       <DevOverlay />

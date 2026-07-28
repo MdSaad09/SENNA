@@ -13,11 +13,18 @@ import {
   YAxis,
 } from "recharts";
 
-import type { EnergyProfile } from "../../api/types";
+import type { EnergyLap, EnergyProfile } from "../../api/types";
+import { MODE_ACTION_LABELS } from "../../config/constants";
 
 // stylised — SOC ribbon sky-blue; pit marks a muted grey so they read as annotation
 export const SOC_TINT = "#38bdf8";
 export const PIT_MARK_TINT = "#a3a3a3";
+
+// the 5.13 hover beat reads "banked energy before an attack" off this chart, and the
+// SOC number alone cannot say that — the tooltip names the served mode next to it
+export function socTooltip(lap: EnergyLap): string {
+  return `${lap.soc_mj.toFixed(2)} MJ — ${MODE_ACTION_LABELS[lap.mode]}`;
+}
 
 export default function SocPanel({ profile }: { profile: EnergyProfile }) {
   const pitLaps = profile.laps.filter((lap) => lap.pit !== 0).map((lap) => lap.lap);
@@ -39,7 +46,8 @@ export default function SocPanel({ profile }: { profile: EnergyProfile }) {
             <YAxis domain={[0, profile.usable_soc_mj]} stroke="#737373" fontSize={11} />
             <Tooltip
               contentStyle={{ background: "#171717", border: "1px solid #404040", fontSize: 12 }}
-              formatter={(value: number) => [`${value.toFixed(2)} MJ`, "SOC"]}
+              // the hovered point is one of profile.laps, so item.payload is that lap
+              formatter={(_soc: number, _name, item) => [socTooltip(item.payload as EnergyLap), "SOC"]}
             />
             <Area
               type="monotone"
