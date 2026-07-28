@@ -68,6 +68,34 @@ def test_report_is_byte_identical_on_a_fixture_store(store):
     assert first  # a silently empty render would pass an equality check on its own
 
 
+def test_report_is_byte_identical_across_processes(store):
+    """The acceptance criterion is a marker regenerating from a clean clone, and two calls
+    in one process cannot see that. Python salts str hashing per process, so any place the
+    report walks a set or an unsorted dict renders differently run to run — invisible here
+    and obvious to whoever diffs the committed document."""
+    renders = {
+        _render_in_subprocess(store, hash_seed) for hash_seed in ("0", "1", "12345")
+    }
+
+    assert len(renders) == 1, "the report depends on hash ordering somewhere"
+    assert renders.pop() == build_report(store, figures=False)
+
+
+def _render_in_subprocess(store, hash_seed: str) -> str:
+    import os
+    import subprocess
+    import sys
+
+    result = subprocess.run(
+        [sys.executable, "-c",
+         "import sys; from senna.eval.report import build_report; "
+         "sys.stdout.write(build_report(sys.argv[1], figures=False))", str(store)],
+        capture_output=True, text=True, check=True, cwd=config.REPO_ROOT,
+        env={**os.environ, "PYTHONHASHSEED": hash_seed},
+    )
+    return result.stdout
+
+
 def test_the_table_prints_the_stored_numbers(store):
     page = build_report(store, figures=False)
 
@@ -105,7 +133,6 @@ def test_an_empty_store_says_so_rather_than_rendering_a_blank_table(tmp_path):
     assert "make suite" in page
 
 
-@pytest.mark.slow
 def test_figures_render_identically_on_a_rerun(store, tmp_path):
     """The PNGs are committed beside the document, so a creation-date stamp would make
     every regeneration a spurious diff."""

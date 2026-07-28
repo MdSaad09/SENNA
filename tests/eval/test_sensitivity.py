@@ -7,6 +7,9 @@ So what is pinned here is the blast radius — the overlay rewrites the harvest 
 nothing else, and the repository's own configs are untouched afterwards.
 """
 
+from pathlib import Path
+
+import pytest
 import yaml
 
 from senna import config
@@ -49,6 +52,59 @@ def test_the_committed_configs_still_carry_the_trained_cap(tmp_path):
     caps = {entry["h_max_mj"]
             for entry in yaml.safe_load(before.decode()).values()}
     assert caps == {8.5}, "the frozen headline trained at 8.5; see the circuits.yaml header"
+
+
+def test_both_arms_race_the_same_seeds_under_their_own_overlay(monkeypatch):
+    """The comparison is only paired if nothing but the cap differs. Selecting the arms by
+    value once collapsed them into one run whenever a circuit's cap already equalled the
+    refined figure, and the report printed that as a measured null result."""
+    from senna.eval import sensitivity
+
+    calls = []
+
+    class Race:
+        laps, e_dep_mj = (), 1.0
+
+        def __init__(self):
+            self.agent = type("A", (), {"final_position": 5, "pit_laps": [], "snapped": 0})()
+
+    def fake_record(policy, *, banks, configs_dir, **kwargs):
+        caps = yaml.safe_load((Path(configs_dir) / "circuits.yaml").read_text())
+        calls.append({"banks": {c: tuple(s) for c, s in banks.items()},
+                      "caps": {entry["h_max_mj"] for entry in caps.values()},
+                      "configs_dir": Path(configs_dir)})
+        return [Race()], []
+
+    monkeypatch.setattr(sensitivity.record, "record_eval_races", fake_record)
+    monkeypatch.setattr(sensitivity.record, "test_bank",
+                        lambda configs_dir=None: {"bahrain_grand_prix": (1, 2, 3, 4, 5, 6)})
+    monkeypatch.setattr("senna.eval.run.load_frozen_policy",
+                        lambda triplet: (None, None, None, {"model_version": "stub"}))
+
+    payload = sensitivity.run_sensitivity()
+
+    assert len(calls) == 2
+    assert calls[0]["banks"] == calls[1]["banks"], "the arms rolled different seeds"
+    # each arm gets its own overlay, so neither can silently read the committed configs
+    assert calls[0]["configs_dir"] != calls[1]["configs_dir"]
+    assert calls[0]["caps"] == {payload["trained_h_max_mj"]}
+    assert calls[1]["caps"] == {payload["refined_h_max_mj"]}
+
+
+def test_a_mixed_cap_bank_is_refused(tmp_path):
+    """AR-05 permits per-event caps, and a bank spanning two of them has no single trained
+    cap — labelling the arm with whichever circuit came first would be a quiet lie."""
+    from senna.eval.sensitivity import trained_cap
+
+    overlay = overlay_configs(base_dir=REPO_CONFIGS, dest=tmp_path / "mixed",
+                              h_max_mj=8.5)
+    circuits = yaml.safe_load((overlay / "circuits.yaml").read_text())
+    first = next(iter(circuits))
+    circuits[first]["h_max_mj"] = 7.0
+    (overlay / "circuits.yaml").write_text(yaml.safe_dump(circuits, sort_keys=False))
+
+    with pytest.raises(ValueError, match="harvest caps"):
+        trained_cap(list(circuits)[:2], configs_dir=overlay)
 
 
 def test_the_configured_value_is_the_one_written(tmp_path):

@@ -46,6 +46,21 @@ def overlay_configs(*, base_dir, dest, h_max_mj: float) -> Path:
     return dest
 
 
+def trained_cap(banks, configs_dir=None) -> float:
+    """The cap the frozen model trained under. AR-05 permits per-event values, so a mixed
+    bank has no single "trained cap" to compare against and the arms would be mislabelled
+    by whichever circuit happened to be first."""
+    circuits_cfg = config.load("circuits", configs_dir)
+    caps = {float(config.get(circuits_cfg, f"{circuit}.h_max_mj")) for circuit in banks}
+    if len(caps) != 1:
+        raise ValueError(
+            f"the bank spans {len(caps)} different harvest caps ({sorted(caps)}) — a "
+            "single-number sensitivity comparison would mislabel its own arms; narrow "
+            "--circuits to one cap or report per-circuit"
+        )
+    return caps.pop()
+
+
 def run_sensitivity(*, configs_dir=None, models_dir=None, circuits=None) -> dict:
     """Roll the frozen agent at the trained cap and the refined one, on the same seeds."""
     from senna.eval.run import load_frozen_policy
@@ -60,17 +75,24 @@ def run_sensitivity(*, configs_dir=None, models_dir=None, circuits=None) -> dict
     per_circuit = int(block["races_per_circuit"])
     banks = {c: seeds[:per_circuit] for c, seeds in banks.items()
              if circuits is None or c in circuits}
+    if not banks:
+        raise ValueError(
+            f"no circuit in the reserved bank matches {circuits} — nothing to roll"
+        )
 
-    trained_cap = float(config.get(config.load("circuits", configs_dir),
-                                   f"{next(iter(banks))}.h_max_mj"))
-    arms = {}
+    baseline_mj = trained_cap(banks, configs_dir)
+    arms, dropped = {}, {}
     with tempfile.TemporaryDirectory() as scratch:
-        for label, h_max_mj in (("trained", trained_cap), ("refined", float(block["h_max_mj"]))):
-            overlay = (base_dir if h_max_mj == trained_cap
-                       else overlay_configs(base_dir=base_dir,
-                                            dest=Path(scratch) / f"cap-{h_max_mj}",
-                                            h_max_mj=h_max_mj))
-            races, _ = record.record_eval_races(policy, banks=banks, configs_dir=overlay)
+        # both arms get an overlay, including the one that reproduces the committed value.
+        # Selecting by value would collapse the two into one run the moment a circuit's
+        # cap already equalled the refined figure, and the report would print that as a
+        # measured null result
+        for label, h_max_mj in (("trained", baseline_mj), ("refined", float(block["h_max_mj"]))):
+            overlay = overlay_configs(base_dir=base_dir, dest=Path(scratch) / label,
+                                      h_max_mj=h_max_mj)
+            races, excluded = record.record_eval_races(policy, banks=banks,
+                                                       configs_dir=overlay)
+            dropped[label] = {(row["circuit"], row["seed"]) for row in excluded}
             energy = metrics.energy_utilisation(
                 races, cfg={**cfg["m4"],
                             "intra_lap_share": config.load("env", overlay)["harvest"]
@@ -88,16 +110,28 @@ def run_sensitivity(*, configs_dir=None, models_dir=None, circuits=None) -> dict
                      label, h_max_mj, arms[label]["utilisation"],
                      arms[label]["derate_share"], arms[label]["mean_position"])
 
+    # the whole comparison rests on both arms racing the same seeds; a retirement under one
+    # cap and not the other would silently make them different experiments
+    if dropped["trained"] != dropped["refined"]:
+        raise ValueError(
+            f"the arms dropped different races (trained {sorted(dropped['trained'])}, "
+            f"refined {sorted(dropped['refined'])}) — the comparison is no longer paired"
+        )
+
     return {
         "arms": arms,
         "delta": {
             key: arms["refined"][key] - arms["trained"][key]
             for key in ("utilisation", "derate_share", "mean_position", "failures_per_100")
         },
+        "trained_h_max_mj": baseline_mj,
+        "refined_h_max_mj": float(block["h_max_mj"]),
+        "excluded_races": sorted(dropped["trained"]),
         "model_version": manifest["model_version"],
         "reading": (
-            "the frozen agent's robustness under a 7 MJ cap, not what a model re-optimised "
-            "for 7 MJ would do — the reported numbers stay on the cap it trained under"
+            f"the frozen agent's robustness under a {block['h_max_mj']} MJ cap, not what a "
+            f"model re-optimised for {block['h_max_mj']} MJ would do — the reported numbers "
+            f"stay on the {baseline_mj} MJ cap it trained under"
         ),
     }
 
@@ -111,13 +145,19 @@ def main() -> None:
     from senna.eval import store
 
     cfg = config.load("eval")
-    payload = run_sensitivity(circuits=args.circuits.split(",") if args.circuits else None)
-    committed = config.REPO_ROOT / cfg["store"]["committed_dir"]
+    subset = args.circuits.split(",") if args.circuits else None
+    payload = run_sensitivity(circuits=subset)
+
+    # a subset run never lands where the report reads: its rows would carry a full run's
+    # provenance and print under a full run's claim, which is the incident the smoke
+    # directory already exists to prevent
+    committed = config.REPO_ROOT / cfg["store"]["committed_dir"] / ("subset" if subset else "")
+    n_circuits = len(subset) if subset else len(record.test_bank())
     store.write_metric(committed, "harvest_sensitivity", payload, envelope=store.envelope(
         model_versions={"headline": payload["model_version"]},
         config_hash=config.fingerprint(["circuits"]),
         seeds_fingerprint=config.fingerprint(["seeds"]),
-        scope={"smoke": False, "circuits": payload["arms"]["trained"]["n_races"],
+        scope={"smoke": bool(subset), "circuits": n_circuits,
                "seeds_per_circuit": cfg["sensitivity"]["harvest_cap"]["races_per_circuit"]},
     ))
     log.info("wrote harvest_sensitivity to %s", committed)

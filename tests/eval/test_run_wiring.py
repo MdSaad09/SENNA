@@ -13,16 +13,58 @@ known by construction. What is pinned here is the plumbing around them.
 
 import subprocess
 import sys
+from pathlib import Path
 
 from senna import config
+from senna.eval import run as run_module
 from senna.eval.run import _BATTERIES, _circuit_key
 
+_STUB_MANIFEST = {"model_version": "stub-C-00000000", "fingerprint": "ab" * 32}
 
-def test_the_committed_store_and_the_smoke_store_are_different_places():
-    committed = config.load("eval")["store"]["committed_dir"]
-    # the runner appends "smoke" for a smoke run; the report reads the committed root, so
-    # the two must not resolve to one directory
-    assert (config.REPO_ROOT / committed / "smoke") != (config.REPO_ROOT / committed)
+
+def test_a_smoke_run_never_writes_where_the_report_reads(tmp_path, monkeypatch):
+    """A smoke row carries a full run's provenance, so writing it to the committed store
+    puts a four-race median in the headline table. Exercised through run_suite rather than
+    asserted about paths: comparing two Path objects would pass with the branch deleted."""
+    written = {}
+
+    def fake_write(store_dir, name, payload, *, envelope):
+        written[name] = Path(store_dir)
+        return Path(store_dir) / f"{name}.json"
+
+    monkeypatch.setattr(run_module.store, "write_metric", fake_write)
+    monkeypatch.setattr(run_module, "load_frozen_policy",
+                        lambda triplet: (None, None, None, _STUB_MANIFEST))
+    monkeypatch.setattr(run_module.record, "record_eval_races",
+                        lambda *a, **k: ([], []))
+    monkeypatch.setattr(run_module.metrics, "legality_audit",
+                        lambda races: {"illegal_actions": 0, "snapped": 0,
+                                       "n_races": 0, "clean": True})
+
+    committed = config.REPO_ROOT / config.load("eval")["store"]["committed_dir"]
+    run_module.run_suite(only=["m10"], smoke=True, models_dir=tmp_path)
+
+    assert written, "the runner wrote nothing, so this pins nothing"
+    assert written["m10_legality"] != committed
+    assert written["m10_legality"] == committed / "smoke"
+
+
+def test_a_full_run_writes_to_the_committed_store(tmp_path, monkeypatch):
+    written = {}
+    monkeypatch.setattr(run_module.store, "write_metric",
+                        lambda d, n, p, *, envelope: written.setdefault(n, Path(d)))
+    monkeypatch.setattr(run_module, "load_frozen_policy",
+                        lambda triplet: (None, None, None, _STUB_MANIFEST))
+    monkeypatch.setattr(run_module.record, "record_eval_races", lambda *a, **k: ([], []))
+    monkeypatch.setattr(run_module.metrics, "legality_audit",
+                        lambda races: {"illegal_actions": 0, "snapped": 0,
+                                       "n_races": 0, "clean": True})
+
+    run_module.run_suite(only=["m10"], smoke=False, models_dir=tmp_path)
+
+    assert written["m10_legality"] == (
+        config.REPO_ROOT / config.load("eval")["store"]["committed_dir"]
+    )
 
 
 def test_circuit_key_is_stable_across_processes():
@@ -46,6 +88,9 @@ def test_m7_seed_stream_is_configured_not_inlined():
     m7 = config.load("eval")["m7"]
 
     assert "seed_stream" in m7, "M7's stream id belongs in configs, not in the runner"
+    # and the runner must actually read it: an inlined literal would keep the key green
+    import inspect
+    assert 'cfg["m7"]["seed_stream"]' in inspect.getsource(run_module._diversity)
     # the rollout policy sub-stream is 91 and M11's is 173; sharing one would couple
     # draws that are supposed to be independent
     assert m7["seed_stream"] not in (91, config.load("eval")["m11"]["decision_stream"])

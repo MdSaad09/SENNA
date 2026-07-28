@@ -109,27 +109,46 @@ def _provenance(envelope, store_dir) -> str:
 
 
 def _sensitivity_section(payload) -> str:
-    """E-02: what the newer 7 MJ recharge cap does to the agent that trained under 8.5."""
+    """E-02: what the refined recharge cap does to the agent that trained under the old one.
+
+    Every number and every direction word comes from the payload. A fixed sentence beside a
+    generated table is one config edit away from contradicting it, and in a chapter whose
+    whole design is that a number carries its honest reading, that is the worst defect
+    available.
+    """
     arms, delta = payload["arms"], payload["delta"]
+    trained_mj = payload.get("trained_h_max_mj", arms["trained"]["h_max_mj"])
+    refined_mj = payload.get("refined_h_max_mj", arms["refined"]["h_max_mj"])
     rows = "\n".join(
         f"| {label} ({arms[label]['h_max_mj']:.1f} MJ) | "
         f"{arms[label]['utilisation']:.3f} | {arms[label]['derate_share']:.3f} | "
         f"P{arms[label]['mean_position']:.2f} |"
         for label in ("trained", "refined")
     )
+    # a higher finishing position is a worse one, so the sign has to be read, not assumed
+    places = delta["mean_position"]
+    verb = "costs" if places > 0 else ("gains" if places < 0 else "moves")
+    derate = delta["derate_share"]
+    derate_clause = ("runs out of energy more often" if derate > 0
+                     else "derates less often" if derate < 0
+                     else "derates at the same rate")
+    direction = "Tightening" if refined_mj < trained_mj else "Loosening"
+
     return (
         "\n## Harvest-cap sensitivity (E-02)\n\n"
-        "The FIA cut maximum permitted recharge from 8 MJ to 7 MJ in April 2026 (Issue 18\n"
-        "Art C5.2.10). The frozen model trained at the 8.5 MJ baseline and every number\n"
-        "above is measured there, because moving the value in `configs/circuits.yaml`\n"
-        "would desync the fingerprint the served triplet records. The refined figure runs\n"
-        "as an eval-only overlay on the same seeds instead.\n\n"
+        f"The FIA refined the maximum permitted recharge to {refined_mj:.1f} MJ (2026\n"
+        "Technical Regulations Issue 18, Art C5.2.10). The frozen model trained at the\n"
+        f"{trained_mj:.1f} MJ baseline and every number above is measured there, because\n"
+        "moving the value in `configs/circuits.yaml` would desync the fingerprint the\n"
+        "served triplet records. The refined figure runs as an eval-only overlay on the\n"
+        "same seeds instead — both arms are built the same way, so the only difference\n"
+        "between them is the number in the yaml.\n\n"
         "| Cap | Utilisation | Derate share | Mean finish |\n|---|---|---|---|\n"
         f"{rows}\n\n"
-        f"Tightening the cap costs {abs(delta['mean_position']):.2f} places on average "
-        f"while the derate share moves {delta['derate_share']:+.3f} — the agent keeps its "
-        "results but runs out of energy far more often, which is what operating closer to "
-        f"the limit looks like. Read this as {payload['reading']}.\n"
+        f"{direction} the cap {verb} {abs(places):.2f} places on average while the derate "
+        f"share moves {derate:+.3f} — the agent keeps its results but {derate_clause}, "
+        "which is what operating closer to a limit looks like. Read this as "
+        f"{payload['reading']}.\n"
     )
 
 
@@ -170,6 +189,7 @@ def _reproducing() -> str:
         ## Reproducing this
 
             make suite            # rolls every battery, rewrites the committed store
+            make sensitivity      # the E-02 harvest-cap pass this document's last section reads
             make report           # regenerates this document and its figures
 
         `make report` reads only the committed store, so it needs no model, no database and

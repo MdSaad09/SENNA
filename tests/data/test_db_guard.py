@@ -7,6 +7,8 @@ property of the database rather than of pytest, so it lives in senna.data.db and
 destructive site calls it.
 """
 
+from pathlib import Path
+
 import pytest
 
 from senna.data.db import ProductionDatabaseError, database_name, require_disposable
@@ -55,15 +57,46 @@ def test_database_name_reads_the_url_path():
     assert database_name("postgresql://u:p@host:5432/other_test") == "other_test"
 
 
-@pytest.mark.parametrize("module", [
-    "tests.api.conftest", "tests.data.test_ingest_resume", "tests.explain.test_persist",
-])
-def test_every_destructive_module_calls_the_guard(module):
-    """A new drop_all that forgets the guard is the whole failure mode, so the wiring is
-    pinned per module rather than trusted."""
-    from pathlib import Path
+def _destructive_modules():
+    """Every test module that drops tables, discovered rather than listed: a hard-coded
+    list cannot notice the new module that forgets the guard, which is the whole failure
+    mode this file exists for."""
+    from senna import config
 
-    path = Path(module.replace(".", "/") + ".py")
-    source = path.read_text()
-    assert "drop_all" in source, f"{path} no longer drops tables — drop this row"
-    assert "require_disposable" in source, f"{path} drops tables without the guard"
+    here = Path(__file__).resolve()
+    return sorted(
+        path for path in (config.REPO_ROOT / "tests").rglob("*.py")
+        if path.resolve() != here and "drop_all" in path.read_text()
+    )
+
+
+def test_at_least_one_module_still_drops_tables():
+    # if this ever empties, the discovery below is silently vacuous
+    assert _destructive_modules()
+
+
+@pytest.mark.parametrize("path", _destructive_modules(), ids=lambda p: p.stem)
+def test_every_destructive_module_calls_the_guard(path):
+    assert "require_disposable" in path.read_text(), (
+        f"{path} drops every table without calling require_disposable — point it at the "
+        "guard before it finds the ingested store"
+    )
+
+
+def test_the_api_reset_refuses_the_production_database(monkeypatch):
+    """The grep above proves the call exists; this proves it fires. Deleting the guard
+    call while leaving the import would pass a substring check and fail here."""
+    from tests.api.conftest import reset_schema
+
+    monkeypatch.setenv("DATABASE_URL", PRODUCTION)
+    monkeypatch.delenv("SENNA_ALLOW_DESTRUCTIVE_DB", raising=False)
+    with pytest.raises(ProductionDatabaseError):
+        reset_schema()
+
+
+def test_a_url_without_a_database_is_refused(monkeypatch):
+    # sqlalchemy leaves the database unset and asyncpg then defaults it to the role name,
+    # which is the ingested store; an empty name also used to match an empty override
+    monkeypatch.setenv("SENNA_ALLOW_DESTRUCTIVE_DB", "")
+    with pytest.raises(ProductionDatabaseError):
+        require_disposable("postgresql+asyncpg://senna:senna@localhost:5432")

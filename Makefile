@@ -4,7 +4,7 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain finetune suite report api worker up
+.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain finetune suite sensitivity report api worker up
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -124,6 +124,12 @@ finetune:
 # stores. Local only: needs models/headline. ONLY=m1,m4 narrows; SMOKE=1 does two circuits.
 suite:
 	OMP_NUM_THREADS=1 python -m senna.eval.run $(if $(ONLY),--only $(ONLY)) $(if $(SMOKE),--smoke)
+
+# the E-02 harvest-cap robustness pass: rolls the frozen agent at the cap it trained
+# under and at the FIA's refined figure, on the same seeds, and writes the store row the
+# report renders. CIRCUITS= narrows it (a subset writes to store/subset, never the root).
+sensitivity:
+	OMP_NUM_THREADS=1 python -m senna.eval.sensitivity $(if $(CIRCUITS),--circuits $(CIRCUITS))
 
 # regenerate the Chapter 7 tables and figures from the committed store. A pure function of
 # docs/results/F14/store — no model, no database, no GPU — so a clean clone can rerun it.

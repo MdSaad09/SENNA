@@ -48,14 +48,23 @@ def require_disposable(url: str | None = None) -> str:
     """
     url = url or database_url()
     name = database_name(url)
-    if name.endswith(_DISPOSABLE_SUFFIX) or os.environ.get(_OVERRIDE) == name:
+    if not name:
+        # a URL with no path leaves asyncpg to default the database to the role name,
+        # which is the ingested store; an empty name would also match an empty override
+        raise ProductionDatabaseError(
+            f"'{url}' names no database, so the server would pick one — most likely the "
+            "role's own. Put the database in the URL before dropping anything."
+        )
+
+    override = os.environ.get(_OVERRIDE)
+    if name.endswith(_DISPOSABLE_SUFFIX) or (override and override == name):
         return url
 
     raise ProductionDatabaseError(
         f"refusing to drop every table on '{name}': destructive tests run against a "
         f"database whose name ends in '{_DISPOSABLE_SUFFIX}'. Create one and point the "
         f"tests at it:\n"
-        f"    createdb -U senna {name}{_DISPOSABLE_SUFFIX}\n"
+        f"    docker compose exec postgres createdb -U senna {name}{_DISPOSABLE_SUFFIX}\n"
         f"    DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/"
         f"{name}{_DISPOSABLE_SUFFIX} .venv/bin/python -m pytest tests/api\n"
         f"If '{name}' really is disposable, say so by name: {_OVERRIDE}={name}"

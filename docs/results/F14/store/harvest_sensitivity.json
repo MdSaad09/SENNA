@@ -1,12 +1,12 @@
 {
   "envelope": {
     "config_hash": "26a436fece3dc4a094b60d82bfecc1e41ff3a8721f44167efe24f9e199183d1a",
-    "git_commit": "78fd1ee01a35276e06d71d03f2e17ca1312d0c5b",
+    "git_commit": "7cba49068c2643b035dfeb9d773c9849304f5a79",
     "model_versions": {
       "headline": "senna-ppo-6b6edb78d84e-C-00835584"
     },
     "scope": {
-      "circuits": 120,
+      "circuits": 24,
       "seeds_per_circuit": 5,
       "smoke": false
     },
@@ -39,7 +39,10 @@
       "mean_position": 0.13333333333333286,
       "utilisation": -0.02088885049104916
     },
+    "excluded_races": [],
     "model_version": "senna-ppo-6b6edb78d84e-C-00835584",
-    "reading": "the frozen agent's robustness under a 7 MJ cap, not what a model re-optimised for 7 MJ would do — the reported numbers stay on the cap it trained under"
+    "reading": "the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under",
+    "refined_h_max_mj": 7.0,
+    "trained_h_max_mj": 8.5
   }
 }

@@ -82,18 +82,20 @@ luck it happened to meet.
 
 ## Harvest-cap sensitivity (E-02)
 
-The FIA cut maximum permitted recharge from 8 MJ to 7 MJ in April 2026 (Issue 18
-Art C5.2.10). The frozen model trained at the 8.5 MJ baseline and every number
-above is measured there, because moving the value in `configs/circuits.yaml`
-would desync the fingerprint the served triplet records. The refined figure runs
-as an eval-only overlay on the same seeds instead.
+The FIA refined the maximum permitted recharge to 7.0 MJ (2026
+Technical Regulations Issue 18, Art C5.2.10). The frozen model trained at the
+8.5 MJ baseline and every number above is measured there, because
+moving the value in `configs/circuits.yaml` would desync the fingerprint the
+served triplet records. The refined figure runs as an eval-only overlay on the
+same seeds instead — both arms are built the same way, so the only difference
+between them is the number in the yaml.
 
 | Cap | Utilisation | Derate share | Mean finish |
 |---|---|---|---|
 | trained (8.5 MJ) | 0.648 | 0.078 | P4.81 |
 | refined (7.0 MJ) | 0.627 | 0.182 | P4.94 |
 
-Tightening the cap costs 0.13 places on average while the derate share moves +0.104 — the agent keeps its results but runs out of energy far more often, which is what operating closer to the limit looks like. Read this as the frozen agent's robustness under a 7 MJ cap, not what a model re-optimised for 7 MJ would do — the reported numbers stay on the cap it trained under.
+Tightening the cap costs 0.13 places on average while the derate share moves +0.104 — the agent keeps its results but runs out of energy more often, which is what operating closer to a limit looks like. Read this as the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under.
 
 
 ## Figures
@@ -108,6 +110,7 @@ Tightening the cap costs 0.13 places on average while the derate share moves +0.
 ## Reproducing this
 
     make suite            # rolls every battery, rewrites the committed store
+    make sensitivity      # the E-02 harvest-cap pass this document's last section reads
     make report           # regenerates this document and its figures
 
 `make report` reads only the committed store, so it needs no model, no database and
