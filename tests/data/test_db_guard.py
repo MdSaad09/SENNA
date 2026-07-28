@@ -83,15 +83,42 @@ def test_every_destructive_module_calls_the_guard(path):
     )
 
 
-def test_the_api_reset_refuses_the_production_database(monkeypatch):
-    """The grep above proves the call exists; this proves it fires. Deleting the guard
-    call while leaving the import would pass a substring check and fail here."""
-    from tests.api.conftest import reset_schema
+def _explode(*args, **kwargs):
+    raise AssertionError(
+        "a destructive fixture reached the database layer with DATABASE_URL pointing at "
+        "the production store — the guard did not fire"
+    )
 
+
+@pytest.mark.parametrize("call", [
+    ("tests.api.conftest", "reset_schema", ()),
+    ("tests.data.test_ingest_resume", "_fresh_schema", (PRODUCTION,)),
+    ("tests.explain.test_persist", "_fresh_schema", (PRODUCTION,)),
+], ids=lambda c: c[0].rsplit(".", 1)[-1] if isinstance(c, tuple) else str(c))
+def test_every_destructive_entry_point_refuses_production(call, monkeypatch):
+    """The discovery grep proves the call exists; this proves it fires.
+
+    The engine constructor is replaced with something that raises, so a regressed guard
+    fails this test instead of demonstrating the bug on the real database. A test that
+    only goes red *after* dropping the tables would be a worse version of the incident it
+    models — and one that needs no DATABASE_URL from the operator, so a plain
+    `pytest tests/data` would be the thing that erases the store.
+    """
+    import asyncio
+    import importlib
+
+    module_name, function_name, args = call
+    module = importlib.import_module(module_name)
+    monkeypatch.setattr("sqlalchemy.ext.asyncio.create_async_engine", _explode)
+    monkeypatch.setattr(module, "create_async_engine", _explode, raising=False)
     monkeypatch.setenv("DATABASE_URL", PRODUCTION)
     monkeypatch.delenv("SENNA_ALLOW_DESTRUCTIVE_DB", raising=False)
+
+    target = getattr(module, function_name)
     with pytest.raises(ProductionDatabaseError):
-        reset_schema()
+        result = target(*args)
+        if asyncio.iscoroutine(result):
+            asyncio.run(result)
 
 
 def test_a_url_without_a_database_is_refused(monkeypatch):

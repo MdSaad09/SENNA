@@ -90,9 +90,10 @@ def _render_in_subprocess(store, hash_seed: str) -> str:
         [sys.executable, "-c",
          "import sys; from senna.eval.report import build_report; "
          "sys.stdout.write(build_report(sys.argv[1], figures=False))", str(store)],
-        capture_output=True, text=True, check=True, cwd=config.REPO_ROOT,
+        capture_output=True, text=True, cwd=config.REPO_ROOT,
         env={**os.environ, "PYTHONHASHSEED": hash_seed},
     )
+    assert result.returncode == 0, result.stderr
     return result.stdout
 
 

@@ -46,12 +46,12 @@ def overlay_configs(*, base_dir, dest, h_max_mj: float) -> Path:
     return dest
 
 
-def trained_cap(banks, configs_dir=None) -> float:
+def trained_cap(circuits, configs_dir=None) -> float:
     """The cap the frozen model trained under. AR-05 permits per-event values, so a mixed
     bank has no single "trained cap" to compare against and the arms would be mislabelled
     by whichever circuit happened to be first."""
     circuits_cfg = config.load("circuits", configs_dir)
-    caps = {float(config.get(circuits_cfg, f"{circuit}.h_max_mj")) for circuit in banks}
+    caps = {float(config.get(circuits_cfg, f"{circuit}.h_max_mj")) for circuit in circuits}
     if len(caps) != 1:
         raise ValueError(
             f"the bank spans {len(caps)} different harvest caps ({sorted(caps)}) — a "
@@ -127,6 +127,7 @@ def run_sensitivity(*, configs_dir=None, models_dir=None, circuits=None) -> dict
         "trained_h_max_mj": baseline_mj,
         "refined_h_max_mj": float(block["h_max_mj"]),
         "excluded_races": sorted(dropped["trained"]),
+        "n_circuits": len(banks),
         "model_version": manifest["model_version"],
         "reading": (
             f"the frozen agent's robustness under a {block['h_max_mj']} MJ cap, not what a "
@@ -152,12 +153,13 @@ def main() -> None:
     # provenance and print under a full run's claim, which is the incident the smoke
     # directory already exists to prevent
     committed = config.REPO_ROOT / cfg["store"]["committed_dir"] / ("subset" if subset else "")
-    n_circuits = len(subset) if subset else len(record.test_bank())
     store.write_metric(committed, "harvest_sensitivity", payload, envelope=store.envelope(
         model_versions={"headline": payload["model_version"]},
         config_hash=config.fingerprint(["circuits"]),
         seeds_fingerprint=config.fingerprint(["seeds"]),
-        scope={"smoke": bool(subset), "circuits": n_circuits,
+        # circuits rolled, not names given: a mistyped --circuits would otherwise inflate
+        # the provenance the same way a race count once did
+        scope={"smoke": False, "subset": bool(subset), "circuits": payload["n_circuits"],
                "seeds_per_circuit": cfg["sensitivity"]["harvest_cap"]["races_per_circuit"]},
     ))
     log.info("wrote harvest_sensitivity to %s", committed)

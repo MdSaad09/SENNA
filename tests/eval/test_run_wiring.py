@@ -88,12 +88,26 @@ def test_m7_seed_stream_is_configured_not_inlined():
     m7 = config.load("eval")["m7"]
 
     assert "seed_stream" in m7, "M7's stream id belongs in configs, not in the runner"
-    # and the runner must actually read it: an inlined literal would keep the key green
-    import inspect
-    assert 'cfg["m7"]["seed_stream"]' in inspect.getsource(run_module._diversity)
     # the rollout policy sub-stream is 91 and M11's is 173; sharing one would couple
     # draws that are supposed to be independent
     assert m7["seed_stream"] not in (91, config.load("eval")["m11"]["decision_stream"])
+
+
+def test_m7_draws_move_when_the_configured_stream_moves(monkeypatch):
+    """Behaviour, not source text: an inlined literal would keep the key above green."""
+    seen = []
+    monkeypatch.setattr(run_module.record, "roll_live_batch",
+                        lambda policy, *, circuit, seeds, **kw: seen.append(tuple(seeds)) or [])
+    monkeypatch.setattr(run_module.metrics, "strategy_diversity",
+                        lambda races: {"per_circuit": {}, "mean_entropy_nats": 0.0})
+
+    base = config.load("eval")
+    run_module._diversity(None, {"bahrain_grand_prix": (1,)}, base, None, smoke=True)
+    shifted = {**base, "m7": {**base["m7"], "seed_stream": base["m7"]["seed_stream"] + 1}}
+    run_module._diversity(None, {"bahrain_grand_prix": (1,)}, shifted, None, smoke=True)
+
+    assert len(seen) == 2
+    assert seen[0] != seen[1], "the configured stream id does not reach the draw"
 
 
 def test_every_battery_name_has_a_config_block_or_is_a_named_extra():

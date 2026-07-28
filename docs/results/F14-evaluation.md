@@ -95,7 +95,7 @@ between them is the number in the yaml.
 | trained (8.5 MJ) | 0.648 | 0.078 | P4.81 |
 | refined (7.0 MJ) | 0.627 | 0.182 | P4.94 |
 
-Tightening the cap costs 0.13 places on average while the derate share moves +0.104 — the agent keeps its results but runs out of energy more often, which is what operating closer to a limit looks like. Read this as the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under.
+Tightening the cap costs 0.13 places on average while the derate share moves +0.104: the agent runs out of energy more often, which is what operating closer to a limit looks like. Read this as the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under.
 
 
 ## Figures

@@ -91,6 +91,30 @@ def test_both_arms_race_the_same_seeds_under_their_own_overlay(monkeypatch):
     assert calls[1]["caps"] == {payload["refined_h_max_mj"]}
 
 
+def test_a_subset_run_never_writes_where_the_report_reads(monkeypatch):
+    """The same rule the suite runner follows: a partial run carries a full run's
+    provenance, so writing it to the committed root would print a five-race number under
+    the headline claim."""
+    from senna.eval import sensitivity
+
+    written = {}
+    monkeypatch.setattr("senna.eval.store.write_metric",
+                        lambda d, n, p, *, envelope: written.update(dir=Path(d), env=envelope))
+    monkeypatch.setattr(sensitivity, "run_sensitivity",
+                        lambda **kw: {"model_version": "stub", "n_circuits": 1,
+                                      "arms": {"trained": {"n_races": 5}}})
+    monkeypatch.setattr("sys.argv", ["sensitivity", "--circuits", "bahrain_grand_prix"])
+
+    sensitivity.main()
+
+    committed = config.REPO_ROOT / config.load("eval")["store"]["committed_dir"]
+    assert written["dir"] == committed / "subset"
+    assert written["dir"] != committed
+    # circuits rolled, not names typed: a mistyped name must not inflate the provenance
+    assert written["env"]["scope"]["circuits"] == 1
+    assert written["env"]["scope"]["subset"] is True
+
+
 def test_a_mixed_cap_bank_is_refused(tmp_path):
     """AR-05 permits per-event caps, and a bank spanning two of them has no single trained
     cap — labelling the arm with whichever circuit came first would be a quiet lie."""

@@ -8,7 +8,7 @@ cost of getting this wrong is real, and it has been paid three times.
 """
 
 import os
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
@@ -35,7 +35,19 @@ def database_url() -> str:
 
 
 def database_name(url: str) -> str:
-    return urlsplit(url).path.lstrip("/")
+    """The database a driver would actually connect to.
+
+    Reading the URL path alone is not enough: both Postgres dialects let a `database=` or
+    `dbname=` query parameter override it, so `.../senna_test?database=senna` looks
+    disposable and connects to the ingested store. The query wins here for the same reason
+    it wins in the driver.
+    """
+    parsed = urlsplit(url)
+    query = parse_qs(parsed.query)
+    for key in ("database", "dbname"):
+        if query.get(key):
+            return query[key][-1]
+    return parsed.path.lstrip("/")
 
 
 def require_disposable(url: str | None = None) -> str:

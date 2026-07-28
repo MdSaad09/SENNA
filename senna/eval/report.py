@@ -109,13 +109,8 @@ def _provenance(envelope, store_dir) -> str:
 
 
 def _sensitivity_section(payload) -> str:
-    """E-02: what the refined recharge cap does to the agent that trained under the old one.
-
-    Every number and every direction word comes from the payload. A fixed sentence beside a
-    generated table is one config edit away from contradicting it, and in a chapter whose
-    whole design is that a number carries its honest reading, that is the worst defect
-    available.
-    """
+    """E-02, with every clause derived from the payload — a fixed sentence beside a
+    generated table is one config edit away from contradicting it."""
     arms, delta = payload["arms"], payload["delta"]
     trained_mj = payload.get("trained_h_max_mj", arms["trained"]["h_max_mj"])
     refined_mj = payload.get("refined_h_max_mj", arms["refined"]["h_max_mj"])
@@ -125,14 +120,18 @@ def _sensitivity_section(payload) -> str:
         f"P{arms[label]['mean_position']:.2f} |"
         for label in ("trained", "refined")
     )
-    # a higher finishing position is a worse one, so the sign has to be read, not assumed
-    places = delta["mean_position"]
+    # a higher finishing position is a worse one, so every sign is read, never assumed
+    places, derate = delta["mean_position"], delta["derate_share"]
     verb = "costs" if places > 0 else ("gains" if places < 0 else "moves")
-    derate = delta["derate_share"]
     derate_clause = ("runs out of energy more often" if derate > 0
                      else "derates less often" if derate < 0
                      else "derates at the same rate")
-    direction = "Tightening" if refined_mj < trained_mj else "Loosening"
+    if refined_mj < trained_mj:
+        direction, reading = "Tightening", "operating closer to a limit"
+    elif refined_mj > trained_mj:
+        direction, reading = "Loosening", "operating with more headroom"
+    else:
+        direction, reading = "Holding", "the two arms carrying the same cap"
 
     return (
         "\n## Harvest-cap sensitivity (E-02)\n\n"
@@ -146,9 +145,8 @@ def _sensitivity_section(payload) -> str:
         "| Cap | Utilisation | Derate share | Mean finish |\n|---|---|---|---|\n"
         f"{rows}\n\n"
         f"{direction} the cap {verb} {abs(places):.2f} places on average while the derate "
-        f"share moves {derate:+.3f} — the agent keeps its results but {derate_clause}, "
-        "which is what operating closer to a limit looks like. Read this as "
-        f"{payload['reading']}.\n"
+        f"share moves {derate:+.3f}: the agent {derate_clause}, which is what "
+        f"{reading} looks like. Read this as {payload['reading']}.\n"
     )
 
 
