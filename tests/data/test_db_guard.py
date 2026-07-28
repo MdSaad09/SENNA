@@ -57,6 +57,29 @@ def test_database_name_reads_the_url_path():
     assert database_name("postgresql://u:p@host:5432/other_test") == "other_test"
 
 
+def test_a_query_parameter_cannot_disguise_the_production_database():
+    """SQLAlchemy merges the query over the connect arguments, so a disposable-looking path
+    with a production `database=` was a live bypass. Which key a given driver honours is
+    that driver's business, so any disagreement resolves to the least disposable reading."""
+    assert database_name(DISPOSABLE + "?database=senna") == "senna"
+    assert database_name(PRODUCTION + "?dbname=senna_test") == "senna"
+
+    for disguised in (DISPOSABLE + "?database=senna", DISPOSABLE + "?dbname=senna",
+                      PRODUCTION + "?database=senna_test"):
+        with pytest.raises(ProductionDatabaseError):
+            require_disposable(disguised)
+
+    # a genuinely disposable redirect is still allowed
+    assert require_disposable(DISPOSABLE + "?database=other_test")
+
+
+def test_a_repeated_database_key_is_refused():
+    # SQLAlchemy hands the driver a tuple and no layer defines which wins, so there is no
+    # honest answer to check against
+    with pytest.raises(ProductionDatabaseError, match="names the database"):
+        require_disposable(DISPOSABLE + "?database=a&database=senna_test")
+
+
 def _destructive_modules():
     """Every test module that drops tables, discovered rather than listed: a hard-coded
     list cannot notice the new module that forgets the guard, which is the whole failure
@@ -90,27 +113,40 @@ def _explode(*args, **kwargs):
     )
 
 
-@pytest.mark.parametrize("call", [
+ENTRY_POINTS = [
     ("tests.api.conftest", "reset_schema", ()),
     ("tests.data.test_ingest_resume", "_fresh_schema", (PRODUCTION,)),
     ("tests.explain.test_persist", "_fresh_schema", (PRODUCTION,)),
-], ids=lambda c: c[0].rsplit(".", 1)[-1] if isinstance(c, tuple) else str(c))
+]
+
+
+def test_the_entry_point_list_covers_every_discovered_module():
+    """This file's own thesis is that a hard-coded list cannot notice a new module, so the
+    list below has to be checked against discovery rather than trusted."""
+    listed = {name.rsplit(".", 1)[-1] for name, _, _ in ENTRY_POINTS}
+    assert {path.stem for path in _destructive_modules()} == listed
+
+
+@pytest.mark.parametrize("call", ENTRY_POINTS, ids=lambda c: f"{c[0].rsplit('.', 1)[-1]}.{c[1]}")
 def test_every_destructive_entry_point_refuses_production(call, monkeypatch):
     """The discovery grep proves the call exists; this proves it fires.
 
-    The engine constructor is replaced with something that raises, so a regressed guard
-    fails this test instead of demonstrating the bug on the real database. A test that
-    only goes red *after* dropping the tables would be a worse version of the incident it
-    models — and one that needs no DATABASE_URL from the operator, so a plain
-    `pytest tests/data` would be the thing that erases the store.
+    The block is placed at asyncpg.connect rather than at create_async_engine, because a
+    module that aliases its import (`from ... import create_async_engine as make_engine`)
+    slips past a patch bound by name — and then this test does the damage it was written
+    to prevent. A test that only goes red *after* dropping the tables is a worse version
+    of the incident it models, and this one needs no DATABASE_URL from the operator, so a
+    plain `pytest tests/data` would be the thing that erases the store.
     """
     import asyncio
     import importlib
 
     module_name, function_name, args = call
     module = importlib.import_module(module_name)
+    # a chokepoint the target module cannot rename out from under us; no raising=False,
+    # so a stale patch target errors instead of quietly no-oping
+    monkeypatch.setattr("asyncpg.connect", _explode)
     monkeypatch.setattr("sqlalchemy.ext.asyncio.create_async_engine", _explode)
-    monkeypatch.setattr(module, "create_async_engine", _explode, raising=False)
     monkeypatch.setenv("DATABASE_URL", PRODUCTION)
     monkeypatch.delenv("SENNA_ALLOW_DESTRUCTIVE_DB", raising=False)
 

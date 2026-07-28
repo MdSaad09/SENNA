@@ -35,19 +35,30 @@ def database_url() -> str:
 
 
 def database_name(url: str) -> str:
-    """The database a driver would actually connect to.
+    """The database this URL could name, resolved conservatively.
 
-    Reading the URL path alone is not enough: both Postgres dialects let a `database=` or
-    `dbname=` query parameter override it, so `.../senna_test?database=senna` looks
-    disposable and connects to the ingested store. The query wins here for the same reason
-    it wins in the driver.
+    The path alone is not enough: SQLAlchemy merges the query over the connect arguments,
+    so `.../senna_test?database=senna` looks disposable and connects to the ingested store.
+    But which key a driver honours is a driver's business — asyncpg takes `database` and
+    rejects `dbname` outright, psycopg2 the other way about. Rather than model each one and
+    inherit its accidents, every candidate is collected and the least disposable wins: if
+    any reading of the URL points at something not named `*_test`, that is the answer.
     """
     parsed = urlsplit(url)
     query = parse_qs(parsed.query)
+    candidates = []
     for key in ("database", "dbname"):
-        if query.get(key):
-            return query[key][-1]
-    return parsed.path.lstrip("/")
+        values = query.get(key, [])
+        if len(values) > 1:
+            # SQLAlchemy hands the driver a tuple here and no layer implements "last wins";
+            # guessing one would be a rule nothing enforces
+            raise ProductionDatabaseError(
+                f"'{url}' names the database {len(values)} times ({values}) — no driver "
+                "defines which wins, so this cannot be checked"
+            )
+        candidates.extend(values)
+    candidates.append(parsed.path.lstrip("/"))
+    return min(candidates, key=lambda name: name.endswith(_DISPOSABLE_SUFFIX))
 
 
 def require_disposable(url: str | None = None) -> str:
