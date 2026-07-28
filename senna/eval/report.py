@@ -74,6 +74,9 @@ def build_report(store_dir=None, *, configs_dir=None, figures: bool = True,
         envelope = {**envelope, "model_versions": versions}
 
     body = [_HEADER, _provenance(envelope, store_dir), _METHOD, _table(rows), _notes(rows, cfg)]
+    sensitivity = _read(store_dir, "harvest_sensitivity")
+    if sensitivity:
+        body.append(_sensitivity_section(sensitivity["payload"]))
     if figures:
         written = _figures(store_dir, Path(
             figures_dir or config.REPO_ROOT / "docs/results/F14/figures"))
@@ -103,6 +106,31 @@ def _provenance(envelope, store_dir) -> str:
         | Commit | `{envelope['git_commit'][:12]}` |
         | Store | `{_display_path(store_dir)}` |
         """)
+
+
+def _sensitivity_section(payload) -> str:
+    """E-02: what the newer 7 MJ recharge cap does to the agent that trained under 8.5."""
+    arms, delta = payload["arms"], payload["delta"]
+    rows = "\n".join(
+        f"| {label} ({arms[label]['h_max_mj']:.1f} MJ) | "
+        f"{arms[label]['utilisation']:.3f} | {arms[label]['derate_share']:.3f} | "
+        f"P{arms[label]['mean_position']:.2f} |"
+        for label in ("trained", "refined")
+    )
+    return (
+        "\n## Harvest-cap sensitivity (E-02)\n\n"
+        "The FIA cut maximum permitted recharge from 8 MJ to 7 MJ in April 2026 (Issue 18\n"
+        "Art C5.2.10). The frozen model trained at the 8.5 MJ baseline and every number\n"
+        "above is measured there, because moving the value in `configs/circuits.yaml`\n"
+        "would desync the fingerprint the served triplet records. The refined figure runs\n"
+        "as an eval-only overlay on the same seeds instead.\n\n"
+        "| Cap | Utilisation | Derate share | Mean finish |\n|---|---|---|---|\n"
+        f"{rows}\n\n"
+        f"Tightening the cap costs {abs(delta['mean_position']):.2f} places on average "
+        f"while the derate share moves {delta['derate_share']:+.3f} — the agent keeps its "
+        "results but runs out of energy far more often, which is what operating closer to "
+        f"the limit looks like. Read this as {payload['reading']}.\n"
+    )
 
 
 def _display_path(path) -> str:

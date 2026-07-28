@@ -80,6 +80,22 @@ luck it happened to meet.
 **M9.** Trivially zero by never stretching a stint, so it is read jointly with M1 and the stint-length distribution, both of which are reported beside it.
 
 
+## Harvest-cap sensitivity (E-02)
+
+The FIA cut maximum permitted recharge from 8 MJ to 7 MJ in April 2026 (Issue 18
+Art C5.2.10). The frozen model trained at the 8.5 MJ baseline and every number
+above is measured there, because moving the value in `configs/circuits.yaml`
+would desync the fingerprint the served triplet records. The refined figure runs
+as an eval-only overlay on the same seeds instead.
+
+| Cap | Utilisation | Derate share | Mean finish |
+|---|---|---|---|
+| trained (8.5 MJ) | 0.648 | 0.078 | P4.81 |
+| refined (7.0 MJ) | 0.627 | 0.182 | P4.94 |
+
+Tightening the cap costs 0.13 places on average while the derate share moves +0.104 — the agent keeps its results but runs out of energy far more often, which is what operating closer to the limit looks like. Read this as the frozen agent's robustness under a 7 MJ cap, not what a model re-optimised for 7 MJ would do — the reported numbers stay on the cap it trained under.
+
+
 ## Figures
 
 ![m1_delta_hist](F14/figures/m1_delta_hist.png)

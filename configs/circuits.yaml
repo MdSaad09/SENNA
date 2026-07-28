@@ -8,6 +8,21 @@
 # as reporting surfaces it and rerun make synth — the code reads only this file.
 # One entry per ingested event (E-13: the index is data-driven; Madrid appears
 # with its first ingested session, September 2026).
+#
+# HARVEST CAP, 8.5 vs 7.0 — read this before changing any h_max_mj below.
+# The FIA's 20 Apr 2026 refinement (2026 Technical Regulations Issue 18, Art C5.2.10)
+# cut maximum permitted recharge from 8 MJ to 7 MJ, with a 5 MJ floor in qualifying and
+# +0.5 MJ under Manual Override (Art B7.2). Verified 26 Jul 2026. The 8.5 values below
+# are deliberately unchanged: the frozen headline triplet trained under them, its
+# manifest records the fingerprint of this file, and every reported number in
+# docs/results/F14-evaluation.md is measured under them. Editing a value here would
+# desync the served fingerprint from the frozen model and silently invalidate the
+# evaluation chapter (E-15), so the newer figure is exercised as an eval-only overlay
+# instead — configs/eval.yaml sensitivity.harvest_cap, reported in the F14 results doc.
+# That pass measures the FROZEN agent's robustness under a 7 MJ cap; it is not what a
+# model re-optimised for 7 MJ would do. Correcting these values for real means
+# re-running the whole chain (make synth -> train -> promote -> make explain), which is
+# a deliberate decision, not an edit (Saad, 26 Jul 2026, F14 plan decision 1).
 
 abu_dhabi_grand_prix:
   h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
