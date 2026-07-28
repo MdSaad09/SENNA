@@ -4,9 +4,9 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F14 — In review on `feature/F14-evaluation`. All M1-M11 numbers are
-computed and committed (docs/results/F14-evaluation.md); four of eleven targets are met and
-the misses are the interesting half. See the ship report before landing.
+**Active feature:** F14 — In review on `feature/F14-evaluation`, complete. All M1-M11
+numbers computed and committed (docs/results/F14-evaluation.md), the E-02 harvest-cap
+sensitivity measured, and the DB-wipe guard landed. `/land F14` when you have read it.
 **Next up:** F15
 
 ## Feature ledger
@@ -118,6 +118,19 @@ the work — resume with `claude --continue`, or start fresh and say
   failures per 100 races**, mean stint 29.4 laps, max 76). M11 luck share **0.758**
   CI [0.68, 0.82] at a mean head entropy of 0.605 nats. Read M1 with M9: the agent buys
   track position by over-running tyres. Evidence: docs/results/F14-evaluation.md.
+- **DB-wipe guard (F14, 28 Jul 2026):** `senna/data/db.py::require_disposable` refuses to
+  drop tables on any database not named `*_test`, resolving the name the way the driver
+  does (a `?database=` query parameter overrides the URL path, which was a live bypass).
+  All three destructive test modules call it, CI's ephemeral Postgres is renamed
+  `senna_test`, and compose provisions it on first boot. The escape hatch names the
+  database out loud (`SENNA_ALLOW_DESTRUCTIVE_DB=senna`) so it cannot be left armed.
+  Closes the recurring wipe hazard — the store was lost three times, twice in one session.
+- **E-02 harvest cap MEASURED (F14, 28 Jul 2026):** under the FIA's refined 7 MJ cap
+  (Issue 18 Art C5.2.10) the frozen agent loses **0.13 places** and its derate share goes
+  **0.078 -> 0.182**. It keeps its results and runs out of energy more than twice as
+  often. This is the frozen agent's robustness, NOT a model re-optimised for 7 MJ.
+  circuits.yaml stays at 8.5 with a header explaining why; AR-05 carries the verification.
+  Reproduce with `make sensitivity`.
 - **AR-04 energy store (spec Part 8):** VERIFIED 24 Jul 2026 — official FIA regulation
   text. FIA 2026 Formula 1 Technical Regulations Issue 8 (24 Jun 2024), Art 5.4.9: "The
   difference between the maximum and the minimum state of charge of the ES may not
