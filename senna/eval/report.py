@@ -50,7 +50,8 @@ luck it happened to meet.
 """
 
 
-def build_report(store_dir=None, *, configs_dir=None, figures: bool = True) -> str:
+def build_report(store_dir=None, *, configs_dir=None, figures: bool = True,
+                 figures_dir=None) -> str:
     cfg = config.load("eval", configs_dir)
     store_dir = Path(store_dir) if store_dir else config.REPO_ROOT / cfg["store"]["committed_dir"]
 
@@ -74,7 +75,8 @@ def build_report(store_dir=None, *, configs_dir=None, figures: bool = True) -> s
 
     body = [_HEADER, _provenance(envelope, store_dir), _METHOD, _table(rows), _notes(rows, cfg)]
     if figures:
-        written = _figures(store_dir, config.REPO_ROOT / "docs/results/F14/figures")
+        written = _figures(store_dir, Path(
+            figures_dir or config.REPO_ROOT / "docs/results/F14/figures"))
         if written:
             body.append(_figure_section(written))
     body.append(_reproducing())
@@ -99,8 +101,17 @@ def _provenance(envelope, store_dir) -> str:
         | Env config hash | `{envelope['config_hash'][:12]}` |
         | Seed manifest | `{envelope['seeds_fingerprint'][:12]}` |
         | Commit | `{envelope['git_commit'][:12]}` |
-        | Store | `{Path(store_dir).relative_to(config.REPO_ROOT)}` |
+        | Store | `{_display_path(store_dir)}` |
         """)
+
+
+def _display_path(path) -> str:
+    """Repo-relative where it can be, absolute otherwise: --store may point anywhere."""
+    path = Path(path)
+    try:
+        return str(path.relative_to(config.REPO_ROOT))
+    except ValueError:
+        return str(path)
 
 
 def _table(rows) -> str:
@@ -360,8 +371,11 @@ def _save(fig, path) -> Path:
 def _figure_section(written) -> str:
     lines = ["\n## Figures\n"]
     for path in written:
-        rel = Path(path).relative_to(config.REPO_ROOT / "docs/results")
-        lines.append(f"![{Path(path).stem}]({rel})\n")
+        try:
+            link = Path(path).relative_to(config.REPO_ROOT / "docs/results")
+        except ValueError:
+            link = Path(path).name
+        lines.append(f"![{Path(path).stem}]({link})\n")
     return "\n".join(lines)
 
 
