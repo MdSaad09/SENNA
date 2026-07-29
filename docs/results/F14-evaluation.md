@@ -16,7 +16,7 @@ reachable from training: the seed loader refuses every consumer but this suite, 
 | | |
 |---|---|
 | Models | era2024 `senna-ppo-db031aead155-C-02211840`, headline `senna-ppo-6b6edb78d84e-C-00835584` |
-| Env config hash | `6b6edb78d84e` |
+| Env config hash | `6b6edb78d84e` (the training manifest's) |
 | Seed manifest | `b112935601b2` |
 | Commit | `bccc8a851531` |
 | Store | `docs/results/F14/store` |
@@ -80,6 +80,9 @@ luck it happened to meet.
 **M9.** Trivially zero by never stretching a stint, so it is read jointly with M1 and the stint-length distribution, both of which are reported beside it.
 
 
+The overlay studies below mutate a config on purpose, so each prints its own hash beside its table.
+
+
 ## Harvest-cap sensitivity (E-02)
 
 The FIA refined the maximum permitted recharge to 7.0 MJ (2026
@@ -96,6 +99,24 @@ between them is the number in the yaml.
 | refined (7.0 MJ) | 0.627 | 0.182 | P4.94 |
 
 Tightening the cap costs 0.13 places on average while the derate share moves +0.104: the agent runs out of energy more often, which is what operating closer to a limit looks like. Read this as the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under.
+
+Provenance: config `26a436fece3d` (circuits.yaml, the base file the overlays scaled), seeds `b112935601b2`.
+
+
+## M2 energy-coefficient sensitivity
+
+The 2024 counterfactual scenario borrows the 2026 fitted energy-mode block
+(`configs/physics_2024.yaml` names the four coefficients). Both arms re-roll
+the ten M2 races with that block scaled by +/-50% under the era-matched model.
+
+| Arm | Mean delta (places) | Races |
+|---|---|---|
+| up (+50%) | -0.14 | 10 |
+| down (-50%) | -0.52 | 10 |
+
+Read this as the borrowed 2026 energy-mode fit scaled by +/-50% under the era-matched model — how much of M2 rides on coefficients the 2024 era never fitted, not a claim about either era's true physics.
+
+Provenance: config `eb4c6dbe716b` (the base configs the overlays scaled), seeds `b112935601b2`.
 
 
 ## Figures

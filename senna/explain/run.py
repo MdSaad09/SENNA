@@ -46,25 +46,54 @@ from senna.train.checkpoints import load_triplet
 from senna.train.evals import Sb3Policy
 from senna.train.seeds import load_banks
 
-_ERA = "2026"  # the headline model is the 2026 strategist (5.7)
+_ERA = "2026"  # the CLI default: the headline model is the 2026 strategist (5.7)
 _MIN_RACE_LAPS = 30  # only sizes the seed draw; shorter circuits just use more seeds
 
 
-def load_headline(triplet_dir: Path):
+def explain_env(circuit: str, era: str = _ERA, *, rival_band: str = "train") -> F1RaceEnv:
+    """Every spaces, distillation and card env goes through here so the era can never
+    fork between them — the F-24 trap is a surrogate distilled on physics the policy
+    never raced."""
+    return F1RaceEnv(circuit, era, rival_band=rival_band)
+
+
+def era_circuits(banks, era: str) -> list[str]:
+    """The distillation and card circuits for an era. 2026 keeps the whole Stage C
+    validation bank (its scenarios come from the transform chain, so every circuit is
+    native); an earlier era narrows to the fine-tune's native-fit list and re-checks
+    each against the same guard M2 uses, because build_scenario's 2026 fallback would
+    otherwise card an era-matched model on borrowed physics (F-24)."""
+    circuits = sorted(banks.stage_c_validation)
+    if era == _ERA:
+        return circuits
+    from senna.eval.traces import require_native_era_fits
+
+    native = set(config.load("eval")["era_finetune"]["circuits"])
+    narrowed = sorted(set(circuits) & native)
+    for circuit in narrowed:
+        require_native_era_fits(circuit, era)
+    return narrowed
+
+
+def load_headline(triplet_dir: Path, era: str = _ERA):
     """The score_triplet recipe (F-23): one throwaway env for the spaces, statistics
     frozen from the triplet, and the manifest that names what we are explaining."""
     from stable_baselines3.common.monitor import Monitor
     from stable_baselines3.common.vec_env import DummyVecEnv
 
     banks = load_banks()
-    circuit = next(iter(banks.stage_c_validation))
-    venv = DummyVecEnv([lambda: Monitor(F1RaceEnv(circuit, _ERA))])
+    # even the spaces-only env goes through the narrowed list: the bank's first
+    # circuit can be one with no native fits for this era, and build_scenario's
+    # silent 2026 fallback is exactly the fork explain_env exists to close (F-24)
+    circuit = era_circuits(banks, era)[0]
+    venv = DummyVecEnv([lambda: Monitor(explain_env(circuit, era))])
     model, loaded = load_triplet(Path(triplet_dir), venv)
     manifest = json.loads((Path(triplet_dir) / "manifest.json").read_text())
     return Sb3Policy(model, loaded.normalize_obs), manifest, banks
 
 
-def collect_distillation(policy, circuits, *, pairs_target, seed_base, seed_floor):
+def collect_distillation(policy, circuits, *, pairs_target, seed_base, seed_floor,
+                         era: str = _ERA):
     """Evaluation rollouts until the pair budget is met: deterministic head on the
     stochastic train-band env (E-06), circuits round-robin, derived seeds. The seed
     list is drawn once up front so the run is a pure function of the config; the
@@ -79,7 +108,7 @@ def collect_distillation(policy, circuits, *, pairs_target, seed_base, seed_floo
             break
         circuit = circuits[i % len(circuits)]
         if circuit not in envs:
-            envs[circuit] = F1RaceEnv(circuit, _ERA, rival_band="train")
+            envs[circuit] = explain_env(circuit, era, rival_band="train")
         records.extend(log_episode(envs[circuit], policy, circuit=circuit, seed=seed))
         episodes += 1
     if len(records) < pairs_target:
@@ -311,6 +340,9 @@ def main() -> None:
         description="distill, explain and card the frozen headline model (F09)"
     )
     parser.add_argument("--triplet", type=Path, default=Path("models/headline"))
+    parser.add_argument("--era", choices=("2026", "2024"), default=_ERA,
+                        help="the physics the explained model raced (F-24): the "
+                             "era-matched triplet distills and cards on its own era")
     parser.add_argument("--pairs", type=int, default=None,
                         help="dev cap: override distill.pairs for a smoke run")
     parser.add_argument("--card-races", type=int, default=None,
@@ -323,12 +355,18 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = config.load("explain")
-    policy, manifest, banks = load_headline(args.triplet)
+    policy, manifest, banks = load_headline(args.triplet, args.era)
     model_version = manifest["model_version"]
     env_config_hash = manifest["fingerprint"]
-    circuits = sorted(banks.stage_c_validation)
+    if str(manifest.get("era", "2026")) != args.era:
+        raise SystemExit(
+            f"{model_version} is baked for era {manifest.get('era', '2026')} but "
+            f"--era {args.era} was given — an era mismatch here distills the model "
+            "on physics it never raced (F-24)"
+        )
+    circuits = era_circuits(banks, args.era)
     seed_base = config.get(cfg, "distill.rollout_seed_base")
-    print(f"explaining {model_version} (config {env_config_hash[:12]})")
+    print(f"explaining {model_version} (era {args.era}, config {env_config_hash[:12]})")
 
     dest = Path("models/explain") / model_version
     if args.reuse_surrogate:
@@ -346,6 +384,7 @@ def main() -> None:
             policy, circuits,
             pairs_target=args.pairs or config.get(cfg, "distill.pairs"),
             seed_base=seed_base, seed_floor=config.get(cfg, "distill.seed_floor"),
+            era=args.era,
         )
         train, holdout = split_by_episode(
             records, config.get(cfg, "distill.holdout_episode_frac"), seed=seed_base
@@ -382,7 +421,7 @@ def main() -> None:
     races, card_records = [], []
     for circuit, seed in race_list:
         if circuit not in envs:
-            envs[circuit] = F1RaceEnv(circuit, _ERA, rival_band="train")
+            envs[circuit] = explain_env(circuit, args.era, rival_band="train")
         cards, recs = race_cards(
             policy, envs[circuit], circuit, seed, explainers, cfg, fidelity=fidelity,
             model_version=model_version, surrogate_version=surrogate_version,

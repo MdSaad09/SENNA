@@ -22,6 +22,9 @@ COPY scripts/ scripts/
 # repo — nothing is ever mounted. senna.config resolves REPO_ROOT to /app, so the
 # loader finds these at /app/models without any env override.
 COPY models/headline/ models/headline/
+# the era-matched 2024 triplet serves the counterfactual view (F-24); committed in
+# F14 but only baked here in F15 — an image without it can never clear pending-F14
+COPY models/era2024/ models/era2024/
 COPY models/explain/ models/explain/
 COPY data/circuits/ data/circuits/
 

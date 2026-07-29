@@ -42,13 +42,17 @@ const WS_STATUS_FAILED = 500;
 export class LiveSocket {
   private readonly runId: number;
   private readonly path: string;
+  private readonly startLap: number | undefined;
+  private readonly startSpeed: number | undefined;
   private ws: WebSocket | null = null;
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
   private attempt = 0;
   private disposed = false;
 
-  constructor(runId: number) {
+  constructor(runId: number, opts: { startLap?: number; speed?: number } = {}) {
     this.runId = runId;
+    this.startLap = opts.startLap;
+    this.startSpeed = opts.speed;
     this.path = `/ws/simulations/${runId}`;
     this.connect();
   }
@@ -72,7 +76,14 @@ export class LiveSocket {
     });
     const { frames, speed, playing } = useLiveStore.getState();
     const head = frames.length === 0 ? 0 : frames[frames.length - 1].lap;
-    if (head === 0) return; // a fresh session: the server's defaults are ours too
+    if (head === 0) {
+      // an empty buffer has nothing to resync, so the deep link speaks: a mid-race
+      // entry rides the same client:seek the resync uses (E-16). Once frames land,
+      // the buffer owns every later open and these opts never speak again.
+      if (this.startLap !== undefined) this.send({ type: "client:seek", lap: this.startLap });
+      if (this.startSpeed !== undefined) this.send({ type: "client:speed", speed: this.startSpeed });
+      return;
+    }
     // resync in one path: jump past the buffer, restore the tempo, re-pause if the
     // viewer had paused (the replayed connection always starts unpaused at 1x)
     this.send({ type: "client:seek", lap: head + 1 });

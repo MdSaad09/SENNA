@@ -38,11 +38,21 @@ test("flip lines render on the pit-lap card and only there", () => {
   }
 });
 
-test("the honesty footer quotes the statement verbatim with per-head fidelity and version", () => {
+test("the honesty footer quotes the statement verbatim with the model version", () => {
+  // the fidelity figures moved to the badge (F15); the statement and version stay here
   render(<DecisionCardPanel card={decisionCardPitLap} />);
   const honesty = screen.getByTestId("card-honesty");
   expect(honesty).toHaveTextContent(decisionCardPitLap.honesty.statement);
-  expect(honesty.textContent).toMatch(/93(\.0)?\s*%/); // pit head fidelity
-  expect(honesty.textContent).toMatch(/88(\.0)?\s*%/); // mode head fidelity
   expect(honesty).toHaveTextContent("test-model");
+});
+
+test("the fidelity badge carries both served agreement figures (5.13)", () => {
+  render(<DecisionCardPanel card={decisionCardPitLap} />);
+  const badge = screen.getByTestId("fidelity-badge");
+  // the served honesty.fidelity pair as percentages: pit 0.93, mode 0.88 — same
+  // data as the old monospace footer line, no new numbers
+  expect(badge.textContent).toMatch(/93(\.0)?\s*%/);
+  expect(badge.textContent).toMatch(/88(\.0)?\s*%/);
+  // the honesty statement itself stays rendered verbatim alongside the badge
+  expect(screen.getByText(decisionCardPitLap.honesty.statement)).toBeInTheDocument();
 });

@@ -360,7 +360,7 @@ the recorded numbers. `promote_headline` then refuses to copy unless the chosen
 `best/` manifest's `global_step` equals the gate log's selected step — finding 7's
 fragile coupling, checked instead of trusted — and swaps the triplet into
 `models/headline/` atomically with a `promotion.json` naming the `model_version`
-F09 and F10 consume. `score_triplet` (behind `make eval`) re-scores any saved
+F09 and F10 consume. `score_triplet` (behind `make rescore` (named `make eval` until F15)) re-scores any saved
 triplet on the validation banks, always in the default masked v3 env. `headline.py`
 runs the three seeds and skips completed ones by matching the ledger on
 (kind, seed, fingerprint) — never on run id, which embeds its start date; an

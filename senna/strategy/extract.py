@@ -4,18 +4,21 @@ F13 counterfactual route extracts a named driver the same way).
 `plan_from_rows` is the pure heart — bare tuples of one driver's laps in, a PitPlan
 out, no pandas and no database — so the API route and the worker share it without
 either touching a frame (nothing pandas-shaped near the serving path). `compile_plan`
-keeps its pandas signature as a thin adapter for the winner script below.
+keeps its pandas signature as a thin adapter for the script below.
 
-Run as a script it reads the ingested Postgres store, takes the race winner's stints and
-writes configs/real_strategies.yaml, which is checked in so a rollout (and CI) never needs
-the database:
+Run as a script it reads the ingested Postgres store and prints the plan; --write
+merges it into configs/real_strategies.yaml, which is checked in so a rollout (and CI)
+never needs the database. Drivers are named by their three-letter code, the same key
+the counterfactual route uses (F-29); the winner is the default:
 
-    python -m senna.strategy.extract --season 2024 --circuit bahrain_grand_prix
+    python -m senna.strategy.extract --season 2024 --circuit british_grand_prix \\
+        --driver HAM --write
 """
 
 import argparse
 
 import pandas as pd
+import yaml
 
 from senna.strategy.plans import PitPlan
 
@@ -69,7 +72,28 @@ def compile_plan(frame: pd.DataFrame, *, sim_total_laps: int, real_total_laps: i
     return plan_from_rows(rows, sim_total_laps=sim_total_laps, real_total_laps=real_total_laps)
 
 
-async def _winner_frame(conn, season: int, circuit: str):
+def merge_strategy(existing_text: str, entry: dict) -> str:
+    """Merge one extracted race into the real_strategies yaml text, pure and re-runnable:
+    the key derives from the entry's own season/circuit/driver, an existing entry under
+    that key is replaced rather than duplicated, and the file's leading comment header
+    rides through the merge (safe_dump would silently eat it)."""
+    lines = existing_text.splitlines(keepends=True)
+    header_end = 0
+    for line in lines:
+        if line.strip() and not line.lstrip().startswith("#"):
+            break
+        header_end += 1
+    header = "".join(lines[:header_end])
+
+    recorded = yaml.safe_load(existing_text) or {}
+    recorded[f"{entry['season']}_{entry['circuit']}_{entry['driver']}"] = entry
+    # default_flow_style=None keeps each stop on one line ([18, HARD]) — the record
+    # is committed for humans to read, and block style buries the pair
+    return header + yaml.safe_dump(recorded, sort_keys=False, allow_unicode=True,
+                                   default_flow_style=None)
+
+
+async def _race_session(conn, season: int, circuit: str):
     from sqlalchemy import text
 
     session = (await conn.execute(
@@ -83,42 +107,60 @@ async def _winner_frame(conn, season: int, circuit: str):
     if session is None:
         raise LookupError(f"no {season} race session for {circuit}")
     session_id = session[0]
-
     final_lap = (await conn.execute(
         text("select max(lap_number) from laps where session_id = :s"), {"s": session_id}
     )).scalar_one()
-    winner = (await conn.execute(
-        text(
-            "select driver_number from laps where session_id = :s and lap_number = :lap "
-            "and position = 1 and source like 'real%'"
-        ),
-        {"s": session_id, "lap": final_lap},
-    )).scalar_one()
+    return session_id, int(final_lap)
+
+
+async def _driver_rows(conn, session_id: int, driver: str):
+    from sqlalchemy import text
+
     rows = (await conn.execute(
         text(
             "select lap_number, stint, compound, pit_in_time_s from laps "
-            "where session_id = :s and driver_number = :d and source like 'real%' "
+            "where session_id = :s and driver = :d and source like 'real%' "
             "order by lap_number"
         ),
-        {"s": session_id, "d": winner},
+        {"s": session_id, "d": driver},
     )).all()
-    frame = pd.DataFrame(rows, columns=["lap_number", "stint", "compound", "pit_in_time_s"])
-    return frame, winner, int(final_lap)
+    if not rows:
+        raise LookupError(f"no ingested laps for {driver} in session {session_id}")
+    return rows
 
 
-async def _extract(season: int, circuit: str) -> dict:
+async def _extract(season: int, circuit: str, driver: str | None) -> dict:
+    from sqlalchemy import text
+
     from senna import config
     from senna.data.db import database_url, engine_for
 
     engine = engine_for(database_url())
     async with engine.connect() as conn:
-        frame, winner, real_total_laps = await _winner_frame(conn, season, circuit)
+        session_id, real_total_laps = await _race_session(conn, season, circuit)
+        if driver is None:
+            # the winner by three-letter code — the key the counterfactual route and
+            # the M2 config both speak, never the car number (F14 plan)
+            driver = (await conn.execute(
+                text(
+                    "select driver from laps where session_id = :s and lap_number = :lap "
+                    "and position = 1 and source like 'real%'"
+                ),
+                {"s": session_id, "lap": real_total_laps},
+            )).scalar_one()
+        rows = await _driver_rows(conn, session_id, driver)
     await engine.dispose()
 
     sim_total_laps = int(config.get(config.load("circuits"), f"{circuit}.race_laps"))
-    plan = compile_plan(frame, sim_total_laps=sim_total_laps, real_total_laps=real_total_laps)
+    plan = plan_from_rows(
+        [tuple(row) for row in rows],
+        sim_total_laps=sim_total_laps, real_total_laps=real_total_laps,
+    )
     return {
-        "winner": winner,
+        "season": season,
+        "circuit": circuit,
+        "driver": str(driver),
+        "source": f"FastF1 {season} {circuit}, {driver} — senna.strategy.extract",
         "real_total_laps": real_total_laps,
         "sim_total_laps": sim_total_laps,
         "stops": [[lap, name] for lap, name in plan.stops],
@@ -128,13 +170,22 @@ async def _extract(season: int, circuit: str) -> dict:
 def main() -> None:
     import asyncio
 
+    from senna import config
+
     parser = argparse.ArgumentParser(description="extract a real race strategy into a plan")
     parser.add_argument("--season", type=int, required=True)
     parser.add_argument("--circuit", required=True)
+    parser.add_argument("--driver", help="three-letter code; default is the race winner")
+    parser.add_argument("--write", action="store_true",
+                        help="merge the entry into configs/real_strategies.yaml")
     args = parser.parse_args()
 
-    result = asyncio.run(_extract(args.season, args.circuit))
-    print(f"{args.circuit} {args.season}: winner {result['winner']} -> {result['stops']}")
+    entry = asyncio.run(_extract(args.season, args.circuit, args.driver))
+    print(f"{args.circuit} {args.season}: {entry['driver']} -> {entry['stops']}")
+    if args.write:
+        path = config.REPO_ROOT / "configs" / "real_strategies.yaml"
+        path.write_text(merge_strategy(path.read_text(), entry))
+        print(f"wrote {entry['season']}_{entry['circuit']}_{entry['driver']} to {path}")
 
 
 if __name__ == "__main__":

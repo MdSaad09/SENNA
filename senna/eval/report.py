@@ -75,8 +75,13 @@ def build_report(store_dir=None, *, configs_dir=None, figures: bool = True,
 
     body = [_HEADER, _provenance(envelope, store_dir), _METHOD, _table(rows), _notes(rows, cfg)]
     sensitivity = _read(store_dir, "harvest_sensitivity")
+    coefficients = _read(store_dir, "m2_sensitivity")
+    if sensitivity or coefficients:
+        body.append(_overlay_note())
     if sensitivity:
-        body.append(_sensitivity_section(sensitivity["payload"]))
+        body.append(_sensitivity_section(sensitivity["payload"], sensitivity["envelope"]))
+    if coefficients:
+        body.append(_m2_sensitivity_section(coefficients["payload"], coefficients["envelope"]))
     if figures:
         written = _figures(store_dir, Path(
             figures_dir or config.REPO_ROOT / "docs/results/F14/figures"))
@@ -101,14 +106,21 @@ def _provenance(envelope, store_dir) -> str:
         | | |
         |---|---|
         | Models | {versions} |
-        | Env config hash | `{envelope['config_hash'][:12]}` |
+        | Env config hash | `{envelope['config_hash'][:12]}` (the training manifest's) |
         | Seed manifest | `{envelope['seeds_fingerprint'][:12]}` |
         | Commit | `{envelope['git_commit'][:12]}` |
         | Store | `{_display_path(store_dir)}` |
         """)
 
 
-def _sensitivity_section(payload) -> str:
+def _overlay_note() -> str:
+    return (
+        "\nThe overlay studies below mutate a config on purpose, so each prints its "
+        "own hash beside its table.\n"
+    )
+
+
+def _sensitivity_section(payload, envelope) -> str:
     """E-02, with every clause derived from the payload — a fixed sentence beside a
     generated table is one config edit away from contradicting it."""
     arms, delta = payload["arms"], payload["delta"]
@@ -146,7 +158,37 @@ def _sensitivity_section(payload) -> str:
         f"{rows}\n\n"
         f"{direction} the cap {verb} {abs(places):.2f} places on average while the derate "
         f"share moves {derate:+.3f}: the agent {derate_clause}, which is what "
-        f"{reading} looks like. Read this as {payload['reading']}.\n"
+        f"{reading} looks like. Read this as {payload['reading']}.\n\n"
+        # this study fingerprints the file its overlay mutates, at run time — the suite
+        # hash above describes a different preimage, and printing only that one invites
+        # an examiner to mis-attribute it (F15)
+        f"Provenance: config `{envelope['config_hash'][:12]}` (circuits.yaml, the base "
+        f"file the overlays scaled), seeds `{envelope['seeds_fingerprint'][:12]}`.\n"
+    )
+
+
+def _m2_sensitivity_section(payload, envelope) -> str:
+    """The borrowed-coefficient study beside the metric it qualifies: M2's 2024 scenario
+    runs the 2026 energy-mode fit, and this is what that borrow is worth."""
+    arms = payload["arms"]
+    spread = "\n".join(
+        f"| {label} ({'+' if label == 'up' else '-'}{payload['perturbation']:.0%}) | "
+        f"{arms[label]['mean_delta']:+.2f} | {arms[label]['n_races']} |"
+        for label in ("up", "down") if label in arms
+    )
+    reading = payload.get(
+        "reading", "the borrowed 2026 energy-mode fit, priced under the era-matched model")
+    return (
+        "\n## M2 energy-coefficient sensitivity\n\n"
+        "The 2024 counterfactual scenario borrows the 2026 fitted energy-mode block\n"
+        "(`configs/physics_2024.yaml` names the four coefficients). Both arms re-roll\n"
+        f"the ten M2 races with that block scaled by +/-{payload['perturbation']:.0%} "
+        "under the era-matched model.\n\n"
+        "| Arm | Mean delta (places) | Races |\n|---|---|---|\n"
+        f"{spread}\n\n"
+        f"Read this as {reading}.\n\n"
+        f"Provenance: config `{envelope['config_hash'][:12]}` (the base configs the "
+        f"overlays scaled), seeds `{envelope['seeds_fingerprint'][:12]}`.\n"
     )
 
 
@@ -415,13 +457,12 @@ def _save(fig, path) -> Path:
 
 
 def _figure_section(written) -> str:
+    # links always name the committed layout, wherever --out sent the PNGs this run:
+    # the page's bytes must not depend on a scratch figures dir, or the CI byte-check
+    # could only pass by overwriting the committed figures (F15)
     lines = ["\n## Figures\n"]
     for path in written:
-        try:
-            link = Path(path).relative_to(config.REPO_ROOT / "docs/results")
-        except ValueError:
-            link = Path(path).name
-        lines.append(f"![{Path(path).stem}]({link})\n")
+        lines.append(f"![{Path(path).stem}](F14/figures/{Path(path).name})\n")
     return "\n".join(lines)
 
 

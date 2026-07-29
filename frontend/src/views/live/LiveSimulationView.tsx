@@ -10,17 +10,18 @@ import { Suspense, useEffect, useRef, useState } from "react";
 
 import { apiPost } from "../../api/client";
 import { LiveSocket } from "../../api/liveSocket";
-import { useCircuit, useSimulation } from "../../api/queries";
+import { useCircuit, useEnergyProfile, useSimulation } from "../../api/queries";
 import type { JobAccepted } from "../../api/types";
 import CanvasHost from "../../components/CanvasHost";
 import RunPicker from "../../components/RunPicker";
 import TransportControls, {
   ILLUSTRATIVE_MOTION_CAPTION,
 } from "../../components/TransportControls";
-import { DEFAULT_GRID_POSITION } from "../../config/constants";
+import { DEFAULT_GRID_POSITION, PLAYBACK_SPEEDS } from "../../config/constants";
 import { useLiveStore } from "../../stores/liveStore";
 import ReplayScene from "../replay/ReplayScene";
 import DecisionCardPanel from "./DecisionCardPanel";
+import SocBar from "./SocBar";
 
 function positiveIntParam(query: URLSearchParams, name: string): number | null {
   const raw = query.get(name);
@@ -35,6 +36,15 @@ function seedParam(query: URLSearchParams): number | null {
   if (raw === null) return null;
   const parsed = Number(raw);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
+}
+
+// ?speed= is only honoured from the 5.9.3 set — the server would reject anything
+// else, and a silent drop beats surfacing an error over a shareable link
+function speedParam(query: URLSearchParams): number | null {
+  const raw = query.get("speed");
+  if (raw === null) return null;
+  const parsed = Number(raw);
+  return PLAYBACK_SPEEDS.includes(parsed) ? parsed : null;
 }
 
 const subscribeLivePlayhead = (listener: (playheadLap: number) => void) =>
@@ -79,7 +89,17 @@ export default function LiveSimulationView() {
   useEffect(() => {
     if (runId === null) return;
     useLiveStore.getState().reset();
-    const socket = new LiveSocket(runId);
+    // ?lap= and ?speed= ride the socket, never the POST body: the E-15 cache key is
+    // circuit + grid + seed alone, so a pre-warmed demo run stays a hit whatever
+    // lap or speed the link opens at
+    const query = new URLSearchParams(window.location.search);
+    const startLap = positiveIntParam(query, "lap");
+    const startSpeed = speedParam(query);
+    if (startSpeed !== null) useLiveStore.getState().setSpeed(startSpeed);
+    const socket = new LiveSocket(runId, {
+      ...(startLap !== null ? { startLap } : {}),
+      ...(startSpeed !== null ? { speed: startSpeed } : {}),
+    });
     socketRef.current = socket;
     return () => {
       socketRef.current = null;
@@ -89,6 +109,9 @@ export default function LiveSimulationView() {
 
   const run = useSimulation(runId);
   const detail = useCircuit(run.data?.circuit_id ?? null);
+  // the SOC bar's ceiling is the served usable store (E-01) — the same ledger the
+  // energy view reads, never a client-side 4 MJ
+  const energy = useEnergyProfile(runId, run.data?.status === "complete");
 
   const playing = useLiveStore((state) => state.playing);
   const speed = useLiveStore((state) => state.speed);
@@ -113,6 +136,9 @@ export default function LiveSimulationView() {
 
   const card = cards.get(cardLap) ?? null;
   const allCardsNull = cards.size > 0 && [...cards.values()].every((held) => held === null);
+  // scrubbing must move the bar with the card: both read the lap under the playhead,
+  // not the head of the stream
+  const playheadFrame = frames.find((frame) => frame.lap === cardLap);
 
   function handlePlayPause(next: boolean): void {
     setPlaying(next);
@@ -193,7 +219,13 @@ export default function LiveSimulationView() {
         </section>
 
         {runId !== null && frames.length > 0 && (
-          <aside className="w-80 shrink-0 overflow-y-auto border-l border-neutral-800 p-3">
+          <aside className="w-80 shrink-0 space-y-3 overflow-y-auto border-l border-neutral-800 p-3">
+            {energy.data !== undefined && playheadFrame !== undefined && (
+              <SocBar
+                socMj={playheadFrame.agent.soc_mj}
+                usableSocMj={energy.data.usable_soc_mj}
+              />
+            )}
             {card !== null && <DecisionCardPanel card={card} />}
             {card === null && allCardsNull && (
               <p className="text-xs text-neutral-500">

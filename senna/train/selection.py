@@ -6,7 +6,7 @@ triplet against the gate log before copying: the coupling that makes best/ the
 selected checkpoint holds only while min_improvement_points is zero, so trusting it
 silently would be a latent bug. models/headline/ is the artifact F09 and F10 consume.
 
-    make eval RUN=models/<run_dir>     # re-score a run's selected checkpoint
+    make rescore RUN=models/<run_dir>  # re-score a run's selected checkpoint
 """
 
 import argparse
@@ -84,7 +84,8 @@ def promote_headline(candidate: HeadlineCandidate, dest: Path) -> dict:
 
 
 def score_triplet(triplet_dir: Path, *, configs_dir=None) -> float:
-    """Re-score a saved triplet on the validation banks — the make eval path. One
+    """Re-score a saved triplet on the validation banks — the make rescore path
+    (named make eval until F15 reclaimed that name for the A-09 suite). One
     throwaway env provides the spaces, the frozen statistics come from the triplet,
     and the bank is rolled exactly as a Stage C gate evaluation would (E-06: train
     band; the test bank stays reserved)."""

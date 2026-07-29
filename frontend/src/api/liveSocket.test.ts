@@ -9,8 +9,8 @@ import { clearProvenance, provenanceLog } from "./provenance";
 let restoreSocket: () => void;
 let sockets: LiveSocket[] = [];
 
-function connect(runId = 7): LiveSocket {
-  const socket = new LiveSocket(runId);
+function connect(runId = 7, opts?: { startLap?: number; speed?: number }): LiveSocket {
+  const socket = new LiveSocket(runId, opts);
   sockets.push(socket);
   return socket;
 }
@@ -178,6 +178,35 @@ test("dispose is StrictMode-symmetric: a late close wakes nothing", () => {
   expect(vi.getTimerCount()).toBe(0);
   vi.advanceTimersByTime(60_000);
   expect(FakeWebSocket.instances).toHaveLength(1);
+});
+
+test("a mid-race deep link's first open seeks to the start lap, then sets the speed", () => {
+  // E-16: mid-race entry is a seek over stored frames — the empty-buffer early
+  // return gives way to the deep link's opts
+  connect(7, { startLap: 18, speed: 30 });
+  wire().serverOpen();
+  expect(wire().sent[0]).toEqual({ type: "client:seek", lap: 18 });
+  expect(wire().sent[1]).toEqual({ type: "client:speed", speed: 30 });
+});
+
+test("a start lap without a speed seeks and leaves the tempo alone", () => {
+  connect(7, { startLap: 18 });
+  wire().serverOpen();
+  expect(wire().sent).toEqual([{ type: "client:seek", lap: 18 }]);
+});
+
+test("start opts speak once: a reconnect resyncs from the buffer, not the deep link", () => {
+  connect(7, { startLap: 18, speed: 30 });
+  wire().serverOpen();
+  for (let lap = 18; lap <= 20; lap++) wire().serverMessage(lapMessage(lap));
+  wire().serverClose(1006);
+
+  vi.advanceTimersByTime(500);
+  const rejoined = wire(1);
+  rejoined.serverOpen();
+  // the buffer owns the resync (E-16): head + 1, never the deep-link lap again
+  expect(rejoined.sent[0]).toEqual({ type: "client:seek", lap: 21 });
+  expect(rejoined.sent).not.toContainEqual({ type: "client:seek", lap: 18 });
 });
 
 test("provenance records the socket lifecycle, never a frame", () => {

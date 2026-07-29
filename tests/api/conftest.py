@@ -4,6 +4,11 @@ cross-suite coincidence cannot mask a bug (5.5.5). The app lifespan owns Postgre
 Redis, so `client` skips unless DATABASE_URL and REDIS_URL are both set (CI provides
 service containers). Jobs drain in-process through rq's SimpleWorker, which imports
 torch and xgboost — hence the OpenMP guard before anything heavy loads.
+
+Running these with the compose stack UP needs an isolated queue: the live worker
+consumes the same rq queue name and would steal test jobs into the wrong database.
+Point the run at its own Redis db — REDIS_URL=redis://localhost:6379/1 — as CI's
+dedicated service container does implicitly (found in F15's full-suite gate).
 """
 
 import asyncio

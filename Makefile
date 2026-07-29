@@ -1,10 +1,15 @@
-# A-09 reproducibility pack. Each stub becomes real in the feature that owns it;
-# until then it says so instead of silently doing nothing.
+# A-09 reproducibility pack — every target is real. The pipeline, in dependency order:
+#   ingest -> fit / synth -> circuits -> train / headline -> explain -> finetune ->
+#   eval (the M1-M11 suite) -> sensitivity / sensitivity-m2 -> report
+# plus the pack around it: snapshot / restore (the frozen data), verify (what a clean
+# clone can prove), test / lint (CI's gates, locally), up (the whole stack), and the
+# demo pair demo-warm / demo-check. Targets that need the ingested Postgres store or
+# the frozen models say so in their comments and never run in CI.
 #
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint migrate ingest fit synth synth-figures circuits bench train ablate headline eval explain finetune suite sensitivity report api worker up
+.PHONY: lock lint test migrate ingest fit synth synth-figures circuits bench train ablate headline rescore eval explain finetune suite sensitivity sensitivity-m2 snapshot restore verify report demo-warm demo-check api worker up
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -86,18 +91,27 @@ headline:
 		$(if $(VEC),--vec $(VEC))
 
 # re-score a run's selected checkpoint on the validation banks (F08) and note the
-# result in the ledger. RUN=models/<run_dir>.
-eval:
+# result in the ledger. RUN=models/<run_dir>. This was `make eval` until F15: the
+# A-09 pack promises `make eval` = the evaluation suite, and a name that quietly
+# meant "one checkpoint's rescore" would hand an examiner the wrong artifact.
+rescore:
 	python -m senna.train.selection --rescore $(RUN)
+
+# the A-09 name for the M1-M11 battery: `make eval` is what the spec's pack
+# enumerates (5.11), and it must mean the thing an examiner expects
+eval: suite
 
 # distill the frozen headline triplet, gate on fidelity, and card every validation
 # race into agent_decisions (F09, spec 5.8). Reads models/headline + Postgres —
 # local only, never CI. Smoke the wiring with PAIRS=2000 RACES=2 SKIP_PERSIST=1.
 # OMP_NUM_THREADS=1: torch + xgboost in one process carry duplicate OpenMP runtimes
 # on arm64 and segfault without it (F09 plan).
+# TRIPLET=models/era2024 ERA=2024 distills and cards the era-matched model on its
+# own physics (F-24) — the pair must agree, and the CLI refuses a mismatch.
 explain:
 	OMP_NUM_THREADS=1 python -m senna.explain.run $(if $(PAIRS),--pairs $(PAIRS)) \
-		$(if $(RACES),--card-races $(RACES)) $(if $(SKIP_PERSIST),--skip-persist)
+		$(if $(RACES),--card-races $(RACES)) $(if $(SKIP_PERSIST),--skip-persist) \
+		$(if $(TRIPLET),--triplet $(TRIPLET)) $(if $(ERA),--era $(ERA))
 
 # local serving against compose postgres/redis (F10). `make api` migrates first and
 # reloads on edit; `make worker` is the same entrypoint Railway runs. Source .env
@@ -131,7 +145,48 @@ suite:
 sensitivity:
 	OMP_NUM_THREADS=1 python -m senna.eval.sensitivity $(if $(CIRCUITS),--circuits $(CIRCUITS))
 
+# the M2 borrowed-coefficient pass (F15): re-rolls the ten counterfactual races with
+# the borrowed 2026 energy-mode fit at +/-50% (configs/eval.yaml). Needs the ingested
+# Postgres store and models/era2024 — local only, never CI.
+sensitivity-m2:
+	OMP_NUM_THREADS=1 python -m senna.eval.coefficients
+
 # regenerate the Chapter 7 tables and figures from the committed store. A pure function of
 # docs/results/F14/store — no model, no database, no GPU — so a clean clone can rerun it.
 report:
 	python -m senna.eval.report
+
+# CI's fast suite, locally and by the same spelling — `pytest -m "not slow"` scoped the
+# way ci.yml runs it, so the local gate can't drift from CI (the F03-F06 lesson)
+test:
+	python -m pytest -m "not slow" -q
+
+# freeze the ingested store (A-09): pg_dump to data/snapshot/ (gitignored) and rewrite
+# the committed MANIFEST.md — sha256, size, per-table counts. The dump rides the tagged
+# GitHub release as an asset. Local only: needs Postgres and pg_dump on PATH.
+snapshot:
+	python -m senna.data.snapshot
+
+# load a snapshot back — only into a database require_disposable accepts (*_test, or
+# the named escape hatch). DUMP=data/snapshot/<file>.dump
+restore:
+	python -m senna.data.snapshot --restore $(DUMP)
+
+# what a clean clone can prove without models or a database: the committed chapter
+# regenerates byte-for-byte, the freeze chain is internally consistent, and no public
+# page carries a rotten link. CI runs this same target (F15 gate).
+verify:
+	python -m pytest tests/eval/test_freeze.py -q
+	python scripts/check_links.py README.md INDEX.md docs/deploy.md docs/freeze.md \
+		docs/demo/script.md data/snapshot/MANIFEST.md
+
+# pre-run the demo simulations against the local stack so the 5.13 deep link opens
+# mid-race instead of blocking on a cold simulation (E-15: the warm run IS the run)
+demo-warm:
+	./scripts/warm_demo.sh
+
+# the 5.13 first-beat check in a real browser: a cold Chrome must reach mid-race
+# inside the 15 s budget. Needs the stack up (make up) and a warmed demo run.
+# First run: cd frontend && npm i && npx playwright install chromium
+demo-check:
+	cd frontend && npx playwright test

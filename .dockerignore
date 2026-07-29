@@ -16,6 +16,7 @@ data/*
 !data/circuits
 models/*
 !models/headline
+!models/era2024
 !models/explain
 # evaluation-only arrays: in the local tree but never in the image (plan bake list)
 models/explain/*/holdout.npz

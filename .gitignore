@@ -18,15 +18,24 @@ wandb/
 # and ablation run dirs never come in. `dir/*` + negations, not `dir/`: git will not
 # descend into a fully ignored directory to honour a re-include.
 models/*
+# the run ledger is the ablation table's machine-readable twin (F08) — a clean clone
+# without it has no record of what was trained, so it is committed (F15)
+!models/runs.json
 !models/headline
 !models/era2024
 !models/explain
 models/explain/*
 !models/explain/senna-ppo-6b6edb78d84e-C-00835584
+!models/explain/senna-ppo-db031aead155-C-02211840
 # the two evaluation-only arrays are reproducible from make explain and serve nothing
 models/explain/senna-ppo-6b6edb78d84e-C-00835584/holdout.npz
 models/explain/senna-ppo-6b6edb78d84e-C-00835584/crosscheck.npz
+models/explain/senna-ppo-db031aead155-C-02211840/holdout.npz
+models/explain/senna-ppo-db031aead155-C-02211840/crosscheck.npz
 data/cache/
+# the frozen A-09 dump rides the tagged GitHub release, never git history; its
+# committed half is data/snapshot/MANIFEST.md (make snapshot writes both)
+data/snapshot/*.dump
 # the ribbon library is a committed artifact (INDEX decision 22 Jul 2026): a clean
 # clone must show every buildable circuit, so nothing under data/circuits is ignored
 fastf1_cache/

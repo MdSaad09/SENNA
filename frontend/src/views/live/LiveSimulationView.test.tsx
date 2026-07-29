@@ -3,9 +3,11 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { StrictMode } from "react";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
-import { DEFAULT_GRID_POSITION } from "../../config/constants";
+import { DEFAULT_GRID_POSITION, PLAYBACK_SPEEDS } from "../../config/constants";
+import { useLiveStore } from "../../stores/liveStore";
 import {
   decisionCardForLap,
+  energyProfile,
   installFetchStub,
   liveStreamFrames,
   simLapMessages,
@@ -21,6 +23,7 @@ let restoreSocket: () => void;
 
 beforeEach(() => {
   window.history.replaceState(null, "", "/live?run=7");
+  useLiveStore.getState().reset(); // no playback state leaks between tests
   restoreFetch = installFetchStub();
   restoreSocket = installFakeWebSocket();
 });
@@ -141,4 +144,88 @@ test("a cold deep link posts one simulation under StrictMode and writes run= bac
     seed: 42,
     grid_position: DEFAULT_GRID_POSITION,
   });
+});
+
+test("a mid-race deep link seeks and sets speed over the socket, never through the POST body (E-15)", async () => {
+  window.history.replaceState(null, "", "/live?circuit=bahrain_grand_prix&seed=1&lap=18&speed=30");
+  const fetchSpy = vi.spyOn(globalThis, "fetch");
+  renderView();
+
+  const posts = () =>
+    fetchSpy.mock.calls.filter(
+      ([input, init]) => init?.method === "POST" && String(input).includes("/v1/simulations"),
+    );
+  await waitFor(() => expect(posts()).toHaveLength(1));
+
+  // the E-15 cache key hashes exactly these three fields (senna/serve/cache.py), so a
+  // pre-warmed demo run is a hit whatever lap or speed the link opens at
+  const [, init] = posts()[0];
+  expect(JSON.parse(String(init?.body))).toEqual({
+    circuit_id: "bahrain_grand_prix",
+    grid_position: DEFAULT_GRID_POSITION,
+    seed: 1,
+  });
+
+  // mid-race entry rides the existing client:seek (E-16), then restores the tempo
+  const socket = await liveWire();
+  act(() => socket.serverOpen());
+  expect(socket.sent[0]).toEqual({ type: "client:seek", lap: 18 });
+  expect(socket.sent[1]).toEqual({ type: "client:speed", speed: 30 });
+});
+
+test("the URL speed lands in the live store so the transport shows it", async () => {
+  window.history.replaceState(null, "", "/live?circuit=bahrain_grand_prix&seed=1&lap=18&speed=30");
+  renderView();
+  await liveWire();
+  await waitFor(() => expect(useLiveStore.getState().speed).toBe(30));
+});
+
+test("an invalid lap or speed in the deep link is ignored", async () => {
+  // lap must be a positive integer and speed one of PLAYBACK_SPEEDS (5.9.3)
+  window.history.replaceState(null, "", "/live?circuit=bahrain_grand_prix&seed=1&lap=0&speed=7");
+  renderView();
+  const socket = await liveWire();
+  act(() => socket.serverOpen());
+
+  const sentTypes = socket.sent.map((message) => message.type);
+  expect(sentTypes).not.toContain("client:seek");
+  expect(sentTypes).not.toContain("client:speed");
+  expect(useLiveStore.getState().speed).toBe(PLAYBACK_SPEEDS[0]);
+});
+
+// per-lap distinct SOC, so the bar provably reads the playhead frame and not the head
+function socLadderFrames(laps: number) {
+  return liveStreamFrames(laps).map((frame) => ({
+    ...frame,
+    agent: { ...frame.agent, soc_mj: frame.lap * 0.5 },
+  }));
+}
+
+test("the SOC bar reads the frame at the playhead against the served usable store", async () => {
+  renderView();
+  const socket = await liveWire();
+  act(() => {
+    socket.serverOpen();
+    for (const message of simLapMessages(socLadderFrames(6))) socket.serverMessage(message);
+  });
+
+  // following the stream: the playhead sits on lap 6 — soc 3.0 of the served 4 MJ
+  expect(await screen.findByTestId("soc-bar")).toHaveTextContent("3.00 / 4 MJ");
+
+  fireEvent.change(screen.getByRole("slider", { name: /scrub/i }), { target: { value: "3" } });
+  await waitFor(() => expect(screen.getByTestId("soc-bar")).toHaveTextContent("1.50 / 4 MJ"));
+});
+
+test("the SOC bar scale is the served profile, never a client 4 MJ literal", async () => {
+  // an off-regulation usable store: only the served field can put 3.6 on screen —
+  // a hard-coded 4 MJ scale would fail here (E-01: the axis top is served)
+  restoreFetch();
+  restoreFetch = installFetchStub({ "/v1/energy/": { ...energyProfile, usable_soc_mj: 3.6 } });
+  renderView();
+  const socket = await liveWire();
+  act(() => {
+    socket.serverOpen();
+    for (const message of simLapMessages(liveStreamFrames(2))) socket.serverMessage(message);
+  });
+  expect(await screen.findByTestId("soc-bar")).toHaveTextContent("2.10 / 3.6 MJ");
 });

@@ -7,15 +7,18 @@ Railway section below keeps the layer deployment-ready per 5.11.1, but it has NO
 been executed against a real Railway project — treat it as a runbook, not a record.
 
 Both targets run the same image from `Dockerfile.api` — the api and the worker
-differ only in start command, and the frozen model triplet, its surrogate and the
-built ribbons are baked in at `/app/models` and `/app/data/circuits` (F-26:
-ephemeral filesystems, nothing is ever mounted; also exactly what makes the
-clean-clone compose run work).
+differ only in start command, and the frozen model triplets (headline and era2024),
+their surrogates and the built ribbons are baked in at `/app/models` and
+`/app/data/circuits` (F-26: ephemeral filesystems, no serving artifact is ever
+mounted; also exactly what makes the clean-clone compose run work). The one mount
+in local compose is the frontend service itself — a vite dev server over a
+`./frontend` bind mount, which is a dev convenience, not a serving artifact.
 
 ## Local (docker compose)
 
     docker compose up --build          # postgres, redis, api, worker, frontend
     curl localhost:8000/api/v1/health  # {"status":"ok","model_version":"senna-ppo-..."}
+    open http://localhost:5173         # the dashboard (vite dev server)
 
 The api entrypoint runs `alembic upgrade head` before serving; the worker runs the
 same migration idempotently in case it boots first on a fresh database. A smoke

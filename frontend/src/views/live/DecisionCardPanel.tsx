@@ -74,11 +74,19 @@ export default function DecisionCardPanel({ card }: { card: DecisionCard }) {
         className="border-t border-neutral-800 pt-2 text-xs text-neutral-500"
       >
         <p>{card.honesty.statement}</p>
-        <p className="mt-1 font-mono">
-          {Object.entries(card.honesty.fidelity)
-            .map(([head, top1]) => `${head} ${(top1 * 100).toFixed(1)}%`)
-            .join(" · ")}{" "}
-          · {card.honesty.model_version}
+        {/* the 5.13 demo points a finger at surrogate fidelity, so the agreement
+            figures wear a badge instead of hiding in the mono line; the statement
+            above stays verbatim (A-03) */}
+        <p className="mt-1.5 flex items-center gap-2">
+          <span
+            data-testid="fidelity-badge"
+            className="rounded-full bg-neutral-800 px-2 py-0.5 font-mono text-neutral-300"
+          >
+            {Object.entries(card.honesty.fidelity)
+              .map(([head, top1]) => `${head} ${(top1 * 100).toFixed(1)}%`)
+              .join(" · ")}
+          </span>
+          <span className="font-mono">{card.honesty.model_version}</span>
         </p>
       </footer>
     </article>

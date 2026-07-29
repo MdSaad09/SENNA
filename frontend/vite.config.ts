@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
 // Browser code only ever sees VITE_API_BASE=/api; the proxy target is a
 // server-side detail, so a compose service name is allowed here (5.11.2, F-27).
@@ -16,5 +16,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: "./src/vitest.setup.ts",
+    // e2e/ holds Playwright specs driven by make demo-check — vitest must not collect them
+    exclude: [...configDefaults.exclude, "e2e/**"],
   },
 });
