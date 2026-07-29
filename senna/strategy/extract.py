@@ -87,7 +87,10 @@ def merge_strategy(existing_text: str, entry: dict) -> str:
 
     recorded = yaml.safe_load(existing_text) or {}
     recorded[f"{entry['season']}_{entry['circuit']}_{entry['driver']}"] = entry
-    return header + yaml.safe_dump(recorded, sort_keys=False, allow_unicode=True)
+    # default_flow_style=None keeps each stop on one line ([18, HARD]) — the record
+    # is committed for humans to read, and block style buries the pair
+    return header + yaml.safe_dump(recorded, sort_keys=False, allow_unicode=True,
+                                   default_flow_style=None)
 
 
 async def _race_session(conn, season: int, circuit: str):

@@ -66,8 +66,8 @@ state-of-charge window, and there is no per-lap deployment cap in the 2026
 rulebook — my v2 spec had one, and removing it changed the whole strategy
 problem. Hover here: the agent runs conserve for three laps, banks charge, then
 attacks. When the FIA refined the cap from 8 to 7 megajoules this April, I
-re-rolled the frozen agent under the tighter cap: it keeps its results and
-derates twice as often — that sensitivity is one make target."
+re-rolled the frozen agent under the tighter cap: it gives up 0.13 places and
+derates more than twice as often — that sensitivity is one make target."
 
 **[3:45] Tyre view.** Click Tyres.
 "Degradation curves are fitted per circuit and compound from real stint data,
@@ -85,9 +85,9 @@ call. The explanations come from a gradient-boosted surrogate, so the badge
 matters: it agrees with the real network on 99.7 percent of pit calls and 99.1
 percent of energy calls on held-out decisions. When a card can't meet its bar,
 the system says so instead of showing you something pretty. The known weakness
-is on the card too: the agent never pits under a virtual safety car — 311
-windows, zero calls. I know why that likely happens; the write-up marks it as a
-hypothesis because I haven't proven it."
+is on the card too: the agent never pits under a virtual safety car — three
+hundred counted windows, zero calls. I know why that likely happens; the
+write-up marks it as a hypothesis because I haven't proven it."
 
 **[6:15] Counterfactual view.** Click Counterfactual.
 "The recruiter question: is it better than the real teams? Split screen, same

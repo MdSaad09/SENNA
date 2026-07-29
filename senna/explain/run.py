@@ -82,7 +82,10 @@ def load_headline(triplet_dir: Path, era: str = _ERA):
     from stable_baselines3.common.vec_env import DummyVecEnv
 
     banks = load_banks()
-    circuit = next(iter(banks.stage_c_validation))
+    # even the spaces-only env goes through the narrowed list: the bank's first
+    # circuit can be one with no native fits for this era, and build_scenario's
+    # silent 2026 fallback is exactly the fork explain_env exists to close (F-24)
+    circuit = era_circuits(banks, era)[0]
     venv = DummyVecEnv([lambda: Monitor(explain_env(circuit, era))])
     model, loaded = load_triplet(Path(triplet_dir), venv)
     manifest = json.loads((Path(triplet_dir) / "manifest.json").read_text())

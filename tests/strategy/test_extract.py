@@ -67,7 +67,9 @@ def test_extract_writes_a_driver_entry(tmp_path):
     from senna.strategy.extract import merge_strategy
     from senna.strategy.replay import load_real_plan
 
-    existing = yaml.safe_dump({
+    # the leading comment block must ride through the merge — safe_dump alone would
+    # silently eat the committed file's provenance header (review, F15)
+    existing = "# the provenance header the writer must preserve\n\n" + yaml.safe_dump({
         "2024_bahrain_grand_prix_VER": {
             "season": 2024, "circuit": "bahrain_grand_prix", "driver": "VER",
             "source": "FastF1 2024 Bahrain Grand Prix, VER — senna.strategy.extract",
@@ -94,6 +96,7 @@ def test_extract_writes_a_driver_entry(tmp_path):
     written = yaml.safe_load(merged)["2024_british_grand_prix_HAM"]
     assert (written["season"], written["circuit"], written["driver"]) == (
         2024, "british_grand_prix", "HAM")
+    assert merged.startswith("# the provenance header the writer must preserve")
 
 
 def test_real_strategies_covers_all_m2_races():

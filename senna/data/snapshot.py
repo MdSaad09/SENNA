@@ -41,8 +41,9 @@ def row_counts(url: str) -> dict:
                     "order by tablename"
                 ))).scalars().all()
                 for table in tables:
+                    quoted = table.replace('"', '""')  # identifiers can't be bound params
                     counts[table] = (await conn.execute(
-                        text(f'select count(*) from "{table}"')  # noqa: S608 — pg_tables names, not user input
+                        text(f'select count(*) from "{quoted}"')
                     )).scalar_one()
         finally:
             await engine.dispose()
@@ -126,8 +127,11 @@ def main() -> None:
         return
 
     dest = config.REPO_ROOT / "data" / "snapshot"
-    dump_path = dump_snapshot(url, dest)
+    # count before dumping: the manifest vouches for the dump, and a concurrent write
+    # between the two would make it vouch for rows the archive never held — counting
+    # first biases any race toward under-claiming, never over-claiming
     counts = row_counts(url)
+    dump_path = dump_snapshot(url, dest)
     manifest = write_manifest(
         dump_name=dump_path.name,
         sha256=hashlib.sha256(dump_path.read_bytes()).hexdigest(),

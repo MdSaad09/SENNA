@@ -75,9 +75,11 @@ def build_report(store_dir=None, *, configs_dir=None, figures: bool = True,
 
     body = [_HEADER, _provenance(envelope, store_dir), _METHOD, _table(rows), _notes(rows, cfg)]
     sensitivity = _read(store_dir, "harvest_sensitivity")
+    coefficients = _read(store_dir, "m2_sensitivity")
+    if sensitivity or coefficients:
+        body.append(_overlay_note())
     if sensitivity:
         body.append(_sensitivity_section(sensitivity["payload"], sensitivity["envelope"]))
-    coefficients = _read(store_dir, "m2_sensitivity")
     if coefficients:
         body.append(_m2_sensitivity_section(coefficients["payload"], coefficients["envelope"]))
     if figures:
@@ -108,10 +110,14 @@ def _provenance(envelope, store_dir) -> str:
         | Seed manifest | `{envelope['seeds_fingerprint'][:12]}` |
         | Commit | `{envelope['git_commit'][:12]}` |
         | Store | `{_display_path(store_dir)}` |
-
-        The overlay studies at the end of this page mutate a config on purpose, so
-        each prints its own hash beside its table.
         """)
+
+
+def _overlay_note() -> str:
+    return (
+        "\nThe overlay studies below mutate a config on purpose, so each prints its "
+        "own hash beside its table.\n"
+    )
 
 
 def _sensitivity_section(payload, envelope) -> str:
@@ -156,8 +162,8 @@ def _sensitivity_section(payload, envelope) -> str:
         # this study fingerprints the file its overlay mutates, at run time — the suite
         # hash above describes a different preimage, and printing only that one invites
         # an examiner to mis-attribute it (F15)
-        f"Provenance: config `{envelope['config_hash'][:12]}` (circuits.yaml as "
-        f"overlaid), seeds `{envelope['seeds_fingerprint'][:12]}`.\n"
+        f"Provenance: config `{envelope['config_hash'][:12]}` (circuits.yaml, the base "
+        f"file the overlays scaled), seeds `{envelope['seeds_fingerprint'][:12]}`.\n"
     )
 
 
@@ -181,8 +187,8 @@ def _m2_sensitivity_section(payload, envelope) -> str:
         "| Arm | Mean delta (places) | Races |\n|---|---|---|\n"
         f"{spread}\n\n"
         f"Read this as {reading}.\n\n"
-        f"Provenance: config `{envelope['config_hash'][:12]}` (physics_2026.yaml as "
-        f"overlaid), seeds `{envelope['seeds_fingerprint'][:12]}`.\n"
+        f"Provenance: config `{envelope['config_hash'][:12]}` (the base configs the "
+        f"overlays scaled), seeds `{envelope['seeds_fingerprint'][:12]}`.\n"
     )
 
 

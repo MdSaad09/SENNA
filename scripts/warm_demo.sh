@@ -34,7 +34,7 @@ for id in "$RUN" "$CF"; do
   printf 'run %s ' "$id"
   until [ "$(curl -sf "$API/simulations/$id" | json_field status)" = complete ]; do
     printf '.'
-    sleep 2
+    sleep 2  # operational — a full sim takes tens of seconds; 2 s keeps the dots honest without hammering the API
   done
   echo ' complete'
 done

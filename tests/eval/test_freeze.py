@@ -61,3 +61,12 @@ def test_freeze_chain_is_internally_consistent():
     harvest = json.loads((STORE / "harvest_sensitivity.json").read_text())["envelope"]
     assert harvest["config_hash"] == config.fingerprint(["circuits"])
     assert harvest["seeds_fingerprint"] == seeds_now
+
+    # the coefficient study chains the same way, on its own (wider) preimage — the
+    # review found the branch's newest artifact was the one the chain never covered
+    from senna.eval.coefficients import M2_CONFIG_FILES
+
+    m2s = json.loads((STORE / "m2_sensitivity.json").read_text())["envelope"]
+    assert m2s["config_hash"] == config.fingerprint(M2_CONFIG_FILES)
+    assert m2s["seeds_fingerprint"] == seeds_now
+    assert m2s["model_versions"]["era2024"] == era2024["model_version"]

@@ -55,8 +55,8 @@ database and no GPU.
 
 Eleven pre-registered metrics, frozen targets, 480 held-out paired races
 (`docs/results/F14-evaluation.md` — regenerated, never hand-edited). Two met,
-seven missed, three report-only. A suite where every metric passes is a suite
-whose bars were set after the run.
+six missed (one of them on both its safety-car rows), three report-only. A suite
+where every metric passes is a suite whose bars were set after the run.
 
 | Result | Number | Reading |
 |---|---|---|
@@ -64,7 +64,8 @@ whose bars were set after the run.
 | Regulatory legality (M10) | 0 illegal, 0 snapped in 480 races | met — by construction, then measured anyway |
 | Tyre failures (M9) | 37.3 per 100 races (target < 2) | missed — and it explains M1: the agent buys track position by over-running its tyres |
 | Counterfactual vs real strategies (M2) | 4W/5L/1T over 10 races, p = 1.0 | an honest wash at n = 10 under a pre-registered sign test — "competitive with elite humans", not "beats" |
-| Safety-car decisions (M5) | SC precision 0.942, recall 0.308; VSC recall 0.000 | the agent is blind to virtual safety cars — 311 windows, zero calls; the suspected mechanism is documented as a hypothesis, not a finding |
+| Energy utilisation (M4) | 0.649 deployed/E_dep against a 0.914 attainable ceiling | missed — though the 0.90 bar is unreachable by construction at several circuits, which the chapter says out loud |
+| Safety-car decisions (M5) | SC precision 0.942, recall 0.308; VSC recall 0.000 | the agent is blind to virtual safety cars — 300 counted windows, zero calls; the suspected mechanism is documented as a hypothesis, not a finding |
 | Sim-to-real (M8) | 0/4 circuits within the KS bar | missed upstream: the synthetic-2026 transform runs 4–6 s fast; the held-out validation split forbids refitting on the evidence |
 | Luck share (M11) | 75.8% of finishing-position variance | the novel analytics finding: most of a finish is the event draw, quantified |
 

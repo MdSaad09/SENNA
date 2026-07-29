@@ -157,7 +157,7 @@ test("a mid-race deep link seeks and sets speed over the socket, never through t
     );
   await waitFor(() => expect(posts()).toHaveLength(1));
 
-  // the E-15 cache key is the byte-identical body: exactly these three keys, so a
+  // the E-15 cache key hashes exactly these three fields (senna/serve/cache.py), so a
   // pre-warmed demo run is a hit whatever lap or speed the link opens at
   const [, init] = posts()[0];
   expect(JSON.parse(String(init?.body))).toEqual({

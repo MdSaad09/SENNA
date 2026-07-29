@@ -36,6 +36,11 @@ BORROWED = (
     "attack_soc_floor_mj",
 )
 
+# every config the M2 roll reads: the perturbed file first, then the era constants,
+# the circuit bank and the race list. The envelope hashes the base files — the two
+# per-arm overlays could never share one hash, and the perturbation is in the payload
+M2_CONFIG_FILES = ["physics_2026", "physics_2024", "circuits", "eval"]
+
 
 def build_overlays(*, base_configs_dir, tmp_root, perturbation: float) -> dict:
     """Two throwaway config trees, the borrowed block scaled by (1 +/- perturbation) and
@@ -79,7 +84,9 @@ def write_m2_sensitivity(store_dir, *, arms: dict, dropped: dict, perturbation: 
     }
     return store.write_metric(store_dir, "m2_sensitivity", payload, envelope=store.envelope(
         model_versions={"era2024": model_version},
-        config_hash=config.fingerprint(["physics_2026"]),
+        # the run's whole config preimage, not just the mutated file: the M2 roll also
+        # reads the race list, the 2024 era constants and the circuit bank (review, F15)
+        config_hash=config.fingerprint(M2_CONFIG_FILES),
         seeds_fingerprint=config.fingerprint(["seeds"]),
         scope={"races": min(arm["n_races"] for arm in arms.values()),
                "arms": sorted(arms)},

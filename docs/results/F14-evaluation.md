@@ -21,9 +21,6 @@ reachable from training: the seed loader refuses every consumer but this suite, 
 | Commit | `bccc8a851531` |
 | Store | `docs/results/F14/store` |
 
-The overlay studies at the end of this page mutate a config on purpose, so
-each prints its own hash beside its table.
-
 
 ## How to read these numbers
 
@@ -83,6 +80,9 @@ luck it happened to meet.
 **M9.** Trivially zero by never stretching a stint, so it is read jointly with M1 and the stint-length distribution, both of which are reported beside it.
 
 
+The overlay studies below mutate a config on purpose, so each prints its own hash beside its table.
+
+
 ## Harvest-cap sensitivity (E-02)
 
 The FIA refined the maximum permitted recharge to 7.0 MJ (2026
@@ -100,7 +100,7 @@ between them is the number in the yaml.
 
 Tightening the cap costs 0.13 places on average while the derate share moves +0.104: the agent runs out of energy more often, which is what operating closer to a limit looks like. Read this as the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under.
 
-Provenance: config `26a436fece3d` (circuits.yaml as overlaid), seeds `b112935601b2`.
+Provenance: config `26a436fece3d` (circuits.yaml, the base file the overlays scaled), seeds `b112935601b2`.
 
 
 ## M2 energy-coefficient sensitivity
@@ -116,7 +116,7 @@ the ten M2 races with that block scaled by +/-50% under the era-matched model.
 
 Read this as the borrowed 2026 energy-mode fit scaled by +/-50% under the era-matched model — how much of M2 rides on coefficients the 2024 era never fitted, not a claim about either era's true physics.
 
-Provenance: config `d507c0d6fc35` (physics_2026.yaml as overlaid), seeds `b112935601b2`.
+Provenance: config `d507c0d6fc35` (the base configs the overlays scaled), seeds `b112935601b2`.
 
 
 ## Figures

@@ -16,10 +16,15 @@ _LINK = re.compile(r"\[[^\]]*\]\(([^)#\s]+)[^)]*\)")
 
 
 def broken_links(md_paths) -> list:
-    """(file, link) for every relative link whose target does not exist on disk."""
+    """(file, link) for every relative link whose target does not exist on disk. A
+    page missing from the list is itself rot — reported, never a traceback, so one
+    absent file cannot mask findings in the rest."""
     rotten = []
     for path in md_paths:
         path = Path(path)
+        if not path.exists():
+            rotten.append((str(path), "<the page itself is missing>"))
+            continue
         for target in _LINK.findall(path.read_text()):
             if "://" in target or target.startswith("mailto:"):
                 continue

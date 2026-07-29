@@ -4,11 +4,15 @@
 # circuit and driver are explicit fields — the key is derivable, never load-bearing
 # alone. Checked in so a rollout — and CI — never touches the database.
 #
-# Origin: sourced. Extracted by `python -m senna.strategy.extract --season <s>
-# --circuit <c> [--driver <ABC>] --write` (senna/strategy/extract.py). Stops are
-# (out-lap, compound taken). The start compound is not replayed — the env fixes everyone
-# on MEDIUM (5.5) — so a stops-only plan replays the tyre sequence, run on balanced
-# modes (an earlier era's strategy carries no 2026 energy decision).
+# Origin: sourced, every entry — extracted from the ingested FastF1 store by
+# `python -m senna.strategy.extract --season <s> --circuit <c> [--driver <ABC>] --write`
+# (senna/strategy/extract.py; the writer regenerates entries wholesale, so per-line
+# notes do not survive it and provenance lives here and in each source: field).
+# real_total_laps is that season's race distance; sim_total_laps the era circuit
+# config's; stops are (out-lap, compound taken), lap-rescaled where the two differ.
+# The start compound is not replayed — the env fixes everyone on MEDIUM (5.5) — so a
+# stops-only plan replays the tyre sequence, run on balanced modes (an earlier era's
+# strategy carries no 2026 energy decision).
 
 2024_bahrain_grand_prix_VER:
   season: 2024
@@ -18,10 +22,8 @@
   real_total_laps: 57
   sim_total_laps: 57
   stops:
-  - - 18
-    - HARD
-  - - 38
-    - SOFT
+  - [18, HARD]
+  - [38, SOFT]
 2024_british_grand_prix_HAM:
   season: 2024
   circuit: british_grand_prix
@@ -30,10 +32,8 @@
   real_total_laps: 52
   sim_total_laps: 52
   stops:
-  - - 28
-    - INTERMEDIATE
-  - - 39
-    - SOFT
+  - [28, INTERMEDIATE]
+  - [39, SOFT]
 2024_italian_grand_prix_LEC:
   season: 2024
   circuit: italian_grand_prix
@@ -42,8 +42,7 @@
   real_total_laps: 53
   sim_total_laps: 53
   stops:
-  - - 16
-    - HARD
+  - [16, HARD]
 2024_belgian_grand_prix_RUS:
   season: 2024
   circuit: belgian_grand_prix
@@ -52,8 +51,7 @@
   real_total_laps: 44
   sim_total_laps: 44
   stops:
-  - - 11
-    - HARD
+  - [11, HARD]
 2024_hungarian_grand_prix_PIA:
   season: 2024
   circuit: hungarian_grand_prix
@@ -62,10 +60,8 @@
   real_total_laps: 70
   sim_total_laps: 70
   stops:
-  - - 19
-    - HARD
-  - - 48
-    - MEDIUM
+  - [19, HARD]
+  - [48, MEDIUM]
 2024_monaco_grand_prix_LEC:
   season: 2024
   circuit: monaco_grand_prix
@@ -74,8 +70,7 @@
   real_total_laps: 78
   sim_total_laps: 78
   stops:
-  - - 2
-    - HARD
+  - [2, HARD]
 2023_dutch_grand_prix_VER:
   season: 2023
   circuit: dutch_grand_prix
@@ -84,18 +79,12 @@
   real_total_laps: 72
   sim_total_laps: 72
   stops:
-  - - 3
-    - INTERMEDIATE
-  - - 12
-    - SOFT
-  - - 50
-    - SOFT
-  - - 62
-    - INTERMEDIATE
-  - - 64
-    - WET
-  - - 65
-    - INTERMEDIATE
+  - [3, INTERMEDIATE]
+  - [12, SOFT]
+  - [50, SOFT]
+  - [62, INTERMEDIATE]
+  - [64, WET]
+  - [65, INTERMEDIATE]
 2023_las_vegas_grand_prix_VER:
   season: 2023
   circuit: las_vegas_grand_prix
@@ -104,10 +93,8 @@
   real_total_laps: 50
   sim_total_laps: 50
   stops:
-  - - 17
-    - HARD
-  - - 27
-    - HARD
+  - [17, HARD]
+  - [27, HARD]
 2023_british_grand_prix_NOR:
   season: 2023
   circuit: british_grand_prix
@@ -116,8 +103,7 @@
   real_total_laps: 52
   sim_total_laps: 52
   stops:
-  - - 34
-    - HARD
+  - [34, HARD]
 2023_spanish_grand_prix_VER:
   season: 2023
   circuit: spanish_grand_prix
@@ -126,7 +112,5 @@
   real_total_laps: 66
   sim_total_laps: 66
   stops:
-  - - 27
-    - HARD
-  - - 53
-    - SOFT
+  - [27, HARD]
+  - [53, SOFT]
