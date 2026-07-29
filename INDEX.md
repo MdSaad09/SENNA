@@ -4,13 +4,12 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F15 (demo, docs, reproducibility pack & freeze) — In review on
-feature/F15-demo-freeze. All three inherited F14 cuts are closed, the live-view Chrome
-canvas item is closed with a standing harness (`make demo-check`), and the freeze
-artifacts exist. Saad: read the ship report and docs/learn/F15-demo-freeze.md, try the
-demo, then `/land F15`. After the land: the docs/freeze.md runbook (tag v1.0.0, release
-asset, CI green check).
-**Next up:** nothing — F15 is the last feature.
+**Active feature:** none — every feature F00–F15 is Done. The build is complete.
+**Next up:** not a feature — the freeze: run the docs/freeze.md runbook (tag v1.0.0,
+GitHub release with the snapshot asset, CI green check), record the video from the
+warmed stack per docs/demo/script.md, then the written dissertation. Open item: the
+COMP702 submission mechanism (bundle vs repo access) decides where the snapshot
+travels — Saad's call.
 
 ## Feature ledger
 
@@ -31,7 +30,7 @@ asset, CI green check).
 | F12 | Views 3–4: Energy, Tyre Surface | F11 | Done 24 Jul 2026 | feature/F12-views-energy-tyre | [F12](docs/learn/F12-views-energy-tyre.md) |
 | F13 | Views 5–6: Live, Counterfactual | F11 | Done 25 Jul 2026 | feature/F13-views-live-counterfactual | [F13](docs/learn/F13-views-live-counterfactual.md) |
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
-| F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Planned | | |
+| F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
