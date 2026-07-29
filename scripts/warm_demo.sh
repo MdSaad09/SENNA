@@ -9,11 +9,15 @@ set -euo pipefail
 API="${API:-http://localhost:8000/api/v1}"
 FRONTEND="${FRONTEND:-http://localhost:5173}"
 # stylised — the 5.13 demo pick (F15 plan): Bahrain has a committed ribbon, native
-# 2024 fits, an ASCII slug, and the real 2024 winner pitted on lap 18 — the
-# storyboard's own beat. These values must match frontend/e2e/demo.spec.ts and
-# docs/demo/script.md; change all three together or the check measures a cold link.
+# 2024 fits and an ASCII slug. Seed 55 runs the full 57 laps and carries the LATEST
+# agent stop of the auditioned bank (lap 10 — the one-stop-early habit M9 documents),
+# so the seek lands two laps before the pit call and the card beat shows the actual
+# decision; VER's real lap-18 stop appears in the counterfactual leg instead. These
+# values must match frontend/e2e/demo.spec.ts, docs/demo/script.md and the README;
+# change all four together or the check measures a cold link.
 CIRCUIT="${CIRCUIT:-bahrain_grand_prix}"
-SEED="${SEED:-42}"
+SEED="${SEED:-55}"
+LAP="${LAP:-8}"
 GRID="${GRID:-8}"  # DEFAULT_GRID_POSITION — what the deep link sends when ?grid= is absent
 
 json_field() {
@@ -40,5 +44,5 @@ for id in "$RUN" "$CF"; do
 done
 
 echo
-echo "demo deep link:  $FRONTEND/live?circuit=$CIRCUIT&seed=$SEED&lap=18&speed=30&year=2024&round=1&driver=VER"
+echo "demo deep link:  $FRONTEND/live?circuit=$CIRCUIT&seed=$SEED&lap=$LAP&speed=30&year=2024&round=1&driver=VER"
 echo "counterfactual:  $FRONTEND/counterfactual?year=2024&round=1&driver=VER&seed=$SEED"

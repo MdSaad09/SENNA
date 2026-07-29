@@ -9,6 +9,8 @@ is the db-wipe incident with a new spelling, so require_disposable fires before 
 subprocess exists to do damage.
 """
 
+import os
+import shlex
 import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
@@ -19,6 +21,16 @@ from senna.data.db import require_disposable
 def _libpq_url(url: str) -> str:
     """pg_dump speaks libpq, not SQLAlchemy: strip the +asyncpg driver marker."""
     return url.replace("+asyncpg", "")
+
+
+def _tool(name: str, env_var: str) -> list:
+    """The dump/restore executable, overridable because this repo's Postgres runs in
+    Docker and a host without libpq has no pg_dump. The archive rides stdout/stdin
+    rather than --file paths, so the same recipe works either way:
+
+        SENNA_PG_DUMP="docker compose exec -T postgres pg_dump" make snapshot
+    """
+    return shlex.split(os.environ.get(env_var, name))
 
 
 def row_counts(url: str) -> dict:
@@ -61,11 +73,12 @@ def dump_snapshot(url: str, dest_dir) -> Path:
     dest_dir.mkdir(parents=True, exist_ok=True)
     database = urlparse(_libpq_url(url)).path.lstrip("/") or "senna"
     dump_path = dest_dir / f"{database}-{datetime.now(UTC):%Y%m%d}.dump"
-    subprocess.run(
-        ["pg_dump", "--format=custom", "--no-owner", "--no-privileges",
-         f"--file={dump_path}", _libpq_url(url)],
-        check=True,
-    )
+    with dump_path.open("wb") as archive:
+        subprocess.run(
+            _tool("pg_dump", "SENNA_PG_DUMP")
+            + ["--format=custom", "--no-owner", "--no-privileges", _libpq_url(url)],
+            stdout=archive, check=True,
+        )
     return dump_path
 
 
@@ -74,11 +87,13 @@ def restore(dump_path, url: str) -> None:
     round-trip needs (drop what is there, recreate from the archive); the guard runs
     first because that drop is exactly the destructive step it exists to gate."""
     require_disposable(url)
-    subprocess.run(
-        ["pg_restore", "--clean", "--if-exists", "--no-owner", "--no-privileges",
-         f"--dbname={_libpq_url(url)}", str(dump_path)],
-        check=True,
-    )
+    with Path(dump_path).open("rb") as archive:
+        subprocess.run(
+            _tool("pg_restore", "SENNA_PG_RESTORE")
+            + ["--clean", "--if-exists", "--no-owner", "--no-privileges",
+               f"--dbname={_libpq_url(url)}"],
+            stdin=archive, check=True,
+        )
 
 
 def write_manifest(*, dump_name: str, sha256: str, size_bytes: int,

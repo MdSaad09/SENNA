@@ -15,11 +15,14 @@ Setup, once, before any recording:
                      # before you press record, every time
 
 The demo pick is Bahrain (stylised, F15 plan): committed ribbon, native 2024 fits,
-ASCII slug, and the real 2024 winner pitted on lap 18 — the storyboard's own beat.
-The canonical URL (also printed by demo-warm; keep in sync with
-frontend/e2e/demo.spec.ts and scripts/warm_demo.sh):
+ASCII slug. The seek lands on lap 8, two laps before the agent's stop — the audition
+across ten seeds showed the agent one-stops early at Bahrain (laps 3–10; the tyre
+habit M9 documents), and seed 55 carries the latest stop, so the card beat shows the
+actual pit call. 5.13's "lap ~18" is where the REAL winner stopped; that contrast is
+the counterfactual beat's line. The canonical URL (also printed by demo-warm; keep in
+sync with frontend/e2e/demo.spec.ts, scripts/warm_demo.sh and the README):
 
-    http://localhost:5173/live?circuit=bahrain_grand_prix&seed=42&lap=18&speed=30&year=2024&round=1&driver=VER
+    http://localhost:5173/live?circuit=bahrain_grand_prix&seed=55&lap=8&speed=30&year=2024&round=1&driver=VER
 
 The query string carries the union of every view's params on purpose: nav clicks
 preserve it, so "one click to the Counterfactual view" lands configured.
@@ -28,9 +31,9 @@ preserve it, so "one click to the Counterfactual view" lands configured.
 
 | Time | Do | Say (one line) | It proves |
 |---|---|---|---|
-| 0:00 | Open the URL above in a cold tab | "This is a race strategy agent driving lap 18 of Bahrain — live simulator, not a video." | Deployed, fast; 22 cars moving, SOC bar draining and refilling |
-| 0:15 | Let the decision card slide in as the playhead crosses the pit call; point at the badge | "Every call is explained — top SHAP drivers, the flip condition, and the badge is the surrogate's measured agreement, not marketing." | Explainability with stated honesty |
-| 0:45 | One click: Counterfactual in the nav | "Same simulator, same events: the agent against VER's actual 2024 strategy — era-matched, assumptions on screen." | Quantified against reality, honestly framed |
+| 0:00 | Open the URL above in a cold tab | "This is a race strategy agent mid-race at Bahrain — live simulator, not a video." | Deployed, fast; 22 cars moving, SOC bar draining and refilling |
+| 0:15 | Let the decision card slide in as the playhead crosses the lap-10 pit call; point at the badge | "Every call is explained — top SHAP drivers, the flip condition, and the badge is the surrogate's measured agreement, not marketing." | Explainability with stated honesty |
+| 0:45 | One click: Counterfactual in the nav | "Same simulator, same events: the agent against VER's actual 2024 strategy — it stopped on lap 18, my agent eight laps earlier. Era-matched, assumptions on screen." | Quantified against reality, honestly framed |
 | 1:15 | One click: Energy in the nav; hover a banked-energy lap | "2026 physics is recovery-limited — the harvest cap is the constraint, the 4 MJ store is a window, and the agent banks before it attacks." | The exact place a motorsport engineer probes first |
 
 ## The ten-minute tour
@@ -44,7 +47,7 @@ better ones.
 regulations. What you're watching is a 22-car lap-level simulator, and the
 highlighted car is driven by a reinforcement-learning agent deciding, every lap,
 whether to pit, what tyre to take, and how to spend its electrical energy. It's
-mid-race because the link seeks to lap 18 — everything here is a real run you can
+mid-race because the link carries a seek — everything here is a real run you can
 replay from its URL."
 
 **[1:00] Circuit view.** Click Circuit in the nav.

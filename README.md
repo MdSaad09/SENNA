@@ -12,10 +12,10 @@ Formula 1 companies, the FIA or any team.*
 
     docker compose up --build     # postgres, redis, api, worker, frontend — from a clean clone
     make demo-warm                # pre-runs the demo simulations
-    open "http://localhost:5173/live?circuit=bahrain_grand_prix&seed=42&lap=18&speed=30&year=2024&round=1&driver=VER"
+    open "http://localhost:5173/live?circuit=bahrain_grand_prix&seed=55&lap=8&speed=30&year=2024&round=1&driver=VER"
 
 That link opens mid-race: 22 cars on a telemetry-built track ribbon, the agent's
-state of charge draining and refilling, and around lap 18 a decision card with
+state of charge draining and refilling, and two laps later a decision card with
 the SHAP drivers behind the pit call. One click to Counterfactual races the
 agent against VER's actual 2024 Bahrain strategy in the same simulator; one
 click to Energy shows it banking charge before an attack. The serving stack is

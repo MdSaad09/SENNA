@@ -9,9 +9,11 @@ import { expect, test } from "@playwright/test";
 // sourced — spec 5.13's first beat spans 0-15 s of the demo
 const DEMO_BEAT_BUDGET_MS = 15_000;
 
-// stylised — the 5.13 storyboard's mid-race entry; the circuit is the ship-time demo
-// pick (F15 plan: committed ribbon, native fits, ASCII slug, a pit call near lap 18)
-const DEMO_URL = "/live?circuit=bahrain_grand_prix&seed=42&lap=18&speed=30";
+// stylised — the 5.13 storyboard's mid-race entry; the ship-time demo pick (F15 plan:
+// committed ribbon, native fits, ASCII slug). Seed 55's agent stop is lap 10 — the
+// latest of the auditioned bank — so the lap-8 seek lands just before the pit call.
+// Keep in sync with scripts/warm_demo.sh, docs/demo/script.md and the README.
+const DEMO_URL = "/live?circuit=bahrain_grand_prix&seed=55&lap=8&speed=30";
 
 test("the demo deep link puts cars on track inside the 15-second first beat (5.13)", async ({
   page,
