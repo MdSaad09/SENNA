@@ -1,7 +1,7 @@
 {
   "envelope": {
-    "config_hash": "d507c0d6fc35bfd433c39eb89edc1e1feebe5cbb62f080c69d0ffb8491308c2a",
-    "git_commit": "9aa745a1c26f1ac3e1e0bccd029fccfeaefdaed5",
+    "config_hash": "eb4c6dbe716b675481cc0489d9fd7dbc6bd0129026bf1aa386cf27792620fa0d",
+    "git_commit": "60a9e25108a462625912a11659f93950b5cf0169",
     "model_versions": {
       "era2024": "senna-ppo-db031aead155-C-02211840"
     },

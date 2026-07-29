@@ -116,7 +116,7 @@ the ten M2 races with that block scaled by +/-50% under the era-matched model.
 
 Read this as the borrowed 2026 energy-mode fit scaled by +/-50% under the era-matched model — how much of M2 rides on coefficients the 2024 era never fitted, not a claim about either era's true physics.
 
-Provenance: config `d507c0d6fc35` (the base configs the overlays scaled), seeds `b112935601b2`.
+Provenance: config `eb4c6dbe716b` (the base configs the overlays scaled), seeds `b112935601b2`.
 
 
 ## Figures
