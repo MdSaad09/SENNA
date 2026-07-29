@@ -4,10 +4,12 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F15 (demo, docs, reproducibility pack & freeze) — Planned; next:
-`/ship F15` in this same session. The plan (docs/plans/F15-plan.md) carries the three
-inherited F14 cuts (serving flip, extract writer, M2 energy-coefficient sensitivity)
-and the live-view 3D canvas recheck in real Chrome before the video.
+**Active feature:** F15 (demo, docs, reproducibility pack & freeze) — In review on
+feature/F15-demo-freeze. All three inherited F14 cuts are closed, the live-view Chrome
+canvas item is closed with a standing harness (`make demo-check`), and the freeze
+artifacts exist. Saad: read the ship report and docs/learn/F15-demo-freeze.md, try the
+demo, then `/land F15`. After the land: the docs/freeze.md runbook (tag v1.0.0, release
+asset, CI green check).
 **Next up:** nothing — F15 is the last feature.
 
 ## Feature ledger
