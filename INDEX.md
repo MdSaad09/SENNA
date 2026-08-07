@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F16 — race engine extraction. Planned 7 Aug 2026; next step
-`/ship F16` in the same session.
+**Active feature:** F16 — race engine extraction. In review 7 Aug 2026 on
+`feature/F16-engine-extraction`; next step `/land F16` once Saad approves the ship report.
 **Next up:** F17 driver identity, F18 physics uncertainty, F19 explanation language,
 F20 the single observation change (batched, because it invalidates the frozen triplet).
 F21 look-ahead and F22 multi-agent are stretch, in that order. The roadmap comes from
@@ -38,7 +38,7 @@ submission mechanism (bundle vs repo access) decides where the snapshot travels.
 | F13 | Views 5–6: Live, Counterfactual | F11 | Done 25 Jul 2026 | feature/F13-views-live-counterfactual | [F13](docs/learn/F13-views-live-counterfactual.md) |
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
-| F16 | Race engine extraction | F05, F06 | Planned 7 Aug 2026 | feature/F16-engine-extraction | — |
+| F16 | Race engine extraction | F05, F06 | In review 7 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds

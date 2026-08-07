@@ -75,15 +75,15 @@ picked up scope it should not have, and the plan is wrong.
   large (18,477 measured against a 300 floor), so this is a smoke alarm, not a squeeze.
 
 ## Done means
-- [ ] `senna/env/engine.py` exists and advances a race with no gym, SB3, reward or observation import
-- [ ] `advance_lap` takes twenty-two decisions and branches on no ego index
-- [ ] `F1RaceEnv.step()` is under 30 lines and contains no physics
-- [ ] The golden-trace suite passes byte-identical at two circuits, full race, all 22 cars
-- [ ] The seat-symmetry property test passes
-- [ ] `senna/eval` and `senna/serve` still pass unchanged — in particular `frames.py`, which reaches into `env._state` today, keeps working (it gets a supported path in a later feature, not this one)
-- [ ] F14's evaluation suite reproduces its recorded numbers exactly
-- [ ] Throughput within 5% of the recorded 5.6.2 figure
-- [ ] The unused `LapOutcome` in `dynamics.py` is either used or deleted, not left abandoned a second time
+- [x] `senna/env/engine.py` exists and advances a race with no gym, SB3, reward or observation import — enforced over all six race modules by `test_engine_imports_no_gym`
+- [x] `advance_lap` takes twenty-two decisions and branches on no ego index — on the live path; the twin is the documented exception (decision 2)
+- [x] `F1RaceEnv.step()` is under 30 lines and contains no physics — **29 lines**, down from 75. It was 31 until the review fix dropped an unused argument from `begin_lap` and folded a three-line call onto one
+- [x] The golden-trace suite passes byte-identical at two circuits, full race, all 22 cars
+- [x] The seat-symmetry property test passes
+- [x] `senna/eval` and `senna/serve` still pass unchanged — `frames.py` keeps its `env._state` reach
+- [x] F14's evaluation suite reproduces its recorded numbers exactly — M1/M3/M5/M10 payloads diffed identical against a pre-extraction worktree with the frozen headline triplet
+- [x] Throughput within 5% of the recorded 5.6.2 figure — 0.9% slower (8817 vs 8898 steps/s), measured by hand on both commits; no committed test asserts this
+- [x] The unused `LapOutcome` in `dynamics.py` is either used or deleted, not left abandoned a second time
 
 ## Notes for the plan session
 **The one real hazard is RNG draw order.** `self._rng` is consumed in eight methods
