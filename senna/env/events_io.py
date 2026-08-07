@@ -25,9 +25,10 @@ from senna.env.scenario import COMPOUNDS
 STAY_OUT = -1  # the pit head's "stay out", and what a trace stores for a car that did not box
 
 
-def _max_age_by_code(scenario) -> np.ndarray:
+def max_age_by_code(scenario) -> np.ndarray:
     """Each compound's cliff age, in compound-code order, with the observation's age
-    normaliser standing in for a compound the F02 fitter never saw."""
+    normaliser standing in for a compound the F02 fitter never saw. Both event sources
+    and the adapter's rival call need it, so it has one home."""
     fallback = scenario.env["obs"]["tyre_age_norm_laps"]
     return np.array([scenario.deg_max_age.get(name, fallback) for name in COMPOUNDS])
 
@@ -57,7 +58,7 @@ class LiveSource:
         self._max_red = env_cfg["events"]["red_flag_max_per_race"] if hazards == "full" else 0
         self._cliff_margin = env_cfg["tyre_failure"]["cliff_age_margin_laps"]
         self._tyre_hazard = env_cfg["tyre_failure"]["hazard_per_lap_beyond_cliff"]
-        self._max_age_by_code = _max_age_by_code(scenario)
+        self._max_age_by_code = max_age_by_code(scenario)
 
     def track_status(self, state, lap_index: int, rng) -> tuple[bool, int]:
         """Count a running neutralisation down, or roll for a new one. Returns the red-flag
@@ -142,7 +143,7 @@ class TraceSource:
         self.trace = trace
         self.scenario = scenario
         self._cliff_margin = scenario.env["tyre_failure"]["cliff_age_margin_laps"]
-        self._max_age_by_code = _max_age_by_code(scenario)
+        self._max_age_by_code = max_age_by_code(scenario)
 
     def track_status(self, state, lap_index: int, rng) -> tuple[bool, int]:
         state.track_status = int(self.trace.status[lap_index])

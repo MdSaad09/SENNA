@@ -4,8 +4,9 @@ Since F16 this directory has two halves, and the split is the point.
 
 **The race** is `engine.py` (the per-lap tick), `dynamics.py` (the formulas), `state.py`
 (twenty-two cars as a struct of arrays), `events_io.py` (where a lap's events come from),
-`pitlane.py` and `events.py`. None of it imports Gymnasium or stable-baselines3, and
-`tests/env/test_engine.py::test_engine_imports_no_gym` fails the build if that changes.
+`pitlane.py` and `events.py`. None of it imports Gymnasium, stable-baselines3, pandas or
+the adapter, and `test_engine_imports_no_gym` is parametrised over all six so the build
+fails if that changes.
 
 **The adapter** is `race_env.py`, plus `observation.py`, `masks.py`, `reward.py` and
 `reward_v2.py`. It fills twenty-one seats from `rivals.py`, one from the learner, and
@@ -46,9 +47,21 @@ the ego's tyre failure from its own age, and `TraceSink` blanks the ego's pit an
 out of the recording. That is what A-05 is for — freeze the field, vary the ego — so
 the symmetry property is asserted on the live path only.
 
+**Decisions reaching `advance_lap` must already be legal.** The engine does not mask,
+snap or validate: hand it a slick in the wet and it will run the race faithfully. F-16's
+"compliant by construction" is the *adapter's* guarantee — the learner goes through
+`_coerce`/`_snap_pit`, rivals through `rivals.pit_choices`, both of which shop only
+compounds the wetness allows. Any new caller of the engine owes the same guarantee before
+it calls, and owes a test that says so. This is the one contract the seam cannot enforce
+for you.
+
 **No pandas anywhere reachable from the tick**, per `senna/CLAUDE.md`. The 5.6.2
 throughput gate rests on it.
 
-**Constants come from `configs/*.yaml`.** The per-lap event constants (hazard durations,
-cliff margins, pit service floors) live on the event source; the reward and mask
-constants stay on the env. Neither reads a literal.
+**Constants come from `configs/*.yaml`.** The event constants (hazard durations, weather
+targets, cliff margins) are cached on the event source at construction. The pit-timing
+constants — `pit.min_service_s`, `pit.lane_gap_s`, `pit_loss_mult`,
+`forced_pit.tyre_failure_penalty_s` — are read off `scenario.env` inside
+`engine._pit_times`, on stop laps only; that is measurably inside noise, but it is the
+one place the extraction traded a cached attribute for a lookup. The reward and mask
+constants stay on the adapter.

@@ -29,16 +29,20 @@ from dataclasses import dataclass
 import numpy as np
 
 from senna.env import dynamics, events
+from senna.env.events_io import STAY_OUT
 from senna.env.pitlane import resolve_pit_lane
-
-STAY_OUT = -1
 
 
 @dataclass(frozen=True)
 class LapDecisions:
     """What every car on the grid committed to this lap. Both arrays are n_cars wide and
     no index is special: the adapter fills twenty-one seats from the rival archetypes and
-    one from whatever is driving, and the tick cannot tell which is which."""
+    one from whatever is driving, and the tick cannot tell which is which.
+
+    Decisions arrive already legal. The engine does not mask, snap or validate — legality
+    is the adapter's job (F-16), and a caller that skips it will get an illegal race run
+    faithfully rather than an error.
+    """
 
     pit: np.ndarray   # compound code to box onto, or STAY_OUT
     mode: np.ndarray  # energy/pace mode, per dynamics.CONSERVE..DEFEND
@@ -53,16 +57,20 @@ class LapContext:
     onset: int  # the neutralisation that began this lap, GREEN if none — E-06's cue
 
 
-def begin_lap(state, scenario, rng, *, source, lap_index: int) -> LapContext:
+def begin_lap(state, rng, *, source, lap_index: int) -> LapContext:
     """Resolve the track for this lap: status first, then the weather chain. Mutates the
     state's status, wetness and red-flag count, so the decisions collected next see the
-    conditions they are actually deciding in."""
+    conditions they are actually deciding in.
+
+    Takes no scenario: what the track does is entirely the source's business, whether it
+    is rolling hazards or reading a trace."""
     red_flag, onset = source.track_status(state, lap_index, rng)
     source.weather(state, lap_index, rng)
     return LapContext(lap_index=lap_index, red_flag=red_flag, onset=onset)
 
 
-def advance_lap(state, context, decisions, scenario, rng, *, source, sink=None):
+def advance_lap(state, context, decisions, scenario, rng, *, source, sink=None
+                ) -> dynamics.LapOutcome:
     """Run the lap the field committed to, and return what happened to every car.
 
     The order is the transition model of 5.5.3 read top to bottom: who failed, how much
@@ -92,14 +100,13 @@ def advance_lap(state, context, decisions, scenario, rng, *, source, sink=None):
     pit_time_s = _pit_times(state, decisions.pit, failed, context, scenario, source, rng)
     lap_time_s = racing_time_s + pit_time_s
 
-    # recorded before the pit swap, so the trace holds the tyre that ran the lap
     if sink is not None:
         sink.capture(state, context, decisions, failed)
 
     _apply_pits(state, decisions.pit, failed, context.red_flag)
     state.cumulative_time_s = state.cumulative_time_s + lap_time_s
     state.tyre_age = np.where(
-        (decisions.pit >= 0) | failed | context.red_flag, 0, state.tyre_age + 1
+        (decisions.pit != STAY_OUT) | failed | context.red_flag, 0, state.tyre_age + 1
     )
     state.soc_mj = soc_next_mj
     state.last_harvest_mj = harvest_mj
@@ -140,7 +147,7 @@ def _pit_times(state, pit, failed, context, scenario, source, rng) -> np.ndarray
     tyre-failure stop (+25 s, kept from v2); free under a red flag (E-04)."""
     env_cfg = scenario.env
     pit_time_s = np.zeros(state.n_cars)
-    stopping = (pit >= 0) & ~failed
+    stopping = (pit != STAY_OUT) & ~failed
     if not context.red_flag and stopping.any():
         cars = np.flatnonzero(stopping)
         draws = source.pit_service_s(cars.size, rng)
@@ -164,7 +171,7 @@ def _status_pit_multiplier(state, env_cfg) -> float:
 
 
 def _apply_pits(state, pit, failed, red_flag: bool) -> None:
-    changed = pit >= 0
+    changed = pit != STAY_OUT
     state.compound = np.where(changed, pit, state.compound)
     stopped = changed | failed | red_flag
     new_compound = state.compound != state.first_compound

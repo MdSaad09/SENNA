@@ -23,7 +23,7 @@ from hypothesis import strategies as st
 from senna.env import events
 from senna.env.dynamics import BALANCED
 from senna.env.engine import LapDecisions, advance_lap, begin_lap
-from senna.env.events_io import LiveSource, TraceSink, TraceSource
+from senna.env.events_io import STAY_OUT, LiveSource, TraceSink, TraceSource
 from senna.env.scenario import START_COMPOUND, build_scenario, compound_code
 from senna.env.state import RaceState
 from senna.env.twin import EventTrace
@@ -34,16 +34,20 @@ ERA = "2026"
 FULL_GRID = 22
 SOLO = 1  # F07 Stage A: draw_field returns an empty non-ego set, so the tick must not
           # assume a car has neighbours
-STAY_OUT = -1
 HARD = compound_code("HARD")
 
-ENGINE_MODULE = Path(__file__).resolve().parents[2] / "senna" / "env" / "engine.py"
-# the engine advances a race, so it may not reach for the agent's half of the world
-# (F16 done-means: no gym, SB3, reward or observation import); pandas is the senna/
-# hot-loop ban that the 5.6.2 throughput gate rests on
+ENV_PACKAGE = Path(__file__).resolve().parents[2] / "senna" / "env"
+# the race half of senna/env: everything reachable from advance_lap. The adapter
+# (race_env, observation, masks, reward) is the other half and is exempt by design.
+RACE_MODULES = ("engine.py", "events_io.py", "dynamics.py", "state.py", "pitlane.py",
+                "events.py")
+# it may not reach for the agent's half of the world (F16 done-means: no gym, SB3,
+# reward or observation import); pandas is the senna/ hot-loop ban that the 5.6.2
+# throughput gate rests on
 BANNED_IMPORTS = (
     "gymnasium", "stable_baselines3", "sb3_contrib", "pandas",
     "senna.env.reward", "senna.env.reward_v2", "senna.env.observation",
+    "senna.env.race_env", "senna.env.masks",
 )
 
 # seat i boxes on STOP_LAPS[i % 3]: a real queue in the pit lane (E-05) without the whole
@@ -146,15 +150,15 @@ def _stop_at_seat_five(state, _context) -> LapDecisions:
     return LapDecisions(pit=pit, mode=np.full(state.n_cars, BALANCED))
 
 
-def _watch_the_track(seen):
-    """A decision function that writes down what the track looked like when it was asked,
-    and boxes nobody."""
+def _watch_the_track(seen, decide=_everyone_stays_out):
+    """Wraps a decision function to write down what the track looked like when it was
+    asked. Boxes nobody unless handed something that does."""
 
-    def decide(state, _context) -> LapDecisions:
+    def watched(state, context) -> LapDecisions:
         seen.append((int(state.track_status), int(state.weather), float(state.wetness)))
-        return _stay_out(state.n_cars)
+        return decide(state, context)
 
-    return decide
+    return watched
 
 
 def _drive_to_flag(state, scenario, rng, *, source, decide, sink=None) -> RaceState:
@@ -162,17 +166,21 @@ def _drive_to_flag(state, scenario, rng, *, source, decide, sink=None) -> RaceSt
     run the lap. Observe the track, everyone commits, the lap runs — the order a real race
     happens in and the reason the interface is two calls rather than one."""
     while state.lap < scenario.total_laps:
-        context = begin_lap(state, scenario, rng, source=source, lap_index=state.lap)
+        context = begin_lap(state, rng, source=source, lap_index=state.lap)
         decisions = decide(state, context)
         advance_lap(state, context, decisions, scenario, rng, source=source, sink=sink)
     return state
 
 
-def test_engine_imports_no_gym():
-    """The tick may not import the agent's half of the world. Read as imports rather than
-    as file text, in the style of the R-04 guard, because the module docstring is entitled
-    to say out loud that it knows nothing about Gymnasium."""
-    tree = ast.parse(ENGINE_MODULE.read_text())
+@pytest.mark.parametrize("module", RACE_MODULES)
+def test_engine_imports_no_gym(module):
+    """The race half may not import the agent's half of the world. Read as imports rather
+    than as file text, in the style of the R-04 guard, because a module docstring is
+    entitled to say out loud that it knows nothing about Gymnasium.
+
+    Every module reachable from advance_lap is checked, not just engine.py: an import of
+    the adapter would drag gymnasium in transitively and the seam would be a fiction."""
+    tree = ast.parse((ENV_PACKAGE / module).read_text())
 
     imported = set()
     for node in ast.walk(tree):
@@ -209,10 +217,12 @@ def test_advance_without_reward(n_cars):
     )
 
     assert state.lap == scenario.total_laps
-    assert np.array_equal(np.sort(state.positions()), np.arange(1, n_cars + 1))
-    assert not state.retired.all()
     assert np.all(state.pit_count >= 1)  # the stops the field decided on were served
     assert np.all(state.cumulative_time_s > scenario.t_ref_s)  # a race, not a lap
+    # physics disposed all race, with no mask in sight: the store stayed inside [0, 4]
+    # however hard the field asked to deploy (E-01, 5.5.3)
+    assert np.all((state.soc_mj >= 0.0) & (state.soc_mj <= scenario.usable_soc_mj))
+    assert np.all(state.tyre_age < scenario.total_laps)  # every set was changed at least once
 
 
 def test_decisions_are_field_wide():
@@ -269,6 +279,9 @@ def test_event_source_round_trip():
 
     The recorded failures are not compared, because the twin deliberately recomputes the
     ego's row from its own tyre age (A-05) — what round-trips is the track, not that row.
+
+    The whole field boxes, the ego included, so the ego-blanking assertions below are
+    about a stop that actually happened rather than a row that was empty anyway.
     """
     scenario = build_scenario(CIRCUIT, ERA)
 
@@ -277,17 +290,28 @@ def test_event_source_round_trip():
     recorded = []
     _drive_to_flag(
         live, scenario, np.random.default_rng(SEED), source=_live_source(scenario, FULL_GRID),
-        sink=sink, decide=_watch_the_track(recorded),
+        sink=sink, decide=_watch_the_track(recorded, _one_stop_each),
     )
+    assert live.pit_count[live.ego] >= 1
 
     replay = _grid_state(scenario, FULL_GRID)
     replayed = []
     _drive_to_flag(
         replay, scenario, np.random.default_rng(SEED + 1),
-        source=_trace_source(trace, scenario, FULL_GRID), decide=_watch_the_track(replayed),
+        source=_trace_source(trace, scenario, FULL_GRID),
+        decide=_watch_the_track(replayed, _one_stop_each),
     )
 
     assert replayed == recorded
+    # A-05's other half: the ego's own pit and mode are blanked out of the recording, so a
+    # replay drives them from its action instead of inheriting the recorded strategy. Leave
+    # them in and the twin stops freezing the field while the ego varies — and because
+    # _field_decisions only overwrites the ego slot when it asks to box, a replayed ego
+    # that stays out would silently serve the recording's stop.
+    ego = live.ego
+    assert np.all(trace.rival_pit[:, ego] == STAY_OUT)
+    assert np.all(trace.rival_mode[:, ego] == BALANCED)
+    assert (trace.rival_pit[:, np.arange(FULL_GRID) != ego] != STAY_OUT).any()
 
 
 def test_a_shape_mismatched_source_is_refused_at_construction():

@@ -32,7 +32,11 @@ class RaceState:
     wetness: float                  # continuous [0, 1], the crossover scalar (E-08)
     red_flags_seen: int
     red_flag_now: bool              # a red flag was raised entering this lap (E-04)
-    ego: int                        # index of the agent's car
+    # which seat the adapter is watching, and nothing more. Since F16 no engine function
+    # branches on it — the tick runs twenty-two equal cars, and the pace and pit-response
+    # asymmetries live in rivals.draw_field where they belong. The twin is the documented
+    # exception (A-05). tests/env/test_engine.py::test_seat_symmetry holds it this way.
+    ego: int
 
     def positions(self) -> np.ndarray:
         """Classification 1..n by cumulative race time; retired cars sink to the back."""

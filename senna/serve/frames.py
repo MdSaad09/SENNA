@@ -7,7 +7,7 @@ CarState fields exist directly on the env, so each is an honest derivation:
   interpolation illustrative.
 - in_pit and the pit RaceEvents come from diffing pit_count against the previous
   lap's snapshot, which is why the builder is handed one.
-- gap_ahead_s repeats the env's own cumulative-time arithmetic (race_env._gaps_ahead)
+- gap_ahead_s repeats the env's own cumulative-time arithmetic (engine.gaps_ahead)
   so the ego's display gap is bit-identical to info["gap_ahead_s"], never a second
   derivation free to drift.
 

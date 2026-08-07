@@ -106,7 +106,7 @@ def legal_codes_at(scenario, trace: EventTrace, out_lap: int) -> list:
 
 def _pit_loss_at(scenario, status: int) -> float:
     """The pit loss a stop pays under this track status — the same discount the env
-    applies (race_env._status_pit_multiplier): a bunched field roughly halves relative
+    applies (engine._status_pit_multiplier): a bunched field roughly halves relative
     pit loss under SC, less so under VSC (E-03)."""
     mult = scenario.env["pit_loss_mult"]
     if status == events.SC:

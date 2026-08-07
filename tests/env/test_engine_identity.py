@@ -125,7 +125,7 @@ def _drive_field_race(scenario, n_cars, rng, *, book, watch=_unwatched):
     validity = scenario.env["compound_validity"]
 
     while state.lap < scenario.total_laps:
-        context = begin_lap(state, scenario, rng, source=source, lap_index=state.lap)
+        context = begin_lap(state, rng, source=source, lap_index=state.lap)
         watch("begin_lap", state)
 
         decisions = LapDecisions(
@@ -263,16 +263,17 @@ def _env_steps_per_s(circuit) -> float:
 
 
 @pytest.mark.slow
-def test_throughput_no_regression():
-    """5.6.2 stays comfortable after the extraction.
+def test_an_engine_lap_costs_less_than_an_env_step():
+    """A coarse alarm, not the 5.6.2 gate — read the name literally.
 
-    The 18,477 steps/s reading is stamped with hardware, commit and config hash precisely
-    so that it is never read out of context, so the alarm here measures the two paths
-    against each other on whatever machine is running. A lap through the engine does
-    strictly less work than the env step wrapping it — no reward, no observation, no mask,
-    no info dict — so an engine lap costing more than a whole env step means the
-    extraction's own per-lap cost has swallowed everything it removed. The absolute gate
-    stays the 5.6.2 floor in configs/baselines.yaml.
+    The 5.6.2 reading is stamped with hardware, commit and config hash precisely so it is
+    never read out of context, so nothing portable can assert "within 5% of 18,477". What
+    this does assert is a ratio on whatever machine is running: an engine lap does strictly
+    less work than the env step wrapping it — no reward, no observation, no mask, no info
+    dict — so an engine lap costing more than a whole env step means the extraction's own
+    per-lap cost swallowed everything it removed. Measured slack is large (the real ratio
+    is about 1.5), so this fires only on a catastrophic regression. A true before/after
+    comparison needs `make bench` run on both commits by hand.
     """
     circuit = CIRCUITS[0]
     scenario = build_scenario(circuit, ERA)

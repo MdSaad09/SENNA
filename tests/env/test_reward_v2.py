@@ -9,7 +9,7 @@ import pytest
 
 from senna import config
 from senna.env import F1RaceEnv
-from senna.env.dynamics import LapOutcome
+from senna.env.dynamics import LapOutcome, grip_est
 from senna.env.reward_v2 import (
     ers_efficiency,
     ers_violation,
@@ -19,6 +19,7 @@ from senna.env.reward_v2 import (
     sc_pit_bonus,
     tyre_failure,
 )
+from senna.env.scenario import compound_code
 from tests.env.conftest import CIRCUIT, SEED
 
 V2_TERMS = {
@@ -86,7 +87,11 @@ def test_the_undercut_window_counts_full_laps_after_the_stop():
     window = config.load("ablations")["reward_v2"]["undercut_window_laps"]
     env = F1RaceEnv(CIRCUIT, "2026", reward_mode="v2")
     env.reset(seed=SEED)
-    env._state.lap = 10
+    # since F16 the engine advances the lap before the adapter scores it, so state.lap is
+    # already 11 when the facts for lap 10 are gathered. The two must not be equal here or
+    # the test cannot tell `lap_index` from `state.lap` and stops pinning the arithmetic.
+    stop_lap = 10
+    env._state.lap = stop_lap + 1
     env._undercut_check = None
 
     zeros = np.zeros(env.n_cars)
@@ -97,17 +102,50 @@ def test_the_undercut_window_counts_full_laps_after_the_stop():
         failed=np.zeros(env.n_cars, dtype=bool), red_flag=False,
     )
     outgoing = (int(env._state.compound[0]), int(env._state.tyre_age[0]))
-    # the stop lap is passed in since F16: the engine advances state.lap before the
-    # adapter scores the lap, so the window is anchored to the lap that was run
-    facts = env._v2_lap_facts(2, outcome, 3, outgoing, 10)
+    facts = env._v2_lap_facts(2, outcome, 3, outgoing, stop_lap)
     assert facts["pitted"]
-    assert env._undercut_check == (3, 10 + 1 + window)
+    assert env._undercut_check == (3, stop_lap + 1 + window)
 
-    env._state.lap = 10 + window  # the last lap still inside the window
+    env._state.lap = stop_lap + window  # the last lap still inside the window
     assert env._undercut_resolved_ahead() is False
     assert env._undercut_check is not None
 
-    env._state.lap = 10 + 1 + window  # the window closes: resolved and cleared
+    env._state.lap = stop_lap + 1 + window  # the window closes: resolved and cleared
     rank = env._state.positions()
     assert env._undercut_resolved_ahead() == (int(rank[0]) < int(rank[3]))
     assert env._undercut_check is None
+
+
+def test_stint_end_grip_is_the_set_that_came_off():
+    """The grip v2 rewards belongs to the tyre that finished the stint, not the one bolted
+    on in the pit lane. Since F16 the engine applies the swap before the adapter scores the
+    lap, so the compound and age are sampled beforehand and passed in — this pins that
+    snapshot, which is the refactor's own compensation and otherwise untested.
+    """
+    env = F1RaceEnv(CIRCUIT, "2026", reward_mode="v2")
+    env.reset(seed=SEED)
+    ego = env._state.ego
+
+    # MEDIUM, not SOFT: Bahrain's fitted soft carries deg_a = 0.0, so a worn one would
+    # score the same full grip as a fresh set and the test could not tell them apart
+    worn = compound_code("MEDIUM")
+    fresh = compound_code("HARD")
+    outgoing = (worn, 25)  # the set that finished a long stint
+    env._state.compound[ego] = fresh  # what the engine already bolted on
+    env._state.tyre_age[ego] = 0
+
+    zeros = np.zeros(env.n_cars)
+    outcome = LapOutcome(
+        lap_time_s=np.full(env.n_cars, 90.0), racing_time_s=np.full(env.n_cars, 90.0),
+        pit_time_s=zeros, harvest_mj=zeros, deploy_mj=zeros, soc_next_mj=zeros,
+        derate_penalty_s=zeros, failed=np.zeros(env.n_cars, dtype=bool), red_flag=False,
+    )
+    facts = env._v2_lap_facts(2, outcome, None, outgoing, 20)
+
+    worn_grip = grip_est(env.scenario.deg_a["MEDIUM"], env.scenario.deg_b["MEDIUM"], 25)
+    assert facts["outgoing_grip"] == pytest.approx(worn_grip)
+    # reading the post-swap state instead would score the fresh set at age 0 — full grip,
+    # and a stint-end bonus paid for a tyre that had not turned a lap
+    assert facts["outgoing_grip"] < grip_est(
+        env.scenario.deg_a["HARD"], env.scenario.deg_b["HARD"], 0
+    )

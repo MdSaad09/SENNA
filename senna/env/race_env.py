@@ -22,7 +22,13 @@ from gymnasium.spaces import Box, MultiDiscrete
 from senna import config
 from senna.env import dynamics, events, observation, reward_v2, rivals
 from senna.env.engine import LapDecisions, advance_lap, begin_lap
-from senna.env.events_io import LiveSource, TraceSink, TraceSource
+from senna.env.events_io import (
+    STAY_OUT,
+    LiveSource,
+    TraceSink,
+    TraceSource,
+    max_age_by_code,
+)
 from senna.env.masks import SLICK_ACTIONS, UNFITTED_COMPOUND, ActionMask, build_mask
 from senna.env.observation import NO_DEG_A, NO_DEG_B
 from senna.env.reward import pace_shaping, shaping_step, terminal_points
@@ -31,7 +37,6 @@ from senna.env.state import RaceState
 from senna.env.twin import EventTrace
 
 _STATUS_NAMES = {events.GREEN: "green", events.VSC: "vsc", events.SC: "sc", events.RED: "red"}
-_BALANCED = 1
 _START_COMPOUND = compound_code(START_COMPOUND)
 
 
@@ -103,10 +108,7 @@ class F1RaceEnv(Env):
             raise KeyError(
                 f"no rival band '{rival_band}' — rivals.yaml defines: {', '.join(self._book.bands)}"
             )
-        age_fallback = env_cfg["obs"]["tyre_age_norm_laps"]
-        self._max_age_by_code = np.array(
-            [self.scenario.deg_max_age.get(name, age_fallback) for name in COMPOUNDS]
-        )
+        self._max_age_by_code = max_age_by_code(self.scenario)
         # F08 mask guard (INDEX 19 Jul): pit action = compound code + 1, slicks only —
         # the baselines already shop fitted compounds, this closes the same door on
         # the agent
@@ -248,9 +250,7 @@ class F1RaceEnv(Env):
         # wants what ran, not what was asked for (F10; snapped counts track the delta)
         self._ego_action = (pit_ego, mode_ego)
 
-        context = begin_lap(
-            state, self.scenario, self._rng, source=self._source, lap_index=lap_index
-        )
+        context = begin_lap(state, self._rng, source=self._source, lap_index=lap_index)
         decisions = self._field_decisions(pit_ego, mode_ego, context, lap_index)
         outgoing = self._v2_before_lap() if self._reward_mode == "v2" else None
         outcome = advance_lap(state, context, decisions, self.scenario, self._rng,
@@ -285,7 +285,7 @@ class F1RaceEnv(Env):
         which of the twenty-two anyone is watching."""
         ego = self._state.ego
         self._forced_pit_now = bool(outcome.failed[ego])
-        if decisions.pit[ego] >= 0:
+        if decisions.pit[ego] != STAY_OUT:
             self._ego_pit_laps.append(lap_index + 1)
             self._ego_pit_compounds.append(COMPOUNDS[int(decisions.pit[ego])])
         self._ego_harvest_total += float(outcome.harvest_mj[ego])
@@ -310,7 +310,7 @@ class F1RaceEnv(Env):
                 validity=self.scenario.env["compound_validity"],
                 total_laps=self.total_laps, rng=self._rng,
             )
-            mode = np.full(self.n_cars, _BALANCED)
+            mode = np.full(self.n_cars, dynamics.BALANCED)
         if pit_ego >= 1:
             pit[state.ego] = pit_ego - 1  # pit head 1..5 -> compound code 0..4
         mode[state.ego] = mode_ego
@@ -330,7 +330,7 @@ class F1RaceEnv(Env):
             return np.ones_like(self._mask.flat())
         return self._mask.flat()
 
-    # -- reward, gaps, observation, info ---------------------------------------
+    # -- reward, observation, info ----------------------------------------------
 
     def _reward(self, prev_position: int, racing_time_s: float, terminated: bool,
                 v2_lap: dict | None) -> dict:
@@ -504,7 +504,7 @@ class F1RaceEnv(Env):
         if self._constraints == "penalty":
             return self._coerce_penalty(pit, mode)
         if not mask.mode[mode]:
-            mode = _BALANCED
+            mode = dynamics.BALANCED
         if mask.pit[pit]:
             return pit, mode
         return self._snap_pit(pit), mode
