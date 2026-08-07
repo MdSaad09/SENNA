@@ -21,9 +21,10 @@ from gymnasium.spaces import Box, MultiDiscrete
 
 from senna import config
 from senna.env import dynamics, events, observation, reward_v2, rivals
+from senna.env.engine import LapDecisions, advance_lap, begin_lap
+from senna.env.events_io import LiveSource, TraceSink, TraceSource
 from senna.env.masks import SLICK_ACTIONS, UNFITTED_COMPOUND, ActionMask, build_mask
 from senna.env.observation import NO_DEG_A, NO_DEG_B
-from senna.env.pitlane import resolve_pit_lane
 from senna.env.reward import pace_shaping, shaping_step, terminal_points
 from senna.env.scenario import COMPOUNDS, START_COMPOUND, build_scenario, compound_code
 from senna.env.state import RaceState
@@ -83,20 +84,9 @@ class F1RaceEnv(Env):
             low=-1.0, high=1.0, shape=(observation.OBS_DIM,), dtype=np.float32
         )
 
+        # the per-lap event constants now live on the event source (senna/env/events_io.py);
+        # what stays here is what the adapter itself needs — the reward and the mask
         env_cfg = self.scenario.env
-        self._markov = env_cfg["weather"]["markov"]
-        self._n_sectors = env_cfg["weather"]["n_sectors"]
-        self._weather_targets = env_cfg["weather"]["target_wetness"]
-        self._sc_laps = env_cfg["events"]["sc_duration_laps"]
-        self._vsc_laps = env_cfg["events"]["vsc_duration_laps"]
-        # the red flag first appears in the Stage C row of 5.7, so "sc_vsc" zeroes the cap
-        self._max_red = env_cfg["events"]["red_flag_max_per_race"] if hazards == "full" else 0
-        self._tyre_penalty_s = env_cfg["forced_pit"]["tyre_failure_penalty_s"]
-        self._cliff_margin = env_cfg["tyre_failure"]["cliff_age_margin_laps"]
-        self._tyre_hazard = env_cfg["tyre_failure"]["hazard_per_lap_beyond_cliff"]
-        self._pit_loss_mult = env_cfg["pit_loss_mult"]
-        self._min_service_s = env_cfg["pit"]["min_service_s"]
-        self._lane_gap_s = env_cfg["pit"]["lane_gap_s"]
         self._w_p = env_cfg["reward"]["pace_weight_w_p"]
         self._coef = env_cfg["reward"]["position_potential_coef"]
         self._gamma = env_cfg["reward"]["gamma"]
@@ -129,6 +119,8 @@ class F1RaceEnv(Env):
         self._rng = None
         self._rivals: rivals.RivalDraw | None = None
         self._trace: EventTrace | None = None
+        self._sink: TraceSink | None = None
+        self._source = None
 
     # -- gymnasium api ----------------------------------------------------------
 
@@ -198,6 +190,13 @@ class F1RaceEnv(Env):
             None if self._twin is not None
             else rivals.draw_field(self._book, self._band, n_cars=n, ego=0, rng=self._rng)
         )
+        # where this race's events come from. The drawn pace sigma rides the live source
+        # because per-lap noise has been scaled by the archetype mix since F06.
+        self._source = (
+            TraceSource(self._twin, self.scenario, n_cars=n) if self._twin is not None
+            else LiveSource(self.scenario, sigma_mult=self._rivals.sigma_mult,
+                            hazards=self._hazards, weather=self._weather_mode)
+        )
         self._ego_pit_laps: list[int] = []
         self._ego_pit_compounds: list[str] = []
         self._ego_derate_count = 0
@@ -212,24 +211,18 @@ class F1RaceEnv(Env):
             self._ego_fastest_s = np.inf
             self._undercut_check: tuple[int, int] | None = None
         self._trace = self._new_trace(seed, grid, driver_s) if self._record else None
-        self._recorded_laps = 0
+        self._sink = TraceSink(self._trace) if self._record else None
 
         self._mask = self._ego_mask()
         return self._observe(), self._info(dict.fromkeys((*self._term_keys, "total"), 0.0))
 
     def _new_trace(self, seed, grid, driver_s) -> EventTrace:
-        laps, n = self.total_laps, self.n_cars
-        return EventTrace(
-            circuit=self.circuit, era=self.era, seed=(-1 if seed is None else int(seed)),
-            n_laps=laps, n_cars=n, grid=grid.copy(), driver_s=driver_s.copy(),
-            status=np.full(laps, events.GREEN, dtype=int),
-            red_flag=np.zeros(laps, dtype=bool),
-            weather=np.full(laps, events.DRY, dtype=int),
-            wetness=np.zeros(laps, dtype=float),
-            failed=np.zeros((laps, n), dtype=bool),
-            rival_pit=np.full((laps, n), -1, dtype=np.int8),
-            rival_mode=np.full((laps, n), _BALANCED, dtype=np.int8),
+        trace = EventTrace.green(
+            self.circuit, self.era, self.total_laps, self.n_cars,
+            grid=grid.copy(), driver_s=driver_s.copy(),
         )
+        trace.seed = -1 if seed is None else int(seed)
+        return trace
 
     def recorded_trace(self) -> EventTrace:
         """The EventTrace captured during a record=True episode — the deterministic twin
@@ -238,9 +231,9 @@ class F1RaceEnv(Env):
         twin that silently misrepresents the events (M3)."""
         if self._trace is None:
             raise RuntimeError("no trace recorded — build the env with record=True")
-        if self._recorded_laps < self.total_laps:
+        if self._sink.laps_recorded < self.total_laps:
             raise RuntimeError(
-                f"trace covers only {self._recorded_laps}/{self.total_laps} laps — the "
+                f"trace covers only {self._sink.laps_recorded}/{self.total_laps} laps — the "
                 "recorded race did not reach the flag, so the twin is incomplete"
             )
         return self._trace
@@ -255,69 +248,73 @@ class F1RaceEnv(Env):
         # wants what ran, not what was asked for (F10; snapped counts track the delta)
         self._ego_action = (pit_ego, mode_ego)
 
-        red_flag, onset = self._resolve_track_status(lap_index)
-        self._resolve_weather(lap_index)
-        if self._reward_mode == "v2":
-            self._sc_laps_active = (self._sc_laps_active + 1
-                                    if state.track_status == events.SC else 0)
-
-        modes = self._field_modes(mode_ego, lap_index)
-        pit_choice = self._field_pit_choices(pit_ego, red_flag, onset, lap_index)
-        failed = self._resolve_failures(lap_index)
-        self._forced_pit_now = bool(failed[state.ego])
-
-        gap_ahead = self._gaps_ahead()
-        harvest = dynamics.per_lap_harvest_mj(self.scenario, state.track_status)
-        harvest_mj = np.full(self.n_cars, harvest)
-        request = dynamics.deploy_request_mj(modes, self.scenario)
-        delivered, derate, soc_next = dynamics.resolve_energy(
-            state.soc_mj, harvest_mj, request, self.scenario
+        context = begin_lap(
+            state, self.scenario, self._rng, source=self._source, lap_index=lap_index
         )
+        decisions = self._field_decisions(pit_ego, mode_ego, context, lap_index)
+        outgoing = self._v2_before_lap() if self._reward_mode == "v2" else None
+        outcome = advance_lap(state, context, decisions, self.scenario, self._rng,
+                              source=self._source, sink=self._sink)
 
-        noise = self._lap_noise()
-        racing_time = dynamics.lap_time_s(
-            compound=state.compound, age=state.tyre_age, fuel_kg=state.fuel_kg, modes=modes,
-            delivered_mj=delivered, request_mj=request, derate_s=derate, gap_ahead_s=gap_ahead,
-            wetness=state.wetness, track_status=np.full(self.n_cars, state.track_status),
-            driver_s=state.driver_s, noise_s=noise, scenario=self.scenario,
-        )
-        pit_time = self._pit_times(pit_choice, failed, red_flag)
-        lap_time = racing_time + pit_time
-
-        # gathered before the pit swap mutates compound and age — the stint-end grip
-        # must be the outgoing set's, and the fastest-lap ledger wants racing time
-        v2_lap = (self._v2_lap_facts(pit_ego, failed, delivered, derate, racing_time,
-                                     prev_ahead_car)
+        self._log_ego_lap(outcome, decisions, lap_index)
+        v2_lap = (self._v2_lap_facts(pit_ego, outcome, prev_ahead_car, outgoing, lap_index)
                   if self._reward_mode == "v2" else None)
 
-        if self._record:
-            self._capture(lap_index, red_flag, failed, pit_choice, modes)
-        self._apply_pits(pit_choice, failed, red_flag)
-        state.cumulative_time_s = state.cumulative_time_s + lap_time
-        state.tyre_age = np.where((pit_choice >= 0) | failed | red_flag, 0, state.tyre_age + 1)
-        state.soc_mj = soc_next
-        state.last_harvest_mj = harvest_mj
-        state.last_deploy_mj = delivered
-        state.fuel_kg = self._burn_fuel()
-        state.lap += 1
-        state.red_flag_now = red_flag
-        if state.track_status == events.RED:
-            state.track_status = events.GREEN  # the race resumes after the neutralisation
-
         ego = state.ego
-        self._ego_harvest_total += float(harvest_mj[ego])
-        self._ego_deploy_total += float(delivered[ego])
-        self._ego_derated_now = bool(derate[ego] > 0)
-        if self._ego_derated_now:
-            self._ego_derate_count += 1
-
         terminated = bool(state.lap >= self.total_laps or state.retired[ego])
         # solo, the position and terminal terms are constants, so pit loss must enter
         # through the pace term or stops are free (5.7 Stage A; F07 decision 1)
-        pace_time_s = float(lap_time[ego]) if self._solo else float(racing_time[ego])
+        pace_time_s = (float(outcome.lap_time_s[ego]) if self._solo
+                       else float(outcome.racing_time_s[ego]))
         terms = self._reward(prev_position, pace_time_s, terminated, v2_lap)
         self._mask = self._ego_mask()
         return self._observe(), terms["total"], terminated, False, self._info(terms)
+
+    def _v2_before_lap(self) -> tuple[int, int]:
+        """What ablation 3 has to read while the lap is still ahead of it: how long the
+        safety car has been out, and the set the ego is about to finish the lap on — the
+        pit swap moves compound and age, and v2 rewards the grip that came off."""
+        state = self._state
+        self._sc_laps_active = (self._sc_laps_active + 1
+                                if state.track_status == events.SC else 0)
+        return int(state.compound[state.ego]), int(state.tyre_age[state.ego])
+
+    def _log_ego_lap(self, outcome, decisions, lap_index: int) -> None:
+        """The ledger the info dict and the terminal summary read from. It is the adapter's
+        because it is about one seat: the engine reported the whole field and has no view on
+        which of the twenty-two anyone is watching."""
+        ego = self._state.ego
+        self._forced_pit_now = bool(outcome.failed[ego])
+        if decisions.pit[ego] >= 0:
+            self._ego_pit_laps.append(lap_index + 1)
+            self._ego_pit_compounds.append(COMPOUNDS[int(decisions.pit[ego])])
+        self._ego_harvest_total += float(outcome.harvest_mj[ego])
+        self._ego_deploy_total += float(outcome.deploy_mj[ego])
+        self._ego_derated_now = bool(outcome.derate_penalty_s[ego] > 0)
+        if self._ego_derated_now:
+            self._ego_derate_count += 1
+
+    def _field_decisions(self, pit_ego: int, mode_ego: int, context, lap_index: int):
+        """Fill all twenty-two seats. Rivals decide by their archetype rules (or replay the
+        trace's applied choices) and hold balanced mode — a documented F06 simplification,
+        since the E-06 axis is the pit response, not the energy mode. The ego's own heads
+        are laid over the top, and from the engine's side no seat looks different."""
+        state = self._state
+        if self._twin is not None:
+            pit = self._twin.rival_pit[lap_index].astype(int)
+            mode = self._twin.rival_mode[lap_index].astype(int)
+        else:
+            pit = rivals.pit_choices(
+                self._book, self._rivals, state, status_onset=context.onset,
+                red_flag=context.red_flag, max_age_by_code=self._max_age_by_code,
+                validity=self.scenario.env["compound_validity"],
+                total_laps=self.total_laps, rng=self._rng,
+            )
+            mode = np.full(self.n_cars, _BALANCED)
+        if pit_ego >= 1:
+            pit[state.ego] = pit_ego - 1  # pit head 1..5 -> compound code 0..4
+        mode[state.ego] = mode_ego
+        return LapDecisions(pit=pit, mode=mode)
 
     @property
     def twin(self) -> EventTrace | None:
@@ -332,202 +329,6 @@ class F1RaceEnv(Env):
             # violation detector (5.6.3 row 2)
             return np.ones_like(self._mask.flat())
         return self._mask.flat()
-
-    # -- events -----------------------------------------------------------------
-
-    def _resolve_track_status(self, lap_index: int):
-        """The track status for this lap and whether a neutralisation just began (its onset
-        lap — the moment a rival decides whether to answer it, E-06). On a twin the status
-        and the red flag are read from the trace, so the field's events never shift when the
-        ego's strategy does; live, they are rolled from the per-circuit hazards."""
-        if self._twin is not None:
-            state = self._state
-            state.track_status = int(self._twin.status[lap_index])
-            red = bool(self._twin.red_flag[lap_index])
-            if red:
-                state.red_flags_seen += 1
-            return red, events.GREEN
-        return self._advance_track_status()
-
-    def _advance_track_status(self):
-        """Count a running neutralisation down, or roll for a new one. Returns the red-flag
-        event flag (E-04, consumed this lap) and the neutralisation that began this lap, if
-        any — GREEN on a countdown lap, since only an onset offers a fresh pit decision."""
-        state = self._state
-        if self._hazards == "none":
-            return False, events.GREEN  # no roll, so the RNG stream is untouched
-        if state.status_laps_left > 0:
-            state.status_laps_left -= 1
-            if state.status_laps_left == 0:
-                state.track_status = events.GREEN
-            return False, events.GREEN
-        if state.track_status != events.GREEN:
-            state.track_status = events.GREEN
-
-        drawn = events.advance_track_status(events.GREEN, self.scenario.hazards, self._rng)
-        if drawn == events.RED and state.red_flags_seen < self._max_red:
-            state.red_flags_seen += 1
-            state.track_status = events.RED
-            return True, events.GREEN
-        if drawn == events.SC:
-            state.track_status = events.SC
-            state.status_laps_left = self._sc_laps
-            return False, events.SC
-        if drawn == events.VSC:
-            state.track_status = events.VSC
-            state.status_laps_left = self._vsc_laps
-            return False, events.VSC
-        return False, events.GREEN
-
-    def _resolve_weather(self, lap_index: int) -> None:
-        state = self._state
-        if self._twin is not None:
-            state.weather = int(self._twin.weather[lap_index])
-            state.wetness = float(self._twin.wetness[lap_index])
-            return
-        if self._weather_mode == "dry":
-            return  # pinned DRY/0.0 from reset; no Markov roll, so no RNG draw
-        state.weather, state.wetness = events.advance_weather(
-            state.weather, state.wetness, self._markov, self._n_sectors, self._rng,
-            target_wetness=self._weather_targets,
-        )
-
-    def _field_modes(self, mode_ego: int, lap_index: int) -> np.ndarray:
-        """Rivals hold balanced mode (a documented F06 simplification; the E-06 axis is the
-        pit response, not the energy mode) or replay the trace's applied modes; the ego's
-        mode is its own action either way."""
-        if self._twin is not None:
-            modes = self._twin.rival_mode[lap_index].astype(int)
-        else:
-            modes = np.full(self.n_cars, _BALANCED)
-        modes[self._state.ego] = mode_ego
-        return modes
-
-    def _lap_noise(self) -> np.ndarray:
-        """Per-car pace noise, scaled per rival by its drawn pace_sigma_mult (the ego keeps
-        unit sigma). A twin roll zeroes it — deterministic physics is what makes the oracle
-        regret a clean ceiling (M3)."""
-        if self._twin is not None:
-            return np.zeros(self.n_cars)
-        return self._rng.normal(0.0, self.scenario.s_ref_s * self._rivals.sigma_mult)
-
-    def _capture(self, lap_index, red_flag, failed, pit_choice, modes) -> None:
-        state = self._state
-        self._trace.status[lap_index] = state.track_status
-        self._trace.red_flag[lap_index] = red_flag
-        self._trace.weather[lap_index] = state.weather
-        self._trace.wetness[lap_index] = state.wetness
-        self._trace.failed[lap_index] = failed
-        rival_pit = pit_choice.copy()
-        rival_pit[state.ego] = -1  # the ego is replayed from its own action, not the trace
-        self._trace.rival_pit[lap_index] = rival_pit
-        rival_mode = modes.copy()
-        rival_mode[state.ego] = _BALANCED
-        self._trace.rival_mode[lap_index] = rival_mode
-        self._recorded_laps = lap_index + 1
-
-    def _resolve_failures(self, lap_index: int) -> np.ndarray:
-        """Tyre failures this lap. A twin replays the field's verbatim, but recomputes the
-        ego's from its own (possibly different) tyre age as a hard cap at the cliff — the
-        conservative rule that keeps an oracle stint inside the fitted data's support."""
-        if self._twin is None:
-            return self._tyre_failures()
-        state = self._state
-        failed = self._twin.failed[lap_index].copy()
-        ego = state.ego
-        cliff = self._max_age_by_code[int(state.compound[ego])] + self._cliff_margin
-        failed[ego] = state.tyre_age[ego] > cliff
-        return failed
-
-    def _tyre_failures(self) -> np.ndarray:
-        state = self._state
-        failed = np.zeros(self.n_cars, dtype=bool)
-        for car in range(self.n_cars):
-            name = COMPOUNDS[int(state.compound[car])]
-            age_fallback = self.scenario.env["obs"]["tyre_age_norm_laps"]
-            max_age = self.scenario.deg_max_age.get(name, age_fallback)
-            if self._hazards == "none":
-                # deterministic Stage A: the twin's hard cap at the cliff, not a hazard roll
-                failed[car] = state.tyre_age[car] > max_age + self._cliff_margin
-            else:
-                failed[car] = events.tyre_failure(
-                    int(state.tyre_age[car]), max_age, self._cliff_margin, self._tyre_hazard,
-                    self._rng,
-                )
-        return failed
-
-    # -- pit choices and timing -------------------------------------------------
-
-    def _field_pit_choices(self, pit_ego: int, red_flag: bool, onset: int,
-                           lap_index: int) -> np.ndarray:
-        """Compound code each car pits to this lap, or -1 for staying out. Rivals decide by
-        their archetype rules (or replay the trace); the ego's own pit head is overlaid on
-        top. Every rival target is legal for the current wetness by construction (E-08)."""
-        state = self._state
-        if self._twin is not None:
-            choice = self._twin.rival_pit[lap_index].astype(int)
-        else:
-            choice = rivals.pit_choices(
-                self._book, self._rivals, state, status_onset=onset, red_flag=red_flag,
-                max_age_by_code=self._max_age_by_code,
-                validity=self.scenario.env["compound_validity"],
-                total_laps=self.total_laps, rng=self._rng,
-            )
-        if pit_ego >= 1:
-            choice[state.ego] = pit_ego - 1  # pit head 1..5 -> compound code 0..4
-        return choice
-
-    def _pit_times(self, pit_choice: np.ndarray, failed: np.ndarray, red_flag: bool) -> np.ndarray:
-        """Green pit loss with FIFO stacking for scheduled stops (E-05); a flat penalty for
-        a tyre-failure stop (+25 s, kept from v2); free under a red flag (E-04)."""
-        state = self._state
-        pit_time = np.zeros(self.n_cars)
-        stopping = (pit_choice >= 0) & ~failed
-        if not red_flag and stopping.any():
-            cars = np.flatnonzero(stopping)
-            if self._twin is not None:
-                draws = np.full(cars.size, self.scenario.pit_loss_mean_s)  # mean, no noise
-            else:
-                draws = self._rng.normal(
-                    self.scenario.pit_loss_mean_s, self.scenario.pit_loss_sigma_s, cars.size
-                )
-            service = np.maximum(self._min_service_s, draws) * self._status_pit_multiplier()
-            exit_s = resolve_pit_lane(
-                state.cumulative_time_s[cars], service, lane_gap_s=self._lane_gap_s
-            )
-            pit_time[cars] = exit_s - state.cumulative_time_s[cars]
-        pit_time[failed] = self._tyre_penalty_s
-        return pit_time
-
-    def _status_pit_multiplier(self) -> float:
-        if self._state.track_status == events.SC:
-            return self._pit_loss_mult["sc"]
-        if self._state.track_status == events.VSC:
-            return self._pit_loss_mult["vsc"]
-        return 1.0
-
-    def _apply_pits(self, pit_choice: np.ndarray, failed: np.ndarray, red_flag: bool) -> None:
-        state = self._state
-        changed = pit_choice >= 0
-        state.compound = np.where(changed, pit_choice, state.compound)
-        stopped = changed | failed | red_flag
-        new_compound = state.compound != state.first_compound
-        state.second_compound_used |= stopped & new_compound
-        state.pit_count += (changed | failed).astype(int)
-        if pit_choice[state.ego] >= 0:
-            self._ego_pit_laps.append(state.lap + 1)
-            self._ego_pit_compounds.append(COMPOUNDS[int(pit_choice[state.ego])])
-
-    def _burn_fuel(self) -> np.ndarray:
-        """Burn this lap's fuel. A car that cannot cover the lap retires — it never reaches
-        the flag; a car landing on exactly zero at the line has finished, not retired, so the
-        winner of a green race is never mis-scored as a DNF."""
-        state = self._state
-        base = self.scenario.race_fuel_kg / self.total_laps
-        if state.track_status in (events.SC, events.VSC):
-            base *= self.scenario.sc_burn_factor
-        state.retired |= state.fuel_kg < base - 1e-9
-        return np.maximum(0.0, state.fuel_kg - base)
 
     # -- reward, gaps, observation, info ---------------------------------------
 
@@ -604,33 +405,35 @@ class F1RaceEnv(Env):
             ),
         }
 
-    def _v2_lap_facts(self, pit_ego: int, failed: np.ndarray, delivered: np.ndarray,
-                      derate: np.ndarray, racing_time: np.ndarray,
-                      prev_ahead_car: int | None) -> dict:
-        state = self._state
-        ego = state.ego
-        pitted = pit_ego >= 1 and not bool(failed[ego])
-        name = COMPOUNDS[int(state.compound[ego])]
+    def _v2_lap_facts(self, pit_ego: int, outcome, prev_ahead_car: int | None,
+                      outgoing: tuple[int, int], lap_index: int) -> dict:
+        """v2's per-lap inputs, read off the finished lap. `outgoing` is the compound and
+        age the ego carried into it, sampled before the engine ran because the stint-end
+        grip this arm rewards belongs to the set that came off, not the one going on."""
+        ego = self._state.ego
+        pitted = pit_ego >= 1 and not bool(outcome.failed[ego])
+        outgoing_compound, outgoing_age = outgoing
+        name = COMPOUNDS[outgoing_compound]
         outgoing_grip = float(dynamics.grip_est(
             self.scenario.deg_a.get(name, NO_DEG_A),
             self.scenario.deg_b.get(name, NO_DEG_B),
-            int(state.tyre_age[ego]),
+            outgoing_age,
         ))
-        self._field_fastest_s = min(self._field_fastest_s, float(racing_time.min()))
-        self._ego_fastest_s = min(self._ego_fastest_s, float(racing_time[ego]))
+        self._field_fastest_s = min(self._field_fastest_s, float(outcome.racing_time_s.min()))
+        self._ego_fastest_s = min(self._ego_fastest_s, float(outcome.racing_time_s[ego]))
         if pitted and prev_ahead_car is not None and self._undercut_check is None:
-            # +1: state.lap is pre-advance here, and the window counts full laps
+            # +1: lap_index is the pre-advance lap, and the window counts full laps
             # AFTER the stop lap — undercut_window_laps 3 means judged once laps
             # L+1..L+3 have run, exactly as the yaml comment reads
             self._undercut_check = (
-                prev_ahead_car, state.lap + 1 + int(self._v2["undercut_window_laps"])
+                prev_ahead_car, lap_index + 1 + int(self._v2["undercut_window_laps"])
             )
         return {
             "pitted": pitted,
             "outgoing_grip": outgoing_grip,
-            "deployed_mj": float(delivered[ego]),
-            "derate_s": float(derate[ego]),
-            "tyre_failed": bool(failed[ego]),
+            "deployed_mj": float(outcome.deploy_mj[ego]),
+            "derate_s": float(outcome.derate_penalty_s[ego]),
+            "tyre_failed": bool(outcome.failed[ego]),
             "sc_laps_active": self._sc_laps_active,
         }
 
@@ -657,18 +460,6 @@ class F1RaceEnv(Env):
             return None
         by_rank = np.argsort(rank, kind="stable")
         return int(by_rank[position - 2])
-
-    def _gaps_ahead(self) -> np.ndarray:
-        """Each car's time gap to the car classified one place ahead — the traffic input.
-        A leader gets the dirty-air threshold so it is never counted as being in traffic."""
-        state = self._state
-        gaps = np.full(self.n_cars, self.scenario.dirty_air_threshold_s)
-        rank = state.positions()
-        by_rank = np.argsort(rank, kind="stable")  # car index at each 0-based place
-        for place in range(1, self.n_cars):
-            car, ahead = by_rank[place], by_rank[place - 1]
-            gaps[car] = state.cumulative_time_s[car] - state.cumulative_time_s[ahead]
-        return gaps
 
     def _neighbours(self):
         state = self._state

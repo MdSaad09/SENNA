@@ -9,6 +9,7 @@ import pytest
 
 from senna import config
 from senna.env import F1RaceEnv
+from senna.env.dynamics import LapOutcome
 from senna.env.reward_v2 import (
     ers_efficiency,
     ers_violation,
@@ -89,8 +90,16 @@ def test_the_undercut_window_counts_full_laps_after_the_stop():
     env._undercut_check = None
 
     zeros = np.zeros(env.n_cars)
-    facts = env._v2_lap_facts(2, np.zeros(env.n_cars, dtype=bool), zeros, zeros,
-                              np.full(env.n_cars, 90.0), 3)
+    even_laps = np.full(env.n_cars, 90.0)
+    outcome = LapOutcome(
+        lap_time_s=even_laps, racing_time_s=even_laps, pit_time_s=zeros,
+        harvest_mj=zeros, deploy_mj=zeros, soc_next_mj=zeros, derate_penalty_s=zeros,
+        failed=np.zeros(env.n_cars, dtype=bool), red_flag=False,
+    )
+    outgoing = (int(env._state.compound[0]), int(env._state.tyre_age[0]))
+    # the stop lap is passed in since F16: the engine advances state.lap before the
+    # adapter scores the lap, so the window is anchored to the lap that was run
+    facts = env._v2_lap_facts(2, outcome, 3, outgoing, 10)
     assert facts["pitted"]
     assert env._undercut_check == (3, 10 + 1 + window)
 

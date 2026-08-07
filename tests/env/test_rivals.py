@@ -15,6 +15,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from senna.env import F1RaceEnv, events
+from senna.env.events_io import LiveSource
 from senna.env.rivals import (
     ArchetypeBook,
     RivalDraw,
@@ -263,7 +264,10 @@ def test_rival_lap_noise_scales_with_the_drawn_sigma():
         wet_jitter=np.zeros(n),
     )
 
-    noise = np.array([env._lap_noise() for _ in range(4000)])
+    # since F16 the drawn sigma rides the live event source, which is where reset()
+    # hands it over — build it the same way rather than reaching past the seam
+    source = LiveSource(env.scenario, sigma_mult=env._rivals.sigma_mult)
+    noise = np.array([source.lap_noise(env._state, env._rng) for _ in range(4000)])
     spread = noise.std(axis=0)
     assert spread[2] > spread[1]  # a higher multiplier is a wider spread
     assert spread[env._state.ego] == pytest.approx(env.scenario.s_ref_s, rel=0.1)
