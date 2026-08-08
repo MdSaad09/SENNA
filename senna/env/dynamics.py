@@ -39,11 +39,19 @@ def derate_penalty_s(request_mj, deploy_mj, p_der):
 
 @dataclass(frozen=True)
 class LapOutcome:
+    """What a lap did to every car. Racing and pit time are reported apart as well as
+    summed: the pace term is scored on the racing lap alone, so a stop is not read as
+    a slow lap (5.5.4)."""
+
     lap_time_s: np.ndarray
+    racing_time_s: np.ndarray
+    pit_time_s: np.ndarray
     harvest_mj: np.ndarray
     deploy_mj: np.ndarray
     soc_next_mj: np.ndarray
     derate_penalty_s: np.ndarray
+    failed: np.ndarray  # tyre let go this lap: a forced stop, not a retirement (5.5.5)
+    red_flag: bool
 
 
 def per_lap_harvest_mj(scenario, track_status: int) -> float:

@@ -96,17 +96,17 @@ Existing suites are part of the gate and must pass untouched: `test_determinism.
 
 ## Acceptance checklist
 
-- [ ] `senna/env/engine.py` exists; advances a race with no gym, SB3, reward, observation or pandas import
-- [ ] `advance_lap` takes 22 decisions and branches on no ego index on the live path
-- [ ] `F1RaceEnv.step()` is under 30 lines and contains no physics
-- [ ] Golden-trace equality at two circuits, full race, all 22 cars, exact
-- [ ] Seat-symmetry property test passes on the live path
-- [ ] The seven `self._twin` branches inside the tick are gone, replaced by one event-source seam
-- [ ] `senna/eval` and `senna/serve` pass unchanged — including `frames.py`, which reaches into `env._state` at `:34` and keeps working
-- [ ] F14's evaluation suite reproduces its recorded numbers exactly
-- [ ] Throughput within 5% of the 5.6.2 figure
-- [ ] `dynamics.LapOutcome` is used, not abandoned a second time
-- [ ] Cold-cache `ruff` over the whole repo before the final gate
+- [x] `senna/env/engine.py` exists; advances a race with no gym, SB3, reward, observation or pandas import
+- [x] `advance_lap` takes 22 decisions and branches on no ego index on the live path
+- [x] `F1RaceEnv.step()` is under 30 lines and contains no physics — **29 lines** (from 75). It was 31 until the review fix dropped `begin_lap`'s unused `scenario` argument
+- [x] Golden-trace equality at two circuits, full race, all 22 cars, exact
+- [x] Seat-symmetry property test passes on the live path
+- [x] The seven `self._twin` branches inside the tick are gone, replaced by one event-source seam — one branch remains in `_field_decisions`, which is rival *strategy* replay and therefore adapter work, not engine work
+- [x] `senna/eval` and `senna/serve` pass unchanged — including `frames.py`, which reaches into `env._state` at `:34` and keeps working
+- [x] F14's evaluation suite reproduces its recorded numbers exactly — M1/M3/M5/M10 payloads diffed identical against a pre-extraction worktree, frozen headline triplet
+- [x] Throughput within 5% of the 5.6.2 figure — 0.9% slower, measured by hand on both commits; the committed test asserts a ratio, not this
+- [x] `dynamics.LapOutcome` is used, not abandoned a second time
+- [x] Cold-cache `ruff` over the whole repo before the final gate
 
 ## Out of scope
 

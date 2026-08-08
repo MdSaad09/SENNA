@@ -42,14 +42,15 @@ class EventTrace:
         """A synthetic all-green, bone-dry trace: no neutralisations, no weather, no
         failures, no rival stops, balanced modes. The Stage A solo reference and the oracle
         toy race run on this — a race with a computable near-optimal answer (5.7)."""
-        driver_s = np.zeros(n_cars) if driver_s is None else np.asarray(driver_s, dtype=float)
+        driver_s = (np.zeros(n_cars) if driver_s is None
+                    else np.array(driver_s, dtype=float))  # copy: the trace outlives the caller
         return cls(
             circuit=circuit,
             era=era,
             seed=-1,
             n_laps=n_laps,
             n_cars=n_cars,
-            grid=np.asarray(grid, dtype=int),
+            grid=np.array(grid, dtype=int),
             driver_s=driver_s,
             status=np.full(n_laps, events.GREEN, dtype=int),
             red_flag=np.zeros(n_laps, dtype=bool),
