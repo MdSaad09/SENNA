@@ -4,12 +4,10 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none — F16 landed 8 Aug 2026. The race engine is out of the env: a
-lap can be advanced without an agent, and every seat is equal on the live path.
-**Next up:** F17 driver identity — persist the per-driver effects `joint_pace.py:102`
-already estimates and `:114` currently averages away, add a driver dimension to
-`CircuitScenario`, and seed `driver_s` from a named table. No observation change and no
-retrain, so it cannot disturb F14. Then F18 physics uncertainty, F19 explanation
+**Active feature:** F17 — driver identity. Planned 9 Aug 2026; next step `/ship F17` in
+the same session. Two decisions recorded in the plan: no default 2026 lineup, and the wet
+multiplier dropped as unfittable.
+**Next up:** after F17, F18 physics uncertainty, F19 explanation
 language, F20 the single observation change (batched, because it invalidates the frozen
 triplet). F21 look-ahead and F22 multi-agent are stretch, in that order. The roadmap
 comes from Saad's sixteen-point architectural review (7 Aug 2026) and extends master
@@ -42,6 +40,7 @@ submission mechanism (bundle vs repo access) decides where the snapshot travels.
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
+| F17 | Driver identity | F02, F16 | Planned 9 Aug 2026 | feature/F17-driver-identity | — |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
