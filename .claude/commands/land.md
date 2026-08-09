@@ -4,10 +4,15 @@ argument-hint: [feature-id]
 ---
 Feature to land: $1
 
+Typing `/land` IS Saad's approval of the ship report — do not also ask him to say the
+word. What stops this being a shortcut past review is the state check below: $1 only
+reaches "In review" at the end of a completed /ship, which means the tests, the subagent
+reviews and the ship report have already happened.
+
 Preflight — abort with a clear explanation if any of these fail:
-- Saad has said "approved" for this feature's ship report in this session; if he has
-  not, say so and stop — /land is not a shortcut past review
-- INDEX.md shows $1 as In review and you are on branch feature/$1-*
+- INDEX.md shows $1 as In review and you are on branch feature/$1-*. If it shows Planned
+  or Todo, /ship has not finished: say so and stop rather than merging unreviewed work
+- The working tree is clean
 - The branch contains the latest main (rebase onto main if behind, then rerun the full
   test suite)
 

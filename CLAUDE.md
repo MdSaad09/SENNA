@@ -36,7 +36,9 @@ spec cites an ID, read that row in the master spec before writing code against i
 
 Hard rules:
 - Never commit to `main` except merges via /land and `docs:` commits that touch only
-  INDEX.md, docs/plans/ or docs/learn/.
+  INDEX.md, docs/plans/, docs/learn/, or the workflow itself (CLAUDE.md, .claude/).
+  Workflow maintenance has no feature branch to ride, so it lands on main or nowhere —
+  but it is still `docs:`, still small, and never bundled with feature work.
 - Never start implementing during /plan-feature. Never merge during /ship.
 - Tests are written and shown failing before the code that makes them pass.
 

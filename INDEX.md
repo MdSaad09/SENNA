@@ -185,9 +185,10 @@ cleaning contract, the calibration/validation split, the metric suite, or decisi
 4. Type `/ship F05`. Claude branches, writes failing tests, builds, gets reviewed by
    the subagents, fixes the findings, writes your lesson, and stops with a ship report.
 5. Read the ship report and the new lesson in `docs/learn/`. Run the "try it" commands
-   yourself. Ask questions — this is your study time. Request changes, or say
-   **approved**.
-6. Type `/land F05`. Claude merges to main, deletes the branch, and updates this file.
+   yourself. Ask questions — this is your study time. Request changes if you want them.
+6. Type `/land F05` when you are happy. Typing it **is** your approval — you do not have
+   to say the word first. Claude merges to main, deletes the branch, and updates this
+   file. If you are not happy, just say so instead; nothing merges until you land it.
 7. Close the session. Next feature = fresh session. Run `/status` any time you are lost.
 
 ## When things wobble

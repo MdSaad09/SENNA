@@ -37,5 +37,6 @@ Then:
    and their reasons · test summary (counts, slowest, anything skipped) · review
    findings and how each was resolved or why rejected · the acceptance checklist,
    ticked · exact commands for Saad to try it locally · where the lesson is.
-10. STOP. Do not merge and do not touch main. Saad will approve, request changes, or
-    ask questions; `/land $1` is his approval button.
+10. STOP. Do not merge and do not touch main. Saad will request changes, ask questions,
+    or land it — `/land $1` is his approval button, and typing it is the approval, so do
+    not ask him to say the word as well.
