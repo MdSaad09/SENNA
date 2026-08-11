@@ -6,7 +6,7 @@ circuits:
   abu_dhabi_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 87.92  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 88.336  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -2.2136  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 10.282  # fitted: notebooks/fit_point_mass.ipynb
@@ -22,11 +22,11 @@ circuits:
       deficit_mj: 1.782  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 10.282  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 11.0475  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 10.9642  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 10.5688  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   australian_grand_prix:
     base:
       source: "real 2026 fit"  # fitted: notebooks/fit_point_mass.ipynb
@@ -46,15 +46,15 @@ circuits:
       deficit_mj: 0.5231  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 9.0231  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 8.9175  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 9.1601  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 10.5965  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 4.9097  # fitted: notebooks/fit_residual_2026.ipynb — real 2026 minus model median
+      c_circuit_s: 3.7697  # fitted: notebooks/fit_residual_2026.ipynb — real 2026 minus model median
   austrian_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 67.944  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 67.955  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -2.1863  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 9.3721  # fitted: notebooks/fit_point_mass.ipynb
@@ -70,15 +70,15 @@ circuits:
       deficit_mj: 0.8721  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 9.3721  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 9.508  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 9.4031  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 9.4886  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   azerbaijan_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 105.668  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 106.254  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -3.0075  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 10.8784  # fitted: notebooks/fit_point_mass.ipynb
@@ -94,15 +94,15 @@ circuits:
       deficit_mj: 2.3784  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 10.8784  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 14.838  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 14.7052  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 13.0495  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   bahrain_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 95.638  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 96.506  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -2.4235  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 12.1052  # fitted: notebooks/fit_point_mass.ipynb
@@ -118,15 +118,15 @@ circuits:
       deficit_mj: 3.6052  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 12.1052  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 13.1607  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 13.0382  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 11.2811  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   belgian_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 105.636  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 107.692  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -2.4516  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 9.2383  # fitted: notebooks/fit_point_mass.ipynb
@@ -142,11 +142,11 @@ circuits:
       deficit_mj: 0.7383  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 9.2383  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 11.2084  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 11.2819  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 13.7246  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   british_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
@@ -170,7 +170,7 @@ circuits:
       harvest_clipping_mj: 11.6399  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   canadian_grand_prix:
     base:
       source: "real 2026 fit"  # fitted: notebooks/fit_point_mass.ipynb
@@ -190,11 +190,11 @@ circuits:
       deficit_mj: 0.6247  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 9.1247  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 0.0  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 11.3042  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 9.0061  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.0217  # fitted: notebooks/fit_residual_2026.ipynb — real 2026 minus model median
   chinese_grand_prix:
     base:
       source: "real 2026 fit"  # fitted: notebooks/fit_point_mass.ipynb
@@ -222,7 +222,7 @@ circuits:
   dutch_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 74.953  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 75.413  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -1.1722  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 8.5358  # fitted: notebooks/fit_point_mass.ipynb
@@ -238,15 +238,15 @@ circuits:
       deficit_mj: 0.0358  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 8.5358  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 8.4709  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 8.3905  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 7.9334  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   emilia_romagna_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 78.073  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 78.209  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -3.6809  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 10.6556  # fitted: notebooks/fit_point_mass.ipynb
@@ -262,11 +262,35 @@ circuits:
       deficit_mj: 2.1556  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 10.6556  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 10.9707  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 10.9609  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 10.7639  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+  french_grand_prix:
+    base:
+      source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
+      t0_2026_s: 96.952  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+    t1_powertrain:
+      delta_lap_s: -3.2048  # fitted: notebooks/fit_point_mass.ipynb
+      e_dep_mj: 9.5432  # fitted: notebooks/fit_point_mass.ipynb
+      effective_ok: true  # fitted: notebooks/fit_point_mass.ipynb — self-check gate
+      full_throttle_s: 46.671  # fitted: notebooks/fit_point_mass.ipynb
+      top_speed_kmh: 358.94  # fitted: notebooks/fit_point_mass.ipynb
+    t3_mass_fuel:
+      avg_fuel_kg_2026: 35.0  # fitted: notebooks/fit_point_mass.ipynb — half the 70 kg allowance (T6, AR-10)
+      k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_point_mass.ipynb
+      static_mass_delta_s: -0.5357  # fitted: notebooks/fit_point_mass.ipynb — k_m*(dm) (T3, E-10)
+    t4_energy:
+      c_lc_s_per_mj: 1.3048  # fitted: notebooks/fit_energy_budget.ipynb
+      deficit_mj: 1.0432  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
+      e_dep_mj: 9.5432  # fitted: notebooks/fit_energy_budget.ipynb
+      h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
+      harvest_braking_mj: 10.5144  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_clipping_mj: 11.6677  # fitted: notebooks/fit_energy_budget.ipynb
+      supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
+    t8_residual:
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   hungarian_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
@@ -290,11 +314,11 @@ circuits:
       harvest_clipping_mj: 7.8277  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   italian_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 82.091  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 82.581  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -3.2341  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 8.5232  # fitted: notebooks/fit_point_mass.ipynb
@@ -310,11 +334,11 @@ circuits:
       deficit_mj: 0.0232  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 8.5232  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 10.4507  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 10.3914  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 12.6518  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   japanese_grand_prix:
     base:
       source: "real 2026 fit"  # fitted: notebooks/fit_point_mass.ipynb
@@ -362,11 +386,11 @@ circuits:
       harvest_clipping_mj: 13.541  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   mexico_city_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 83.748  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 84.084  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: 0.3972  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 6.0133  # fitted: notebooks/fit_point_mass.ipynb
@@ -382,11 +406,11 @@ circuits:
       deficit_mj: 0.0  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 6.0133  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 10.104  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 10.0515  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 7.2046  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   miami_grand_prix:
     base:
       source: "real 2026 fit"  # fitted: notebooks/fit_point_mass.ipynb
@@ -406,11 +430,11 @@ circuits:
       deficit_mj: 0.0  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 7.8652  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 10.1019  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 9.8272  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 10.5821  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: -12.5526  # fitted: notebooks/fit_residual_2026.ipynb — real 2026 minus model median
+      c_circuit_s: -12.7466  # fitted: notebooks/fit_residual_2026.ipynb — real 2026 minus model median
   monaco_grand_prix:
     base:
       source: "real 2026 fit"  # fitted: notebooks/fit_point_mass.ipynb
@@ -458,11 +482,11 @@ circuits:
       harvest_clipping_mj: 11.0797  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   saudi_arabian_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 90.828  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 91.593  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -5.0163  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 11.2016  # fitted: notebooks/fit_point_mass.ipynb
@@ -478,11 +502,11 @@ circuits:
       deficit_mj: 2.7016  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 11.2016  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 11.0303  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 10.8263  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 13.8444  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   singapore_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
@@ -506,11 +530,11 @@ circuits:
       harvest_clipping_mj: 9.0641  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   spanish_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 79.93  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 83.326  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -0.3219  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 9.1275  # fitted: notebooks/fit_point_mass.ipynb
@@ -526,15 +550,15 @@ circuits:
       deficit_mj: 0.6275  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 9.1275  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 9.3051  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 9.4573  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 8.4876  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   são_paulo_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 69.992  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 72.734  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -2.6545  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 7.9832  # fitted: notebooks/fit_point_mass.ipynb
@@ -550,15 +574,15 @@ circuits:
       deficit_mj: 0.0  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 7.9832  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 9.1083  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 8.9842  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 8.818  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
   united_states_grand_prix:
     base:
       source: "transform (T1+T2+T3)"  # fitted: notebooks/fit_point_mass.ipynb
-      t0_2026_s: 99.368  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
+      t0_2026_s: 99.949  # fitted: notebooks/fit_point_mass.ipynb — transform (T1+T2+T3)
     t1_powertrain:
       delta_lap_s: -1.4209  # fitted: notebooks/fit_point_mass.ipynb
       e_dep_mj: 11.3387  # fitted: notebooks/fit_point_mass.ipynb
@@ -574,16 +598,16 @@ circuits:
       deficit_mj: 2.8387  # fitted: notebooks/fit_energy_budget.ipynb — derate deficit (F-02/F-04)
       e_dep_mj: 11.3387  # fitted: notebooks/fit_energy_budget.ipynb
       h_max_mj: 8.5  # sourced circuits.yaml (AR-05, E-02)
-      harvest_braking_mj: 11.3982  # fitted: notebooks/fit_energy_budget.ipynb
+      harvest_braking_mj: 11.4178  # fitted: notebooks/fit_energy_budget.ipynb
       harvest_clipping_mj: 10.6607  # fitted: notebooks/fit_energy_budget.ipynb
       supply_mj: 8.5  # fitted: notebooks/fit_energy_budget.ipynb
     t8_residual:
-      c_circuit_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
+      c_circuit_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb — pooled c_global (no 2026 data)
 globals:
-  c_global_residual_s: 0.8809  # fitted: notebooks/fit_residual_2026.ipynb
+  c_global_residual_s: 0.663  # fitted: notebooks/fit_residual_2026.ipynb
   c_lc_median_s_per_mj: 0.423  # fitted: notebooks/fit_energy_budget.ipynb — cross-circuit median, mirrored to physics_2026.yaml
   corner_speed_exponent: 0.2239  # fitted: notebooks/fit_corner_exponent.ipynb — global fit over both-era apexes
   overtaking:
-    beta_pace: 0.3727  # fitted: notebooks/fit_overtaking.ipynb
-    n_events: 21159  # fitted: notebooks/fit_overtaking.ipynb
-    shift_2026_logit: 0.1231  # fitted: notebooks/fit_overtaking.ipynb — 2026 pass-rate shift vs 2024
+    beta_pace: 0.3731  # fitted: notebooks/fit_overtaking.ipynb
+    n_events: 21131  # fitted: notebooks/fit_overtaking.ipynb
+    shift_2026_logit: 0.1343  # fitted: notebooks/fit_overtaking.ipynb — 2026 pass-rate shift vs 2024

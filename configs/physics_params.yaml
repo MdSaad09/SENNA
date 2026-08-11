@@ -76,9 +76,9 @@ circuits:
           MEDIUM: -0.2181  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.1612  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 19.1  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.067379  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.034129  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 4044  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.2847  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5271  # fitted: notebooks/fit_joint_pace.ipynb
@@ -173,9 +173,9 @@ circuits:
           MEDIUM: -0.177  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 2.0479  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 13.5  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.067669  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.034846  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 1646  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.6221  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.7095  # fitted: notebooks/fit_joint_pace.ipynb
@@ -208,13 +208,13 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.001444  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.001454  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8139  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 41  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 931  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000168  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.000169  # fitted: notebooks/fit_degradation.ipynb
           b: 1.4758  # fitted: notebooks/fit_degradation.ipynb
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 33  # fitted: notebooks/fit_degradation.ipynb
@@ -227,12 +227,12 @@ circuits:
           n_laps: 133  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000467  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.00047  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000182  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.000183  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
@@ -274,18 +274,18 @@ circuits:
       2024:
         compound_offsets_s:
           HARD: 0.0  # fitted: notebooks/fit_joint_pace.ipynb
-          MEDIUM: 0.1702  # fitted: notebooks/fit_joint_pace.ipynb
-          SOFT: 0.8087  # fitted: notebooks/fit_joint_pace.ipynb
+          MEDIUM: 0.1688  # fitted: notebooks/fit_joint_pace.ipynb
+          SOFT: 0.8324  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.1  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.044101  # fitted: notebooks/fit_joint_pace.ipynb
-        identified: true  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb
+        evolution_s_per_lap: -0.016346  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
+        identified: false  # fitted: notebooks/fit_joint_pace.ipynb
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 2636  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 0.9895  # fitted: notebooks/fit_joint_pace.ipynb
-        sigma_driver_s: 0.5034  # fitted: notebooks/fit_joint_pace.ipynb
-        t0_s: 71.181  # fitted: notebooks/fit_joint_pace.ipynb
+        sigma_driver_s: 0.5114  # fitted: notebooks/fit_joint_pace.ipynb
+        t0_s: 70.677  # fitted: notebooks/fit_joint_pace.ipynb
         t_ref_s: 70.798  # fitted: notebooks/fit_joint_pace.ipynb
-        trend_s_per_lap: -0.033313  # fitted: notebooks/fit_joint_pace.ipynb
+        trend_s_per_lap: -0.033652  # fitted: notebooks/fit_joint_pace.ipynb
         vif_fuel: 22.5  # fitted: notebooks/fit_joint_pace.ipynb
     pit_loss:
       mean_s: 22.159  # fitted: notebooks/fit_hazards_pit_loss.ipynb
@@ -365,9 +365,9 @@ circuits:
           MEDIUM: -0.3832  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -1.1485  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 13.5  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.089811  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.052225  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3187  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.9633  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.7389  # fitted: notebooks/fit_joint_pace.ipynb
@@ -453,9 +453,9 @@ circuits:
           MEDIUM: -0.252  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.2543  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 20.1  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.088728  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.054942  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3705  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.6265  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.6571  # fitted: notebooks/fit_joint_pace.ipynb
@@ -541,9 +541,9 @@ circuits:
           MEDIUM: 0.0393  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.5723  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 10.8  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.104091  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.059743  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 1639  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 3.0922  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.6919  # fitted: notebooks/fit_joint_pace.ipynb
@@ -629,9 +629,9 @@ circuits:
           MEDIUM: 0.2518  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.2192  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 18.2  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.069146  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.033326  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 802  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.0442  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.4894  # fitted: notebooks/fit_joint_pace.ipynb
@@ -726,9 +726,9 @@ circuits:
           MEDIUM: 0.425  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.4215  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 11.1  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.047756  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.02091  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 2044  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.1984  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5777  # fitted: notebooks/fit_joint_pace.ipynb
@@ -839,9 +839,9 @@ circuits:
           MEDIUM: -0.3533  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.3129  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 15.8  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.086916  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.053672  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 2400  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 2.3542  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5283  # fitted: notebooks/fit_joint_pace.ipynb
@@ -943,9 +943,9 @@ circuits:
           MEDIUM: 0.1685  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.0623  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 17.0  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.048168  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.021511  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3408  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.1943  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.6747  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1031,9 +1031,9 @@ circuits:
           MEDIUM: 0.8255  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.673  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 12.9  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.053373  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.021052  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3160  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.2552  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5529  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1096,9 +1096,9 @@ circuits:
           HARD: 0.0  # fitted: notebooks/fit_joint_pace.ipynb
           MEDIUM: -0.6338  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.1  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.080979  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.045676  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 790  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.0714  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.816  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1179,9 +1179,9 @@ circuits:
           MEDIUM: 0.3317  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.7627  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 23.1  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.058196  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.030555  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3662  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.6293  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5061  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1267,9 +1267,9 @@ circuits:
           MEDIUM: 0.2442  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.0576  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 15.6  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.064087  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.027543  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3452  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.8065  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.4839  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1358,9 +1358,9 @@ circuits:
           MEDIUM: 0.2725  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.6018  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.9  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.085906  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.049951  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 1683  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 3.0305  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 4.5253  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1461,9 +1461,9 @@ circuits:
           MEDIUM: -0.4801  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -3.3384  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 16.5  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.099414  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.060599  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 2230  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.8722  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5743  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1549,9 +1549,9 @@ circuits:
           MEDIUM: -0.3647  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.658  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.3  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.049709  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.022299  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3445  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.4167  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.6025  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1640,9 +1640,9 @@ circuits:
           MEDIUM: -0.2371  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.0671  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 13.2  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.067279  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.033915  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 2298  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 0.9915  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.4061  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1753,9 +1753,9 @@ circuits:
           MEDIUM: 0.1851  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -1.7557  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 11.8  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.050371  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.025441  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 1177  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.9004  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 1.0197  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1857,9 +1857,9 @@ circuits:
           MEDIUM: 0.6545  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.6312  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.8  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.092704  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.058656  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3255  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.8817  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5873  # fitted: notebooks/fit_joint_pace.ipynb
@@ -1945,9 +1945,9 @@ circuits:
           MEDIUM: -0.5408  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.3182  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.9  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.088666  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.050368  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3034  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.5232  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.8117  # fitted: notebooks/fit_joint_pace.ipynb
@@ -2033,9 +2033,9 @@ circuits:
           MEDIUM: -0.5763  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.8282  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 18.5  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.062487  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.031488  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 1947  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.5337  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.5868  # fitted: notebooks/fit_joint_pace.ipynb
@@ -2121,9 +2121,9 @@ circuits:
           MEDIUM: 0.0478  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.0285  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.3  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.065148  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.036017  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 3256  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 4.1206  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.6359  # fitted: notebooks/fit_joint_pace.ipynb
@@ -2209,9 +2209,9 @@ circuits:
           MEDIUM: 0.2519  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: 0.1648  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 12.3  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.045831  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.018109  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 2366  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.3401  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.4942  # fitted: notebooks/fit_joint_pace.ipynb
@@ -2297,9 +2297,9 @@ circuits:
           MEDIUM: -0.1652  # fitted: notebooks/fit_joint_pace.ipynb
           SOFT: -0.3268  # fitted: notebooks/fit_joint_pace.ipynb
         condition_number: 14.1  # fitted: notebooks/fit_joint_pace.ipynb
-        evolution_s_per_lap: -0.079152  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        evolution_s_per_lap: -0.045085  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         identified: false  # fitted: notebooks/fit_joint_pace.ipynb
-        k_m_s_per_kg: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m
+        k_m_s_per_kg: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — decomposed via pooled k_m (grade C via AR-10 fuel — through the pooled k_m)
         n_laps: 4377  # fitted: notebooks/fit_joint_pace.ipynb
         s_ref_s: 1.8168  # fitted: notebooks/fit_joint_pace.ipynb
         sigma_driver_s: 0.6629  # fitted: notebooks/fit_joint_pace.ipynb
@@ -2344,11 +2344,11 @@ clusters:
   silhouettes:
     k2: 0.4432  # fitted: notebooks/fit_tyre_clusters.ipynb
     k3: 0.2695  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k4: 0.2526  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k4: 0.213  # fitted: notebooks/fit_tyre_clusters.ipynb
     k5: 0.2464  # fitted: notebooks/fit_tyre_clusters.ipynb
     k6: 0.2397  # fitted: notebooks/fit_tyre_clusters.ipynb
 globals:
-  k_m_pooled_s_per_kg_2024: -0.007421  # fitted: notebooks/fit_joint_pace.ipynb — inverse-variance mean over identified circuits
+  k_m_pooled_s_per_kg_2024: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — inverse-variance mean over identified circuits — cross-era fallback, no circuit of this era identified (grade C via AR-10 fuel)
   k_m_pooled_s_per_kg_2026: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — inverse-variance mean over identified circuits (grade C via AR-10 fuel)
   status_pace_2024:
     sc_lap_time_mult: 1.4092  # fitted: notebooks/fit_hazards_pit_loss.ipynb
