@@ -185,6 +185,68 @@
       "promoted": true,
       "era": "2024",
       "model_version": "senna-ppo-db031aead155-C-02211840"
+    },
+    "headline-20260811-s101-e823d1b5a2ea": {
+      "attempts": 1,
+      "kind": "headline",
+      "seed": 101,
+      "fingerprint": "e823d1b5a2ea4ef263ab2b85d681ca064306183d7eb2f835ef14e3853fcbb0ec",
+      "budget_steps": 8000000,
+      "wandb_run_id": "u2y56bd1",
+      "status": "complete",
+      "exit_reason": "gate",
+      "selected_step": 1130496,
+      "selected_points": 6.3549999999999995,
+      "run_dir": "/Users/saad/senna/models/headline-20260811-s101-e823d1b5a2ea",
+      "started_at": "2026-08-11T15:58:08.670490+00:00",
+      "completed_at": "2026-08-11T16:03:47.477647+00:00"
+    },
+    "headline-20260811-s211-e823d1b5a2ea": {
+      "attempts": 1,
+      "kind": "headline",
+      "seed": 211,
+      "fingerprint": "e823d1b5a2ea4ef263ab2b85d681ca064306183d7eb2f835ef14e3853fcbb0ec",
+      "budget_steps": 8000000,
+      "wandb_run_id": "wx4dfmjs",
+      "status": "complete",
+      "exit_reason": "ceiling",
+      "selected_step": 4227072,
+      "selected_points": 6.295000000000001,
+      "run_dir": "/Users/saad/senna/models/headline-20260811-s211-e823d1b5a2ea",
+      "started_at": "2026-08-11T16:03:47.688247+00:00",
+      "completed_at": "2026-08-11T16:14:55.368596+00:00"
+    },
+    "headline-20260811-s331-e823d1b5a2ea": {
+      "attempts": 1,
+      "kind": "headline",
+      "seed": 331,
+      "fingerprint": "e823d1b5a2ea4ef263ab2b85d681ca064306183d7eb2f835ef14e3853fcbb0ec",
+      "budget_steps": 8000000,
+      "wandb_run_id": "eylvad9c",
+      "status": "complete",
+      "exit_reason": "gate",
+      "selected_step": 1769472,
+      "selected_points": 6.541666666666667,
+      "run_dir": "/Users/saad/senna/models/headline-20260811-s331-e823d1b5a2ea",
+      "started_at": "2026-08-11T16:14:55.580199+00:00",
+      "completed_at": "2026-08-11T16:22:01.533311+00:00",
+      "promoted": true,
+      "model_version": "senna-ppo-e823d1b5a2ea-C-01769472"
+    },
+    "abl-no_curriculum-20260811-s101-3d8e6d54c99b": {
+      "attempts": 1,
+      "kind": "ablation:no_curriculum",
+      "seed": 101,
+      "fingerprint": "3d8e6d54c99bcbcd39511b07146580258a0615ebf041bcb60d02f220e79eac33",
+      "budget_steps": 4000000,
+      "wandb_run_id": "cdjp9i9i",
+      "status": "running",
+      "exit_reason": null,
+      "selected_step": null,
+      "selected_points": null,
+      "run_dir": null,
+      "started_at": "2026-08-11T16:22:12.485680+00:00",
+      "completed_at": null
     }
   }
 }
