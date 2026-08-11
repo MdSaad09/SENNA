@@ -15,7 +15,7 @@ from senna.explain.dataset import DecisionRecord
 from senna.explain.features import FEATURE_NAMES
 from tests.explain.conftest import CIRCUIT, SEED
 
-MODEL_VERSION = "senna-ppo-6b6edb78d84e-C-00835584"  # the promoted headline triplet (F08)
+MODEL_VERSION = "senna-ppo-e823d1b5a2ea-C-01769472"  # the promoted headline triplet (F08)
 FIDELITY = {"pit": 0.93, "mode": 0.96}
 FLIP_LINES = ["stays out until tyre_age_norm reaches 0.43 (about 17 laps)"]
 
