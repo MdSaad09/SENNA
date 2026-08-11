@@ -12,11 +12,12 @@ build/
 .env.*
 !.env.example
 wandb/
-# models/ and data/circuits/ stay ignored except the frozen serving artifacts —
-# Railway builds the worker image from the repo, so the baked triplet, its surrogate
-# and the built ribbons must be committed (F-26; decision Q1, 22 Jul 2026). Training
-# and ablation run dirs never come in. `dir/*` + negations, not `dir/`: git will not
-# descend into a fully ignored directory to honour a re-include.
+# models/ stays ignored except the frozen serving artifacts — Railway builds the worker
+# image from the repo, so the baked triplet and its surrogate must be committed (F-26;
+# decision Q1, 22 Jul 2026). Training and ablation run dirs never come in. `dir/*` +
+# negations, not `dir/`: git will not descend into a fully ignored directory to honour a
+# re-include. data/circuits/ was in this sentence until F18 and never belonged in it —
+# the ribbon library has been committed whole since the decision below.
 models/*
 # the run ledger is the ablation table's machine-readable twin (F08) — a clean clone
 # without it has no record of what was trained, so it is committed (F15)
