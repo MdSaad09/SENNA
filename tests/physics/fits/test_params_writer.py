@@ -5,6 +5,7 @@ from senna.physics.fits.params_writer import (
     IncompleteParamsError,
     render_params,
     validate_complete,
+    validate_origins,
 )
 
 GENERATED_AT = "2026-07-15T00:00:00Z"
@@ -102,3 +103,50 @@ def test_validate_complete_raises_naming_every_null_key():
     # F05 debugging starts from this message -- it must name the dotted paths
     assert "monza.pit_loss.mean_s" in str(excinfo.value)
     assert "spa.pit_loss.n_stops" in str(excinfo.value)
+
+
+def test_params_refuse_non_finite_values():
+    params = _params()
+    params["monza"]["pit_loss"]["mean_s"] = (float("nan"), "fitted: fit_pit_loss.ipynb")
+    params["spa"]["pit_loss"]["mean_s"] = (float("inf"), "fitted: fit_pit_loss.ipynb")
+    params["monza"]["hazards"]["sc_p_per_race"] = (float("-inf"), "fitted: fit_hazards.ipynb")
+
+    # a NaN is not None, so the null check waves it through and the emitter writes
+    # the bare literal `nan` into physics_params.yaml -- which safe_load hands back
+    # to F05 as a float that silently poisons every mean taken over it. The joint
+    # fit produced exactly this shape of value on the 2022 seasons (E-09).
+    with pytest.raises(IncompleteParamsError) as excinfo:
+        validate_complete(params)
+
+    assert "monza.pit_loss.mean_s" in str(excinfo.value)
+    assert "spa.pit_loss.mean_s" in str(excinfo.value)
+    assert "monza.hazards.sc_p_per_race" in str(excinfo.value)
+
+
+def test_params_refuse_an_untagged_origin():
+    # the four tags are the whole vocabulary, in the grammars the shipped file
+    # actually uses: "fitted: <notebook>", "sourced <where> — why", "stylised — why"
+    validate_origins(
+        {
+            "globals": {
+                "race_fuel_kg": (70.0, "sourced AR-10 — grade C until Saad verifies it"),
+                "k_m_pooled_s_per_kg": (0.031, "fitted: notebooks/fit_joint_pace.ipynb"),
+                "sc_burn_factor": (0.6, "stylised — SC laps burn less; the ratio is a choice"),
+                "require_full_season_coverage": (True, "operational — a gate, not a tunable"),
+            }
+        }
+    )
+
+    params = _params()
+    params["monza"]["pit_loss"]["mean_s"] = (21.4, "")
+    params["spa"]["pit_loss"]["n_stops"] = (30, "measured off a stopwatch")
+    # "refitted" is not a tag; a substring search over the four would let it past,
+    # and the interpretability contract is that the tag opens the comment
+    params["monza"]["hazards"]["sc_p_per_race"] = (0.3, "refitted: fit_hazards.ipynb")
+
+    with pytest.raises(IncompleteParamsError) as excinfo:
+        validate_origins(params)
+
+    assert "monza.pit_loss.mean_s" in str(excinfo.value)
+    assert "spa.pit_loss.n_stops" in str(excinfo.value)
+    assert "monza.hazards.sc_p_per_race" in str(excinfo.value)
