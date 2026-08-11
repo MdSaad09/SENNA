@@ -38,6 +38,9 @@ class JointPaceFit:
     t_ref_s: float
     s_ref_s: float
     n_laps: int
+    # counted, not silent — the same convention PitLossFit.n_excluded uses, so a season
+    # whose tyre ages are patchy shows up in the fit report instead of just shrinking n
+    n_excluded_no_tyre_age: int
     # the raw OLS attribution, kept even when too weak to report per circuit —
     # not for pooling (weak fits are confounded by post-SC pace effects, see
     # pool_k_m) but for the notebook's diagnostic that demonstrates exactly that
@@ -56,15 +59,15 @@ def fit_joint_pace(
     if calibration_rounds is not None:
         _refuse_validation_rounds(laps, calibration_rounds)
 
-    clean = (
-        laps["is_green"]
-        & laps["is_accurate"]
-        & laps["lap_time_s"].notna()
-        & laps["pit_in_time_s"].isna()
-        & laps["pit_out_time_s"].isna()
-    )
+    clean, n_ageless = _clean_mask(laps)
     fit_laps = laps[clean].copy()
     fit_laps["fuel_kg"] = fuel_kg[clean]
+    if fit_laps.empty:
+        raise ValueError(
+            f"no laps left to fit: every otherwise-clean lap was dropped, {n_ageless} of "
+            "them for having no tyre age. A lap with no tyre life cannot enter a "
+            "regression on tyre life (5.3.4, E-09) — check the ingest for this circuit"
+        )
 
     columns, names = _design_matrix(fit_laps)
     lap_time_s = fit_laps["lap_time_s"].to_numpy(dtype=float)
@@ -124,6 +127,7 @@ def fit_joint_pace(
         t_ref_s=float(np.median(lap_time_s)),
         s_ref_s=float(np.std(lap_time_s, ddof=1)),
         n_laps=int(clean.sum()),
+        n_excluded_no_tyre_age=n_ageless,
         k_m_ols_s_per_kg=k_m_ols,
         k_m_ols_se_s_per_kg=k_m_ols_se,
     )
@@ -140,13 +144,7 @@ def age_partial_residuals(
     residuals), so the power law is not refitting what E-10 already explained."""
     if calibration_rounds is not None:
         _refuse_validation_rounds(laps, calibration_rounds)
-    clean = (
-        laps["is_green"]
-        & laps["is_accurate"]
-        & laps["lap_time_s"].notna()
-        & laps["pit_in_time_s"].isna()
-        & laps["pit_out_time_s"].isna()
-    )
+    clean, _ = _clean_mask(laps)
     fit_laps = laps[clean].copy()
     fit_laps["fuel_kg"] = fuel_kg[clean]
     design, names = _design_matrix(fit_laps)
@@ -175,6 +173,27 @@ def pool_k_m(fits: list[JointPaceFit]) -> float | None:
     weights = np.array([1.0 / fit.k_m_se_s_per_kg**2 for fit in usable])
     values = np.array([fit.k_m_s_per_kg for fit in usable])
     return float(np.sum(weights * values) / np.sum(weights))
+
+
+def _clean_mask(laps: pd.DataFrame) -> tuple[pd.Series, int]:
+    """The 5.3.4 laps this regression may see, and how many were dropped for having no
+    tyre age. Both callers must use the identical mask: the degradation fitter works on
+    this one's partial residuals, so a lap in one frame and not the other would silently
+    misattribute the age term.
+
+    `tyre_life` earns its place in the mask because it is a regressor here, not merely a
+    column. FastF1's TyreLife is patchy on the older seasons, and an absent age reached
+    LAPACK as a NaN and took the whole battery down rather than excluding one lap (E-09).
+    """
+    usable = (
+        laps["is_green"]
+        & laps["is_accurate"]
+        & laps["lap_time_s"].notna()
+        & laps["pit_in_time_s"].isna()
+        & laps["pit_out_time_s"].isna()
+    )
+    has_age = laps["tyre_life"].notna()
+    return usable & has_age, int((usable & ~has_age).sum())
 
 
 def _refuse_validation_rounds(laps: pd.DataFrame, calibration_rounds: list[int]) -> None:

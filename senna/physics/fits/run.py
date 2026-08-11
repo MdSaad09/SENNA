@@ -25,7 +25,7 @@ from senna.physics.fits.clusters import assign_clusters, transfer_degradation
 from senna.physics.fits.degradation import fit_degradation
 from senna.physics.fits.energy import session_energy_frame
 from senna.physics.fits.fuel import session_fuel
-from senna.physics.fits.gate import assert_quality_reports
+from senna.physics.fits.gate import assert_quality_reports, assert_season_coverage
 from senna.physics.fits.hazards import (
     per_lap_hazard,
     per_race_events,
@@ -33,7 +33,11 @@ from senna.physics.fits.hazards import (
     wilson_band,
 )
 from senna.physics.fits.joint_pace import age_partial_residuals, fit_joint_pace, pool_k_m
-from senna.physics.fits.params_writer import render_params, validate_complete
+from senna.physics.fits.params_writer import (
+    render_params,
+    validate_complete,
+    validate_origins,
+)
 from senna.physics.fits.pit_loss import fit_pit_loss
 
 log = logging.getLogger(__name__)
@@ -82,7 +86,11 @@ async def run_battery(args: argparse.Namespace) -> dict:
     if narrowed:
         log.info("narrowed run (--only/--circuit): physics_params.yaml not written")
     else:
+        # only a full run writes, so only a full run has to cover every declared season
+        # (E-12). A narrowed run cannot trip this on its own smaller index.
+        assert_season_coverage(seasons, sorted(index["season"].unique().tolist()))
         validate_complete(params)
+        validate_origins(params)
         text = render_params(params, generated_at=battery.data_through())
         args.params_out.write_text(text)
         log.info("wrote %s", args.params_out)

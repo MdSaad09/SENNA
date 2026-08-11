@@ -25,13 +25,15 @@ models/*
 !models/era2024
 !models/explain
 models/explain/*
-!models/explain/senna-ppo-6b6edb78d84e-C-00835584
-!models/explain/senna-ppo-db031aead155-C-02211840
+# by pattern, not by checkpoint name: make explain writes to a directory named after the
+# model version, so a refit or retrain produces a new name. Pinning the old names meant a
+# regenerated surrogate landed silently ignored, and a clean clone could then not serve
+# (serve/loader.py raises on the missing artifact). Nothing failed — the files just never
+# reached git. F18 found it; the wildcard is what stops it recurring.
+!models/explain/senna-ppo-*
 # the two evaluation-only arrays are reproducible from make explain and serve nothing
-models/explain/senna-ppo-6b6edb78d84e-C-00835584/holdout.npz
-models/explain/senna-ppo-6b6edb78d84e-C-00835584/crosscheck.npz
-models/explain/senna-ppo-db031aead155-C-02211840/holdout.npz
-models/explain/senna-ppo-db031aead155-C-02211840/crosscheck.npz
+models/explain/*/holdout.npz
+models/explain/*/crosscheck.npz
 data/cache/
 # the frozen A-09 dump rides the tagged GitHub release, never git history; its
 # committed half is data/snapshot/MANIFEST.md (make snapshot writes both)

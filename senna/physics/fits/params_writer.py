@@ -7,6 +7,7 @@ level, shortest-repr floats — and `git diff` after a make fit rerun is empty.
 """
 
 import json
+import math
 
 
 class IncompleteParamsError(ValueError):
@@ -29,12 +30,30 @@ def render_params(params: dict, generated_at: str, *, header: str = HEADER) -> s
     return "\n".join(lines) + "\n"
 
 
+ORIGIN_TAGS = ("sourced", "fitted", "stylised", "operational")
+
+
 def validate_complete(params: dict) -> None:
-    nulls = sorted(_null_paths(params, prefix=""))
-    if nulls:
+    """Refuse a tree that cannot be read as physics. A null is an unfitted constant; a NaN
+    or an infinity is a fit that failed and did not say so — `is None` never caught those,
+    so they would have rendered into the yaml as `nan` and been loaded back as a float."""
+    unusable = sorted(_unusable_paths(params, prefix=""))
+    if unusable:
         raise IncompleteParamsError(
-            "physics_params has null constants — fit or verify before F05 reads them: "
-            + ", ".join(nulls)
+            "physics_params has null or non-finite constants — fit or verify before F05 "
+            "reads them: " + ", ".join(unusable)
+        )
+
+
+def validate_origins(params: dict) -> None:
+    """Every leaf must say where it came from. The tag is what makes the file an
+    anti-black-box artifact rather than a list of numbers, so an untagged constant is a
+    defect even when its value is right."""
+    untagged = sorted(_untagged_paths(params, prefix=""))
+    if untagged:
+        raise IncompleteParamsError(
+            "physics_params has constants with no provenance tag — every value needs one of "
+            f"{', '.join(ORIGIN_TAGS)}: " + ", ".join(untagged)
         )
 
 
@@ -71,12 +90,25 @@ def _scalar(value) -> str:
     return str(value)
 
 
-def _null_paths(mapping: dict, prefix: str) -> list[str]:
+def _unusable_paths(mapping: dict, prefix: str) -> list[str]:
     paths = []
     for key, node in mapping.items():
         dotted = f"{prefix}{key}"
         if isinstance(node, dict):
-            paths.extend(_null_paths(node, f"{dotted}."))
-        elif node[0] is None:
+            paths.extend(_unusable_paths(node, f"{dotted}."))
+        elif node[0] is None or (isinstance(node[0], float) and not math.isfinite(node[0])):
             paths.append(dotted)
+    return paths
+
+
+def _untagged_paths(mapping: dict, prefix: str) -> list[str]:
+    paths = []
+    for key, node in mapping.items():
+        dotted = f"{prefix}{key}"
+        if isinstance(node, dict):
+            paths.extend(_untagged_paths(node, f"{dotted}."))
+        else:
+            origin = str(node[1]).strip() if len(node) > 1 else ""
+            if not origin.startswith(ORIGIN_TAGS):
+                paths.append(dotted)
     return paths
