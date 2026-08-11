@@ -4,10 +4,20 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F17 — driver identity. Planned 9 Aug 2026; next step `/ship F17` in
-the same session. Two decisions recorded in the plan: no default 2026 lineup, and the wet
-multiplier dropped as unfittable.
-**Next up:** after F17, F18 physics uncertainty, F19 explanation
+**Active feature:** F18 — full-era refit and revalidation. Spec written 11 Aug 2026, not
+yet planned. **F17 is blocked behind it:** `/ship F17` was aborted on 11 Aug when the
+fit-scope defect below surfaced, because driver effects must come from the same regression
+that produces the simulator's own constants.
+**Data-integrity defect found 11 Aug 2026 (Saad's call: refit on the full era):**
+`configs/physics_params.yaml` was fitted on seasons 2024–2025 only; the frozen A-09
+snapshot holds 2022–2025 and `configs/ingest.yaml` declares all of them. Reproduced
+exactly at Bahrain era 2024 — committed `n_laps=1958, t0_s=98.597, sigma_driver_s=0.5653`
+matches a 2024+2025 fit to every digit, while the full era gives `3705 / 99.465 / 0.6571`.
+So `make fit` from the frozen snapshot does not reproduce the shipped physics: the
+reproducibility pack does not round-trip. F18 refits on the full era, regenerates the
+whole chain, and adds the coverage gate that prevents a recurrence. Every downstream
+number moves, including F14's headline.
+**Next up:** after F18 comes F17 driver identity, then physics uncertainty, explanation
 language, F20 the single observation change (batched, because it invalidates the frozen
 triplet). F21 look-ahead and F22 multi-agent are stretch, in that order. The roadmap
 comes from Saad's sixteen-point architectural review (7 Aug 2026) and extends master
@@ -40,7 +50,8 @@ submission mechanism (bundle vs repo access) decides where the snapshot travels.
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
-| F17 | Driver identity | F02, F16 | Planned 9 Aug 2026 | feature/F17-driver-identity | — |
+| F17 | Driver identity | F02, F16, **F18** | Planned 9 Aug 2026 — blocked on F18 | feature/F17-driver-identity | — |
+| F18 | Full-era refit and revalidation | F02, F16 | Todo 11 Aug 2026 | — | — |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
