@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from senna.physics.fits.joint_pace import JointPaceFit, fit_joint_pace, pool_k_m
+from tests.physics.fits.conftest import K_FUEL_S_PER_KG
 
 CALIBRATION_ROUNDS = [1, 2, 3, 4, 5, 6]  # frozen split (E-14, configs/data_split.yaml)
 
@@ -131,3 +132,24 @@ def test_a_single_confounded_circuit_cannot_invert_the_era():
     assert pool_k_m(healthy) == pytest.approx(0.0121, abs=5e-4)
     # a mixed era still pools if the weighted result stays physical
     assert pool_k_m(confounded + healthy) is None or pool_k_m(confounded + healthy) > 0
+
+
+def test_a_negative_mass_sensitivity_is_not_an_identified_attribution(make_synthetic_race):
+    """Separable is not the same as physical. The VIF gate asks whether the design can
+    tell fuel from track evolution; it cannot ask whether the answer means anything, and
+    a lighter-is-slower coefficient means nothing. F18: Austria passed VIF at 22.5 on the
+    wider data and published a negative k_m, which then set the whole era's pool."""
+    race = make_synthetic_race()
+    laps = race.laps.copy()
+    # invert the fuel contribution the fixture baked in: the design is untouched, so the
+    # collinearity diagnostics are identical and only the sign of the answer moves
+    laps["lap_time_s"] = laps["lap_time_s"] - 2 * K_FUEL_S_PER_KG * race.fuel_kg
+
+    fit = fit_joint_pace(laps, race.fuel_kg, vif_max=SINGLE_RACE_VIF_MAX)
+
+    assert fit.k_m_ols_s_per_kg < 0  # the raw estimate is kept for the notebook
+    assert fit.identified is False   # but it is not an attribution anyone may use
+    assert fit.k_m_s_per_kg is None  # so no downstream circuit inherits it
+    # the trend the data does pin down survives; only the attribution is withheld
+    assert fit.trend_s_per_lap is not None
+    assert fit.vif_fuel < SINGLE_RACE_VIF_MAX  # the design was separable all along

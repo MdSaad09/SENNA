@@ -75,7 +75,6 @@ def fit_joint_pace(
     coef, rank = _lstsq(columns, lap_time_s)
     vif_fuel = _vif(columns, names.index("fuel_kg"))
     condition_number = _condition_number(columns, names)
-    identified = bool(np.isfinite(vif_fuel) and vif_fuel <= vif_max and rank == len(names))
 
     fuel_slope_kg_per_lap = _within_session_slope(fit_laps)
     full_rank = rank == len(names) and np.isfinite(vif_fuel)
@@ -83,6 +82,13 @@ def fit_joint_pace(
     k_m_ols_se = (
         _coefficient_se(columns, lap_time_s, coef, names.index("fuel_kg")) if full_rank else None
     )
+    # separable is not the same as physical. VIF asks whether the design can tell fuel
+    # from track evolution; it cannot ask whether the answer means anything, and a
+    # lighter-is-slower coefficient means nothing. An attribution that fails either test
+    # is withheld and the circuit takes the pooled decomposition like any weak fit — the
+    # trend it does pin down is unaffected either way (E-10).
+    separable = bool(np.isfinite(vif_fuel) and vif_fuel <= vif_max and rank == len(names))
+    identified = bool(separable and k_m_ols is not None and k_m_ols > 0.0)
     if identified:
         k_m = k_m_ols
         evolution = float(coef[names.index("lap_number")])
