@@ -25,7 +25,11 @@ from senna.physics.fits.clusters import assign_clusters, transfer_degradation
 from senna.physics.fits.degradation import fit_degradation
 from senna.physics.fits.energy import session_energy_frame
 from senna.physics.fits.fuel import session_fuel
-from senna.physics.fits.gate import assert_quality_reports, assert_season_coverage
+from senna.physics.fits.gate import (
+    assert_pace_season_coverage,
+    assert_quality_reports,
+    assert_season_coverage,
+)
 from senna.physics.fits.hazards import (
     per_lap_hazard,
     per_race_events,
@@ -66,10 +70,18 @@ async def run_battery(args: argparse.Namespace) -> dict:
     if unknown:
         raise SystemExit(f"unknown --only module(s): {', '.join(sorted(unknown))}")
 
+    narrowed = bool(args.only or args.circuit)
     engine = engine_for(database_url())
     try:
         async with engine.connect() as conn:
             index = await frames.circuit_index(conn, calibration_rounds)
+            # before the battery, not after it: _run_energy streams four seasons of
+            # FastF1 telemetry, and an operator should not wait through that to be told
+            # 2022 never landed. Only a full run writes, so only a full run has to cover
+            # every declared season (E-12) — a narrowed run cannot trip this on its own
+            # smaller index.
+            if not narrowed and config.get(fits_cfg, "gates.require_full_season_coverage"):
+                assert_season_coverage(seasons, sorted(index["season"].unique().tolist()))
             if args.circuit:
                 index = index[index["slug"] == args.circuit]
                 if index.empty:
@@ -82,14 +94,15 @@ async def run_battery(args: argparse.Namespace) -> dict:
         await engine.dispose()
 
     params = battery.params()
-    narrowed = bool(args.only or args.circuit)
     if narrowed:
         log.info("narrowed run (--only/--circuit): physics_params.yaml not written")
     else:
-        # only a full run writes, so only a full run has to cover every declared season
-        # (E-12). A narrowed run cannot trip this on its own smaller index.
         if config.get(fits_cfg, "gates.require_full_season_coverage"):
-            assert_season_coverage(seasons, sorted(index["season"].unique().tolist()))
+            assert_pace_season_coverage(
+                battery.pace_seasons,
+                {era: set(rows["season"].astype(int))
+                 for era, rows in index.groupby("era")},
+            )
         validate_complete(
             params, require_finite=config.get(fits_cfg, "gates.require_finite_params")
         )
@@ -120,6 +133,9 @@ class _Battery:
         }
         self.joint: dict[tuple[str, str], object] = {}
         self.residuals: dict[tuple[str, str], pd.DataFrame] = {}
+        # which seasons actually reached a pace fit, per era — the E-12 question one
+        # layer below "is the season in the store" (gate.assert_pace_season_coverage)
+        self.pace_seasons: dict[str, set[int]] = {}
         self.deg: dict[tuple[str, str], dict] = {}
         self.hazards: dict[str, dict] = {}
         self.status_pace: dict[str, dict] = {}
@@ -160,6 +176,9 @@ class _Battery:
                 if laps.empty:
                     log.info("joint_pace %s/%s: no dry slick laps, skipped", slug, era)
                     continue
+                self.pace_seasons.setdefault(era, set()).update(
+                    int(s) for s in laps["season"].unique()
+                )
                 fuel_kg = session_fuel(laps, self.fuel_by_era[era], sc_burn)
                 fit = fit_joint_pace(
                     laps, fuel_kg, vif_max=vif_max, calibration_rounds=self.calibration_rounds
@@ -170,8 +189,9 @@ class _Battery:
                 )
                 pending.append((slug, era, laps, fuel_kg))
                 log.info(
-                    "joint_pace %s/%s: k_m=%s identified=%s vif=%.1f n=%d",
+                    "joint_pace %s/%s: k_m=%s identified=%s vif=%.1f n=%d no_tyre_age=%d",
                     slug, era, fit.k_m_s_per_kg, fit.identified, fit.vif_fuel, fit.n_laps,
+                    fit.n_excluded_no_tyre_age,
                 )
 
         self.pooled_k_m, self.pooled_fallback_eras = _pool_k_m(dict(self.joint))

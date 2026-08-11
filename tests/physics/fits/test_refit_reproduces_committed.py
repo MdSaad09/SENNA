@@ -48,6 +48,13 @@ def ingested_store():
     if not os.environ.get("DATABASE_URL"):
         pytest.skip("needs the ingested store; export DATABASE_URL (see .env.example)")
 
+    # the energy module swallows FastF1 failures by design, so a cold cache does not
+    # error — it quietly drops the energy blocks and the byte comparison then fails
+    # blaming the fitters. Skip rather than accuse.
+    cache = config.REPO_ROOT / config.get(config.load("ingest"), "fastf1.cache_dir")
+    if not cache.is_dir() or not any(cache.iterdir()):
+        pytest.skip(f"needs a warm FastF1 cache at {cache}; the energy fits read telemetry")
+
     rounds = config.get(config.load("data_split"), "calibration_rounds")
     index = asyncio.run(_read(lambda conn: frames.circuit_index(conn, rounds)))
     declared = config.get(config.load("ingest"), "seasons")

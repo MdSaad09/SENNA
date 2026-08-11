@@ -38,8 +38,11 @@ class JointPaceFit:
     t_ref_s: float
     s_ref_s: float
     n_laps: int
-    # counted, not silent — the same convention PitLossFit.n_excluded uses, so a season
-    # whose tyre ages are patchy shows up in the fit report instead of just shrinking n
+    # counted, not silent, so a circuit whose tyre ages are patchy says so in the fit log
+    # rather than just arriving with a smaller n. Unlike PitLossFit.n_excluded this one is
+    # not rendered into physics_params.yaml: the per-season totals in the 5.3.4 quality
+    # report are the committed record of the rule's cost (E-09), and a second count in the
+    # constants file would be a diagnostic pretending to be a constant.
     n_excluded_no_tyre_age: int
     # the raw OLS attribution, kept even when too weak to report per circuit —
     # not for pooling (weak fits are confounded by post-SC pace effects, see

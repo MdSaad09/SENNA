@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 
 from senna.physics.fits.joint_pace import JointPaceFit, fit_joint_pace, pool_k_m
-from tests.physics.fits.conftest import K_FUEL_S_PER_KG
 
 CALIBRATION_ROUNDS = [1, 2, 3, 4, 5, 6]  # frozen split (E-14, configs/data_split.yaml)
 
@@ -130,8 +129,11 @@ def test_a_single_confounded_circuit_cannot_invert_the_era():
 
     assert pool_k_m(confounded) is None
     assert pool_k_m(healthy) == pytest.approx(0.0121, abs=5e-4)
-    # a mixed era still pools if the weighted result stays physical
-    assert pool_k_m(confounded + healthy) is None or pool_k_m(confounded + healthy) > 0
+    # a mixed era still pools when the weighted result stays physical. Pinned rather
+    # than asserted "is None or > 0", which the contract makes true either way and so
+    # cannot fail: two healthy circuits outweigh the confounded one and drag the mean
+    # down from 0.0121 without taking it through zero.
+    assert pool_k_m(confounded + healthy) == pytest.approx(0.008883, abs=1e-6)
 
 
 def test_a_negative_mass_sensitivity_is_not_an_identified_attribution(make_synthetic_race):
@@ -143,7 +145,7 @@ def test_a_negative_mass_sensitivity_is_not_an_identified_attribution(make_synth
     laps = race.laps.copy()
     # invert the fuel contribution the fixture baked in: the design is untouched, so the
     # collinearity diagnostics are identical and only the sign of the answer moves
-    laps["lap_time_s"] = laps["lap_time_s"] - 2 * K_FUEL_S_PER_KG * race.fuel_kg
+    laps["lap_time_s"] = laps["lap_time_s"] - 2 * race.k_fuel_s_per_kg * race.fuel_kg
 
     fit = fit_joint_pace(laps, race.fuel_kg, vif_max=SINGLE_RACE_VIF_MAX)
 
