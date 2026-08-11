@@ -4,10 +4,11 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F18 — full-era refit and revalidation. Spec written 11 Aug 2026, not
-yet planned. **F17 is blocked behind it:** `/ship F17` was aborted on 11 Aug when the
+**Active feature:** F18 — full-era refit and revalidation. Planned 11 Aug 2026; next step
+`/ship F18`. **F17 is blocked behind it:** `/ship F17` was aborted on 11 Aug when the
 fit-scope defect below surfaced, because driver effects must come from the same regression
-that produces the simulator's own constants.
+that produces the simulator's own constants. F18 lands all-or-nothing — `make verify` runs
+both freeze-chain tests in CI, so there is no partial-landing path.
 **Data-integrity defect found 11 Aug 2026 (Saad's call: refit on the full era):**
 `configs/physics_params.yaml` was fitted on seasons 2024–2025 only; the frozen A-09
 snapshot holds 2022–2025 and `configs/ingest.yaml` declares all of them. Reproduced
@@ -51,7 +52,7 @@ submission mechanism (bundle vs repo access) decides where the snapshot travels.
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
 | F17 | Driver identity | F02, F16, **F18** | Planned 9 Aug 2026 — blocked on F18 | feature/F17-driver-identity | — |
-| F18 | Full-era refit and revalidation | F02, F16 | Todo 11 Aug 2026 | — | — |
+| F18 | Full-era refit and revalidation | F02, F16 | Planned 11 Aug 2026 | feature/F18-full-era-refit | — |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
