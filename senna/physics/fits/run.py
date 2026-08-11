@@ -88,8 +88,11 @@ async def run_battery(args: argparse.Namespace) -> dict:
     else:
         # only a full run writes, so only a full run has to cover every declared season
         # (E-12). A narrowed run cannot trip this on its own smaller index.
-        assert_season_coverage(seasons, sorted(index["season"].unique().tolist()))
-        validate_complete(params)
+        if config.get(fits_cfg, "gates.require_full_season_coverage"):
+            assert_season_coverage(seasons, sorted(index["season"].unique().tolist()))
+        validate_complete(
+            params, require_finite=config.get(fits_cfg, "gates.require_finite_params")
+        )
         validate_origins(params)
         text = render_params(params, generated_at=battery.data_through())
         args.params_out.write_text(text)

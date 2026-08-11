@@ -33,11 +33,16 @@ def render_params(params: dict, generated_at: str, *, header: str = HEADER) -> s
 ORIGIN_TAGS = ("sourced", "fitted", "stylised", "operational")
 
 
-def validate_complete(params: dict) -> None:
+def validate_complete(params: dict, *, require_finite: bool = True) -> None:
     """Refuse a tree that cannot be read as physics. A null is an unfitted constant; a NaN
     or an infinity is a fit that failed and did not say so — `is None` never caught those,
-    so they would have rendered into the yaml as `nan` and been loaded back as a float."""
-    unusable = sorted(_unusable_paths(params, prefix=""))
+    so they would have rendered into the yaml as `nan` and been loaded back as a float.
+
+    `require_finite` is configs/fits.yaml `gates.require_finite_params`. It exists to be
+    left on; turning it off reproduces the pre-F18 writer, which is the only honest way to
+    show what the old gate let through.
+    """
+    unusable = sorted(_unusable_paths(params, prefix="", require_finite=require_finite))
     if unusable:
         raise IncompleteParamsError(
             "physics_params has null or non-finite constants — fit or verify before F05 "
@@ -90,13 +95,15 @@ def _scalar(value) -> str:
     return str(value)
 
 
-def _unusable_paths(mapping: dict, prefix: str) -> list[str]:
+def _unusable_paths(mapping: dict, prefix: str, *, require_finite: bool) -> list[str]:
     paths = []
     for key, node in mapping.items():
         dotted = f"{prefix}{key}"
         if isinstance(node, dict):
-            paths.extend(_unusable_paths(node, f"{dotted}."))
-        elif node[0] is None or (isinstance(node[0], float) and not math.isfinite(node[0])):
+            paths.extend(_unusable_paths(node, f"{dotted}.", require_finite=require_finite))
+        elif node[0] is None:
+            paths.append(dotted)
+        elif require_finite and isinstance(node[0], float) and not math.isfinite(node[0]):
             paths.append(dotted)
     return paths
 

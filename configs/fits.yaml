@@ -3,6 +3,22 @@
 # fitters take as an argument gets its named origin. null means "fit me": code
 # that reads a null must raise, never guess.
 
+# The two write gates. Both default true and there is no reason to run with either
+# off except one: setting a gate false reproduces the pre-F18 battery, which is how
+# the defect below was demonstrated rather than argued. Leave them true.
+gates:
+  require_full_season_coverage: true  # operational — refuse to write physics_params.yaml
+                                      # from a store missing a season configs/ingest.yaml
+                                      # declares (E-12). Its absence is why the committed
+                                      # physics was fitted on two of five declared seasons
+                                      # with the scope recorded nowhere, so make fit over
+                                      # the frozen snapshot stopped reproducing it (A-09)
+  require_finite_params: true         # operational — refuse NaN and Inf as well as null
+                                      # in a fitted value. validate_complete tested
+                                      # `is None`, and a NaN is not None, so a failed fit
+                                      # could render the bare literal `nan` into the yaml
+                                      # for F05 to load back as a poisoning float (E-09)
+
 fuel:
   sc_burn_factor: 0.6        # stylised — SC/VSC laps burn less than green ones;
                              # the exact ratio is a visual choice, sensitivity

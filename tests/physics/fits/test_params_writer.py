@@ -123,6 +123,23 @@ def test_params_refuse_non_finite_values():
     assert "monza.hazards.sc_p_per_race" in str(excinfo.value)
 
 
+def test_the_finite_gate_is_read_from_config_not_assumed():
+    params = _params()
+    params["monza"]["pit_loss"]["mean_s"] = (float("nan"), "fitted: fit_pit_loss.ipynb")
+
+    # gates.require_finite_params off is the pre-F18 writer, and the only reason it can
+    # be turned off is to demonstrate what that writer let through. If this passes with
+    # the flag ignored, the constant in configs/fits.yaml is decoration.
+    validate_complete(params, require_finite=False)
+
+    # a null is not a gated case -- an unfitted constant is refused either way
+    params["spa"]["pit_loss"]["mean_s"] = (None, "fitted: fit_pit_loss.ipynb")
+    with pytest.raises(IncompleteParamsError) as excinfo:
+        validate_complete(params, require_finite=False)
+    assert "spa.pit_loss.mean_s" in str(excinfo.value)
+    assert "monza.pit_loss.mean_s" not in str(excinfo.value)
+
+
 def test_params_refuse_an_untagged_origin():
     # the four tags are the whole vocabulary, in the grammars the shipped file
     # actually uses: "fitted: <notebook>", "sourced <where> — why", "stylised — why"

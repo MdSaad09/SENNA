@@ -14,6 +14,7 @@ returning a flag, and saying what to do about it.
 
 import pytest
 
+from senna import config
 from senna.physics.fits.gate import IncompleteSeasonCoverageError, assert_season_coverage
 
 DECLARED_SEASONS = [2022, 2023, 2024, 2025, 2026]  # configs/ingest.yaml `seasons`
@@ -33,6 +34,21 @@ def test_a_partial_ingest_refuses_to_write_params():
     # and, like the F-14 gate beside it, the message points somewhere: the declared
     # list to correct, or the ingest to finish
     assert "ingest" in message
+
+
+def test_both_write_gates_are_declared_with_provenance():
+    # the interpretability contract: a gate that lives only in code is a constant nobody
+    # can find. Both are `operational` -- engineering defaults, not fitted or sourced
+    # numbers -- and both are in the fingerprint every model manifest records, so a
+    # change here is a change to what the trained artifacts were produced under.
+    text = (config.REPO_ROOT / "configs" / "fits.yaml").read_text()
+    gates = config.get(config.load("fits"), "gates")
+
+    assert gates["require_full_season_coverage"] is True
+    assert gates["require_finite_params"] is True
+    for name in ("require_full_season_coverage", "require_finite_params"):
+        line = next(row for row in text.splitlines() if row.strip().startswith(name))
+        assert "operational" in line, f"{name} has no provenance tag"
 
 
 def test_full_coverage_passes_the_gate():
