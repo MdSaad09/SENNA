@@ -1,0 +1,45 @@
+# A hand-built params file for the F-24 era-fit guard, not a fitted artifact.
+#
+# The guard is a statement about logic — "this circuit has no fits of its own for this
+# era" — and pinning it to whichever real circuit happened to lack them made it fail the
+# moment the F18 refit gave every circuit native 2024 fits. Canada was the old example;
+# it gained its full compound set because it was raced in 2022 and 2023, which the old
+# two-season scope never saw. The gap lives here on purpose now, so improving the physics
+# cannot take the guard's test down with it.
+circuits:
+  both_eras_grand_prix:
+    joint_pace:
+      2024: {t0_s: 90.0}
+      2026: {t0_s: 89.0}
+    degradation:
+      2024:
+        SOFT: {a: 0.001, b: 1.2}
+        MEDIUM: {a: 0.0009, b: 1.2}
+      2026:
+        SOFT: {a: 0.001, b: 1.2}
+        MEDIUM: {a: 0.0009, b: 1.2}
+
+  # no joint-pace fit for 2024: build_scenario would serve 2026 pace under a 2024 label
+  no_2024_joint_grand_prix:
+    joint_pace:
+      2026: {t0_s: 89.0}
+    degradation:
+      2024:
+        SOFT: {a: 0.001, b: 1.2}
+        MEDIUM: {a: 0.0009, b: 1.2}
+      2026:
+        SOFT: {a: 0.001, b: 1.2}
+        MEDIUM: {a: 0.0009, b: 1.2}
+
+  # one fitted slick is not a tyre model: the two-compound rule needs two, so this is
+  # refused for the same reason and by the same branch
+  one_slick_2024_grand_prix:
+    joint_pace:
+      2024: {t0_s: 90.0}
+      2026: {t0_s: 89.0}
+    degradation:
+      2024:
+        SOFT: {a: 0.001, b: 1.2}
+      2026:
+        SOFT: {a: 0.001, b: 1.2}
+        MEDIUM: {a: 0.0009, b: 1.2}

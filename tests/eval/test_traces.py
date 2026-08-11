@@ -10,6 +10,8 @@ and the strict-era guard that refuses a circuit whose "2024" scenario is really 
 fallback. Rows are hand-built tuples: no database, no FastF1, no network.
 """
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -169,5 +171,11 @@ def test_a_circuit_without_native_2024_fits_is_refused():
     # era-matched counterfactual built on that is a mislabelled comparison, not a coarse one
     require_native_era_fits(CIRCUIT, ERA)
 
-    with pytest.raises(ValueError, match="canadian_grand_prix"):
-        require_native_era_fits("canadian_grand_prix", ERA)
+    # against a fixture, not a real circuit: the F18 refit gave every circuit native
+    # 2024 fits, so tying this guard to whichever one lacked them made improving the
+    # physics look like a regression
+    gaps = Path(__file__).parent / "fixtures" / "era_fit_gaps"
+    require_native_era_fits("both_eras_grand_prix", ERA, configs_dir=gaps)
+    for circuit in ("no_2024_joint_grand_prix", "one_slick_2024_grand_prix"):
+        with pytest.raises(ValueError, match=circuit):
+            require_native_era_fits(circuit, ERA, configs_dir=gaps)

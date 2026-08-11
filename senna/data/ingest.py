@@ -386,6 +386,7 @@ async def _season_drop_counts(engine: AsyncEngine, season: int) -> list[DropCoun
             .label("in_out"),
             func.count().filter(Lap.is_green.is_(False)).label("not_green"),
             func.count().filter(Lap.lap_time_s.is_(None)).label("no_lap_time"),
+            func.count().filter(Lap.tyre_life.is_(None)).label("no_tyre_age"),
         )
         .select_from(Lap)
         .join(Session, Lap.session_id == Session.id)
@@ -400,6 +401,11 @@ async def _season_drop_counts(engine: AsyncEngine, season: int) -> list[DropCoun
         DropCount("in_out_laps", n, totals.in_out, 0),
         DropCount("is_green", n, 0, totals.not_green),
         DropCount("lap_time_nat", n, 0, totals.no_lap_time),
+        # FastF1's TyreLife is patchy on the older seasons, and the joint pace fit
+        # regresses on it, so a lap without one cannot enter the fit at all (E-09).
+        # Counted here for the same reason as the rules above: so the cost of the rule
+        # is visible per season rather than showing up as a smaller n.
+        DropCount("no_tyre_age", n, totals.no_tyre_age, 0),
     ]
 
 
