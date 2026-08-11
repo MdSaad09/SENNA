@@ -172,7 +172,17 @@ def pool_k_m(fits: list[JointPaceFit]) -> float | None:
         return None
     weights = np.array([1.0 / fit.k_m_se_s_per_kg**2 for fit in usable])
     values = np.array([fit.k_m_s_per_kg for fit in usable])
-    return float(np.sum(weights * values) / np.sum(weights))
+    pooled = float(np.sum(weights * values) / np.sum(weights))
+    if pooled <= 0.0:
+        # a heavier car cannot be faster, so a non-positive pool is not a small
+        # number — it is the confounding above, arriving at scale. Refusing it
+        # hands the era to the same fallback an unidentified era already uses,
+        # which is a borrowed physical value instead of a published impossible one.
+        # F18 found this the hard way: one circuit crossed the VIF gate on the
+        # wider data, became the era's only identified fit, and inverted the sign
+        # of the 2026 mass transform for every circuit downstream.
+        return None
+    return pooled
 
 
 def _clean_mask(laps: pd.DataFrame) -> tuple[pd.Series, int]:

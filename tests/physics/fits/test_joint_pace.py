@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from senna.physics.fits.joint_pace import fit_joint_pace
+from senna.physics.fits.joint_pace import JointPaceFit, fit_joint_pace, pool_k_m
 
 CALIBRATION_ROUNDS = [1, 2, 3, 4, 5, 6]  # frozen split (E-14, configs/data_split.yaml)
 
@@ -99,3 +99,35 @@ def test_refuses_validation_rounds(make_synthetic_race):
             vif_max=SINGLE_RACE_VIF_MAX,
             calibration_rounds=CALIBRATION_ROUNDS,
         )
+
+
+def _fit(k_m: float, se: float) -> JointPaceFit:
+    """A minimal identified fit — pool_k_m reads only these four fields."""
+    return JointPaceFit(
+        t0_s=90.0, k_m_s_per_kg=k_m, k_m_se_s_per_kg=se, evolution_s_per_lap=-0.01,
+        trend_s_per_lap=-0.02, identified=True, vif_fuel=5.0, condition_number=10.0,
+        sigma_driver_s=0.5, compound_offsets_s={}, t_ref_s=90.0, s_ref_s=1.0,
+        n_laps=2000, n_excluded_no_tyre_age=0,
+    )
+
+
+def test_a_non_positive_pooled_k_m_is_refused():
+    # a heavier car cannot be faster. A negative pool is this module's documented
+    # signature of a confounded fit (see pool_k_m), so it must be refused rather
+    # than published — an era with no usable pool already has a fallback, and
+    # borrowing a good value beats shipping an impossible one.
+    assert pool_k_m([_fit(-0.0074, 0.002)]) is None
+    assert pool_k_m([_fit(0.0, 0.002)]) is None
+
+
+def test_a_single_confounded_circuit_cannot_invert_the_era():
+    # F18: refitting on the full era made one circuit identify where none had, and
+    # its negative attribution became the era's whole pool — flipping the 2026 mass
+    # transform's sign. One circuit crossing the VIF gate must not do that.
+    confounded = [_fit(-0.0074, 0.002)]
+    healthy = [_fit(0.0119, 0.001), _fit(0.0131, 0.002)]
+
+    assert pool_k_m(confounded) is None
+    assert pool_k_m(healthy) == pytest.approx(0.0121, abs=5e-4)
+    # a mixed era still pools if the weighted result stays physical
+    assert pool_k_m(confounded + healthy) is None or pool_k_m(confounded + healthy) > 0
