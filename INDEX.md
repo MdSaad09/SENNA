@@ -10,14 +10,39 @@ fit-scope defect below surfaced, because driver effects must come from the same 
 that produces the simulator's own constants. F18 lands all-or-nothing — `make verify` runs
 both freeze-chain tests in CI, so there is no partial-landing path.
 **Data-integrity defect found 11 Aug 2026 (Saad's call: refit on the full era):**
-`configs/physics_params.yaml` was fitted on seasons 2024–2025 only; the frozen A-09
-snapshot holds 2022–2025 and `configs/ingest.yaml` declares all of them. Reproduced
-exactly at Bahrain era 2024 — committed `n_laps=1958, t0_s=98.597, sigma_driver_s=0.5653`
-matches a 2024+2025 fit to every digit, while the full era gives `3705 / 99.465 / 0.6571`.
-So `make fit` from the frozen snapshot does not reproduce the shipped physics: the
-reproducibility pack does not round-trip. F18 refits on the full era, regenerates the
-whole chain, and adds the coverage gate that prevents a recurrence. Every downstream
-number moves, including F14's headline.
+`configs/physics_params.yaml` was fitted with only seasons 2024–2025 reaching the pace
+fits. Reproduced exactly at Bahrain era 2024 — committed `n_laps=1958, t0_s=98.597,
+sigma_driver_s=0.5653` matches a 2024+2025 fit to every digit, while the full era gives
+`3705 / 99.465 / 0.6571`. So `make fit` from the frozen snapshot did not reproduce the
+shipped physics: the reproducibility pack did not round-trip.
+
+**Corrected during the F18 build:** the first diagnosis said the 2022 and 2023 seasons had
+not been ingested. They had. The pre-refit file's own watermark reads `seasons 2022-2026,
+round 6` and it carries a `hazards` block for the French GP, raced only in 2022, with race
+counts identical to the post-refit file. Every declared season was in the store; 2022 and
+2023 reached hazards, pit loss and energy and reached no joint pace fit at all. The scope
+was not unrecorded — it was recorded wrongly, which is the sharper finding. A season-level
+gate would have passed that run silently, so F18 ships `assert_pace_season_coverage` at
+the layer the defect happened, and the guard that actually failed on main is the
+byte-identity round-trip test.
+
+**What the refit changed, read out of the fit diff as the spec requires.** E-10
+identification is **unchanged**: `canadian_grand_prix/2026` is the only identified
+circuit-era before and after, so era 2024 still borrows 2026's pooled mass sensitivity and
+the wider data did not resolve the fuel/evolution confound. T5 transfer is **unchanged in
+kind**: 53 borrowed curves became 54, and no compound stopped needing the cluster
+transfer. Both contradict the spec's expectation ("fewer circuits should fall back") and
+are reported rather than dropped. What the wider data did buy is coverage: seven degradation
+curves that did not exist before (Azerbaijan SOFT, Canada's full set, France HARD and
+MEDIUM — circuits raced only in 2022–23), native curves 85 → 91, and circuits with native
+era-2024 fits 23 → 25.
+
+**Two physicality guards, found by refitting.** Austria's fuel VIF fell 131.7 → 22.5 on
+the wider data and it became separable — returning a *negative* mass sensitivity. Unguarded
+it would have become era 2024's only identified circuit and stamped −0.007421 onto every
+other circuit in the era, inverting the 2026 mass transform for two thirds of
+`transforms.yaml`. Identification now requires a positive estimate as well as a separable
+design, and `pool_k_m` refuses a non-positive pool.
 **Next up:** after F18 comes F17 driver identity, then physics uncertainty, explanation
 language, F20 the single observation change (batched, because it invalidates the frozen
 triplet). F21 look-ahead and F22 multi-agent are stretch, in that order. The roadmap
