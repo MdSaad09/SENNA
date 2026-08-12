@@ -43,10 +43,17 @@ PARTIAL_INDEX = pd.DataFrame(
 )
 
 
-def _wire_battery_out(monkeypatch, index):
-    """Everything between the gate and the write, stubbed. The battery itself needs
+GOOD_PARAMS = {"monza": {"pit_loss": {"mean_s": (21.4, "fitted: nb.ipynb")}}}
+
+
+def _wire_battery_out(monkeypatch, index, *, params=None, pace_seasons=None):
+    """Everything between the gates and the write, stubbed. The battery itself needs
     Postgres and minutes of FastF1; what is under test is whether run_battery consults
-    the gate at all, so the cheapest honest fake is one that would happily write."""
+    each gate at all, so the fake is one that would otherwise happily write.
+
+    `pace_seasons` defaults to whatever the index holds, which is the passing case. Pass
+    a narrower dict to stand in for a season that arrived but reached no regression.
+    """
     async def fake_index(_conn, _rounds):
         return index
 
@@ -58,6 +65,10 @@ def _wire_battery_out(monkeypatch, index):
         def connect(self): return _Conn()
         async def dispose(self): return None
 
+    if pace_seasons is None:
+        pace_seasons = {era: set(index[index["era"] == era]["season"].astype(int))
+                        for era in index["era"].unique()}
+
     monkeypatch.setattr(fits_run.frames, "circuit_index", fake_index)
     monkeypatch.setattr(fits_run, "engine_for", lambda _url: _Engine())
     monkeypatch.setattr(fits_run, "database_url", lambda: "postgresql+asyncpg://x/y_test")
@@ -66,12 +77,59 @@ def _wire_battery_out(monkeypatch, index):
         fits_run, "_Battery",
         lambda *a, **k: SimpleNamespace(
             run=lambda _m: asyncio.sleep(0),
-            params=lambda: {"monza": {"pit_loss": {"mean_s": (21.4, "fitted: nb.ipynb")}}},
-            data_through=lambda: "seasons 2024-2025, round 1",
-            pace_seasons={era: set(index[index["era"] == era]["season"].astype(int))
-                          for era in index["era"].unique()},
+            params=lambda: GOOD_PARAMS if params is None else params,
+            data_through=lambda: "seasons 2022-2026, round 6",
+            pace_seasons=pace_seasons,
         ),
     )
+
+
+def _full_index():
+    return pd.concat([PARTIAL_INDEX.assign(season=s) for s in DECLARED_SEASONS],
+                     ignore_index=True)
+
+
+def test_a_clean_full_run_writes_the_params_file(monkeypatch, tmp_path):
+    """The positive control. Every other test here asserts a file is absent, so without
+    this one a writer that silently stopped writing would pass the whole module."""
+    _wire_battery_out(monkeypatch, _full_index())
+    params_out = tmp_path / "physics_params.yaml"
+
+    asyncio.run(fits_run.run_battery(
+        argparse.Namespace(only=None, circuit=None, params_out=params_out)))
+
+    assert params_out.exists()
+    text = params_out.read_text()
+    assert text.startswith("# SENNA")
+    assert "monza" in text and "21.4" in text
+
+
+def test_a_season_reaching_no_pace_fit_refuses_to_write(monkeypatch, tmp_path):
+    # the F18 defect's real shape, driven through the writer: every declared season is
+    # in the index, only two of them reached a regression
+    _wire_battery_out(monkeypatch, _full_index(),
+                      pace_seasons={"2024": {2024, 2025}})
+    params_out = tmp_path / "physics_params.yaml"
+
+    with pytest.raises(IncompletePaceCoverageError):
+        asyncio.run(fits_run.run_battery(
+            argparse.Namespace(only=None, circuit=None, params_out=params_out)))
+
+    assert not params_out.exists()
+
+
+def test_an_untagged_constant_refuses_to_write(monkeypatch, tmp_path):
+    # validate_origins is the third write gate and had no wiring test either
+    _wire_battery_out(monkeypatch, _full_index(),
+                      params={"monza": {"pit_loss": {"mean_s": (21.4, "")}}})
+    params_out = tmp_path / "physics_params.yaml"
+
+    with pytest.raises(IncompleteParamsError) as excinfo:
+        asyncio.run(fits_run.run_battery(
+            argparse.Namespace(only=None, circuit=None, params_out=params_out)))
+
+    assert "monza.pit_loss.mean_s" in str(excinfo.value)
+    assert not params_out.exists()
 
 
 def test_a_partial_ingest_refuses_to_write_params(monkeypatch, tmp_path):
@@ -98,18 +156,9 @@ def test_a_narrowed_run_is_not_tripped_by_its_own_smaller_index(monkeypatch, tmp
 
 
 def test_a_non_finite_fit_refuses_to_write_params(monkeypatch, tmp_path):
-    full = pd.concat(
-        [PARTIAL_INDEX.assign(season=s) for s in DECLARED_SEASONS], ignore_index=True
-    )
-    _wire_battery_out(monkeypatch, full)
-    monkeypatch.setattr(
-        fits_run, "_Battery",
-        lambda *a, **k: SimpleNamespace(
-            run=lambda _m: asyncio.sleep(0),
-            params=lambda: {"monza": {"pit_loss": {"mean_s": (float("nan"), "fitted: nb")}}},
-            data_through=lambda: "seasons 2022-2026, round 1",
-            pace_seasons={"2024": set(DECLARED_SEASONS)},
-        ),
+    _wire_battery_out(
+        monkeypatch, _full_index(),
+        params={"monza": {"pit_loss": {"mean_s": (float("nan"), "fitted: nb")}}},
     )
     params_out = tmp_path / "physics_params.yaml"
     args = argparse.Namespace(only=None, circuit=None, params_out=params_out)

@@ -55,7 +55,7 @@ no stated reason — 2022 through 2025 are one regulation era, which is why they
 `era` value in the first place.
 
 After F18 the constants are fitted on every season of the era, the whole downstream chain
-is regenerated from them, and a test fails the build if the committed constants ever again
+is regenerated from them, and a test catches it if the committed constants ever again
 disagree with what the frozen data produces.
 
 ## Deliverables
@@ -88,7 +88,7 @@ Every regenerated value keeps the provenance tag its fitter already emits, throu
 it should be reviewed as evidence, not skimmed.
 
 ## Tests first
-- **`test_refit_reproduces_the_committed_params`** *(slow, DB-backed)* — the headline test. `make fit` over the frozen snapshot renders byte-identically to `configs/physics_params.yaml`. Red before the refit, green after, and red forever after if anyone refits on partial data again.
+- **`test_refit_reproduces_the_committed_params`** *(slow, DB-backed)* — the headline test. `make fit` over the frozen snapshot renders byte-identically to `configs/physics_params.yaml`. Red before the refit, green after. It is `slow` and needs the ingested store, so CI's `-m "not slow"` run never executes it — `docs/freeze.md` step 1 runs it explicitly before a tag, and that is what makes the A-09 promise checkable rather than asserted.
 - **`test_a_partial_ingest_refuses_to_write_params`** — an ingest missing a declared season raises rather than writing. The defect, pinned.
 - **`test_every_era_2024_season_reaches_the_fit`** — the joint-pace input for a sample circuit contains laps from all four seasons, asserted by season not by count.
 - **`test_params_still_render_deterministically`** — `params_writer`'s existing guarantee, re-checked on the new file.

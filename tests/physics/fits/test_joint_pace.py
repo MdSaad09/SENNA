@@ -120,6 +120,24 @@ def test_a_non_positive_pooled_k_m_is_refused():
     assert pool_k_m([_fit(0.0, 0.002)]) is None
 
 
+def test_a_negative_estimate_never_reaches_the_pool(make_synthetic_race):
+    """The reachable half of the guard, driven through the fitter rather than a
+    hand-built fit. The pool's own `pooled <= 0` branch cannot fire once identification
+    requires a positive estimate, so this is what actually stops the F18 incident: the
+    confounded circuit is refused entry, not filtered out at the average."""
+    race = make_synthetic_race()
+    laps = race.laps.copy()
+    laps["lap_time_s"] = laps["lap_time_s"] - 2 * race.k_fuel_s_per_kg * race.fuel_kg
+
+    inverted = fit_joint_pace(laps, race.fuel_kg, vif_max=SINGLE_RACE_VIF_MAX)
+    healthy = _fit(0.0119, 0.001)
+
+    assert inverted.k_m_ols_s_per_kg < 0
+    assert inverted.identified is False
+    # pooling the pair must be indistinguishable from pooling the healthy fit alone
+    assert pool_k_m([inverted, healthy]) == pool_k_m([healthy])
+
+
 def test_a_single_confounded_circuit_cannot_invert_the_era():
     # F18: refitting on the full era made one circuit identify where none had, and
     # its negative attribution became the era's whole pool — flipping the 2026 mass

@@ -1091,22 +1091,20 @@ Two met, six missed across seven rows, three reported without a bar. Full number
 intervals and gaming notes are in `docs/results/F14-evaluation.md`, regenerated from the
 committed store.
 
-| Metric | Result | Target | Verdict |
-|---|---|---|---|
-| Metric | Result | Previous (two-season physics) | Verdict |
-|---|---|---|---|
-| M1 paired position delta | **+2.279 places** over 480 pairs, CI [1.913, 2.663] | +2.083, CI [1.710, 2.475] | **met** |
-| M2 counterfactual vs actual | 1W/8L/1T, p = 0.039, mean −3.66 over 10 races | 4W/5L/1T, p = 1.000, mean −0.60 | miss |
-| M3 oracle regret | median 30.48 s, mean 71.78 s over 480 races | median 33.09 s, mean 86.98 s | reported |
-| M4 energy utilisation | 0.704 of deployable, ceiling 0.912; derates 0.097 | 0.649, ceiling 0.914; derates 0.080 | miss |
-| M5 safety-car quality | precision 0.820, recall 0.401 over 377 windows | precision 0.942, recall 0.308 | miss |
-| M5 virtual safety car | precision 1.000, recall 0.085 over 304 windows | precision undefined, recall 0.000 | miss |
-| M6 pit-window accuracy | 0.213 of 517 stops within 3 laps of optimum | 0.228 of 457 stops | miss |
-| M7 strategy diversity | 0.653 nats over 24 circuits | 0.226 nats | reported |
-| M8 sim-to-real | 0 of 5 circuits within KS 0.15, worst 0.931 | 0 of 4, worst 0.946 | miss |
-| M9 tyre failures | **37.92 per 100 races** (182 of 480) | 37.29 (179 of 480) | miss |
-| M10 regulatory legality | **0 coerced, 0 snapped** over 480 races | 0, 0 | **met** |
-| M11 luck share | **0.786** of finishing variance, CI [0.704, 0.861] | 0.758, CI [0.679, 0.820] | reported |
+| Metric | Result | Previous (two-season physics) | Target | Verdict |
+|---|---|---|---|---|
+| M1 paired position delta | **+2.279 places** over 480 pairs, CI [1.913, 2.663] | +2.083, CI [1.710, 2.475] | ≥ +1.0, CI excluding 0 | **met** |
+| M2 counterfactual vs actual | 1W/8L/1T, p = 0.039, mean −3.66 over 10 races | 4W/5L/1T, p = 1.000, mean −0.60 | ≥ +1.0, sign test p < 0.05 | miss |
+| M3 oracle regret | median 30.48 s, mean 71.78 s over 480 races | median 33.09 s, mean 86.98 s | report only | reported |
+| M4 energy utilisation | 0.704 of deployable, ceiling 0.912; derates 0.097 | 0.649, ceiling 0.914; derates 0.080 | ≥ 0.90, derates ≤ 0.05 | miss |
+| M5 safety-car quality | precision 0.820, recall 0.401 over 377 windows | precision 0.942, recall 0.308 | both ≥ 0.75 | miss |
+| M5 virtual safety car | precision 1.000, recall 0.085 over 304 windows | precision undefined, recall 0.000 | both ≥ 0.75 | miss |
+| M6 pit-window accuracy | 0.213 of 517 stops within 3 laps of optimum | 0.228 of 457 stops | ≥ 0.72 | miss |
+| M7 strategy diversity | 0.653 nats over 24 circuits | 0.226 nats | report only | reported |
+| M8 sim-to-real | 0 of 5 circuits within KS 0.15, worst 0.931 | 0 of 4, worst 0.946 | KS < 0.15 | miss |
+| M9 tyre failures | **37.92 per 100 races** (182 of 480) | 37.29 (179 of 480) | < 2.0 | miss |
+| M10 regulatory legality | **0 coerced, 0 snapped** over 480 races | 0, 0 | 0 by construction | **met** |
+| M11 luck share | **0.786** of finishing variance, CI [0.704, 0.861] | 0.758, CI [0.679, 0.820] | report only | reported |
 
 A suite where every metric passes is a suite whose bars were set after the run. These
 were set before.

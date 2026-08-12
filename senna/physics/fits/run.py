@@ -87,9 +87,17 @@ async def run_battery(args: argparse.Namespace) -> dict:
                 if index.empty:
                     raise SystemExit(f"no ingested sessions for circuit '{args.circuit}'")
             battery = _Battery(conn, index, fits_cfg, ingest_cfg, calibration_rounds)
+            gate_pace = not narrowed and config.get(
+                fits_cfg, "gates.require_full_season_coverage"
+            )
             for module in MODULES:  # declaration order is dependency order
                 if module in only:
                     await battery.run(module)
+                # joint_pace runs first and its answer is complete when it returns, so
+                # ask here rather than after _run_energy has streamed four seasons of
+                # telemetry for a run that is going to be refused anyway
+                if module == "joint_pace" and gate_pace:
+                    assert_pace_season_coverage(battery.pace_seasons, _pace_expected(index))
     finally:
         await engine.dispose()
 
@@ -97,12 +105,6 @@ async def run_battery(args: argparse.Namespace) -> dict:
     if narrowed:
         log.info("narrowed run (--only/--circuit): physics_params.yaml not written")
     else:
-        if config.get(fits_cfg, "gates.require_full_season_coverage"):
-            assert_pace_season_coverage(
-                battery.pace_seasons,
-                {era: set(rows["season"].astype(int))
-                 for era, rows in index.groupby("era")},
-            )
         validate_complete(
             params, require_finite=config.get(fits_cfg, "gates.require_finite_params")
         )
@@ -111,6 +113,19 @@ async def run_battery(args: argparse.Namespace) -> dict:
         args.params_out.write_text(text)
         log.info("wrote %s", args.params_out)
     return params
+
+
+def _pace_expected(index: pd.DataFrame) -> dict[str, set[int]]:
+    """Which seasons the pace fits could reasonably have consumed, per era.
+
+    Built under `pace_laps`'s own predicate rather than the raw index: that query takes
+    dry sessions only (`frames.py`), so a season the calendar washed out is absent for a
+    reason the gate should not mistake for the F18 defect. Source is not filtered here
+    because `circuit_index` does not select it; once synthetic laps share the table
+    (`schema.py`) this needs the same treatment.
+    """
+    dry = index[index["is_dry"].fillna(False).astype(bool)]
+    return {era: set(rows["season"].astype(int)) for era, rows in dry.groupby("era")}
 
 
 class _Battery:
@@ -176,14 +191,16 @@ class _Battery:
                 if laps.empty:
                     log.info("joint_pace %s/%s: no dry slick laps, skipped", slug, era)
                     continue
-                self.pace_seasons.setdefault(era, set()).update(
-                    int(s) for s in laps["season"].unique()
-                )
                 fuel_kg = session_fuel(laps, self.fuel_by_era[era], sc_burn)
                 fit = fit_joint_pace(
                     laps, fuel_kg, vif_max=vif_max, calibration_rounds=self.calibration_rounds
                 )
                 self.joint[(slug, era)] = fit
+                # from the fit, not from `laps`: a season can arrive here and still be
+                # cleaned away entirely (E-09 drops laps with no tyre age, and FastF1
+                # loses that channel in session-sized holes). Counting the input would
+                # let exactly the failure this gate exists for pass unnoticed.
+                self.pace_seasons.setdefault(era, set()).update(fit.seasons_fitted)
                 self.residuals[(slug, era)] = age_partial_residuals(
                     laps, fuel_kg, calibration_rounds=self.calibration_rounds
                 )

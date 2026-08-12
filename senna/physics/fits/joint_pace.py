@@ -44,6 +44,8 @@ class JointPaceFit:
     # report are the committed record of the rule's cost (E-09), and a second count in the
     # constants file would be a diagnostic pretending to be a constant.
     n_excluded_no_tyre_age: int
+    # which seasons actually made it into this regression, after cleaning
+    seasons_fitted: tuple[int, ...] = ()
     # the raw OLS attribution, kept even when too weak to report per circuit —
     # not for pooling (weak fits are confounded by post-SC pace effects, see
     # pool_k_m) but for the notebook's diagnostic that demonstrates exactly that
@@ -137,6 +139,10 @@ def fit_joint_pace(
         s_ref_s=float(np.std(lap_time_s, ddof=1)),
         n_laps=int(clean.sum()),
         n_excluded_no_tyre_age=n_ageless,
+        # the seasons that survived the clean mask, not the ones that arrived: a season
+        # can pass every gate upstream and still contribute nothing here, which is the
+        # F18 defect's shape and what assert_pace_season_coverage checks (E-12)
+        seasons_fitted=tuple(sorted({int(s) for s in fit_laps["season"].unique()})),
         k_m_ols_s_per_kg=k_m_ols,
         k_m_ols_se_s_per_kg=k_m_ols_se,
     )
@@ -183,13 +189,14 @@ def pool_k_m(fits: list[JointPaceFit]) -> float | None:
     values = np.array([fit.k_m_s_per_kg for fit in usable])
     pooled = float(np.sum(weights * values) / np.sum(weights))
     if pooled <= 0.0:
-        # a heavier car cannot be faster, so a non-positive pool is not a small
-        # number — it is the confounding above, arriving at scale. Refusing it
-        # hands the era to the same fallback an unidentified era already uses,
-        # which is a borrowed physical value instead of a published impossible one.
-        # F18 found this the hard way: one circuit crossed the VIF gate on the
-        # wider data, became the era's only identified fit, and inverted the sign
-        # of the 2026 mass transform for every circuit downstream.
+        # Defence in depth, and unreachable from the fitter as it stands: `identified`
+        # now requires k_m_ols > 0, `usable` admits only identified fits, and an
+        # inverse-variance mean of positive values cannot be non-positive. The guard
+        # that actually stops the F18 incident is the one at `identified`; this one
+        # catches a caller that constructs fits by hand or a future change that relaxes
+        # identification. A heavier car cannot be faster, so a non-positive pool is not
+        # a small number — it is confounding arriving at scale, and refusing it hands
+        # the era to the fallback an unidentified era already uses.
         return None
     return pooled
 

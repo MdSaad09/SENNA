@@ -9,8 +9,8 @@ file is the runbook; every step runs after `/land F15` merges to main.
 
 | Artifact | Value | Where it lives |
 |---|---|---|
-| Headline model | `senna-ppo-e823d1b5a2ea-C-01769472` | `models/headline/` (committed, baked) |
-| Era-matched 2024 model | `senna-ppo-8f7b5998e7eb-C-03538944` | `models/era2024/` (committed, baked) |
+| Headline model | `senna-ppo-70098e9d3425-C-01769472` | `models/headline/` (committed, baked) |
+| Era-matched 2024 model | `senna-ppo-db586a74592a-C-03538944` | `models/era2024/` (committed, baked) |
 | Surrogates | one per model version | `models/explain/<version>/` (committed, baked) |
 | Env config hash | the headline manifest's fingerprint | every suite store envelope |
 | Seed manifest | `configs/seeds.yaml` (frozen 19 Jul 2026) | fingerprint in every envelope |
@@ -25,13 +25,23 @@ live seeds fingerprint matches, and no public page carries a rotten link.
 1. On main after the merge: `rm -rf .ruff_cache && make lint` (ruff's warm cache
    once hid an import-order error on a tests-first feature), `make test`,
    `make verify`.
+
+   Then the A-09 round-trip, which CI cannot run because it needs the ingested
+   store and a warm FastF1 cache, and which is the only check that catches
+   committed constants disagreeing with what their own data produces:
+
+        DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/senna \
+          python -m pytest tests/physics/fits/test_refit_reproduces_committed.py -m slow
+
+   It skips rather than fails if either is missing, so read the result: two
+   skips means the promise went unchecked, not that it held.
 2. `make snapshot` against the ingested store, then commit the regenerated
    `data/snapshot/MANIFEST.md` if it changed (`docs:` commit).
 3. Tag, with the pins in the message:
 
         git tag -a v1.0.0 -m "SENNA v1.0.0 — the COMP702 freeze
-        headline senna-ppo-e823d1b5a2ea-C-01769472
-        era2024  senna-ppo-8f7b5998e7eb-C-03538944
+        headline senna-ppo-70098e9d3425-C-01769472
+        era2024  senna-ppo-db586a74592a-C-03538944
         snapshot sha256 <from data/snapshot/MANIFEST.md>
         never-cut list intact: masking, cleaning contract, calibration/validation
         split, metric suite with gaming notes, decision cards (spec 6.3)"

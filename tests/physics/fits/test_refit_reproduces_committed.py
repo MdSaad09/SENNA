@@ -8,9 +8,16 @@ joint pace fits. Bahrain's era-2024 base pace came from 1958 laps of an availabl
 about 0.9 s/lap, and nothing in the build noticed because nothing compared the file
 against what its own data produces.
 
-That is why this test is the load-bearing one. Both coverage gates would have passed
-that run; only rendering the fit and diffing it against the committed bytes catches a
-file whose recorded scope and actual scope disagree.
+This is the guard that actually failed on `main`. `assert_season_coverage` would have
+passed that run without a word, because the store was complete; `assert_pace_season_
+coverage` did not exist yet and is the gate that matches the defect's shape. Rendering
+the fit and diffing it against the committed bytes is the broadest of the three: it
+catches any disagreement between the committed constants and what the data produces,
+including causes nobody has thought of yet.
+
+It is `slow` and needs the ingested store, so CI's `-m "not slow"` run never executes
+it. `docs/freeze.md` step 1 runs it explicitly before a tag — that, not CI, is what
+makes the A-09 promise checkable.
 
 These two are the guard. They need the ingested store rather than the disposable test
 database, and the battery is minutes of real work, so they are `slow` and skip cleanly
