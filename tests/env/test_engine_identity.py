@@ -26,7 +26,13 @@ from senna.env.engine import LapDecisions, advance_lap, begin_lap
 from senna.env.events_io import LiveSource
 from senna.env.scenario import COMPOUNDS, START_COMPOUND, build_scenario, compound_code
 from senna.env.state import RaceState
-from tests.env.fixtures.generate_f16_golden import CIRCUITS, FIELDS, SEED, ego_action
+from tests.env.fixtures.generate_f16_golden import (
+    CIRCUITS,
+    FIELDS,
+    PINNED_CONFIGS,
+    SEED,
+    ego_action,
+)
 
 ERA = "2026"
 RIVAL_BAND = "train"
@@ -160,10 +166,10 @@ def test_rng_draw_order_preserved():
     The test drives the two phases itself, so every draw is attributed to the phase that
     made it and no site can hide behind another with the same shape.
     """
-    scenario = build_scenario(CIRCUITS[0], ERA)
+    scenario = build_scenario(CIRCUITS[0], ERA, configs_dir=PINNED_CONFIGS)
     n_cars = scenario.grid_size
     rng = RecordingRng(np.random.default_rng(SEED))
-    book = rivals.load_book(validity=scenario.env["compound_validity"])
+    book = rivals.load_book(PINNED_CONFIGS, validity=scenario.env["compound_validity"])
     per_lap = []
 
     def watch(phase, _state):
@@ -221,7 +227,7 @@ def test_golden_trace_identical(circuit):
     the mask snapped, and coercion stays the adapter's job after the extraction (F-16).
     What the engine owes is everything downstream of the executed decision.
     """
-    env = F1RaceEnv(circuit, ERA)
+    env = F1RaceEnv(circuit, ERA, configs_dir=PINNED_CONFIGS)
     env.reset(seed=SEED)
     state = env._state  # the fixture is the whole field, not the ego's observation
     rows = [_snapshot(state)]

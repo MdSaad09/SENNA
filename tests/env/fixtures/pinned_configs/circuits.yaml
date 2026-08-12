@@ -1,0 +1,101 @@
+# SENNA — per-event circuit facts (E-02). Hand-maintained, sourced; never generated.
+# h_max_mj is the FIA per-event recoverable-energy cap (AR-05: 8.5 MJ baseline,
+# ~5-9 MJ adjusted per event, extra reductions in some qualifying sessions).
+# race_laps is the scheduled race distance in laps (the published 2026 lap count; for a
+# circuit with no raced 2026 event it falls back to the 305 km — 260 km at Monaco —
+# distance rule over the lap length). F05 reads it as the episode horizon (5.5).
+# Every entry carries a source note and date; substitute a sourced per-event figure
+# as reporting surfaces it and rerun make synth — the code reads only this file.
+# One entry per ingested event (E-13: the index is data-driven; Madrid appears
+# with its first ingested session, September 2026).
+#
+# HARVEST CAP, 8.5 vs 7.0 — read this before changing any h_max_mj below.
+# The FIA's 20 Apr 2026 refinement (2026 Technical Regulations Issue 18, Art C5.2.10)
+# cut maximum permitted recharge from 8 MJ to 7 MJ, with a 5 MJ floor in qualifying and
+# +0.5 MJ under Manual Override (Art B7.2). Verified 26 Jul 2026. The 8.5 values below
+# are deliberately unchanged: the frozen headline triplet trained under them, its
+# manifest records the fingerprint of this file, and every reported number in
+# docs/results/F14-evaluation.md is measured under them. Editing a value here would
+# desync the served fingerprint from the frozen model and silently invalidate the
+# evaluation chapter (E-15), so the newer figure is exercised as an eval-only overlay
+# instead — configs/eval.yaml sensitivity.harvest_cap, reported in the F14 results doc.
+# That pass measures the FROZEN agent's robustness under a 7 MJ cap; it is not what a
+# model re-optimised for 7 MJ would do. Correcting these values for real means
+# re-running the whole chain (make synth -> train -> promote -> make explain), which is
+# a deliberate decision, not an edit (Saad, 26 Jul 2026, F14 plan decision 1).
+
+abu_dhabi_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 58   # sourced — scheduled race distance, 2026 calendar (Yas Marina)
+australian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 58   # sourced — scheduled race distance, 2026 calendar (Albert Park)
+austrian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 71   # sourced — scheduled race distance, 2026 calendar (Red Bull Ring)
+azerbaijan_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 51   # sourced — scheduled race distance, 2026 calendar (Baku)
+bahrain_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 57   # sourced — scheduled race distance, 2026 calendar (Sakhir)
+belgian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 44   # sourced — scheduled race distance, 2026 calendar (Spa-Francorchamps)
+british_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 52   # sourced — scheduled race distance, 2026 calendar (Silverstone)
+canadian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 70   # sourced — scheduled race distance, 2026 calendar (Circuit Gilles Villeneuve)
+chinese_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 56   # sourced — scheduled race distance, 2026 calendar (Shanghai)
+dutch_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 72   # sourced — scheduled race distance, 2026 calendar (Zandvoort)
+emilia_romagna_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 63   # sourced — scheduled race distance (Imola); un-raced in 2026, published historical count
+french_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 53   # sourced — scheduled race distance (Paul Ricard); un-raced in 2026, published historical count
+hungarian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 70   # sourced — scheduled race distance, 2026 calendar (Hungaroring)
+italian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 53   # sourced — scheduled race distance, 2026 calendar (Monza)
+japanese_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 53   # sourced — scheduled race distance, 2026 calendar (Suzuka)
+las_vegas_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 50   # sourced — scheduled race distance, 2026 calendar (Las Vegas Strip)
+mexico_city_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 71   # sourced — scheduled race distance, 2026 calendar (Autódromo Hermanos Rodríguez)
+miami_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 57   # sourced — scheduled race distance, 2026 calendar (Miami International Autodrome)
+monaco_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 78   # sourced — scheduled race distance, 2026 calendar (Monaco; the 260 km exception)
+qatar_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 57   # sourced — scheduled race distance, 2026 calendar (Lusail)
+saudi_arabian_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 50   # sourced — scheduled race distance, 2026 calendar (Jeddah Corniche)
+singapore_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 62   # sourced — scheduled race distance, 2026 calendar (Marina Bay)
+spanish_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 66   # sourced — scheduled race distance, 2026 calendar (Barcelona-Catalunya)
+são_paulo_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 71   # sourced — scheduled race distance, 2026 calendar (Interlagos)
+united_states_grand_prix:
+  h_max_mj: 8.5   # sourced AR-05 default — no event-specific FIA figure found, checked 2026-07-17
+  race_laps: 56   # sourced — scheduled race distance, 2026 calendar (Circuit of the Americas)

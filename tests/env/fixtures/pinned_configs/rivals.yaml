@@ -1,0 +1,81 @@
+# SENNA — rival archetypes (F06, E-06). Three readable rule sets over per-race parameter
+# draws. Each archetype pits, responds to a safety car and picks compounds by rules a race
+# engineer would recognise; the numbers below are the bands those rules draw from.
+#
+# Origins: every value here is stylised — an explicit modelling choice, not a fit. The
+# archetype characters and their bands are designed, and their policy-sensitivity is an
+# F08/F14 ablation question. Tracked to-do before F14's M1 headline (INDEX decisions log):
+# sanity-check these bands against the real ingested pit-lap distributions and refit to
+# `fitted` if they disagree — M1 is provisional until that passes.
+#
+# Train/test split (E-06): each parameter carries a `train` band and a disjoint `test`
+# band. The test band is reserved for evaluation only and is pushed FURTHER toward each
+# archetype's character — eval opponents are a slightly more extreme version of the ones
+# trained against. So the F14 test-band result measures ROBUSTNESS to unseen, harder
+# opponents, not in-distribution generalisation; to keep the two apart, F14 also runs the
+# fixed scripted baselines against the test band, isolating opponent difficulty from the
+# agent's own gap. Band disjointness is enforced at parse time (senna/env/rivals.py).
+#
+# Pit thresholds are fractions of a compound's fitted max_age_seen. On 2026 circuits the
+# transferred fits carry no max_age_seen, so the scenario falls back to obs.tyre_age_norm_laps
+# (40 laps); read a 2026 `pit_age_frac` of 0.6 as "box near 24 laps of tyre life".
+
+field:                              # rules shared by every archetype
+  vsc_response_scale: 0.5           # stylised — a VSC stop saves less than an SC stop (pit_loss_mult
+                                    # 0.65 vs 0.5, env.yaml), so a car reacts about half as readily (E-03)
+  sc_response_min_stint_frac: 0.35  # stylised — nobody bins a nearly-new set for a cheap stop; a car
+                                    # only answers a safety car past this fraction of its own pit trigger
+  green_stop_min_laps_left: 4       # stylised — no scheduled green stop inside the last 4 laps; only a
+                                    # failure or the two-compound backstop boxes a car that late
+  wet_crossover_jitter: 0.04        # stylised — per-car offset on the wet-crossover trigger so the field's
+                                    # inter/slick calls stagger instead of one memorable full-field pit
+                                    # train (E-06 spirit). Parse enforces it stays <= slick_max_wetness
+                                    # minus inter_band low (env.yaml compound_validity, 0.05), so the
+                                    # earliest slick-abandoner still lands inside the Intermediate band.
+
+archetypes:
+  undercutter:
+    story: >-
+      Boxes with life left in the set — buys track position with the undercut and accepts
+      an extra stop. Prefers the softer tyre and takes a cheap safety-car stop when it fits.
+    slick_preference: [SOFT, MEDIUM, HARD]  # stylised — pace now, stop again later
+    pit_age_frac:
+      train: [0.50, 0.70]           # stylised — boxes at half to two-thirds of tyre life
+      test: [0.38, 0.48]            # stylised — held out: an even earlier trigger (E-06)
+    sc_response_prob:
+      train: [0.45, 0.65]           # stylised — takes the cheap stop when it suits the plan
+      test: [0.66, 0.75]            # stylised — held out: keener still
+    pace_sigma_mult:
+      train: [0.95, 1.15]           # stylised — an attacking style is a scrappier, higher-variance one
+      test: [1.16, 1.25]            # stylised — held out band
+
+  tyre_saver:
+    story: >-
+      Makes the set last — one-stop bias, runs deep into tyre life and will not surrender
+      track position for a safety car. The metronome.
+    slick_preference: [HARD, MEDIUM, SOFT]  # stylised — durability first
+    pit_age_frac:
+      train: [0.80, 0.95]           # stylised — runs close to the fitted max age
+      test: [0.97, 1.05]            # stylised — held out: flirts with the cliff (the failure hazard
+                                    # engages only at max_age + cliff_age_margin_laps, env.yaml)
+    sc_response_prob:
+      train: [0.10, 0.30]           # stylised — track position first, mostly stays out
+      test: [0.02, 0.08]            # stylised — held out: nearly never answers
+    pace_sigma_mult:
+      train: [0.80, 0.95]           # stylised — consistency is the whole identity
+      test: [0.70, 0.78]            # stylised — held out band
+
+  opportunist:
+    story: >-
+      Reads the race, not the plan — mid-range stint lengths, pounces on any neutralisation.
+      The car that always seems to gain from a safety car.
+    slick_preference: [MEDIUM, HARD, SOFT]  # stylised — keeps both directions open
+    pit_age_frac:
+      train: [0.68, 0.82]           # stylised — between the other two by design
+      test: [0.55, 0.64]            # stylised — held out band
+    sc_response_prob:
+      train: [0.60, 0.85]           # stylised — the pounce is the character
+      test: [0.86, 0.95]            # stylised — held out: near-certain response
+    pace_sigma_mult:
+      train: [0.90, 1.10]           # stylised — ordinary variance
+      test: [1.11, 1.20]            # stylised — held out band

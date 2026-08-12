@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "6b6edb78d84e33bcc54b57ab708a4640aedf99f7a91d62e6e222d689c4f2b288",
-    "git_commit": "bccc8a85153129b444c0f76c00d4be4ecb6c52ac",
+    "config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
+    "git_commit": "d1ff2fe420d1b9eeae81d28a7e690b3697763c94",
     "model_versions": {
-      "headline": "senna-ppo-6b6edb78d84e-C-00835584"
+      "headline": "senna-ppo-5e3ddb15d584-C-01769472"
     },
     "scope": {
       "batteries": [
@@ -26,13 +26,13 @@
     "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
   },
   "payload": {
-    "attainable_ceiling": 0.9140851070639615,
-    "derate_share": 0.07963917525773195,
+    "attainable_ceiling": 0.9118670984024313,
+    "derate_share": 0.09661604246534945,
     "max_derate_share": 0.05,
     "met": false,
-    "n_green_laps": 27160,
+    "n_green_laps": 27128,
     "target": 0.9,
-    "utilisation": 0.6493427241063658,
-    "utilisation_of_attainable": 0.7103744707011502
+    "utilisation": 0.7038158109044172,
+    "utilisation_of_attainable": 0.7718403396037484
   }
 }

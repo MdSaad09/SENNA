@@ -22,6 +22,7 @@ STORE = config.REPO_ROOT / "docs/results/F14/store"
 COMMITTED_DOC = config.REPO_ROOT / "docs/results/F14-evaluation.md"
 HEADLINE_MANIFEST = config.REPO_ROOT / "models/headline/manifest.json"
 ERA2024_MANIFEST = config.REPO_ROOT / "models/era2024/manifest.json"
+FREEZE_RUNBOOK = config.REPO_ROOT / "docs/freeze.md"
 
 # these two fingerprint their own overlay inputs at run time (sensitivity.py) rather
 # than copying the training-time manifest hash, so they chain differently below
@@ -35,6 +36,21 @@ def test_report_reproduces_committed_doc(tmp_path):
     # scratch dir: the page's bytes must not depend on where the PNGs landed, or the
     # CI check could only pass by overwriting the committed figures
     assert page.encode() == COMMITTED_DOC.read_bytes()
+
+
+def test_the_runbook_pins_the_models_the_repo_actually_ships():
+    """docs/freeze.md names both model versions in the tag body, and `make verify` only
+    link-checked it. F18 repointed the runbook mid-branch, retrained afterwards, and left
+    it naming a generation that was then pruned from the ledger — a tag cut from that
+    runbook would have frozen v1.0.0 against artifacts committed nowhere."""
+    runbook = FREEZE_RUNBOOK.read_text()
+
+    for manifest_path in (HEADLINE_MANIFEST, ERA2024_MANIFEST):
+        version = json.loads(manifest_path.read_text())["model_version"]
+        assert version in runbook, (
+            f"docs/freeze.md does not name {version} from {manifest_path.name} — the "
+            "runbook would pin a model the repo does not ship"
+        )
 
 
 def test_freeze_chain_is_internally_consistent():

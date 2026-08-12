@@ -793,9 +793,16 @@ approximately with a residual of about (1 − 0.997) × 0.1 × position per lap.
 specification wins; the sensitivity runs are wired and were not run, which is stated
 rather than implied.
 
-**Outcome.** Three headline seeds scoring 6.415, 6.257 and 6.517 mean validation points;
-seed 331 promoted as `senna-ppo-6b6edb78d84e-C-00835584`. Full three-stage wall clock: four
-to eight minutes per seed.
+**Outcome.** Three headline seeds scoring 6.355, 6.295 and 6.542 mean validation points;
+seed 331 promoted as `senna-ppo-5e3ddb15d584-C-01769472`. Full three-stage wall clock: six
+to twelve minutes per seed, 25 minutes for the slate.
+
+The slate was trained twice during F18, on the same physics but under two different
+recorded fingerprints, and every seed returned an identical score at an identical step.
+So did all eight ablation arms and the era-matched fine-tune: eleven runs, two
+independent slates, agreement to the last digit of a float. That was not a designed
+experiment — the second slate exists only because a config edit moved the fingerprint —
+but it is the strongest determinism evidence the project has.
 
 ### 5.8 Ablations
 
@@ -889,10 +896,18 @@ green baseline.
 and the card builder reads the version back off disk from the manifest it just wrote. A
 retrain invalidates every card by construction.
 
-**Outcome.** Headline model: 99.70% top-1 agreement on held-out pit decisions, 99.08% on
-energy-mode decisions, mean rank correlation 0.687 across 500 cross-checked decisions with
-all 500 positive. 14,460 cards across 240 validation races. The era-matched model scores
-98.58% and 96.29% with 13,760 cards.
+**Outcome.** Headline model: 99.76% top-1 agreement on held-out pit decisions, 98.19% on
+energy-mode decisions, mean rank correlation 0.548 across 500 cross-checked decisions with
+all 500 positive and a minimum of 0.222. 14,460 cards across 240 validation races. The
+era-matched model scores 99.15% and 98.24% with 13,760 cards.
+
+Both surrogates were refitted after F18 and the two moved differently. The era-matched
+one improved everywhere. The headline one halved both KL divergences while giving up
+about nine tenths of a point on the mode head's top-1 and falling from 0.687 to 0.548 on
+the gradient cross-check — a surrogate closer to the policy's distribution that crosses
+the argmax boundary more often on near-ties, and a cross-check comparing against a
+different network's gradients. The claim that survives unchanged is that no sampled
+decision had the two views disagreeing about direction.
 
 ### 5.10 Serving
 
@@ -1076,23 +1091,41 @@ Two met, six missed across seven rows, three reported without a bar. Full number
 intervals and gaming notes are in `docs/results/F14-evaluation.md`, regenerated from the
 committed store.
 
-| Metric | Result | Target | Verdict |
-|---|---|---|---|
-| M1 paired position delta | **+2.083 places** over 480 pairs, CI [1.710, 2.475] | ≥ +1.0, CI excluding 0 | **met** |
-| M2 counterfactual vs actual | 4W/5L/1T, p = 1.000, mean −0.60 over 10 races | ≥ +1.0, sign test p < 0.05 | miss |
-| M3 oracle regret | median 33.09 s, mean 86.98 s over 480 races | report only | reported |
-| M4 energy utilisation | 0.649 of deployable, ceiling 0.914; derates 0.0796 | ≥ 0.90, derates ≤ 0.05 | miss |
-| M5 safety-car quality | precision 0.942, recall 0.308 over 374 windows | both ≥ 0.75 | miss |
-| M5 virtual safety car | precision undefined, recall 0.000 over 300 windows | both ≥ 0.75 | miss |
-| M6 pit-window accuracy | 0.228 of 457 stops within 3 laps of optimum | ≥ 0.72 | miss |
-| M7 strategy diversity | 0.226 nats over 24,000 races | report only | reported |
-| M8 sim-to-real | 0 of 4 circuits within KS 0.15, worst 0.946 | KS < 0.15 | miss |
-| M9 tyre failures | **37.29 per 100 races** (179 of 480) | < 2.0 | miss |
-| M10 regulatory legality | **0 coerced, 0 snapped** over 480 races | 0 by construction | **met** |
-| M11 luck share | **0.758** of finishing variance, CI [0.679, 0.820] | report only | reported |
+| Metric | Result | Previous (two-season physics) | Target | Verdict |
+|---|---|---|---|---|
+| M1 paired position delta | **+2.279 places** over 480 pairs, CI [1.913, 2.663] | +2.083, CI [1.710, 2.475] | ≥ +1.0, CI excluding 0 | **met** |
+| M2 counterfactual vs actual | 1W/8L/1T, p = 0.039, mean −3.66 over 10 races | 4W/5L/1T, p = 1.000, mean −0.60 | ≥ +1.0, sign test p < 0.05 | miss |
+| M3 oracle regret | median 30.48 s, mean 71.78 s over 480 races | median 33.09 s, mean 86.98 s | report only | reported |
+| M4 energy utilisation | 0.704 of deployable, ceiling 0.912; derates 0.097 | 0.649, ceiling 0.914; derates 0.080 | ≥ 0.90, derates ≤ 0.05 | miss |
+| M5 safety-car quality | precision 0.820, recall 0.401 over 377 windows | precision 0.942, recall 0.308 | both ≥ 0.75 | miss |
+| M5 virtual safety car | precision 1.000, recall 0.085 over 304 windows | precision undefined, recall 0.000 | both ≥ 0.75 | miss |
+| M6 pit-window accuracy | 0.213 of 517 stops within 3 laps of optimum | 0.228 of 457 stops | ≥ 0.72 | miss |
+| M7 strategy diversity | 0.653 nats over 24 circuits | 0.226 nats | report only | reported |
+| M8 sim-to-real | 0 of 5 circuits within KS 0.15, worst 0.931 | 0 of 4, worst 0.946 | KS < 0.15 | miss |
+| M9 tyre failures | **37.92 per 100 races** (182 of 480) | 37.29 (179 of 480) | < 2.0 | miss |
+| M10 regulatory legality | **0 coerced, 0 snapped** over 480 races | 0, 0 | 0 by construction | **met** |
+| M11 luck share | **0.786** of finishing variance, CI [0.704, 0.861] | 0.758, CI [0.679, 0.820] | report only | reported |
 
 A suite where every metric passes is a suite whose bars were set after the run. These
 were set before.
+
+**What the refit did to this table (F18, 11 August 2026).** Every row above was
+re-measured on constants fitted over the full 2022–2025 era rather than two seasons of
+it. The headline improved: M1 rose about 0.2 places with a tighter interval, oracle
+regret fell at both the median and the mean, and the agent finally pits under a virtual
+safety car — M5's VSC recall moved off 0.000 to 0.085 at perfect precision, ten calls
+and no false positives, against a previous chapter that had to report the agent never
+once doing it across 311 windows.
+
+One row got worse in a way that matters more than the improvements. M2 was a null
+result at 4W/5L/1T and p = 1.000; it is now 1W/8L/1T at p = 0.039, mean −3.66 places.
+The sign test has become significant in the wrong direction: against replayed real
+strategies on the era-matched model, this agent now loses reliably rather than
+inconclusively. Better physics turned an absence of evidence into evidence of a gap,
+which is the more useful result and the one to lead with when discussing limitations.
+It should be read with the 25 snapped stops the replay baseline needed and with M8:
+the counterfactual is priced inside a simulator whose sim-to-real error is still far
+outside target.
 
 ### 6.2 What the misses mean
 

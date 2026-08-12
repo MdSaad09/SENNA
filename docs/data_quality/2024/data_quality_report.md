@@ -74,10 +74,11 @@ inputs.
 
 | Rule | Rows in | Dropped | Flagged | Kept |
 |---|---|---|---|---|
-| is_accurate | 29023 | 3259 | 0 | 25764 |
-| in_out_laps | 29023 | 1721 | 0 | 27302 |
-| is_green | 29023 | 0 | 2143 | 29023 |
-| lap_time_nat | 29023 | 0 | 386 | 29023 |
+| is_accurate | 29022 | 3258 | 0 | 25764 |
+| in_out_laps | 29022 | 1721 | 0 | 27301 |
+| is_green | 29022 | 0 | 2142 | 29022 |
+| lap_time_nat | 29022 | 0 | 367 | 29022 |
+| no_tyre_age | 29022 | 12 | 0 | 29010 |
 
 ## Channels missing per session
 
@@ -85,6 +86,6 @@ inputs.
 
 ## Generation metadata
 
-- generated_at: 2026-07-15T15:42:44+00:00
+- generated_at: 2026-08-11T18:41:50+00:00
 - season: 2024
 - sessions covered: 60

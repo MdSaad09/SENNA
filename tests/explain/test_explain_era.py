@@ -9,6 +9,8 @@ The file is not named test_era.py: tests/train/test_era.py exists, and without
 __init__.py files pytest imports test modules by basename.
 """
 
+from pathlib import Path
+
 import pytest
 
 from senna import config
@@ -33,9 +35,10 @@ def test_explain_era_threading():
 
 def test_explain_narrows_to_native_era_fits():
     banks = load_banks()
-    # the trap is real: the Stage C bank carries Canada (configs/seeds.yaml), which
-    # has no native 2024 fits — build_scenario would silently serve 2026 constants
-    # under an era-2024 label (F-24)
+    # the Stage C bank is wider than the era-matched fine-tune's circuit list, so the
+    # narrowing has real work to do. Canada is the case in point: it rides the bank
+    # (configs/seeds.yaml) and is not an era_finetune circuit, so a 2024 run must not
+    # card it (F-24)
     assert "canadian_grand_prix" in banks.stage_c_validation
 
     narrowed = era_circuits(banks, "2024")
@@ -44,8 +47,11 @@ def test_explain_narrows_to_native_era_fits():
     assert narrowed == sorted(set(banks.stage_c_validation) & native)
     for circuit in narrowed:
         require_native_era_fits(circuit, "2024")  # the guard agrees, not just the list
+    # the guard's refusal path runs against a fixture rather than a real circuit: the
+    # F18 refit gave every circuit native 2024 fits, so no real slug reaches it any more
+    gaps = Path(__file__).resolve().parents[1] / "eval" / "fixtures" / "era_fit_gaps"
     with pytest.raises(EraFitError):
-        require_native_era_fits("canadian_grand_prix", "2024")
+        require_native_era_fits("no_2024_joint_grand_prix", "2024", configs_dir=gaps)
 
     # 2026 keeps the whole bank: the 2026 scenarios come from the transform chain,
     # not physics_params joint-pace rows, so the 2024 guard has nothing to say there

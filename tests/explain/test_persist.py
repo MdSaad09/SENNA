@@ -20,8 +20,8 @@ pytestmark = pytest.mark.skipif(
     reason="needs Postgres; set DATABASE_URL (CI provides a service container)",
 )
 
-MODEL_VERSION = "senna-ppo-6b6edb78d84e-C-00835584"  # the promoted headline triplet (F08)
-ENV_CONFIG_HASH = "6b6edb78d84e" * 5 + "6b6e"  # any 64-hex stand-in; persist never parses it
+MODEL_VERSION = "senna-ppo-e823d1b5a2ea-C-01769472"  # the promoted headline triplet (F08)
+ENV_CONFIG_HASH = "e823d1b5a2ea" * 5 + "e823"  # any 64-hex stand-in; persist never parses it
 
 
 def _db_url() -> str:

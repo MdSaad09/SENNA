@@ -17,7 +17,7 @@ import pytest
 from senna import config
 from senna.serve.loader import UnknownModelVersionError, resolve_version
 
-HEADLINE_VERSION = "senna-ppo-6b6edb78d84e-C-00835584"  # the frozen 2026 headline
+HEADLINE_VERSION = "senna-ppo-e823d1b5a2ea-C-01769472"  # the frozen 2026 headline
 ERA2024_VERSION = "senna-ppo-1187ab0c9d4e-C-00204800"   # a stand-in era-matched triplet
 STRANGER_VERSION = "senna-ppo-000000000000-A-00000000"
 

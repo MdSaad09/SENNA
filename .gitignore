@@ -12,11 +12,12 @@ build/
 .env.*
 !.env.example
 wandb/
-# models/ and data/circuits/ stay ignored except the frozen serving artifacts —
-# Railway builds the worker image from the repo, so the baked triplet, its surrogate
-# and the built ribbons must be committed (F-26; decision Q1, 22 Jul 2026). Training
-# and ablation run dirs never come in. `dir/*` + negations, not `dir/`: git will not
-# descend into a fully ignored directory to honour a re-include.
+# models/ stays ignored except the frozen serving artifacts — Railway builds the worker
+# image from the repo, so the baked triplet and its surrogate must be committed (F-26;
+# decision Q1, 22 Jul 2026). Training and ablation run dirs never come in. `dir/*` +
+# negations, not `dir/`: git will not descend into a fully ignored directory to honour a
+# re-include. data/circuits/ was in this sentence until F18 and never belonged in it —
+# the ribbon library has been committed whole since the decision below.
 models/*
 # the run ledger is the ablation table's machine-readable twin (F08) — a clean clone
 # without it has no record of what was trained, so it is committed (F15)
@@ -25,13 +26,15 @@ models/*
 !models/era2024
 !models/explain
 models/explain/*
-!models/explain/senna-ppo-6b6edb78d84e-C-00835584
-!models/explain/senna-ppo-db031aead155-C-02211840
+# by pattern, not by checkpoint name: make explain writes to a directory named after the
+# model version, so a refit or retrain produces a new name. Pinning the old names meant a
+# regenerated surrogate landed silently ignored, and a clean clone could then not serve
+# (serve/loader.py raises on the missing artifact). Nothing failed — the files just never
+# reached git. F18 found it; the wildcard is what stops it recurring.
+!models/explain/senna-ppo-*
 # the two evaluation-only arrays are reproducible from make explain and serve nothing
-models/explain/senna-ppo-6b6edb78d84e-C-00835584/holdout.npz
-models/explain/senna-ppo-6b6edb78d84e-C-00835584/crosscheck.npz
-models/explain/senna-ppo-db031aead155-C-02211840/holdout.npz
-models/explain/senna-ppo-db031aead155-C-02211840/crosscheck.npz
+models/explain/*/holdout.npz
+models/explain/*/crosscheck.npz
 data/cache/
 # the frozen A-09 dump rides the tagged GitHub release, never git history; its
 # committed half is data/snapshot/MANIFEST.md (make snapshot writes both)

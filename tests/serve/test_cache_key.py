@@ -10,8 +10,8 @@ from api.schemas import SimulationCreate
 from senna import config
 from senna.serve.cache import sim_cache_key, ttl_seconds
 
-MODEL_VERSION = "senna-ppo-6b6edb78d84e-C-00835584"  # the promoted headline triplet (F08)
-ENV_HASH = "6b6edb78d84e" * 5 + "6b6e"  # any 64-hex stand-in; the key never parses it
+MODEL_VERSION = "senna-ppo-e823d1b5a2ea-C-01769472"  # the promoted headline triplet (F08)
+ENV_HASH = "e823d1b5a2ea" * 5 + "e823"  # any 64-hex stand-in; the key never parses it
 
 _DIGEST = re.compile(r"^[0-9a-f]{16}$")
 

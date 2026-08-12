@@ -3,6 +3,26 @@
 # fitters take as an argument gets its named origin. null means "fit me": code
 # that reads a null must raise, never guess.
 
+# The write gates. Both default true; setting either false reproduces the pre-F18
+# battery, which is how the defect was demonstrated rather than argued. Leave them true.
+gates:
+  require_full_season_coverage: true  # operational — switches both E-12 coverage checks:
+                                      # a declared season absent from the store, and a
+                                      # season the store holds that reaches no pace fit.
+                                      # The second is the one F18 was built for. The
+                                      # committed physics was NOT written from a partial
+                                      # store — its own watermark said "seasons 2022-2026"
+                                      # and every season was there — but 2022 and 2023
+                                      # reached hazards, pit loss and energy and reached
+                                      # no joint pace fit, so base pace came from 1958
+                                      # laps of an available 3705 under a watermark
+                                      # claiming all four (A-09)
+  require_finite_params: true         # operational — refuse NaN and Inf as well as null
+                                      # in a fitted value. validate_complete tested
+                                      # `is None`, and a NaN is not None, so a failed fit
+                                      # could render the bare literal `nan` into the yaml
+                                      # for F05 to load back as a poisoning float (E-09)
+
 fuel:
   sc_burn_factor: 0.6        # stylised — SC/VSC laps burn less than green ones;
                              # the exact ratio is a visual choice, sensitivity

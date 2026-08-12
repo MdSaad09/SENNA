@@ -76,7 +76,12 @@ def test_dry_enumeration_unchanged_by_the_wet_extension(scenario, green_trace):
 
     plan, cost_s = solo_reference(scenario, cfg=_oracle_cfg(max_stops=1, top_k=3))
     assert plan == PitPlan(stops=((14, "SOFT"),))
-    assert cost_s == pytest.approx(5555.697989252283, rel=1e-9)
+    # a physics-derived pin, not a physics claim: what this test is about is that the
+    # wet extension leaves dry enumeration alone, and the tight tolerance catches a
+    # silent change in the search. The number tracks configs/physics_params.yaml and is
+    # expected to move on a refit — F18 moved it from 5555.697989252283 when the fits
+    # went from two seasons to four.
+    assert cost_s == pytest.approx(5585.666133009284, rel=1e-9)
 
 
 @pytest.mark.slow

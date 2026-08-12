@@ -4,21 +4,45 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F18 — full-era refit and revalidation. Planned 11 Aug 2026; next step
-`/ship F18`. **F17 is blocked behind it:** `/ship F17` was aborted on 11 Aug when the
-fit-scope defect below surfaced, because driver effects must come from the same regression
-that produces the simulator's own constants. F18 lands all-or-nothing — `make verify` runs
-both freeze-chain tests in CI, so there is no partial-landing path.
-**Data-integrity defect found 11 Aug 2026 (Saad's call: refit on the full era):**
-`configs/physics_params.yaml` was fitted on seasons 2024–2025 only; the frozen A-09
-snapshot holds 2022–2025 and `configs/ingest.yaml` declares all of them. Reproduced
-exactly at Bahrain era 2024 — committed `n_laps=1958, t0_s=98.597, sigma_driver_s=0.5653`
-matches a 2024+2025 fit to every digit, while the full era gives `3705 / 99.465 / 0.6571`.
-So `make fit` from the frozen snapshot does not reproduce the shipped physics: the
-reproducibility pack does not round-trip. F18 refits on the full era, regenerates the
-whole chain, and adds the coverage gate that prevents a recurrence. Every downstream
-number moves, including F14's headline.
-**Next up:** after F18 comes F17 driver identity, then physics uncertainty, explanation
+**Active feature:** none. F18 landed 12 Aug 2026; next step `/plan-feature F17` in a fresh
+session. **F17 is unblocked:** it was aborted on 11 Aug because driver effects must come
+from the same regression that produces the simulator's own constants, and now they do —
+`t0_s` and `sigma_driver_s` are fitted on all four era seasons.
+**Data-integrity defect found 11 Aug 2026, FIXED by F18 (Saad's call: refit on the full era):**
+`configs/physics_params.yaml` was fitted with only seasons 2024–2025 reaching the pace
+fits. Reproduced exactly at Bahrain era 2024 — committed `n_laps=1958, t0_s=98.597,
+sigma_driver_s=0.5653` matches a 2024+2025 fit to every digit, while the full era gives
+`3705 / 99.465 / 0.6571`. So `make fit` from the frozen snapshot did not reproduce the
+shipped physics: the reproducibility pack did not round-trip.
+
+**Corrected during the F18 build:** the first diagnosis said the 2022 and 2023 seasons had
+not been ingested. They had. The pre-refit file's own watermark reads `seasons 2022-2026,
+round 6` and it carries a `hazards` block for the French GP, raced only in 2022, with race
+counts identical to the post-refit file. Every declared season was in the store; 2022 and
+2023 reached hazards, pit loss and energy and reached no joint pace fit at all. The scope
+was not unrecorded — it was recorded wrongly, which is the sharper finding. A season-level
+gate would have passed that run silently, so F18 ships `assert_pace_season_coverage` at
+the layer the defect happened, and the guard that actually failed on main is the
+byte-identity round-trip test.
+
+**What the refit changed, read out of the fit diff as the spec requires.** E-10
+identification is **unchanged**: `canadian_grand_prix/2026` is the only identified
+circuit-era before and after, so era 2024 still borrows 2026's pooled mass sensitivity and
+the wider data did not resolve the fuel/evolution confound. T5 transfer is **unchanged in
+kind**: 53 borrowed curves became 54, and no compound stopped needing the cluster
+transfer. Both contradict the spec's expectation ("fewer circuits should fall back") and
+are reported rather than dropped. What the wider data did buy is coverage: seven degradation
+curves that did not exist before (Azerbaijan SOFT, Canada's full set, France HARD and
+MEDIUM — circuits raced only in 2022–23), native curves 85 → 91, and circuits with native
+era-2024 fits 23 → 25.
+
+**Two physicality guards, found by refitting.** Austria's fuel VIF fell 131.7 → 22.5 on
+the wider data and it became separable — returning a *negative* mass sensitivity. Unguarded
+it would have become era 2024's only identified circuit and stamped −0.007421 onto every
+other circuit in the era, inverting the 2026 mass transform for two thirds of
+`transforms.yaml`. Identification now requires a positive estimate as well as a separable
+design, and `pool_k_m` refuses a non-positive pool.
+**Next up:** F17 driver identity, then physics uncertainty, explanation
 language, F20 the single observation change (batched, because it invalidates the frozen
 triplet). F21 look-ahead and F22 multi-agent are stretch, in that order. The roadmap
 comes from Saad's sixteen-point architectural review (7 Aug 2026) and extends master
@@ -51,8 +75,8 @@ submission mechanism (bundle vs repo access) decides where the snapshot travels.
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
-| F17 | Driver identity | F02, F16, **F18** | Planned 9 Aug 2026 — blocked on F18 | feature/F17-driver-identity | — |
-| F18 | Full-era refit and revalidation | F02, F16 | Planned 11 Aug 2026 | feature/F18-full-era-refit | — |
+| F17 | Driver identity | F02, F16, F18 | Planned 9 Aug 2026 — unblocked | feature/F17-driver-identity | — |
+| F18 | Full-era refit and revalidation | F02, F16 | Done 12 Aug 2026 | feature/F18-full-era-refit | [F18](docs/learn/F18-full-era-refit.md) |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
@@ -89,17 +113,23 @@ the work — resume with `claude --continue`, or start fresh and say
   mask slicks outside scenario.available_compounds. Touches the F05 mask contract
   (F-16), so it opens F08's plan rather than landing as a hotfix. F07's own gates are
   unaffected (Stage A runs Monza solo; the heuristic now shops fitted compounds only).
-- **F08 headline model (19 Jul 2026):** `senna-ppo-6b6edb78d84e-C-00835584` (seed 331,
-  step 835,584, 6.517 validation points) promoted to `models/headline/` — the frozen
-  checkpoint F09 explains and F10 serves. Evidence: docs/results/F08-ablations.md;
-  ledger models/runs.json. W&B runs are offline pending an account.
-- **F09 fidelity badge (21 Jul 2026):** the surrogate that explains the headline model
-  agrees with it on **99.70%** of held-out pit decisions and **99.08%** of energy-mode
-  decisions, gate 0.90 (spec 5.8.2). Gradient cross-check on the true network: mean
-  Spearman 0.687 over 500 decisions, all positive. 14,460 cards across the 240
-  validation races sit in `agent_decisions`. Evidence: docs/results/F09-explainability.md.
-  A retrain invalidates all of it by construction (E-15) — `make explain` must re-run
-  before F10 serves a new checkpoint.
+- **F08 headline model (11 Aug 2026, F18 refit):** `senna-ppo-5e3ddb15d584-C-01769472`
+  (seed 331, step 1,769,472, 6.542 validation points) promoted to `models/headline/` —
+  the frozen checkpoint F09 explains and F10 serves. Era-matched:
+  `senna-ppo-39cabd466e03-C-03538944` (5.550 on the 2024 banks). Superseded:
+  `senna-ppo-6b6edb78d84e-C-00835584` at 6.517, and `senna-ppo-db031aead155-C-02211840`.
+  Evidence: docs/results/F08-ablations.md; ledger models/runs.json. W&B offline.
+  **The slate was trained twice** under two fingerprints and every one of the eleven
+  runs came back identical to the last float digit — the project's strongest
+  determinism evidence, and unplanned.
+- **F09 fidelity badge (11 Aug 2026, re-measured):** the surrogate explaining the
+  headline agrees on **99.76%** of held-out pit decisions and **98.19%** of energy-mode
+  decisions, gate 0.90 (spec 5.8.2); both mean KLs roughly halved. Gradient cross-check:
+  mean Spearman **0.548** over 500 decisions, all positive, minimum 0.222. 14,460 cards
+  across 240 validation races. The era-matched surrogate improved on every measure
+  (99.15% / 98.24%). Previous badge: 99.70% / 99.08%, cross-check 0.687. Evidence:
+  docs/results/F09-explainability.md. A retrain invalidates all of it by construction
+  (E-15) — `make explain` must re-run before F10 serves a new checkpoint.
 - **Railway deploy deferred (Saad, 22 Jul 2026):** 5.11.1's public deploy is not
   executed. The dissertation deliverable is a reproducible codebase plus the
   presentation video, so `docker compose up --build` is the supported target — a
@@ -126,22 +156,36 @@ the work — resume with `claude --continue`, or start fresh and say
   The assumption stands as written ("about 70 kg, energy-flow limited"); next fits
   session may lift the grade-C flag per the register's close-out rule.
 
-- **F14 era-matched fine-tune (26 Jul 2026):** `senna-ppo-db031aead155-C-02211840`
+- **F14 era-matched fine-tune (11 Aug 2026, refit):** `senna-ppo-39cabd466e03-C-03538944`
   (seed 331, warm-started from the headline, 2M Stage C steps on the 2024 constants)
-  promoted to `models/era2024/`. On identical 2024 validation banks it scores **6.336
-  mean points against the frozen 2026 headline's 3.802** — the F-24 regulation confound
-  measured: a 2026-physics agent scored on 2024 races loses ~2.5 points to the car, not
-  to its strategy. The serving flip is wired but still reports `pending-F14` because the
-  2024 surrogate has not been fitted; `make explain` against that triplet clears it
-  (Saad's decision 3 named the flip the designated cut).
-- **F14 headline results (26 Jul 2026):** M1 **+2.08 places** over 480 paired seeds,
-  CI [1.71, 2.48] — met. M10 clean over 480 races. Missed: M2 (-0.60, sign test 4W/5L/1T,
-  p=1.0), M4 (0.649 against a 0.914 attainable ceiling), M5 (SC precision 0.942 but recall
-  0.308; **VSC recall 0.000 — the agent never once pits under a virtual safety car across
-  311 windows**), M6 (0.228), M8 (0/4 circuits, the F03 transform miss), M9 (**37.3 tyre
-  failures per 100 races**, mean stint 29.4 laps, max 76). M11 luck share **0.758**
-  CI [0.68, 0.82] at a mean head entropy of 0.605 nats. Read M1 with M9: the agent buys
-  track position by over-running tyres. Evidence: docs/results/F14-evaluation.md.
+  promoted to `models/era2024/`, scoring **5.550** mean points on the 2024 validation
+  banks. It measures the F-24 regulation confound: a 2026-physics agent scored on 2024
+  races loses points to the car, not to its strategy. Superseded:
+  `senna-ppo-db031aead155-C-02211840` at 6.336 against the old headline's 3.802 on the
+  two-season physics — the pair moves together, so the gap is the quantity to quote, not
+  either figure alone. Its surrogate is now fitted and committed
+  (`models/explain/senna-ppo-39cabd466e03-C-03538944/`), so the `pending-F14` note the
+  serving flip used to carry no longer applies (Saad's decision 3 named the flip the
+  designated cut).
+- **F14 headline results (11 Aug 2026, re-measured on the full-era physics):** M1
+  **+2.279 places** over 480 paired seeds, CI [1.913, 2.663] — met, and better than the
+  two-season result. M10 clean over 480 races. M3 regret fell (median 33.09 → 30.48 s,
+  mean 86.98 → 71.78 s). Missed: M2, M4 (0.704 against a 0.912 ceiling, derates 0.097),
+  M5, M6 (0.213 of 517 stops), M8 (0/5 circuits), M9 (**37.92 tyre failures per 100
+  races**). M7 diversity nearly tripled, 0.226 → 0.653 nats. M11 luck share **0.786**
+  CI [0.70, 0.86]. Read M1 with M9: the agent still buys track position by over-running
+  tyres, and the refit did not touch that. Evidence: docs/results/F14-evaluation.md.
+  Previous: M1 +2.083 CI [1.71, 2.48], M4 0.649, M6 0.228, M9 37.29, M11 0.758.
+- **Two F14 rows moved in ways worth arguing about (11 Aug 2026).** **M2 got worse and
+  became significant:** 4W/5L/1T at p=1.000 (mean −0.60) became **1W/8L/1T at p=0.039**
+  (mean −3.66). The pre-registered sign test now rejects in the adverse direction, so
+  the old reading — "competitive with elite humans, not better" — is no longer
+  supportable. Better physics turned an inconclusive wash into a measured gap, which is
+  the more useful finding and belongs in the limitations section. Read it with the 25
+  snapped stops the replay baseline needed and with M8. **M5's VSC blindness partly
+  lifted:** recall 0.000 → **0.085 at precision 1.000** — ten calls, none wrong, where
+  the old chapter reported zero across 311 windows. SC precision fell 0.942 → 0.820 as
+  recall rose 0.308 → 0.401.
 - **DB-wipe guard (F14, 28 Jul 2026):** `senna/data/db.py::require_disposable` refuses to
   drop tables on any database not named `*_test`, resolving the name the way the driver
   does (a `?database=` query parameter overrides the URL path, which was a live bypass).

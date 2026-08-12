@@ -43,6 +43,7 @@ inputs.
 | in_out_laps | 24882 | 1656 | 0 | 23226 |
 | is_green | 24882 | 0 | 3549 | 24882 |
 | lap_time_nat | 24882 | 0 | 588 | 24882 |
+| no_tyre_age | 24882 | 520 | 0 | 24362 |
 
 ## Channels missing per session
 
@@ -50,6 +51,6 @@ inputs.
 
 ## Generation metadata
 
-- generated_at: 2026-07-15T15:42:44+00:00
+- generated_at: 2026-08-11T18:41:50+00:00
 - season: 2022
 - sessions covered: 25

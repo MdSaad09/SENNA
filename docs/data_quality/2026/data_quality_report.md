@@ -30,6 +30,10 @@
 | British Grand Prix | Sprint | fastf1 | loaded |  |
 | British Grand Prix | Race | openf1 | loaded |  |
 | British Grand Prix | Sprint | openf1 | loaded |  |
+| Belgian Grand Prix | Race | fastf1 | loaded |  |
+| Belgian Grand Prix | Race | openf1 | loaded |  |
+| Hungarian Grand Prix | Race | fastf1 | loaded |  |
+| Hungarian Grand Prix | Race | openf1 | loaded |  |
 
 ## Rows kept vs dropped per rule
 
@@ -40,10 +44,11 @@ inputs.
 
 | Rule | Rows in | Dropped | Flagged | Kept |
 |---|---|---|---|---|
-| is_accurate | 12064 | 1898 | 0 | 10166 |
-| in_out_laps | 12064 | 778 | 0 | 11286 |
-| is_green | 12064 | 0 | 1663 | 12064 |
-| lap_time_nat | 12064 | 0 | 218 | 12064 |
+| is_accurate | 14367 | 2203 | 0 | 12164 |
+| in_out_laps | 14367 | 927 | 0 | 13440 |
+| is_green | 14367 | 0 | 1911 | 14367 |
+| lap_time_nat | 14367 | 0 | 304 | 14367 |
+| no_tyre_age | 14367 | 46 | 0 | 14321 |
 
 ## Channels missing per session
 
@@ -51,6 +56,6 @@ inputs.
 
 ## Generation metadata
 
-- generated_at: 2026-07-15T15:42:44+00:00
+- generated_at: 2026-08-11T18:41:50+00:00
 - season: 2026
-- sessions covered: 26
+- sessions covered: 30

@@ -49,9 +49,11 @@ synth:
 synth-figures:
 	python -m senna.physics.synth.validate
 
-# build one GLTF ribbon + metadata per ingested circuit into data/circuits/
-# (gitignored). Reads Postgres for the dry-session pick and the FastF1 cache for
-# geometry — local only, never CI (needs both). Regenerate after a fresh ingest.
+# build one GLTF ribbon + metadata per ingested circuit into data/circuits/, which is
+# committed whole (INDEX decision, 22 Jul 2026). Reads Postgres for the dry-session pick
+# and the FastF1 cache for geometry — local only, never CI (needs both). Regenerate after
+# a fresh ingest, not after a refit: geometry is a function of track data, and F18 skipped
+# this target for that reason — 41 tracked files of binary churn that means nothing.
 circuits:
 	python -m senna.circuits.build
 
