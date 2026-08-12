@@ -1,9 +1,9 @@
 {
   "envelope": {
     "config_hash": "26a436fece3dc4a094b60d82bfecc1e41ff3a8721f44167efe24f9e199183d1a",
-    "git_commit": "e37d316de3eada8e294d58803e2000d210c0b1b8",
+    "git_commit": "e5c48f9e2475078e5b314afcf76fffa4b6ea05f2",
     "model_versions": {
-      "headline": "senna-ppo-6b6edb78d84e-C-00835584"
+      "headline": "senna-ppo-70098e9d3425-C-01769472"
     },
     "scope": {
       "circuits": 24,
@@ -16,32 +16,32 @@
   "payload": {
     "arms": {
       "refined": {
-        "attainable_ceiling": 0.8191850834512131,
-        "derate_share": 0.18154894121131349,
-        "failures_per_100": 35.833333333333336,
+        "attainable_ceiling": 0.8210232930137277,
+        "derate_share": 0.12926284437825764,
+        "failures_per_100": 32.5,
         "h_max_mj": 7.0,
-        "mean_position": 4.941666666666666,
+        "mean_position": 4.45,
         "n_races": 120,
-        "utilisation": 0.6272091942600297
+        "utilisation": 0.646782057202864
       },
       "trained": {
-        "attainable_ceiling": 0.9140838481250764,
-        "derate_share": 0.07769423558897243,
-        "failures_per_100": 35.0,
+        "attainable_ceiling": 0.9119459983336186,
+        "derate_share": 0.09143535698382069,
+        "failures_per_100": 31.666666666666668,
         "h_max_mj": 8.5,
-        "mean_position": 4.808333333333334,
+        "mean_position": 4.641666666666667,
         "n_races": 120,
-        "utilisation": 0.6480980447510789
+        "utilisation": 0.6968199339704719
       }
     },
     "delta": {
-      "derate_share": 0.10385470562234106,
-      "failures_per_100": 0.8333333333333357,
-      "mean_position": 0.13333333333333286,
-      "utilisation": -0.02088885049104916
+      "derate_share": 0.03782748739443695,
+      "failures_per_100": 0.8333333333333321,
+      "mean_position": -0.19166666666666643,
+      "utilisation": -0.05003787676760796
     },
     "excluded_races": [],
-    "model_version": "senna-ppo-6b6edb78d84e-C-00835584",
+    "model_version": "senna-ppo-70098e9d3425-C-01769472",
     "n_circuits": 24,
     "reading": "the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under",
     "refined_h_max_mj": 7.0,

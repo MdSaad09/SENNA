@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "6b6edb78d84e33bcc54b57ab708a4640aedf99f7a91d62e6e222d689c4f2b288",
-    "git_commit": "bccc8a85153129b444c0f76c00d4be4ecb6c52ac",
+    "config_hash": "70098e9d34255e3ba471a556d36d616b08a384dd0d9e05a092bb529c6b3fb688",
+    "git_commit": "e5c48f9e2475078e5b314afcf76fffa4b6ea05f2",
     "model_versions": {
-      "headline": "senna-ppo-6b6edb78d84e-C-00835584"
+      "headline": "senna-ppo-70098e9d3425-C-01769472"
     },
     "scope": {
       "batteries": [
@@ -26,279 +26,331 @@
     "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
   },
   "payload": {
-    "mean_entropy_nats": 0.2257260603803621,
+    "mean_entropy_nats": 0.6529863954753249,
     "per_circuit": {
       "abu_dhabi_grand_prix": {
-        "entropy_nats": 0.18752898109749944,
+        "entropy_nats": 0.05188693012736842,
         "histogram": {
-          "1xINTERMEDIATE": 4,
-          "1xSOFT": 967,
-          "1xWET": 4,
-          "2xINTERMEDIATE": 7,
-          "2xWET": 17,
-          "3xWET": 1
+          "1xSOFT": 992,
+          "2xINTERMEDIATE": 3,
+          "2xWET": 5
         },
         "n_races": 1000
       },
       "australian_grand_prix": {
-        "entropy_nats": 0.007907255112232087,
+        "entropy_nats": 0.6651895511017668,
         "histogram": {
-          "1xINTERMEDIATE": 1,
-          "1xSOFT": 999
+          "1xSOFT": 779,
+          "2xINTERMEDIATE": 16,
+          "2xSOFT": 187,
+          "3xINTERMEDIATE": 7,
+          "3xSOFT": 9,
+          "3xWET": 1,
+          "4xSOFT": 1
         },
         "n_races": 1000
       },
       "austrian_grand_prix": {
-        "entropy_nats": 0.13731626815862105,
+        "entropy_nats": 0.6649041634258719,
         "histogram": {
-          "1xINTERMEDIATE": 4,
-          "1xSOFT": 978,
-          "1xWET": 1,
-          "2xINTERMEDIATE": 9,
-          "2xWET": 4,
-          "3xWET": 4
+          "1xSOFT": 795,
+          "2xINTERMEDIATE": 30,
+          "2xSOFT": 158,
+          "3xINTERMEDIATE": 7,
+          "3xSOFT": 8,
+          "4xINTERMEDIATE": 2
         },
         "n_races": 1000
       },
       "azerbaijan_grand_prix": {
-        "entropy_nats": 1.317117365745456,
+        "entropy_nats": 0.3304995418274096,
         "histogram": {
-          "0xnone": 1,
-          "1xHARD": 285,
-          "1xINTERMEDIATE": 113,
-          "1xWET": 24,
-          "2xHARD": 501,
-          "2xWET": 49,
-          "3xHARD": 19,
-          "3xWET": 1,
-          "4xHARD": 5,
-          "5xHARD": 1,
-          "8xHARD": 1
+          "1xSOFT": 916,
+          "1xWET": 3,
+          "2xINTERMEDIATE": 7,
+          "2xSOFT": 73,
+          "2xWET": 1
         },
         "n_races": 1000
       },
       "bahrain_grand_prix": {
-        "entropy_nats": 0.19459457142031067,
+        "entropy_nats": 0.36644552453779733,
         "histogram": {
-          "1xINTERMEDIATE": 2,
-          "1xSOFT": 965,
-          "2xINTERMEDIATE": 9,
-          "2xWET": 15,
-          "3xWET": 9
+          "1xINTERMEDIATE": 1,
+          "1xSOFT": 913,
+          "1xWET": 3,
+          "2xINTERMEDIATE": 4,
+          "2xSOFT": 69,
+          "2xWET": 8,
+          "3xINTERMEDIATE": 1,
+          "3xWET": 1
         },
         "n_races": 1000
       },
       "belgian_grand_prix": {
-        "entropy_nats": 0.2654838253007749,
+        "entropy_nats": 0.5743819368562385,
         "histogram": {
-          "1xINTERMEDIATE": 4,
-          "1xSOFT": 949,
-          "1xWET": 2,
-          "2xINTERMEDIATE": 27,
-          "2xWET": 12,
-          "3xWET": 6
+          "0xnone": 1,
+          "1xINTERMEDIATE": 2,
+          "1xSOFT": 828,
+          "1xWET": 7,
+          "2xSOFT": 145,
+          "2xWET": 7,
+          "3xINTERMEDIATE": 1,
+          "3xSOFT": 9
         },
         "n_races": 1000
       },
       "british_grand_prix": {
-        "entropy_nats": 0.046594424222104566,
+        "entropy_nats": 0.6325445680071398,
         "histogram": {
-          "0xnone": 8,
-          "1xSOFT": 992
+          "1xINTERMEDIATE": 3,
+          "1xSOFT": 826,
+          "2xINTERMEDIATE": 23,
+          "2xSOFT": 125,
+          "3xINTERMEDIATE": 13,
+          "3xSOFT": 7,
+          "4xINTERMEDIATE": 2,
+          "4xSOFT": 1
         },
         "n_races": 1000
       },
       "canadian_grand_prix": {
-        "entropy_nats": 0.014427214862176116,
+        "entropy_nats": 0.972552522888208,
         "histogram": {
-          "0xnone": 2,
-          "1xSOFT": 998
+          "1xSOFT": 609,
+          "2xINTERMEDIATE": 19,
+          "2xSOFT": 313,
+          "3xINTERMEDIATE": 12,
+          "3xSOFT": 37,
+          "4xINTERMEDIATE": 4,
+          "4xSOFT": 4,
+          "5xINTERMEDIATE": 2
         },
         "n_races": 1000
       },
       "chinese_grand_prix": {
-        "entropy_nats": 0.22821532532124092,
+        "entropy_nats": 0.8582017053693161,
         "histogram": {
-          "1xINTERMEDIATE": 2,
-          "1xSOFT": 959,
-          "2xINTERMEDIATE": 16,
-          "2xWET": 10,
-          "3xINTERMEDIATE": 1,
-          "3xWET": 11,
+          "1xSOFT": 685,
+          "1xWET": 6,
+          "2xINTERMEDIATE": 2,
+          "2xSOFT": 258,
+          "2xWET": 13,
+          "3xINTERMEDIATE": 3,
+          "3xSOFT": 26,
+          "3xWET": 6,
           "4xWET": 1
         },
         "n_races": 1000
       },
       "dutch_grand_prix": {
-        "entropy_nats": 0.06506074987287486,
+        "entropy_nats": 0.9485139880017498,
         "histogram": {
-          "0xnone": 1,
-          "1xSOFT": 991,
-          "1xWET": 1,
-          "2xINTERMEDIATE": 3,
-          "2xWET": 2,
-          "3xWET": 2
+          "1xSOFT": 611,
+          "2xINTERMEDIATE": 10,
+          "2xSOFT": 315,
+          "3xINTERMEDIATE": 13,
+          "3xSOFT": 44,
+          "4xINTERMEDIATE": 3,
+          "4xSOFT": 2,
+          "5xINTERMEDIATE": 1,
+          "5xSOFT": 1
         },
         "n_races": 1000
       },
       "emilia_romagna_grand_prix": {
-        "entropy_nats": 0.2365527126598612,
+        "entropy_nats": 0.5860064323743426,
         "histogram": {
           "1xINTERMEDIATE": 1,
-          "1xSOFT": 955,
-          "2xINTERMEDIATE": 23,
-          "2xWET": 9,
-          "3xWET": 11,
-          "4xWET": 1
+          "1xSOFT": 822,
+          "2xINTERMEDIATE": 28,
+          "2xSOFT": 141,
+          "3xINTERMEDIATE": 7,
+          "4xINTERMEDIATE": 1
         },
         "n_races": 1000
       },
       "hungarian_grand_prix": {
-        "entropy_nats": 0.10291551867805665,
+        "entropy_nats": 0.1277197107616846,
         "histogram": {
-          "1xINTERMEDIATE": 3,
-          "1xSOFT": 984,
-          "2xINTERMEDIATE": 5,
-          "2xWET": 6,
-          "3xWET": 2
+          "1xSOFT": 972,
+          "2xINTERMEDIATE": 28
         },
         "n_races": 1000
       },
       "italian_grand_prix": {
-        "entropy_nats": 0.20491820362771312,
+        "entropy_nats": 0.4309353472777456,
         "histogram": {
-          "1xINTERMEDIATE": 5,
-          "1xSOFT": 965,
-          "1xWET": 5,
-          "2xINTERMEDIATE": 9,
-          "2xWET": 12,
-          "3xWET": 4
+          "1xSOFT": 894,
+          "2xINTERMEDIATE": 32,
+          "2xSOFT": 67,
+          "3xINTERMEDIATE": 4,
+          "3xSOFT": 3
         },
         "n_races": 1000
       },
       "japanese_grand_prix": {
-        "entropy_nats": 1.171534098104772,
+        "entropy_nats": 1.6876396180459141,
         "histogram": {
-          "0xnone": 1,
-          "1xHARD": 573,
-          "1xINTERMEDIATE": 95,
-          "1xWET": 12,
-          "2xHARD": 259,
-          "2xWET": 43,
-          "3xHARD": 10,
-          "3xWET": 6,
-          "4xHARD": 1
+          "0xnone": 12,
+          "1xHARD": 481,
+          "1xINTERMEDIATE": 32,
+          "1xMEDIUM": 5,
+          "1xWET": 21,
+          "2xHARD": 49,
+          "2xINTERMEDIATE": 33,
+          "2xMEDIUM": 255,
+          "2xWET": 13,
+          "33xMEDIUM": 1,
+          "34xMEDIUM": 1,
+          "37xMEDIUM": 1,
+          "3xHARD": 16,
+          "3xINTERMEDIATE": 1,
+          "3xMEDIUM": 44,
+          "41xMEDIUM": 1,
+          "43xMEDIUM": 1,
+          "46xMEDIUM": 1,
+          "47xMEDIUM": 1,
+          "48xMEDIUM": 1,
+          "49xMEDIUM": 1,
+          "4xHARD": 1,
+          "4xMEDIUM": 23,
+          "51xMEDIUM": 2,
+          "5xMEDIUM": 1,
+          "6xHARD": 1,
+          "8xHARD": 1
         },
         "n_races": 1000
       },
       "las_vegas_grand_prix": {
-        "entropy_nats": 0.04170835854189348,
+        "entropy_nats": 0.5686032685479216,
         "histogram": {
-          "0xnone": 7,
-          "1xSOFT": 993
+          "1xINTERMEDIATE": 1,
+          "1xSOFT": 838,
+          "2xINTERMEDIATE": 28,
+          "2xSOFT": 122,
+          "3xINTERMEDIATE": 7,
+          "3xSOFT": 4
         },
         "n_races": 1000
       },
       "mexico_city_grand_prix": {
-        "entropy_nats": 0.25090807033205814,
+        "entropy_nats": 0.8686106798536768,
         "histogram": {
-          "1xSOFT": 950,
-          "2xINTERMEDIATE": 28,
-          "2xWET": 4,
-          "3xWET": 16,
-          "4xWET": 1,
-          "5xWET": 1
+          "1xSOFT": 675,
+          "2xINTERMEDIATE": 6,
+          "2xSOFT": 261,
+          "2xWET": 3,
+          "3xINTERMEDIATE": 9,
+          "3xSOFT": 41,
+          "3xWET": 1,
+          "4xSOFT": 3,
+          "5xINTERMEDIATE": 1
         },
         "n_races": 1000
       },
       "miami_grand_prix": {
-        "entropy_nats": 0.12492426665174615,
+        "entropy_nats": 1.2706320859767237,
         "histogram": {
-          "1xSOFT": 980,
-          "2xINTERMEDIATE": 7,
+          "1xINTERMEDIATE": 2,
+          "1xSOFT": 305,
+          "2xINTERMEDIATE": 9,
+          "2xSOFT": 445,
           "2xWET": 2,
-          "3xWET": 8,
-          "4xWET": 1,
-          "5xWET": 2
+          "3xINTERMEDIATE": 10,
+          "3xSOFT": 200,
+          "4xINTERMEDIATE": 4,
+          "4xSOFT": 22,
+          "5xSOFT": 1
         },
         "n_races": 1000
       },
       "monaco_grand_prix": {
-        "entropy_nats": 0.11410247313881362,
+        "entropy_nats": 0.8966725089051188,
         "histogram": {
-          "1xINTERMEDIATE": 3,
-          "1xSOFT": 983,
-          "1xWET": 1,
-          "2xINTERMEDIATE": 5,
-          "2xWET": 4,
-          "3xWET": 3,
-          "4xWET": 1
+          "1xSOFT": 691,
+          "2xINTERMEDIATE": 26,
+          "2xSOFT": 233,
+          "3xINTERMEDIATE": 16,
+          "3xSOFT": 25,
+          "4xINTERMEDIATE": 5,
+          "4xSOFT": 4
         },
         "n_races": 1000
       },
       "qatar_grand_prix": {
-        "entropy_nats": 0.06820760700037752,
+        "entropy_nats": 0.44749154273754377,
         "histogram": {
-          "0xnone": 2,
           "1xINTERMEDIATE": 1,
-          "1xSOFT": 990,
-          "1xWET": 5,
-          "2xWET": 2
+          "1xSOFT": 865,
+          "2xINTERMEDIATE": 10,
+          "2xSOFT": 122,
+          "3xINTERMEDIATE": 2
         },
         "n_races": 1000
       },
       "saudi_arabian_grand_prix": {
-        "entropy_nats": 0.17517947112612617,
+        "entropy_nats": 0.39271029736503615,
         "histogram": {
-          "1xINTERMEDIATE": 3,
-          "1xSOFT": 970,
-          "1xWET": 2,
-          "2xINTERMEDIATE": 4,
-          "2xWET": 15,
-          "3xWET": 6
+          "1xINTERMEDIATE": 2,
+          "1xSOFT": 904,
+          "2xINTERMEDIATE": 25,
+          "2xSOFT": 66,
+          "3xINTERMEDIATE": 3
         },
         "n_races": 1000
       },
       "singapore_grand_prix": {
-        "entropy_nats": 0.02607783298339765,
+        "entropy_nats": 0.4219154510201041,
         "histogram": {
-          "0xnone": 4,
-          "1xSOFT": 996
+          "1xSOFT": 890,
+          "2xINTERMEDIATE": 23,
+          "2xSOFT": 83,
+          "3xINTERMEDIATE": 2,
+          "4xINTERMEDIATE": 2
         },
         "n_races": 1000
       },
       "spanish_grand_prix": {
-        "entropy_nats": 0.1033405413160421,
+        "entropy_nats": 0.40293135015402576,
         "histogram": {
-          "1xINTERMEDIATE": 7,
-          "1xSOFT": 984,
-          "1xWET": 1,
-          "2xINTERMEDIATE": 2,
-          "2xWET": 5,
-          "3xWET": 1
+          "1xSOFT": 900,
+          "1xWET": 4,
+          "2xINTERMEDIATE": 4,
+          "2xSOFT": 82,
+          "2xWET": 4,
+          "3xSOFT": 3,
+          "3xWET": 2,
+          "4xWET": 1
         },
         "n_races": 1000
       },
       "são_paulo_grand_prix": {
-        "entropy_nats": 0.31838309899236533,
+        "entropy_nats": 1.1033656228424231,
         "histogram": {
-          "1xINTERMEDIATE": 2,
-          "1xSOFT": 937,
-          "2xINTERMEDIATE": 35,
-          "2xWET": 7,
-          "3xWET": 14,
-          "4xWET": 1,
-          "5xINTERMEDIATE": 1,
-          "5xWET": 2,
-          "6xWET": 1
+          "1xSOFT": 534,
+          "1xWET": 1,
+          "2xINTERMEDIATE": 4,
+          "2xSOFT": 340,
+          "2xWET": 9,
+          "3xINTERMEDIATE": 3,
+          "3xSOFT": 90,
+          "3xWET": 4,
+          "4xINTERMEDIATE": 3,
+          "4xSOFT": 11,
+          "5xWET": 1
         },
         "n_races": 1000
       },
       "united_states_grand_prix": {
-        "entropy_nats": 0.014427214862176116,
+        "entropy_nats": 0.4013191434026697,
         "histogram": {
-          "0xnone": 2,
-          "1xSOFT": 998
+          "1xINTERMEDIATE": 1,
+          "1xSOFT": 899,
+          "2xINTERMEDIATE": 28,
+          "2xSOFT": 70,
+          "3xINTERMEDIATE": 2
         },
         "n_races": 1000
       }

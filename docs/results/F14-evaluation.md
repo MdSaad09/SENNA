@@ -15,10 +15,10 @@ reachable from training: the seed loader refuses every consumer but this suite, 
 
 | | |
 |---|---|
-| Models | era2024 `senna-ppo-db031aead155-C-02211840`, headline `senna-ppo-6b6edb78d84e-C-00835584` |
-| Env config hash | `6b6edb78d84e` (the training manifest's) |
+| Models | era2024 `senna-ppo-db586a74592a-C-03538944`, headline `senna-ppo-70098e9d3425-C-01769472` |
+| Env config hash | `70098e9d3425` (the training manifest's) |
 | Seed manifest | `b112935601b2` |
-| Commit | `bccc8a851531` |
+| Commit | `e5c48f9e2475` |
 | Store | `docs/results/F14/store` |
 
 
@@ -41,18 +41,18 @@ luck it happened to meet.
 
 | Metric | Value | 95% CI | Target | Verdict |
 |---|---|---|---|---|
-| M1 paired position delta | 2.083 places over 480 pairs | [1.710, 2.475] | >= +1.0, CI excluding 0 | met |
-| M2 counterfactual vs actual | 4W/5L/1T, p=1.000 (mean -0.60 places over 10 races) | [-2.98, 1.76] descriptive | >= +1.0, sign test p < 0.05 | **miss** |
-| M3 oracle regret | median 33.09 s (mean 86.98 s, 480 races) | p05 4.01 / p95 313.16 | report distribution | reported |
-| M4 energy utilisation | 0.649 deployed/E_dep (ceiling 0.914, 0.710 of attainable), derates 0.080 of green laps | - | >= 0.9 and derates <= 0.05 | **miss** |
-| M5 SC decision quality | precision 0.942, recall 0.308 over 374 windows | - | both >= 0.75 | **miss** |
-| M5 VSC decision quality | precision undefined, recall 0.000 over 300 windows | - | both >= 0.75 | **miss** |
-| M6 pit window accuracy | 0.228 of 457 stops | [0.190, 0.267] | >= 0.72 | **miss** |
-| M7 strategy diversity | 0.226 nats mean over 24 circuits | - | report only | reported |
-| M8 sim-to-real | 0/4 circuits within KS 0.15, worst 0.946 | held-out rounds 7+ | KS < 0.15 per circuit | **miss** |
-| M9 tyre failure rate | 37.29 per 100 races (179/480) | - | < 2.0 | **miss** |
+| M1 paired position delta | 2.279 places over 480 pairs | [1.913, 2.663] | >= +1.0, CI excluding 0 | met |
+| M2 counterfactual vs actual | 1W/8L/1T, p=0.039 (mean -3.66 places over 10 races) | [-5.82, -1.16] descriptive | >= +1.0, sign test p < 0.05 | **miss** |
+| M3 oracle regret | median 30.48 s (mean 71.78 s, 480 races) | p05 5.67 / p95 276.21 | report distribution | reported |
+| M4 energy utilisation | 0.704 deployed/E_dep (ceiling 0.912, 0.772 of attainable), derates 0.097 of green laps | - | >= 0.9 and derates <= 0.05 | **miss** |
+| M5 SC decision quality | precision 0.820, recall 0.401 over 377 windows | - | both >= 0.75 | **miss** |
+| M5 VSC decision quality | precision 1.000, recall 0.085 over 304 windows | - | both >= 0.75 | **miss** |
+| M6 pit window accuracy | 0.213 of 517 stops | [0.178, 0.248] | >= 0.72 | **miss** |
+| M7 strategy diversity | 0.653 nats mean over 24 circuits | - | report only | reported |
+| M8 sim-to-real | 0/5 circuits within KS 0.15, worst 0.931 | held-out rounds 7+ | KS < 0.15 per circuit | **miss** |
+| M9 tyre failure rate | 37.92 per 100 races (182/480) | - | < 2.0 | **miss** |
 | M10 regulatory legality | 0 coerced actions, 0 snapped over 480 races | - | 0 by construction | met |
-| M11 luck share | 0.758 of finishing-position variance | [0.679, 0.820] | report only | reported |
+| M11 luck share | 0.786 of finishing-position variance | [0.704, 0.861] | report only | reported |
 
 
 ## How each metric can be gamed or misread
@@ -95,10 +95,10 @@ between them is the number in the yaml.
 
 | Cap | Utilisation | Derate share | Mean finish |
 |---|---|---|---|
-| trained (8.5 MJ) | 0.648 | 0.078 | P4.81 |
-| refined (7.0 MJ) | 0.627 | 0.182 | P4.94 |
+| trained (8.5 MJ) | 0.697 | 0.091 | P4.64 |
+| refined (7.0 MJ) | 0.647 | 0.129 | P4.45 |
 
-Tightening the cap costs 0.13 places on average while the derate share moves +0.104: the agent runs out of energy more often, which is what operating closer to a limit looks like. Read this as the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under.
+Tightening the cap gains 0.19 places on average while the derate share moves +0.038: the agent runs out of energy more often, which is what operating closer to a limit looks like. Read this as the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under.
 
 Provenance: config `26a436fece3d` (circuits.yaml, the base file the overlays scaled), seeds `b112935601b2`.
 
@@ -111,8 +111,8 @@ the ten M2 races with that block scaled by +/-50% under the era-matched model.
 
 | Arm | Mean delta (places) | Races |
 |---|---|---|
-| up (+50%) | -0.14 | 10 |
-| down (-50%) | -0.52 | 10 |
+| up (+50%) | -3.12 | 10 |
+| down (-50%) | -3.48 | 10 |
 
 Read this as the borrowed 2026 energy-mode fit scaled by +/-50% under the era-matched model — how much of M2 rides on coefficients the 2024 era never fitted, not a claim about either era's true physics.
 
