@@ -159,7 +159,15 @@ report:
 	python -m senna.eval.report
 
 # CI's fast suite, locally and by the same spelling — `pytest -m "not slow"` scoped the
-# way ci.yml runs it, so the local gate can't drift from CI (the F03-F06 lesson)
+# way ci.yml runs it, so the local gate can't drift from CI (the F03-F06 lesson).
+#
+# Same spelling is not the same environment. ci.yml exports DATABASE_URL and REDIS_URL
+# for its service containers; without both, the API suite skips itself and the run still
+# reports green. F18 merged red that way — 55 skips locally, a real failure in CI. Export
+# both before trusting this as a gate:
+#   DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/senna_test \
+#     REDIS_URL=redis://localhost:6379/0 make test
+# A green run with skips is not a green run; check the skip count against CI's.
 test:
 	python -m pytest -m "not slow" -q
 

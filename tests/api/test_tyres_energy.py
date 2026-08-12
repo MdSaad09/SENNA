@@ -57,8 +57,17 @@ def test_tyres_serve_cliff_age_and_transfer_donors(client):
 
 
 def test_tyres_404_for_a_circuit_without_a_fitted_block(client):
-    # french_grand_prix carries hazards but no degradation fits — the view's empty state
-    assert client.get("/api/v1/tyres/french_grand_prix").status_code == 404
+    # the view's empty state. This used french_grand_prix until F18, which fitted it:
+    # France was raced only in 2022, so the full-era refit gave it degradation curves it
+    # never had, and no circuit in physics_params lacks a degradation block any more.
+    # A slug the file does not carry exercises the same branch (tyres.py) without
+    # depending on which circuits happen to be fitted this month.
+    assert not [
+        slug for slug, blocks in config.load("physics_params")["circuits"].items()
+        if not blocks.get("degradation")
+    ], "a real unfitted circuit exists again — prefer it here, it is the truer case"
+
+    assert client.get("/api/v1/tyres/nurburgring_grand_prix").status_code == 404
 
 
 @pytest.mark.slow
