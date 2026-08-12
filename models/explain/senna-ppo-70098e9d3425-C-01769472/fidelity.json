@@ -1,11 +1,11 @@
 {
-  "model_version": "senna-ppo-6b6edb78d84e-C-00835584",
-  "env_config_hash": "6b6edb78d84e33bcc54b57ab708a4640aedf99f7a91d62e6e222d689c4f2b288",
+  "model_version": "senna-ppo-70098e9d3425-C-01769472",
+  "env_config_hash": "70098e9d34255e3ba471a556d36d616b08a384dd0d9e05a092bb529c6b3fb688",
   "threshold": 0.9,
   "heads": {
     "pit": {
-      "top1": 0.9970158984903957,
-      "mean_kl": 0.014104080012517693,
+      "top1": 0.9975926576056974,
+      "mean_kl": 0.005669784984403108,
       "rung": {
         "max_depth": 6,
         "n_estimators": 300,
@@ -13,8 +13,8 @@
       }
     },
     "mode": {
-      "top1": 0.9908470836049952,
-      "mean_kl": 0.00766418482996904,
+      "top1": 0.9818947790761824,
+      "mean_kl": 0.004491972282589044,
       "rung": {
         "max_depth": 6,
         "n_estimators": 300,
@@ -26,10 +26,10 @@
   "episodes": 3320,
   "holdout_pairs": 39878,
   "crosscheck": {
-    "mean_spearman_rho": 0.6874394011548646,
+    "mean_spearman_rho": 0.5476038476095939,
     "sample": 500
   },
   "cards": 14460,
   "card_races": 240,
-  "generated_at": "2026-07-21T21:21:48.210283+00:00"
+  "generated_at": "2026-08-11T21:52:25.888529+00:00"
 }
