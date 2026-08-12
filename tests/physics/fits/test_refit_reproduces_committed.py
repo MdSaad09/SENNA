@@ -2,10 +2,15 @@
 
 The pack's whole claim is that an examiner can restore `data/snapshot/`, follow
 `docs/freeze.md`, run `make fit`, and arrive at the constants the repo ships. That claim
-was false. `configs/physics_params.yaml` was fitted while only 2024 and 2025 had landed,
-`configs/ingest.yaml` had declared five seasons the whole time, and the season scope was
-recorded nowhere — so a refit from the snapshot moved base pace at Bahrain by about
-0.9 s/lap and nothing in the build noticed.
+was false. `configs/physics_params.yaml` was written from a store holding all five
+declared seasons — its own watermark said so — while only 2024 and 2025 reached the
+joint pace fits. Bahrain's era-2024 base pace came from 1958 laps of an available 3705,
+about 0.9 s/lap, and nothing in the build noticed because nothing compared the file
+against what its own data produces.
+
+That is why this test is the load-bearing one. Both coverage gates would have passed
+that run; only rendering the fit and diffing it against the committed bytes catches a
+file whose recorded scope and actual scope disagree.
 
 These two are the guard. They need the ingested store rather than the disposable test
 database, and the battery is minutes of real work, so they are `slow` and skip cleanly
@@ -18,6 +23,7 @@ import difflib
 import os
 
 import pytest
+from sqlalchemy import text
 
 from senna import config
 from senna.data.db import database_url, engine_for
@@ -54,6 +60,13 @@ def ingested_store():
     cache = config.REPO_ROOT / config.get(config.load("ingest"), "fastf1.cache_dir")
     if not cache.is_dir() or not any(cache.iterdir()):
         pytest.skip(f"needs a warm FastF1 cache at {cache}; the energy fits read telemetry")
+
+    # the disposable test database is the usual value of DATABASE_URL and holds no laps;
+    # circuit_index raises KeyError on the empty frame rather than returning one, so ask
+    # first. A test that needs the ingested store must skip on the test store, not error.
+    laps = asyncio.run(_read(lambda conn: conn.scalar(text("select count(*) from laps"))))
+    if not laps:
+        pytest.skip("DATABASE_URL names a store with no laps; this needs the ingested one")
 
     rounds = config.get(config.load("data_split"), "calibration_rounds")
     index = asyncio.run(_read(lambda conn: frames.circuit_index(conn, rounds)))
