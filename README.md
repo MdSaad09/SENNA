@@ -60,14 +60,14 @@ where every metric passes is a suite whose bars were set after the run.
 
 | Result | Number | Reading |
 |---|---|---|
-| Position gain vs engineered baseline (M1) | +2.08 places, CI [1.71, 2.48] | met — the headline capability |
+| Position gain vs engineered baseline (M1) | +2.28 places, CI [1.91, 2.66] | met — the headline capability |
 | Regulatory legality (M10) | 0 illegal, 0 snapped in 480 races | met — by construction, then measured anyway |
-| Tyre failures (M9) | 37.3 per 100 races (target < 2) | missed — and it explains M1: the agent buys track position by over-running its tyres |
-| Counterfactual vs real strategies (M2) | 4W/5L/1T over 10 races, p = 1.0 | an honest wash at n = 10 under a pre-registered sign test — "competitive with elite humans", not "beats" |
-| Energy utilisation (M4) | 0.649 deployed/E_dep against a 0.914 attainable ceiling | missed — though the 0.90 bar is unreachable by construction at several circuits, which the chapter says out loud |
-| Safety-car decisions (M5) | SC precision 0.942, recall 0.308; VSC recall 0.000 | the agent is blind to virtual safety cars — 300 counted windows, zero calls; the suspected mechanism is documented as a hypothesis, not a finding |
-| Sim-to-real (M8) | 0/4 circuits within the KS bar | missed upstream: the synthetic-2026 transform runs 4–6 s fast; the held-out validation split forbids refitting on the evidence |
-| Luck share (M11) | 75.8% of finishing-position variance | the novel analytics finding: most of a finish is the event draw, quantified |
+| Tyre failures (M9) | 37.9 per 100 races (target < 2) | missed — and it explains M1: the agent buys track position by over-running its tyres |
+| Counterfactual vs real strategies (M2) | 1W/8L/1T over 10 races, p = 0.039 | missed, and significantly so: against replayed real strategies the agent now loses reliably, where the two-season physics gave an inconclusive wash |
+| Energy utilisation (M4) | 0.704 deployed/E_dep against a 0.912 attainable ceiling | missed — though the 0.90 bar is unreachable by construction at several circuits, which the chapter says out loud |
+| Safety-car decisions (M5) | SC precision 0.820, recall 0.401; VSC recall 0.085 at precision 1.000 | still missed, but the agent is no longer blind to virtual safety cars: ten calls, none of them wrong, where the previous physics produced zero across 311 windows |
+| Sim-to-real (M8) | 0/5 circuits within the KS bar | missed upstream: the synthetic-2026 transform still runs fast; the held-out validation split forbids refitting on the evidence |
+| Luck share (M11) | 78.6% of finishing-position variance | the novel analytics finding: most of a finish is the event draw, quantified |
 
 The counterfactuals are era-matched (a 2026-physics agent scored on 2024 races
 loses ~2.5 points to the car, not the strategy — measured, and the fine-tune
