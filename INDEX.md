@@ -114,10 +114,10 @@ the work — resume with `claude --continue`, or start fresh and say
   mask slicks outside scenario.available_compounds. Touches the F05 mask contract
   (F-16), so it opens F08's plan rather than landing as a hotfix. F07's own gates are
   unaffected (Stage A runs Monza solo; the heuristic now shops fitted compounds only).
-- **F08 headline model (11 Aug 2026, F18 refit):** `senna-ppo-70098e9d3425-C-01769472`
+- **F08 headline model (11 Aug 2026, F18 refit):** `senna-ppo-5e3ddb15d584-C-01769472`
   (seed 331, step 1,769,472, 6.542 validation points) promoted to `models/headline/` —
   the frozen checkpoint F09 explains and F10 serves. Era-matched:
-  `senna-ppo-db586a74592a-C-03538944` (5.550 on the 2024 banks). Superseded:
+  `senna-ppo-39cabd466e03-C-03538944` (5.550 on the 2024 banks). Superseded:
   `senna-ppo-6b6edb78d84e-C-00835584` at 6.517, and `senna-ppo-db031aead155-C-02211840`.
   Evidence: docs/results/F08-ablations.md; ledger models/runs.json. W&B offline.
   **The slate was trained twice** under two fingerprints and every one of the eleven
@@ -157,7 +157,7 @@ the work — resume with `claude --continue`, or start fresh and say
   The assumption stands as written ("about 70 kg, energy-flow limited"); next fits
   session may lift the grade-C flag per the register's close-out rule.
 
-- **F14 era-matched fine-tune (11 Aug 2026, refit):** `senna-ppo-db586a74592a-C-03538944`
+- **F14 era-matched fine-tune (11 Aug 2026, refit):** `senna-ppo-39cabd466e03-C-03538944`
   (seed 331, warm-started from the headline, 2M Stage C steps on the 2024 constants)
   promoted to `models/era2024/`, scoring **5.550** mean points on the 2024 validation
   banks. It measures the F-24 regulation confound: a 2026-physics agent scored on 2024
@@ -165,7 +165,7 @@ the work — resume with `claude --continue`, or start fresh and say
   `senna-ppo-db031aead155-C-02211840` at 6.336 against the old headline's 3.802 on the
   two-season physics — the pair moves together, so the gap is the quantity to quote, not
   either figure alone. Its surrogate is now fitted and committed
-  (`models/explain/senna-ppo-db586a74592a-C-03538944/`), so the `pending-F14` note the
+  (`models/explain/senna-ppo-39cabd466e03-C-03538944/`), so the `pending-F14` note the
   serving flip used to carry no longer applies (Saad's decision 3 named the flip the
   designated cut).
 - **F14 headline results (11 Aug 2026, re-measured on the full-era physics):** M1

@@ -794,7 +794,7 @@ specification wins; the sensitivity runs are wired and were not run, which is st
 rather than implied.
 
 **Outcome.** Three headline seeds scoring 6.355, 6.295 and 6.542 mean validation points;
-seed 331 promoted as `senna-ppo-70098e9d3425-C-01769472`. Full three-stage wall clock: six
+seed 331 promoted as `senna-ppo-5e3ddb15d584-C-01769472`. Full three-stage wall clock: six
 to twelve minutes per seed, 25 minutes for the slate.
 
 The slate was trained twice during F18, on the same physics but under two different

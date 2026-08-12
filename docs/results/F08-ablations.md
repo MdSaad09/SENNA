@@ -8,7 +8,7 @@ for F14. The machine-readable twin of this document is `models/runs.json` (the r
 ledger); curves live in the offline W&B runs named in the table (sync when an
 account exists).
 
-Every run below was re-trained on 11 Aug 2026, when F18 refitted the physics on the
+Every run below was re-trained on 11-12 Aug 2026, when F18 refitted the physics on the
 full 2022–2025 era. The first grid ran on 19 Jul 2026 against constants fitted on
 two seasons of the four available, so it is superseded rather than merely older. Its
 numbers are kept beside the new ones throughout, because "the physics improved and
@@ -21,19 +21,25 @@ where they were, the headline is unchanged for practical purposes (6.397 mean ag
 control. That inversion is treated below as evidence about the two-seed protocol
 rather than as a new result about penalties.
 
-**An unplanned reproducibility check, worth more than it cost.** The grid was
-trained twice on the refitted physics. Between the two slates `configs/fits.yaml`
-gained the two write gates F18 declares, which moved the training fingerprint and so
-forced a re-run, but which no part of the environment reads. Every one of the eleven
-runs came back identical to its predecessor — not close, identical, to the last digit
-of a float: 6.3549999999999995, 4.418333333333334, 6.0233333333333325, and the rest.
-Seed 331 won both times at the same step. The era-matched fine-tune reproduced too.
+**An unplanned reproducibility check, worth more than it cost.** The grid was trained
+three times on the refitted physics, under three different fingerprints. Between the
+slates `configs/fits.yaml` changed twice — once to declare the two write gates F18
+adds, once to correct a comment in them — and neither edit touches anything the
+environment reads. The fingerprint is a hash over config bytes, so both forced a full
+re-run anyway.
 
-That is the strongest statement this project can make about determinism, and it was
-not designed: same seed and same behaviour-bearing config give the same checkpoint,
-across a config edit that changed the recorded preimage and nothing else. It also
-prices the gate honestly — the retrain cost about two hours and bought no new number,
-only a fingerprint that reproduces from the configs the repo ships.
+All three slates agree exactly. Not close: identical to the last digit of a float,
+6.3549999999999995, 4.418333333333334, 6.0233333333333325, and the rest. Seed 331 won
+every time at the same step, 1,769,472. The era-matched fine-tune reproduced. So did
+both surrogates, down to a fidelity badge of 0.9976 / 0.9819 and a cross-check
+correlation of 0.5476, and so did the whole M1–M11 suite including a bootstrapped
+confidence interval. That is 33 training runs and two full evaluation passes agreeing
+across three independent executions.
+
+Nobody designed this experiment; it exists because a config edit moved a hash. It is
+still the strongest determinism evidence in the project, and it prices the gate
+honestly — the reruns bought no new number, only a fingerprint that recomputes from
+the configs the repo ships. That property is what `main` never had.
 
 **Why there is no DQN arm.** v2 planned a DQN baseline. It cannot run here, and the
 reason is architectural, not budgetary: the action space is MultiDiscrete([6, 4]) —
@@ -51,21 +57,21 @@ selection score — the final-policy compliance gap is F14's measurement.
 
 ## Run table
 
-The grid as it stands, on the full-era physics (11 Aug 2026):
+The grid as it stands, on the full-era physics (12 Aug 2026):
 
 | Run | Seed | Budget | Exit | Selected (val. points @ step) | Config hash | W&B id |
 |---|---|---|---|---|---|---|
-| ablation: no_curriculum | 101 | 4M | stagnation | 4.315 @ 1,179,648 | cab315f92c5b | 4dkwngu0 |
-| ablation: no_curriculum | 211 | 4M | stagnation | 4.418 @ 1,081,344 | cab315f92c5b | 5fkjq954 |
-| ablation: penalty_constraints | 101 | 4M | stagnation | 4.522 @ 2,850,816 | dd6bc69ce817 | 3u8v8ecv |
-| ablation: penalty_constraints | 211 | 4M | ceiling | 6.023 @ 3,833,856 | dd6bc69ce817 | r8np5lwv |
-| ablation: reward_v2 | 101 | 4M | ceiling | 3.548 @ 4,005,888 | f4143d96fb51 | k9jv4h14 |
-| ablation: reward_v2 | 211 | 4M | ceiling | 4.872 @ 3,833,856 | f4143d96fb51 | 2jeq38lm |
-| ablation: terminal_only | 101 | 4M | stagnation | 6.457 @ 2,260,992 | f054bb667b1b | ta84576u |
-| ablation: terminal_only | 211 | 4M | ceiling | 5.423 @ 4,005,888 | f054bb667b1b | 5620z1nn |
-| headline | 101 | 8M | stagnation | 6.355 @ 1,130,496 | 70098e9d3425 | k4zvqmok |
-| headline | 211 | 8M | ceiling | 6.295 @ 4,227,072 | 70098e9d3425 | hjvll2eu |
-| headline | 331 | 8M | stagnation | **6.542 @ 1,769,472** | 70098e9d3425 | xmu03404 |
+| ablation: no_curriculum | 101 | 4M | stagnation | 4.315 @ 1,179,648 | 27ff835b6895 | d5knsm7p |
+| ablation: no_curriculum | 211 | 4M | stagnation | 4.418 @ 1,081,344 | 27ff835b6895 | m9esilxf |
+| ablation: penalty_constraints | 101 | 4M | stagnation | 4.522 @ 2,850,816 | ca4c4282eff7 | rs9o3dmv |
+| ablation: penalty_constraints | 211 | 4M | ceiling | 6.023 @ 3,833,856 | ca4c4282eff7 | r3xl5y20 |
+| ablation: reward_v2 | 101 | 4M | ceiling | 3.548 @ 4,005,888 | 1517a45186de | mjxspk0p |
+| ablation: reward_v2 | 211 | 4M | ceiling | 4.872 @ 3,833,856 | 1517a45186de | 6njj3f4j |
+| ablation: terminal_only | 101 | 4M | stagnation | 6.457 @ 2,260,992 | d45c9c53f28d | fr7s61ud |
+| ablation: terminal_only | 211 | 4M | ceiling | 5.423 @ 4,005,888 | d45c9c53f28d | ze5w5rq5 |
+| headline | 101 | 8M | stagnation | 6.355 @ 1,130,496 | 5e3ddb15d584 | pi9tuyna |
+| headline | 211 | 8M | ceiling | 6.295 @ 4,227,072 | 5e3ddb15d584 | 3usbytx7 |
+| headline | 331 | 8M | stagnation | **6.542 @ 1,769,472** | 5e3ddb15d584 | 7rr33oj0 |
 
 The superseded 19 Jul grid, on the two-season physics, for comparison:
 
@@ -199,7 +205,7 @@ All three seeds cleared their Stage A and B gates and finished Stage C with tigh
 grouped validation scores (6.295 / 6.355 / 6.542); seed 211 reached the ceiling
 rather than stagnating. Selection followed the 5.7 rule extended across seeds —
 highest validation points, ties to the earlier step, then the lower seed — and
-chose **seed 331 at global step 1,769,472: `senna-ppo-70098e9d3425-C-01769472`**,
+chose **seed 331 at global step 1,769,472: `senna-ppo-5e3ddb15d584-C-01769472`**,
 promoted to `models/headline/` with the triplet verified against the gate log
 before copying. This is the model version F09 explains and F10 serves.
 

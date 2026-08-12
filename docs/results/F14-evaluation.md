@@ -15,10 +15,10 @@ reachable from training: the seed loader refuses every consumer but this suite, 
 
 | | |
 |---|---|
-| Models | era2024 `senna-ppo-db586a74592a-C-03538944`, headline `senna-ppo-70098e9d3425-C-01769472` |
-| Env config hash | `70098e9d3425` (the training manifest's) |
+| Models | era2024 `senna-ppo-39cabd466e03-C-03538944`, headline `senna-ppo-5e3ddb15d584-C-01769472` |
+| Env config hash | `5e3ddb15d584` (the training manifest's) |
 | Seed manifest | `b112935601b2` |
-| Commit | `e5c48f9e2475` |
+| Commit | `d1ff2fe420d1` |
 | Store | `docs/results/F14/store` |
 
 

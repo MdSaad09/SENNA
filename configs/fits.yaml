@@ -3,16 +3,20 @@
 # fitters take as an argument gets its named origin. null means "fit me": code
 # that reads a null must raise, never guess.
 
-# The two write gates. Both default true and there is no reason to run with either
-# off except one: setting a gate false reproduces the pre-F18 battery, which is how
-# the defect below was demonstrated rather than argued. Leave them true.
+# The write gates. Both default true; setting either false reproduces the pre-F18
+# battery, which is how the defect was demonstrated rather than argued. Leave them true.
 gates:
-  require_full_season_coverage: true  # operational — refuse to write physics_params.yaml
-                                      # from a store missing a season configs/ingest.yaml
-                                      # declares (E-12). Its absence is why the committed
-                                      # physics was fitted on two of five declared seasons
-                                      # with the scope recorded nowhere, so make fit over
-                                      # the frozen snapshot stopped reproducing it (A-09)
+  require_full_season_coverage: true  # operational — switches both E-12 coverage checks:
+                                      # a declared season absent from the store, and a
+                                      # season the store holds that reaches no pace fit.
+                                      # The second is the one F18 was built for. The
+                                      # committed physics was NOT written from a partial
+                                      # store — its own watermark said "seasons 2022-2026"
+                                      # and every season was there — but 2022 and 2023
+                                      # reached hazards, pit loss and energy and reached
+                                      # no joint pace fit, so base pace came from 1958
+                                      # laps of an available 3705 under a watermark
+                                      # claiming all four (A-09)
   require_finite_params: true         # operational — refuse NaN and Inf as well as null
                                       # in a fitted value. validate_complete tested
                                       # `is None`, and a NaN is not None, so a failed fit

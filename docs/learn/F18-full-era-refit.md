@@ -97,13 +97,18 @@ make a run's fingerprint self-describing. The mechanic underneath it: `config.fi
 is a sha256 over the raw bytes of eleven named config files, in order. `fits.yaml` is one
 of them. Adding two booleans to it moved the fingerprint from `e823d1b5a2ea` to
 `70098e9d3425`, so every trained artifact recorded a preimage that no longer existed and
-had to be retrained. Nothing in the environment reads either boolean. About two hours of
-compute to change no number.
+had to be retrained. Correcting a *comment* in those same two booleans moved it again, to
+`5e3ddb15d584`, and cost a second full retrain. Nothing in the environment reads either
+boolean, and nothing reads a comment at all. Hours of compute to change no number.
 
-Which produced the accident. Eleven runs, trained twice under different fingerprints,
-returned identical scores — not close, identical to the last float digit
+That is the cost of the design, stated plainly: a hash over bytes cannot tell a
+behavioural change from a typo fix. The alternative — hashing only the values the
+environment reads — would be cheaper and would quietly stop noticing edits that matter.
+
+Which produced the accident. Eleven runs, trained three times under different
+fingerprints, returned identical scores — not close, identical to the last float digit
 (6.3549999999999995, 4.418333333333334, and the rest), with seed 331 promoted at step
-1,769,472 both times. Nobody designed that check, and it is the strongest determinism
+1,769,472 every time. Nobody designed that check, and it is the strongest determinism
 evidence in the project.
 
 **Reporting a result that got worse.** M1 (paired position gain against the engineered
@@ -385,7 +390,7 @@ expectation, and both are in the record anyway.
 
    The manifest names its own preimage, so this recomputes what the model was trained
    under from the configs on disk. You'll know it worked when both halves read
-   `70098e9d3425` — the property `main` never had, where committed configs hashed to
+   `5e3ddb15d584` — the property `main` never had, where committed configs hashed to
    `2368883a49c5` against a recorded `6b6edb78d84e`. Now append a blank comment line to
    `configs/fits.yaml`, rerun, and watch the two disagree after changing nothing the
    environment reads. Revert, confirm they match again, and you have reproduced the
@@ -461,5 +466,5 @@ These rows were appended to `docs/learn/00-curriculum.md`:
 | A regressor gates its own clean mask (E-09) | F18 | `tyre_life` earns a line in `_clean_mask` because it is a column in that fit's design matrix; the lap is excluded, counted (`n_excluded_no_tyre_age`) and reported in the quality report, never `nan_to_num`'d into a false fresh set. |
 | Separable is not physical (E-10) | F18 | Identification now requires `k_m_ols > 0.0` as well as a VIF under the gate, and `pool_k_m` refuses a non-positive pool — Austria passed VIF at 22.5 with -0.007421 s/kg and would have inverted the mass transform for two thirds of `transforms.yaml`. |
 | Byte-identity round-trip on a fitted artifact (A-09) | F18 | `make fit` over the frozen snapshot must render `physics_params.yaml` byte-for-byte; the only guard that caught a file whose recorded scope and actual scope disagreed, and it works only because the writer is deterministic (F02). |
-| Fingerprint over bytes, not behaviour | F18 | `config.fingerprint` is a sha256 over eleven config files' raw bytes, so two booleans nothing reads moved it `e823d1b5a2ea` to `70098e9d3425` and forced a retrain — which returned eleven runs identical to the last float digit, the project's strongest determinism evidence. |
+| Fingerprint over bytes, not behaviour | F18 | `config.fingerprint` is a sha256 over eleven config files' raw bytes, so two booleans nothing reads moved it twice, `e823d1b5a2ea` to `70098e9d3425` to `5e3ddb15d584`, forcing a retrain each time — and all three slates returned identical results to the last float digit, the project's strongest determinism evidence. |
 | Absence of evidence vs evidence of a gap | F18 | M2's 4W/5L/1T at p=1.000 was a failure to reject at n=10 being read as parity; the refit made it 1W/8L/1T at p=0.039, and publishing the worse number against a pre-registered bar is what makes the rest of the chapter readable. |

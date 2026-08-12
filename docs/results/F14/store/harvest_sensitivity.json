@@ -1,9 +1,9 @@
 {
   "envelope": {
     "config_hash": "26a436fece3dc4a094b60d82bfecc1e41ff3a8721f44167efe24f9e199183d1a",
-    "git_commit": "e5c48f9e2475078e5b314afcf76fffa4b6ea05f2",
+    "git_commit": "d1ff2fe420d1b9eeae81d28a7e690b3697763c94",
     "model_versions": {
-      "headline": "senna-ppo-70098e9d3425-C-01769472"
+      "headline": "senna-ppo-5e3ddb15d584-C-01769472"
     },
     "scope": {
       "circuits": 24,
@@ -41,7 +41,7 @@
       "utilisation": -0.05003787676760796
     },
     "excluded_races": [],
-    "model_version": "senna-ppo-70098e9d3425-C-01769472",
+    "model_version": "senna-ppo-5e3ddb15d584-C-01769472",
     "n_circuits": 24,
     "reading": "the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under",
     "refined_h_max_mj": 7.0,

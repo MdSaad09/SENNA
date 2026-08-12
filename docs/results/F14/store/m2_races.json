@@ -1,10 +1,10 @@
 {
   "envelope": {
-    "config_hash": "70098e9d34255e3ba471a556d36d616b08a384dd0d9e05a092bb529c6b3fb688",
-    "git_commit": "e5c48f9e2475078e5b314afcf76fffa4b6ea05f2",
+    "config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
+    "git_commit": "d1ff2fe420d1b9eeae81d28a7e690b3697763c94",
     "model_versions": {
-      "era2024": "senna-ppo-db586a74592a-C-03538944",
-      "headline": "senna-ppo-70098e9d3425-C-01769472"
+      "era2024": "senna-ppo-39cabd466e03-C-03538944",
+      "headline": "senna-ppo-5e3ddb15d584-C-01769472"
     },
     "scope": {
       "batteries": [
@@ -30,7 +30,7 @@
     "ci_high": -1.1595000000000073,
     "ci_low": -5.820499999999996,
     "ci_note": "descriptive only: a bootstrap over ten races is not a claim",
-    "era_matched_model": "senna-ppo-db586a74592a-C-03538944",
+    "era_matched_model": "senna-ppo-39cabd466e03-C-03538944",
     "mean_delta": -3.66,
     "met": false,
     "n_races": 10,

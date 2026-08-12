@@ -1,8 +1,8 @@
 # F09 — explainability: the fidelity badge and the cross-check
 
 The 5.8 pipeline run against the promoted headline triplet
-`senna-ppo-70098e9d3425-C-01769472` (F08, seed 331, step 1,769,472), config fingerprint
-`70098e9d3425`. Everything below was produced by one `make explain` and is
+`senna-ppo-5e3ddb15d584-C-01769472` (F08, seed 331, step 1,769,472), config fingerprint
+`5e3ddb15d584`. Everything below was produced by one `make explain` and is
 reproducible from the frozen constants in `configs/explain.yaml`. The artifacts live in
 `models/explain/<model_version>/` and are committed, minus the two evaluation-only
 arrays; this document is still the readable record. Figures are in `docs/explain/`; the

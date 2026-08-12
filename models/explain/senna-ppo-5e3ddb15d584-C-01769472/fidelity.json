@@ -1,6 +1,6 @@
 {
-  "model_version": "senna-ppo-70098e9d3425-C-01769472",
-  "env_config_hash": "70098e9d34255e3ba471a556d36d616b08a384dd0d9e05a092bb529c6b3fb688",
+  "model_version": "senna-ppo-5e3ddb15d584-C-01769472",
+  "env_config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
   "threshold": 0.9,
   "heads": {
     "pit": {
@@ -31,5 +31,5 @@
   },
   "cards": 14460,
   "card_races": 240,
-  "generated_at": "2026-08-11T21:52:25.888529+00:00"
+  "generated_at": "2026-08-12T17:39:18.151707+00:00"
 }

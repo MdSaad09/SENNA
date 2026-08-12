@@ -1,9 +1,9 @@
 {
-  "model_version": "senna-ppo-70098e9d3425-C-01769472",
-  "run_id": "headline-20260811-s331-70098e9d3425",
+  "model_version": "senna-ppo-5e3ddb15d584-C-01769472",
+  "run_id": "headline-20260812-s331-5e3ddb15d584",
   "run_tag": "headline",
   "era": "2026",
-  "fingerprint": "70098e9d34255e3ba471a556d36d616b08a384dd0d9e05a092bb529c6b3fb688",
+  "fingerprint": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
   "config_files": [
     "env",
     "circuits",
@@ -17,7 +17,7 @@
     "curriculum",
     "seeds"
   ],
-  "git_commit": "a674cc4c5ac8a55fc266da143fbd1677a3af5082",
+  "git_commit": "d1ff2fe420d1b9eeae81d28a7e690b3697763c94",
   "stage": "C",
   "global_step": 1769472,
   "stage_exit_reason": null,
@@ -74,7 +74,7 @@
     ]
   },
   "dominance_ratio": 1.9046901221163506,
-  "wandb_run_id": "xmu03404",
+  "wandb_run_id": "7rr33oj0",
   "versions": {
     "stable_baselines3": "2.9.0",
     "sb3_contrib": "2.9.0",
@@ -82,7 +82,7 @@
     "python": "3.11.9"
   },
   "resumed_from": null,
-  "saved_at": "2026-08-11T20:25:54.790210+00:00",
-  "model_zip_sha256": "321a46a91b7d2b6abc21b921d0c1bd82f4c344b9053a420664ed646a59b0453f",
+  "saved_at": "2026-08-12T03:04:38.280591+00:00",
+  "model_zip_sha256": "e3834dac45355595b474e9d14521e4018e21384a85ce791b72c5127074f740ca",
   "vecnormalize_sha256": "3f53d68fabfe832e4a9723119ca30ddef400de57b90cacab75b4a51d2390afc7"
 }
