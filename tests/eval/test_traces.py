@@ -6,8 +6,9 @@ the trace, not resampled.
 
 Pinned here: the track-status digit mapping, the real-to-sim lap rescale, the grid rules
 for pit-lane starts and short fields, the env's own acceptance of the synthesized result,
-and the strict-era guard that refuses a circuit whose "2024" scenario is really the 2026
-fallback. Rows are hand-built tuples: no database, no FastF1, no network.
+the seat pace a named driver brings into their own seat, and the strict-era guard that
+refuses a circuit whose "2024" scenario is really the 2026 fallback. Rows are hand-built
+tuples: no database, no FastF1, no network.
 """
 
 from pathlib import Path
@@ -18,6 +19,7 @@ import pytest
 from senna import config
 from senna.env import events
 from senna.eval.traces import require_native_era_fits, trace_from_real_race
+from tests.env.fixtures.driver_table import SEAT_PACE_S, write_driver_configs
 from tests.eval.conftest import SEED
 
 CIRCUIT = "bahrain_grand_prix"  # carries native 2024 joint-pace and degradation fits
@@ -163,6 +165,54 @@ def test_pit_lane_and_short_fields_are_placed_at_the_back(make_env):
     assert slots[0] == 1
     assert slots[0] < slots[1] < slots[2] < slots[4]  # classified starters keep their order
     assert slots[3] > slots[4]  # the pit-lane start falls behind every classified starter
+
+
+def test_real_race_traces_carry_the_real_driver(make_env, tmp_path):
+    """M2 asks what the agent would have done with the team's own race in front of it, and
+    this module has been handed `laps_by_driver` keyed by real driver codes all along while
+    filling `driver_s` from `rng.normal` — it knew which seat was Verstappen's and gave him
+    a coin flip. The counterfactual is only era-matched if the real driver's fitted seat
+    pace is in the real driver's seat."""
+    configs = write_driver_configs(tmp_path / "configs")
+    scenario = make_env(CIRCUIT, ERA).scenario
+    real_total_laps = scenario.total_laps
+    drivers = ("VER", "HAM", "LEC")
+    laps_by_driver = {driver: _driver_laps(real_total_laps) for driver in drivers}
+
+    trace = trace_from_real_race(
+        circuit=CIRCUIT, era=ERA, scenario=scenario, laps_by_driver=laps_by_driver,
+        weather_rows=_dry_weather(real_total_laps),
+        grid={driver: i + 1 for i, driver in enumerate(drivers)},
+        real_total_laps=real_total_laps, seed=SEED, cfg=config.load("eval"),
+        configs_dir=configs,
+    )
+
+    # cars are indexed in laps_by_driver order, which is how the harness knows which column
+    # is the driver being counterfactualled — so seat order is the assertion
+    fitted_s = [SEAT_PACE_S[ERA][driver][CIRCUIT] for driver in drivers]
+    assert trace.driver_s[:3].tolist() == pytest.approx(fitted_s)
+    # the phantom cars padding the field out are nobody, so they keep their drawn offset
+    assert (trace.driver_s[3:] != 0.0).all()
+
+
+def test_a_race_without_a_driver_table_still_fills_every_seat(make_env, tmp_path):
+    # E-09: a driver the table has no entry for falls back to the draw, and a table that
+    # is not there at all is that case for every seat. M2 must not need the file to exist
+    configs = write_driver_configs(tmp_path / "configs")
+    (configs / "drivers.yaml").unlink()
+    scenario = make_env(CIRCUIT, ERA).scenario
+    real_total_laps = scenario.total_laps
+    laps_by_driver = {d: _driver_laps(real_total_laps) for d in ("VER", "HAM", "LEC")}
+
+    trace = trace_from_real_race(
+        circuit=CIRCUIT, era=ERA, scenario=scenario, laps_by_driver=laps_by_driver,
+        weather_rows=_dry_weather(real_total_laps), grid={"VER": 1, "HAM": 2, "LEC": 3},
+        real_total_laps=real_total_laps, seed=SEED, cfg=config.load("eval"),
+        configs_dir=configs,
+    )
+
+    assert (trace.driver_s != 0.0).all()
+    assert trace.driver_s.std() > 0.0
 
 
 def test_a_circuit_without_native_2024_fits_is_refused():

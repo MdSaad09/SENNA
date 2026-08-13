@@ -76,6 +76,7 @@ class SyntheticRace:
     evolution_s_per_lap: float
     hard_offset_s: float
     driver_spread_s: float  # sample std of the realised driver effects
+    driver_effects_s: dict[str, float]  # the realised effect per driver code, uncentred
     race_fuel_kg: float
     sc_burn_factor: float
 
@@ -95,11 +96,11 @@ def make_synthetic_race():
         under_sc = set(sc_laps)
         driver_frames = []
         fuel_columns = []
-        driver_effects_s = []
+        driver_effects_s = {}
 
         for i in range(N_DRIVERS):
             driver_effect_s = rng.normal(0.0, DRIVER_SPREAD_S)
-            driver_effects_s.append(driver_effect_s)
+            driver_effects_s[f"D{i:02d}"] = driver_effect_s
             noise_s = rng.normal(0.0, LAP_NOISE_S, size=RACE_LAPS)
             pit_lap = 26 + (i % 10)  # varied stint breaks, all after the SC window
             compound_by_stint = ("HARD", "MEDIUM") if i % 2 else ("MEDIUM", "HARD")
@@ -153,7 +154,8 @@ def make_synthetic_race():
             k_fuel_s_per_kg=K_FUEL_S_PER_KG,
             evolution_s_per_lap=EVOLUTION_S_PER_LAP,
             hard_offset_s=HARD_OFFSET_S,
-            driver_spread_s=float(np.std(driver_effects_s, ddof=1)),
+            driver_spread_s=float(np.std(list(driver_effects_s.values()), ddof=1)),
+            driver_effects_s=driver_effects_s,
             race_fuel_kg=RACE_FUEL_KG,
             sc_burn_factor=SC_BURN_FACTOR,
         )
