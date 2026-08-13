@@ -1,7 +1,7 @@
 {
   "envelope": {
-    "config_hash": "2fc51121f02a5c118e95af335d525d0dfc1a10d2cdc550e47f41bf6ebf1a6174",
-    "git_commit": "fa316270000e1e92c53c98acaaf64c88e5af0504",
+    "config_hash": "5eaf90c65f99df8fec877aa7d43bcda071c5b81b4d1b596a766bfe5963cd4487",
+    "git_commit": "895954ed714e51cad8adc719d7cea52cf75681e7",
     "model_versions": {
       "era2024": "senna-ppo-39cabd466e03-C-03538944"
     },
@@ -1558,10 +1558,10 @@
         "total_snapped_stops": 25
       },
       "up": {
-        "ci_high": -1.92,
-        "ci_low": -9.040000000000001,
+        "ci_high": -2.04,
+        "ci_low": -9.1,
         "ci_note": "descriptive only: a bootstrap over ten races is not a claim",
-        "mean_delta": -5.34,
+        "mean_delta": -5.4399999999999995,
         "met": false,
         "n_races": 10,
         "per_race": [
@@ -2310,11 +2310,11 @@
           {
             "circuit": "monaco_grand_prix",
             "driver": "LEC",
-            "mean_delta": -1.0,
+            "mean_delta": -2.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 4,
                 "agent_stops": [
                   [
                     2,
@@ -2323,21 +2323,17 @@
                   [
                     3,
                     "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -1,
+                "delta": -2,
                 "seed": 198252,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 4,
                 "agent_stops": [
                   [
                     2,
@@ -2346,21 +2342,17 @@
                   [
                     3,
                     "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -1,
+                "delta": -2,
                 "seed": 877739,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 4,
                 "agent_stops": [
                   [
                     2,
@@ -2369,21 +2361,17 @@
                   [
                     3,
                     "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -1,
+                "delta": -2,
                 "seed": 356643,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 4,
                 "agent_stops": [
                   [
                     2,
@@ -2392,21 +2380,17 @@
                   [
                     3,
                     "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -1,
+                "delta": -2,
                 "seed": 984998,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 4,
                 "agent_stops": [
                   [
                     2,
@@ -2415,15 +2399,11 @@
                   [
                     3,
                     "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -1,
+                "delta": -2,
                 "seed": 526345,
                 "snapped_stops": 0
               }

@@ -181,7 +181,40 @@ def test_the_deg_multiplier_se_is_clustered_by_stint():
     assert fits["D00"].se > 2.0 * naive_se
 
 
-def test_a_driver_with_no_degradation_signal_is_not_identified():
+def test_a_lap_with_no_stint_number_still_reaches_the_error_bar():
+    """`Lap.stint` is nullable and the clean mask does not require it, so patchy stint data
+    reaches this fitter. Grouping drops NaN keys by default, which would leave those laps in
+    the signal and out of the clustered sum — the error bar would get *tighter* the patchier
+    the input, and a driver the design cannot pin down would walk through the gate on the
+    strength of the laps it failed to count."""
+    frame = _style_frame({"D00": 1.00}, stint_noise_s=0.5, lap_noise_s=0.05)
+    # a session-sized hole, which is how FastF1 loses a channel — the same shape
+    # joint_pace._clean_mask documents for tyre_life (E-09)
+    patchy = frame.copy()
+    patchy.loc[patchy["session_id"] == SESSIONS[0], "stint"] = None
+
+    holed = fit_deg_multipliers(patchy, min_stints=1, max_rel_se=1.0)["D00"]
+
+    predicted_s = patchy["predicted_deg_s"].to_numpy(dtype=float)
+    residual_s = patchy["pace_residual_s"].to_numpy(dtype=float)
+    signal = float(predicted_s @ predicted_s)
+    raw_mult = float(residual_s @ predicted_s) / signal
+    error_s = residual_s - raw_mult * predicted_s
+    # the error bar a NaN-dropping groupby gives: those laps stay in the signal, which is
+    # the denominator, and leave the clustered sum, which is the numerator
+    dropped = patchy.assign(_d=predicted_s, _e=error_s).groupby(["session_id", "stint"])
+    unlabelled_se = float(
+        np.sqrt(sum(float((g["_d"] * g["_e"]).sum()) ** 2 for _, g in dropped)) / signal
+    )
+
+    assert holed.n_laps == len(patchy)  # no lap silently leaves the sample
+    # compared on rel_se, because the published se is rescaled by the normalising constant
+    # and the raw one is not — rel_se is the scale-free quantity, and the one the gate
+    # reads. meat is a sum of squares, so dropping a cluster can only shrink it: the
+    # version that loses the unlabelled laps reports more precision than it earned. Small
+    # on this frame — a whole session summed into one cluster nearly cancels — but it is
+    # the wrong direction to be generous in.
+    assert holed.rel_se >= unlabelled_se / abs(raw_mult)
     # a quarter of the committed degradation curves sit at exactly a = 0 (the fitter hits
     # its lower bound on flat-residual circuits), so a driver whose whole sample came from
     # those has no denominator at all — that must read as "unidentified", not as a NaN

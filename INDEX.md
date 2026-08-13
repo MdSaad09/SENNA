@@ -187,9 +187,24 @@ the work — resume with `claude --continue`, or start fresh and say
   CI [0.70, 0.86]. Read M1 with M9: the agent still buys track position by over-running
   tyres, and the refit did not touch that. Evidence: docs/results/F14-evaluation.md.
   Previous: M1 +2.083 CI [1.71, 2.48], M4 0.649, M6 0.228, M9 37.29, M11 0.758.
+- **M2 re-measured with named drivers (F17, 13 Aug 2026).** `eval/traces.py` filled each
+  seat's pace from `rng.normal` while holding a list keyed by real driver codes; it now
+  carries the seat effect the joint regression measured for that driver at that
+  circuit-era. Mean delta **−3.66 → −4.58**, CI [−5.82, −1.16] → **[−8.38, −1.20]**. The
+  pre-registered sign test is **unchanged at 1W/8L/1T, p=0.039**, so the adverse conclusion
+  stands and only its size moved. The direction was not knowable before the roll and the
+  plan said so in advance: the seat offset largely cancels inside each pair (both legs
+  share the lineup, and the counterfactualled driver is car 0 in both), so what moves is
+  field context. Las Vegas swings furthest — a fitted Verstappen seat puts the replay
+  baseline on the front row. **Read M2's spread with care from here on:** a twin replay is
+  near-deterministic (zero lap noise, fitted pit service, events from the trace), so the
+  five seeds per race were only ever varying the driver draw, and nine of ten races are now
+  identical across all five. `seeds_per_race` stays at 5 — changing a published metric's
+  shape is a separate decision. Evidence: docs/results/F14-evaluation.md.
 - **Two F14 rows moved in ways worth arguing about (11 Aug 2026).** **M2 got worse and
   became significant:** 4W/5L/1T at p=1.000 (mean −0.60) became **1W/8L/1T at p=0.039**
-  (mean −3.66). The pre-registered sign test now rejects in the adverse direction, so
+  (mean −3.66; F17 later re-measured this to −4.58, above). The pre-registered sign test
+  rejects in the adverse direction, so
   the old reading — "competitive with elite humans, not better" — is no longer
   supportable. Better physics turned an inconclusive wash into a measured gap, which is
   the more useful finding and belongs in the limitations section. Read it with the 25

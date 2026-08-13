@@ -1094,7 +1094,7 @@ committed store.
 | Metric | Result | Previous (two-season physics) | Target | Verdict |
 |---|---|---|---|---|
 | M1 paired position delta | **+2.279 places** over 480 pairs, CI [1.913, 2.663] | +2.083, CI [1.710, 2.475] | ≥ +1.0, CI excluding 0 | **met** |
-| M2 counterfactual vs actual | 1W/8L/1T, p = 0.039, mean −3.66 over 10 races | 4W/5L/1T, p = 1.000, mean −0.60 | ≥ +1.0, sign test p < 0.05 | miss |
+| M2 counterfactual vs actual | 1W/8L/1T, p = 0.039, mean −4.58 over 10 races | 1W/8L/1T, p = 0.039, mean −3.66 (drawn driver pace) | ≥ +1.0, sign test p < 0.05 | miss |
 | M3 oracle regret | median 30.48 s, mean 71.78 s over 480 races | median 33.09 s, mean 86.98 s | report only | reported |
 | M4 energy utilisation | 0.704 of deployable, ceiling 0.912; derates 0.097 | 0.649, ceiling 0.914; derates 0.080 | ≥ 0.90, derates ≤ 0.05 | miss |
 | M5 safety-car quality | precision 0.820, recall 0.401 over 377 windows | precision 0.942, recall 0.308 | both ≥ 0.75 | miss |
@@ -1118,11 +1118,44 @@ and no false positives, against a previous chapter that had to report the agent 
 once doing it across 311 windows.
 
 One row got worse in a way that matters more than the improvements. M2 was a null
-result at 4W/5L/1T and p = 1.000; it is now 1W/8L/1T at p = 0.039, mean −3.66 places.
+result at 4W/5L/1T and p = 1.000; it became 1W/8L/1T at p = 0.039, mean −3.66 places.
 The sign test has become significant in the wrong direction: against replayed real
 strategies on the era-matched model, this agent now loses reliably rather than
 inconclusively. Better physics turned an absence of evidence into evidence of a gap,
 which is the more useful result and the one to lead with when discussing limitations.
+
+**M2 again, re-measured with named drivers (F17, 13 August 2026).** Until F17 the
+counterfactual filled each seat's pace offset from `rng.normal` while holding a list keyed
+by real driver codes — it knew which seat was Verstappen's and gave it a coin flip. Each
+seat now carries the effect the joint regression measured for that driver at that
+circuit-era, so the comparison is era-matched in pace as well as in events. The plan
+committed to reporting whatever came back and to saying that the direction was not knowable
+beforehand; it is worth being precise about why. The seat offset very largely cancels
+inside each pair, because both legs share the same lineup and the counterfactualled driver
+is car 0 in both. What moves is field context: giving the real grid its real pace changes
+where that car sits among the rivals, and therefore changes the strategic problem.
+
+| Reading | Mean delta | 95% CI (descriptive) | Sign test |
+|---|---|---|---|
+| Drawn driver pace (F18 chapter) | −3.66 | [−5.82, −1.16] | 1W/8L/1T, p = 0.039 |
+| Fitted seat pace (F17, current) | **−4.58** | [−8.38, −1.20] | 1W/8L/1T, p = 0.039 |
+
+The pre-registered sign test is unchanged — the same nine races fall the same way — so the
+conclusion does not move: this agent loses reliably to replayed real strategies on the
+era-matched model. The mean and the interval both worsen, driven mostly by Las Vegas, where
+a fitted Verstappen seat puts the replay baseline on the front row and hands the agent that
+much more to lose. Six races got worse, three better, one unchanged.
+
+One methodological note belongs with this table rather than in a footnote. A twin replay is
+close to deterministic by construction: the trace supplies the events, and `TraceSource`
+returns zero lap noise and the fitted pit-service mean with no draw, so that M3's oracle
+regret stays a clean ceiling. The five seeds per race were therefore never varying pit
+service, whatever the config comment used to say — they were varying the random driver-pace
+draw. With that draw replaced by a measurement, nine of the ten races are now identical
+across all five seeds, and each per-race delta should be read as very nearly a single
+number rather than as a mean over five independent rolls. The `seeds_per_race` constant is
+left at 5 because changing the shape of a published metric is a separate decision from
+this one.
 It should be read with the 25 snapped stops the replay baseline needed and with M8:
 the counterfactual is priced inside a simulator whose sim-to-real error is still far
 outside target.

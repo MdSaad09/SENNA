@@ -13,6 +13,7 @@ Run it: python -m senna.physics.fits.run   (or `make fit`)
 import argparse
 import asyncio
 import logging
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import numpy as np
@@ -544,6 +545,16 @@ class _Battery:
         return params
 
 
+@dataclass(frozen=True)
+class _Cell:
+    """One driver's seat effect at one circuit-era, with the sample that produced it."""
+
+    effect_s: float
+    laps: int
+    seasons: tuple[int, ...]
+    grade_c: bool
+
+
 def driver_tree(joint: dict, style: dict, *, min_laps_for_seat_pace: int) -> dict:
     """configs/drivers.yaml as (value, origin) pairs, one entry per driver per era.
 
@@ -553,15 +564,25 @@ def driver_tree(joint: dict, style: dict, *, min_laps_for_seat_pace: int) -> dic
     over the circuits that did clear, which is the rung senna/env/lineup.py falls back to —
     E-10's refusal to publish what the design could not identify, one layer down.
     """
-    cells: dict[tuple[str, str], dict[str, tuple[float, int]]] = {}
+    cells: dict[tuple[str, str], dict[str, _Cell]] = {}
     seasons: dict[tuple[str, str], set[int]] = {}
     for (slug, era), fit in joint.items():
         for code, effect_s in fit.driver_effects_s.items():
-            seasons.setdefault((code, era), set()).update(fit.driver_seasons.get(code, ()))
+            cell_seasons = tuple(fit.driver_seasons.get(code, ()))
+            seasons.setdefault((code, era), set()).update(cell_seasons)
             laps = int(fit.driver_laps.get(code, 0))
             if laps >= min_laps_for_seat_pace:
-                cells.setdefault((code, era), {})[slug] = (float(effect_s), laps)
+                cells.setdefault((code, era), {})[slug] = _Cell(
+                    effect_s=float(effect_s), laps=laps, seasons=cell_seasons,
+                    # a driver coefficient meets a fuel column only where the circuit's
+                    # attribution was identified; an unidentified fit refits without it
+                    # (joint_pace._splice_fuel_zero), so those effects never saw AR-10's
+                    # constructed mass at all. Where it did, the 2026 fuel is grade C and
+                    # the flag has to travel with the value like every other 2026 constant.
+                    grade_c=bool(fit.identified and era == "2026"),
+                )
 
+    _recentre_published_columns(cells)
     seats = set(cells) | {(code, era) for era, fits in style.items() for code in fits}
     drivers: dict = {}
     for code, era in sorted(seats):
@@ -575,33 +596,87 @@ def driver_tree(joint: dict, style: dict, *, min_laps_for_seat_pace: int) -> dic
     return {"drivers": drivers}
 
 
+def _recentre_published_columns(cells: dict) -> None:
+    """Centre each circuit-era column on the cells that survived the lap gate.
+
+    `_centred_effects` centres over every level in the design, which is what keeps the
+    persisted effects consistent with the `t0_s` that absorbed their mean. The lap gate
+    then drops the thinnest cells — and a level with one clean lap can carry an effect of
+    tens of seconds, so the level setting the centre is exactly the level most likely to
+    be removed. At japanese_grand_prix era 2024 a single 21.6 s lap displaced all 22
+    published cells by -0.95 s, and every driver at that circuit read as faster than the
+    field average, which a centred contrast cannot be.
+
+    Re-centring on the published set is what makes a named seat comparable to the
+    N(0, sigma_driver_s) an unnamed one draws, which is the property M1 rests on. It costs
+    a small absolute offset against `t0_s` — the mean of the dropped cells, under 0.02 s on
+    every healthy circuit. Where it is larger, `t0_s` and `sigma_driver_s` were carrying
+    the same outlier and are wrong by the same amount, so the offset removes error rather
+    than adding it. Fixing that at the source means gating the regression's driver factor,
+    which moves every fitted constant and is not this feature's to do.
+    """
+    columns: dict[tuple[str, str], list[float]] = {}
+    for (_code, era), by_circuit in cells.items():
+        for circuit, cell in by_circuit.items():
+            columns.setdefault((era, circuit), []).append(cell.effect_s)
+    centre = {key: sum(values) / len(values) for key, values in columns.items()}
+    for (_code, era), by_circuit in cells.items():
+        for circuit, cell in by_circuit.items():
+            by_circuit[circuit] = replace(
+                cell, effect_s=cell.effect_s - centre[(era, circuit)]
+            )
+
+
 def _driver_entry(cells: dict, style, seasons: list[int]) -> dict:
     entry: dict = {}
     if cells:
+        # the seasons go on the cell, not just on the driver. A circuit-era cell can only
+        # hold the seasons that circuit was raced in — France last ran in 2022, Las Vegas
+        # from 2023 — so a driver-level union would tell a reader that their Le Castellet
+        # number came from four cars when it came from one (the seat-not-skill question,
+        # answered at the granularity it is actually asked)
         entry["seat_pace_s"] = {
-            slug: (round(effect_s, 4), f"{DRIVER_NB} — {laps} clean laps")
-            for slug, (effect_s, laps) in cells.items()
+            slug: (
+                round(cell.effect_s, 4),
+                f"{DRIVER_NB} — {cell.laps} clean laps, "
+                f"season(s) {', '.join(str(s) for s in cell.seasons)}"
+                + (" (grade C via AR-10 fuel)" if cell.grade_c else ""),
+            )
+            for slug, cell in cells.items()
         }
-        total_laps = sum(laps for _, laps in cells.values())
-        mean_s = sum(effect_s * laps for effect_s, laps in cells.values()) / total_laps
+        total_laps = sum(cell.laps for cell in cells.values())
+        mean_s = sum(cell.effect_s * cell.laps for cell in cells.values()) / total_laps
+        grade = " (grade C via AR-10 fuel)" if any(c.grade_c for c in cells.values()) else ""
         entry["seat_pace_mean_s"] = (
             round(mean_s, 4),
-            f"{DRIVER_NB} — lap-weighted over {len(cells)} circuit(s), {total_laps} laps",
+            f"{DRIVER_NB} — lap-weighted over {len(cells)} circuit(s), "
+            f"{total_laps} laps{grade}",
         )
-        entry["n_laps"] = (total_laps, DRIVER_NB)
+        entry["n_laps"] = (total_laps, f"{DRIVER_NB} — the seat-pace sample")
     if style is not None:
         entry["deg_mult"] = (
             round(style.mult, 4), DRIVER_NB if style.identified else DEG_UNIDENTIFIED
         )
         entry["deg_mult_identified"] = (style.identified, DRIVER_NB)
         entry["n_stints"] = (style.n_stints, DRIVER_NB)
-        if style.identified:
-            # only where there is a published multiplier to put an error bar on. An
-            # unidentified driver's raw se can be infinite (no degradation signal at all),
-            # and validate_complete refuses a non-finite constant, correctly
-            entry["deg_mult_se"] = (round(style.se, 4), DRIVER_NB)
+        # a different sample from n_laps above, and the two sit next to each other: the
+        # multiplier is fitted on degradation partial residuals, the seat pace on the
+        # gated cells. Publishing only one of them invites a reader to use it for both.
+        entry["deg_mult_n_laps"] = (style.n_laps, f"{DRIVER_NB} — the tyre-style sample")
+        # published on refusals too, and it is the number that explains them: the count
+        # gate rarely bites, so a reader looking at deg_mult_identified: false needs to see
+        # how far past the precision gate the estimate sat. Rendered as a string when the
+        # design had no degradation signal at all, following vif_fuel's precedent — a bare
+        # inf would be a non-finite constant and validate_complete refuses those, rightly.
+        entry["deg_mult_rel_se"] = (
+            round(style.rel_se, 4) if np.isfinite(style.rel_se) else "inf",
+            f"{DRIVER_NB} — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult",
+        )
     if entry and seasons:
-        entry["seasons"] = (list(seasons), f"{DRIVER_NB} — the seasons behind this seat")
+        entry["seasons"] = (
+            list(seasons),
+            f"{DRIVER_NB} — every season behind this seat; per-circuit seasons are on each cell",
+        )
     return entry
 
 
@@ -654,8 +729,14 @@ def _put_joint(circuit: dict, slug: str, joint: dict, grade_c_pool_eras: set[str
                 None if fit.evolution_s_per_lap is None else round(fit.evolution_s_per_lap, 6),
                 JOINT_NB + attribution + attribution_grade,
             ),
-            # trend, t_ref, s_ref and sigma_driver are computed from raw lap
-            # times alone — fuel-free, so no AR-10 grade even in 2026
+            # no AR-10 grade on these four even in 2026, for two different reasons.
+            # t_ref and s_ref are the median and spread of raw lap times and never
+            # meet a fuel column at all. trend and sigma_driver do come off the joint
+            # design, but neither carries the constructed mass: an unidentified fit
+            # refits without the fuel column entirely (_splice_fuel_zero), and a
+            # driver coefficient is a between-driver contrast within a session, where
+            # the common fuel level differs. Corrected in F17 — the previous note
+            # claimed all four came from raw lap times, which is true of two.
             "trend_s_per_lap": (round(fit.trend_s_per_lap, 6), JOINT_NB),
             "identified": (fit.identified, JOINT_NB),
             "vif_fuel": (round(fit.vif_fuel, 1) if np.isfinite(fit.vif_fuel) else "inf", JOINT_NB),

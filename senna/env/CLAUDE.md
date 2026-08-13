@@ -57,7 +57,7 @@ for you.
 
 **A lineup rides the scenario, not the state.** `F1RaceEnv(..., drivers=[...])` resolves
 `configs/drivers.yaml` into `scenario.lineup` at construction (`senna/env/lineup.py`), and
-that is the only place driver identity lives. `RaceState` gained nothing and `EventTrace`
+that is the only place driver identity lives inside the env. `RaceState` gained nothing and `EventTrace`
 gained nothing — seat pace goes into the `driver_s` field both already had, and the
 tyre-style multiplier is read off the scenario inside `lap_time_s`, which already takes it.
 Three consequences worth knowing before you touch it:

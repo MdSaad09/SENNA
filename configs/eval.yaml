@@ -32,20 +32,22 @@ m1:                                 # paired position delta vs the rule-based ba
 m2:                                 # counterfactual vs actual, era-matched (F-24)
   target_mean_delta: 1.0            # sourced 5.12 — v2's +1.5 kept as the stretch below
   stretch_mean_delta: 1.5           # sourced 5.12
-  seeds_per_race: 5                 # stylised, and since F17 these seeds no longer move anything —
-                                    # READ THIS BEFORE QUOTING M2's SPREAD. A twin replay is
-                                    # deterministic by construction: TraceSource returns zero lap noise
-                                    # and the fitted pit-service mean with no draw, because that is what
-                                    # makes M3's oracle regret a clean ceiling. The events come from the
-                                    # real race. So the only thing these five seeds ever varied was the
-                                    # driver_s vector, which trace_from_real_race drew per seed — the
-                                    # coin flip in Verstappen's seat that F17 exists to remove. Now that
-                                    # seat pace is fitted, all five seeds produce the identical race and
-                                    # each per-race delta is a single deterministic number.
-                                    # The old comment claimed the seeds varied pit service; they did not.
-                                    # Left at 5 rather than 1 because dropping it changes the shape of a
-                                    # published metric, which is Saad's call and not a side effect of
-                                    # F17 (ship report, 13 Aug 2026)
+  seeds_per_race: 5                 # stylised, and since F17 these seeds move much less than the old
+                                    # comment claimed — READ THIS BEFORE QUOTING M2's SPREAD.
+                                    # A twin replay is close to deterministic by construction:
+                                    # TraceSource returns zero lap noise and the fitted pit-service mean
+                                    # with no draw, because that is what makes M3's oracle regret a clean
+                                    # ceiling, and the events come from the real race. The old comment
+                                    # said the seeds varied pit service; in a twin they never did.
+                                    # What they varied was the driver_s vector, which trace_from_real_race
+                                    # drew per seed — the coin flip in Verstappen's seat that F17 removes.
+                                    # Now that named seats take fitted pace, what is left is the phantom
+                                    # cars padding a short field out to the grid, which are nobody and so
+                                    # keep a drawn offset. On the shipped run that leaves 9 of 10 races
+                                    # identical across all five seeds. Read a per-race delta as very
+                                    # nearly a single number, not as a mean over five independent rolls.
+                                    # Left at 5 rather than cut because changing the shape of a published
+                                    # metric is Saad's call, not a side effect of F17 (13 Aug 2026)
   sign_test_alpha: 0.05             # sourced — standard two-sided level; at n=10 the exact paired sign
                                     # test needs 9/10 wins to clear it, and that bar is declared before
                                     # the first roll (a bootstrap CI at n=10 is descriptive, not a claim)

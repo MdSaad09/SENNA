@@ -39,7 +39,11 @@ BORROWED = (
 # every config the M2 roll reads: the perturbed file first, then the era constants,
 # the circuit bank and the race list. The envelope hashes the base files — the two
 # per-arm overlays could never share one hash, and the perturbation is in the payload
-M2_CONFIG_FILES = ["physics_2026", "physics_2024", "circuits", "eval"]
+# drivers is here and not in train.CONFIG_FILES for the reason that file gives: a lineup
+# is read only by a run that names one, and M2 names one for every race (F17). Leaving it
+# out would let the seat pace change the number without changing the hash that claims to
+# identify the inputs.
+M2_CONFIG_FILES = ["physics_2026", "physics_2024", "circuits", "eval", "drivers"]
 
 
 def build_overlays(*, base_configs_dir, tmp_root, perturbation: float) -> dict:

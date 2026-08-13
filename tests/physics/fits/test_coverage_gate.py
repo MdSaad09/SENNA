@@ -150,6 +150,31 @@ def test_an_untagged_constant_refuses_to_write(monkeypatch, tmp_path):
     assert not args.params_out.exists()
 
 
+def test_an_untagged_driver_constant_refuses_to_write_either_file(monkeypatch, tmp_path):
+    """The driver half of the write gate, which the stub above cannot reach on its own.
+
+    F17 added a second file and the claim that both trees clear the gates before either
+    lands. Every other test here drives the failure through `params`, so a driver tree that
+    validated nothing would pass the module — and the failure mode is a table of numbers
+    about named real people with no provenance on them.
+    """
+    _wire_battery_out(monkeypatch, _full_index())
+    monkeypatch.setattr(
+        fits_run, "driver_tree",
+        lambda *a, **k: {"drivers": {"VER": {2024: {"seat_pace_mean_s": (-0.42, "")}}}},
+    )
+    args = _out(tmp_path, only=None, circuit=None)
+
+    with pytest.raises(IncompleteParamsError) as excinfo:
+        asyncio.run(fits_run.run_battery(args))
+
+    assert "drivers.VER.2024.seat_pace_mean_s" in str(excinfo.value)
+    # neither file lands: a physics file on disk beside a refused driver table is a worse
+    # state to debug than neither, which is why the gates run before the first write
+    assert not args.drivers_out.exists()
+    assert not args.params_out.exists()
+
+
 def test_a_partial_ingest_refuses_to_write_params(monkeypatch, tmp_path):
     _wire_battery_out(monkeypatch, PARTIAL_INDEX)
     args = _out(tmp_path, only=None, circuit=None)

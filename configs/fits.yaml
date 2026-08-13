@@ -49,12 +49,18 @@ driver_identity:             # F17 — the gates on what may be said about a nam
   min_laps_for_seat_pace: 30 # stylised — clean laps a driver needs at one circuit-era
                              # before their seat effect is published per circuit; below it
                              # they keep their mean over the circuits that did clear.
-                             # Mirrors degradation.min_laps, and sized on the store: it
-                             # clears 628 of 652 era-2024 driver-circuit cells and 190 of
-                             # 235 era-2026 ones, so it refuses the thin cells without
-                             # gutting coverage (notebooks/fit_driver_identity.ipynb)
-  min_stints_for_deg_mult: 12  # stylised — a floor, not the gate that bites: the thinnest
-                             # era-2024 driver already has 12 stints and the median has 132
+                             # Mirrors degradation.min_laps. It clears 628 of 652
+                             # driver-circuit cells in era 2024 and 91 of 127 in era 2026,
+                             # so it refuses the thin tail without gutting coverage, and it
+                             # bites harder in the era that is one partial season rather
+                             # than four — which is the right way round
+                             # (notebooks/fit_driver_identity.ipynb, both eras executed)
+  min_stints_for_deg_mult: 12  # stylised — a floor rather than the gate that usually
+                             # bites. Era 2024 clears it outright: its thinnest driver has
+                             # 12 stints and the median 132. Era 2026 is where it earns its
+                             # place, binding LIN (10 stints) and HUL (11) out of a median
+                             # of 14.5 — so it is not inert, and a reader should not be
+                             # told it is
   max_rel_se_for_deg_mult: 0.10  # stylised — the gate that does bite. Relative standard
                              # error of the multiplier, clustered by stint, above which the
                              # style is not identified and the pooled curve stands. This is
@@ -64,7 +70,13 @@ driver_identity:             # F17 — the gates on what may be said about a nam
                              # driver with the era-2024 median 132 stints lands at p90
                              # 0.019-0.051, an era-2026 median 29-stint driver at
                              # 0.053-0.109, and a 12-stint driver at 0.084-0.220, so 0.10
-                             # admits a full era of running and refuses a reserve seat
+                             # admits a full era of running and refuses a reserve seat.
+                             # On the shipped fit it identifies 31 of 31 era-2024 drivers
+                             # and 15 of 22 in era 2026: the refusals are all in the
+                             # thinner era, which is the gate working rather than a
+                             # threshold tuned to produce refusals. Era 2024 is insensitive
+                             # here — the notebook's sweep gives 31 of 31 at every value
+                             # from 0.10 to 0.50, and only 0.05 bites
 
 hazards:
   wilson_z: 1.96             # sourced — 95% two-sided normal quantile

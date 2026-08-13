@@ -1,7 +1,8 @@
 {
   "envelope": {
     "config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
-    "git_commit": "fa316270000e1e92c53c98acaaf64c88e5af0504",
+    "drivers_fingerprint": "a5617dc75f4a9a2fa327552ef1051218a4bc01f2b386698459ce04bc0947b58a",
+    "git_commit": "895954ed714e51cad8adc719d7cea52cf75681e7",
     "model_versions": {
       "era2024": "senna-ppo-39cabd466e03-C-03538944",
       "headline": "senna-ppo-5e3ddb15d584-C-01769472"

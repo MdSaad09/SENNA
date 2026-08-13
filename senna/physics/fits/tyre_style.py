@@ -113,7 +113,12 @@ def _one_driver(laps: pd.DataFrame) -> dict:
     # a stint number restarts every session, so the cluster key needs both — keyed on
     # either alone this silently merges a driver's Bahrain second stint with their Monaco
     # second stint, and both the count gate and the error bar read low
-    stints = laps.groupby(["session_id", "stint"])
+    # dropna=False: Lap.stint is nullable and _clean_mask does not require it, so a lap
+    # with no stint number would sit in the signal (the denominator) and leave the
+    # clustered sum (the numerator). meat is a sum of squares, so that can only understate
+    # the error bar. Unknown-stint laps cluster together per session instead, which is the
+    # conservative reading of "these might be one set".
+    stints = laps.groupby(["session_id", "stint"], dropna=False)
     sample = {"n_stints": int(stints.ngroups), "n_laps": int(len(laps))}
 
     signal = float(predicted_s @ predicted_s)
@@ -132,7 +137,7 @@ def _one_driver(laps: pd.DataFrame) -> dict:
     meat = sum(
         float((group["_predicted_s"] * group["_error_s"]).sum()) ** 2
         for _, group in laps.assign(_predicted_s=predicted_s, _error_s=error_s).groupby(
-            ["session_id", "stint"]
+            ["session_id", "stint"], dropna=False
         )
     )
     se = float(np.sqrt(meat) / signal)

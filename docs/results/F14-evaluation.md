@@ -111,12 +111,12 @@ the ten M2 races with that block scaled by +/-50% under the era-matched model.
 
 | Arm | Mean delta (places) | Races |
 |---|---|---|
-| up (+50%) | -5.34 | 10 |
+| up (+50%) | -5.44 | 10 |
 | down (-50%) | -4.28 | 10 |
 
 Read this as the borrowed 2026 energy-mode fit scaled by +/-50% under the era-matched model — how much of M2 rides on coefficients the 2024 era never fitted, not a claim about either era's true physics.
 
-Provenance: config `2fc51121f02a` (the base configs the overlays scaled), seeds `b112935601b2`.
+Provenance: config `5eaf90c65f99` (the base configs the overlays scaled), seeds `b112935601b2`.
 
 
 ## Figures

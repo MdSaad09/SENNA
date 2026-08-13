@@ -154,6 +154,22 @@ def test_an_unnamed_seat_falls_back_to_the_draw(driver_configs):
     assert named.scenario.lineup.deg_mult[1] == 1.0
 
 
+def test_a_solo_race_takes_the_named_seat(driver_configs):
+    """F07 Stage A runs a one-car grid. `build_scenario` does not know about `solo`, so the
+    lineup is resolved at the full grid width and the one-car race reads a prefix of it —
+    which is only correct because the ego is seat 0. Pinned here because the slice is
+    otherwise a silent contract: widen it to a suffix and every twenty-two-car test still
+    passes while a solo race quietly drives on the last seat's tyres."""
+    env = F1RaceEnv(CIRCUIT, ERA, solo=True, drivers=[HEAVY_WEAR], configs_dir=driver_configs)
+
+    env.reset(seed=SEED)
+
+    assert env.n_cars == 1
+    assert env._state.driver_s[0] == pytest.approx(SEAT_PACE_S[ERA][HEAVY_WEAR][CIRCUIT])
+    # and the tyre style reaches the lap-time model for that one car, not seat 21's
+    assert env.scenario.lineup.deg_mult[0] == pytest.approx(DEG_MULT[ERA][HEAVY_WEAR])
+
+
 def test_a_thin_circuit_falls_back_to_the_driver_mean(driver_configs):
     """The fixture's FAST seat has no Monaco cell, because a cell below
     min_laps_for_seat_pace is not published rather than published noisily (E-10). The seat
@@ -182,6 +198,37 @@ def test_a_faster_driver_finishes_ahead_on_equal_strategy(driver_configs):
     # every lap, not once at the start: an offset installed at reset and then dropped from
     # the lap-time model would show up here as a gap two orders of magnitude too small
     assert gap_s == pytest.approx(pace_gap_s * env.total_laps, rel=0.2)
+
+
+def test_the_table_s_multiplier_reaches_the_lap_time(driver_configs):
+    """The chain the property test below does not cover: table -> resolve -> scenario ->
+    lap_time_s. That one hand-builds a deg_mult array and injects it with `replace`, so it
+    proves the multiplication happens and nothing about whose multiplier arrives. Neuter
+    the lookup entirely and it stays green; this goes red.
+
+    HEAVY_WEAR is the only fixture seat carrying a fitted multiplier away from 1.0, so on
+    the same worn tyre it must lose time to a seat on the pooled curve, and on a fresh set
+    the two must be identical — T5's form is unchanged, so age zero costs nobody anything.
+    """
+    scenario = build_scenario(CIRCUIT, ERA, drivers=[SLOW, HEAVY_WEAR],
+                              configs_dir=driver_configs)
+    n = scenario.grid_size
+    modes = np.full(n, BALANCED)
+    request_mj = dynamics.deploy_request_mj(modes, scenario)
+
+    def lap_s(age):
+        return dynamics.lap_time_s(
+            compound=np.full(n, compound_code(START_COMPOUND)), age=np.full(n, age),
+            fuel_kg=np.full(n, scenario.race_fuel_kg), modes=modes,
+            delivered_mj=request_mj, request_mj=request_mj, derate_s=np.zeros(n),
+            gap_ahead_s=np.full(n, scenario.dirty_air_threshold_s), wetness=0.0,
+            track_status=np.zeros(n, dtype=int), driver_s=np.zeros(n),
+            noise_s=np.zeros(n), scenario=scenario,
+        )
+
+    assert scenario.lineup.deg_mult[1] == pytest.approx(DEG_MULT[ERA][HEAVY_WEAR])
+    assert lap_s(20)[1] > lap_s(20)[0]  # the harsher seat pays for a worn set
+    assert lap_s(0)[1] == pytest.approx(lap_s(0)[0])  # and nothing for a fresh one
 
 
 @pytest.mark.property

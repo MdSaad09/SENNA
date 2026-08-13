@@ -144,7 +144,7 @@ drivers:
 | `drivers.<CODE>.<era>.seat_pace_mean_s` | fitted | **fitted** | `drivers.yaml` |
 | `drivers.<CODE>.<era>.deg_mult` | fitted where identified, else `1.0` | **fitted**, or **stylised** with `deg_mult_identified: false` | `drivers.yaml` |
 | `drivers.<CODE>.<era>.deg_mult_se`, `.n_laps`, `.seasons` | fitted | **fitted** — the sample behind each claim | `drivers.yaml` |
-| `driver_identity.min_laps_for_seat_pace` | **30** — mirrors `degradation.min_laps`; clears 628 of 652 era-2024 cells and 190 of 235 era-2026 ones, so it bites the thin cells without gutting coverage. Sized in the notebook. | **stylised** | `configs/fits.yaml` |
+| `driver_identity.min_laps_for_seat_pace` | **30** — mirrors `degradation.min_laps`; clears 628 of 652 era-2024 cells and 91 of 127 era-2026 ones, so it bites the thin cells without gutting coverage. Sized in the notebook. (The era-2026 figure read "190 of 235" when this plan was written, from a query that counted every 2026 session rather than the six calibration rounds the fit may see — corrected 13 Aug against the executed notebook.) | **stylised** | `configs/fits.yaml` |
 | `driver_identity.min_stints_for_deg_mult` | **12** — the observed era-2024 minimum, a floor rather than a filter | **stylised** | `configs/fits.yaml` |
 | `driver_identity.max_rel_se_for_deg_mult` | **0.25** proposed, sized in the notebook — the gate that actually bites | **stylised** | `configs/fits.yaml` |
 
@@ -155,12 +155,23 @@ draws from, and removing it would break the default path.
 null`. `validate_complete` refuses null leaves, so that entry would fail the writer's own
 gate. The fallback is code behaviour, documented in the file header, not a constant.
 
-**Nothing is added to any existing config fingerprint.** `train/run.py:52` already carries
-the precedent in a comment: the ablation harness appends `ablations` for its own runs only,
-so the headline's fingerprint cannot be broken by a later edit there. `drivers.yaml` gets
-the same treatment, appended only for runs that name a lineup. Adding it to `CONFIG_FILES`
-would change `env_config_hash` for runs that never read it and make the frozen triplet's
-recorded hash unreproducible.
+**`drivers.yaml` is added to no fingerprint that does not read it.** `train/run.py:52`
+carries the precedent: the ablation harness appends `ablations` for its own runs only, so
+the headline's fingerprint cannot be broken by a later edit there. `drivers.yaml` gets the
+same treatment — out of `CONFIG_FILES`, which would change `env_config_hash` for runs that
+never read a lineup, and into `M2_CONFIG_FILES` and the M2 envelope, because M2 names a
+lineup for every race and the hash has to identify what produced the number.
+
+**Corrected 13 Aug 2026, during the build.** This section originally said "nothing is added
+to any existing config fingerprint", and that was wrong the moment the three gates went into
+`configs/fits.yaml` — which is itself the seventh entry of `CONFIG_FILES` and of
+`bench/throughput.py`'s list. Measured across the diff, `train.CONFIG_FILES` moves
+`5e3ddb15d584` to `b9eae725babd` and the bench list `2a1ee1f3a859` to `8507264a38b8`. The
+first of those is the frozen headline's own version string, so it no longer recomputes from
+the live configs. Nothing breaks and no test fails: `tests/eval/test_freeze.py` already
+documents that recomputing the eleven-file fingerprint "would fail by design and prove
+nothing", because the configs were legitimately comment-edited after training. But the claim
+as written was false and a reader checking it would have found that out before I did.
 
 ### The two fits, stated precisely
 
