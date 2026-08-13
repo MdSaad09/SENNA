@@ -80,7 +80,24 @@ def _wire_battery_out(monkeypatch, index, *, params=None, pace_seasons=None):
             params=lambda: GOOD_PARAMS if params is None else params,
             data_through=lambda: "seasons 2022-2026, round 6",
             pace_seasons=pace_seasons,
+            # F17 writes a second file from these; empty is the honest stub here,
+            # because this module is about the write gates, not the driver fits
+            joint={},
+            deg_style={},
         ),
+    )
+
+
+def _out(tmp_path, *, only=None, circuit=None):
+    """The battery's CLI arguments, pointed at a scratch directory.
+
+    Both out-paths are per-file since F17: the battery writes physics_params.yaml and
+    drivers.yaml, and a test that redirected only one would rewrite the committed other.
+    """
+    return argparse.Namespace(
+        only=only, circuit=circuit,
+        params_out=tmp_path / "physics_params.yaml",
+        drivers_out=tmp_path / "drivers.yaml",
     )
 
 
@@ -93,15 +110,18 @@ def test_a_clean_full_run_writes_the_params_file(monkeypatch, tmp_path):
     """The positive control. Every other test here asserts a file is absent, so without
     this one a writer that silently stopped writing would pass the whole module."""
     _wire_battery_out(monkeypatch, _full_index())
-    params_out = tmp_path / "physics_params.yaml"
+    args = _out(tmp_path, only=None, circuit=None)
 
-    asyncio.run(fits_run.run_battery(
-        argparse.Namespace(only=None, circuit=None, params_out=params_out)))
+    asyncio.run(fits_run.run_battery(args))
 
-    assert params_out.exists()
-    text = params_out.read_text()
+    assert args.params_out.exists()
+    text = args.params_out.read_text()
     assert text.startswith("# SENNA")
     assert "monza" in text and "21.4" in text
+    # since F17 a full run writes a pair, and the two gates run before either file lands —
+    # a physics file on disk beside a refused driver table is a worse state than neither
+    assert args.drivers_out.exists()
+    assert args.drivers_out.read_text().startswith("# SENNA")
 
 
 def test_a_season_reaching_no_pace_fit_refuses_to_write(monkeypatch, tmp_path):
@@ -109,50 +129,71 @@ def test_a_season_reaching_no_pace_fit_refuses_to_write(monkeypatch, tmp_path):
     # in the index, only two of them reached a regression
     _wire_battery_out(monkeypatch, _full_index(),
                       pace_seasons={"2024": {2024, 2025}})
-    params_out = tmp_path / "physics_params.yaml"
+    args = _out(tmp_path, only=None, circuit=None)
 
     with pytest.raises(IncompletePaceCoverageError):
-        asyncio.run(fits_run.run_battery(
-            argparse.Namespace(only=None, circuit=None, params_out=params_out)))
+        asyncio.run(fits_run.run_battery(args))
 
-    assert not params_out.exists()
+    assert not args.params_out.exists()
 
 
 def test_an_untagged_constant_refuses_to_write(monkeypatch, tmp_path):
     # validate_origins is the third write gate and had no wiring test either
     _wire_battery_out(monkeypatch, _full_index(),
                       params={"monza": {"pit_loss": {"mean_s": (21.4, "")}}})
-    params_out = tmp_path / "physics_params.yaml"
+    args = _out(tmp_path, only=None, circuit=None)
 
     with pytest.raises(IncompleteParamsError) as excinfo:
-        asyncio.run(fits_run.run_battery(
-            argparse.Namespace(only=None, circuit=None, params_out=params_out)))
+        asyncio.run(fits_run.run_battery(args))
 
     assert "monza.pit_loss.mean_s" in str(excinfo.value)
-    assert not params_out.exists()
+    assert not args.params_out.exists()
+
+
+def test_an_untagged_driver_constant_refuses_to_write_either_file(monkeypatch, tmp_path):
+    """The driver half of the write gate, which the stub above cannot reach on its own.
+
+    F17 added a second file and the claim that both trees clear the gates before either
+    lands. Every other test here drives the failure through `params`, so a driver tree that
+    validated nothing would pass the module — and the failure mode is a table of numbers
+    about named real people with no provenance on them.
+    """
+    _wire_battery_out(monkeypatch, _full_index())
+    monkeypatch.setattr(
+        fits_run, "driver_tree",
+        lambda *a, **k: {"drivers": {"VER": {2024: {"seat_pace_mean_s": (-0.42, "")}}}},
+    )
+    args = _out(tmp_path, only=None, circuit=None)
+
+    with pytest.raises(IncompleteParamsError) as excinfo:
+        asyncio.run(fits_run.run_battery(args))
+
+    assert "drivers.VER.2024.seat_pace_mean_s" in str(excinfo.value)
+    # neither file lands: a physics file on disk beside a refused driver table is a worse
+    # state to debug than neither, which is why the gates run before the first write
+    assert not args.drivers_out.exists()
+    assert not args.params_out.exists()
 
 
 def test_a_partial_ingest_refuses_to_write_params(monkeypatch, tmp_path):
     _wire_battery_out(monkeypatch, PARTIAL_INDEX)
-    params_out = tmp_path / "physics_params.yaml"
-    args = argparse.Namespace(only=None, circuit=None, params_out=params_out)
+    args = _out(tmp_path, only=None, circuit=None)
 
     with pytest.raises(IncompleteSeasonCoverageError):
         asyncio.run(fits_run.run_battery(args))
 
     # the refusal is the whole point: a partial ingest must leave no artifact behind
-    assert not params_out.exists()
+    assert not args.params_out.exists()
 
 
 def test_a_narrowed_run_is_not_tripped_by_its_own_smaller_index(monkeypatch, tmp_path):
     _wire_battery_out(monkeypatch, PARTIAL_INDEX)
-    params_out = tmp_path / "physics_params.yaml"
-    args = argparse.Namespace(only="joint_pace", circuit=None, params_out=params_out)
+    args = _out(tmp_path, only="joint_pace", circuit=None)
 
     asyncio.run(fits_run.run_battery(args))
 
     # a narrowed run never writes, so the coverage question does not arise for it
-    assert not params_out.exists()
+    assert not args.params_out.exists()
 
 
 def test_a_non_finite_fit_refuses_to_write_params(monkeypatch, tmp_path):
@@ -160,14 +201,13 @@ def test_a_non_finite_fit_refuses_to_write_params(monkeypatch, tmp_path):
         monkeypatch, _full_index(),
         params={"monza": {"pit_loss": {"mean_s": (float("nan"), "fitted: nb")}}},
     )
-    params_out = tmp_path / "physics_params.yaml"
-    args = argparse.Namespace(only=None, circuit=None, params_out=params_out)
+    args = _out(tmp_path, only=None, circuit=None)
 
     with pytest.raises(IncompleteParamsError):
         asyncio.run(fits_run.run_battery(args))
 
     # without this the emitter renders the bare literal `nan` and F05 loads it as a float
-    assert not params_out.exists()
+    assert not args.params_out.exists()
 
 
 def test_a_season_that_reaches_no_pace_fit_refuses_to_write_params():

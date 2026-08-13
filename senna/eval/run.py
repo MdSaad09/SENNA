@@ -140,7 +140,11 @@ def run_suite(*, only=None, smoke: bool = False, configs_dir=None, models_dir=No
         payload, era_version = _counterfactuals(cfg, models, configs_dir)
         written["m2_races"] = store.write_metric(
             committed, "m2_races", payload,
+            # M2 is the one battery that names a lineup, so the driver table is one of its
+            # inputs and the envelope has to say which one. config_hash identifies the
+            # model's training configs, which never included drivers.yaml by design (F17)
             envelope={**envelope,
+                      "drivers_fingerprint": config.fingerprint(["drivers"], configs_dir),
                       "model_versions": {**envelope["model_versions"], "era2024": era_version}})
 
     if "bands" in wanted:

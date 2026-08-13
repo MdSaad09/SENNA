@@ -42,7 +42,7 @@ luck it happened to meet.
 | Metric | Value | 95% CI | Target | Verdict |
 |---|---|---|---|---|
 | M1 paired position delta | 2.279 places over 480 pairs | [1.913, 2.663] | >= +1.0, CI excluding 0 | met |
-| M2 counterfactual vs actual | 1W/8L/1T, p=0.039 (mean -3.66 places over 10 races) | [-5.82, -1.16] descriptive | >= +1.0, sign test p < 0.05 | **miss** |
+| M2 counterfactual vs actual | 1W/8L/1T, p=0.039 (mean -4.58 places over 10 races) | [-8.38, -1.20] descriptive | >= +1.0, sign test p < 0.05 | **miss** |
 | M3 oracle regret | median 30.48 s (mean 71.78 s, 480 races) | p05 5.67 / p95 276.21 | report distribution | reported |
 | M4 energy utilisation | 0.704 deployed/E_dep (ceiling 0.912, 0.772 of attainable), derates 0.097 of green laps | - | >= 0.9 and derates <= 0.05 | **miss** |
 | M5 SC decision quality | precision 0.820, recall 0.401 over 377 windows | - | both >= 0.75 | **miss** |
@@ -111,12 +111,12 @@ the ten M2 races with that block scaled by +/-50% under the era-matched model.
 
 | Arm | Mean delta (places) | Races |
 |---|---|---|
-| up (+50%) | -3.12 | 10 |
-| down (-50%) | -3.48 | 10 |
+| up (+50%) | -5.44 | 10 |
+| down (-50%) | -4.28 | 10 |
 
 Read this as the borrowed 2026 energy-mode fit scaled by +/-50% under the era-matched model — how much of M2 rides on coefficients the 2024 era never fitted, not a claim about either era's true physics.
 
-Provenance: config `eb4c6dbe716b` (the base configs the overlays scaled), seeds `b112935601b2`.
+Provenance: config `5eaf90c65f99` (the base configs the overlays scaled), seeds `b112935601b2`.
 
 
 ## Figures

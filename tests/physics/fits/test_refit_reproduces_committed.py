@@ -39,6 +39,7 @@ from senna.physics.fits import frames, run
 pytestmark = pytest.mark.slow
 
 COMMITTED_PARAMS = config.REPO_ROOT / "configs" / "physics_params.yaml"
+COMMITTED_DRIVERS = config.REPO_ROOT / "configs" / "drivers.yaml"
 
 # raced dry in all four era-2024 seasons, and the circuit the F18 spec reproduced the
 # defect on — 1958 laps under the old scope against 3705 under the full era
@@ -102,6 +103,32 @@ def test_refit_reproduces_the_committed_params(ingested_store, tmp_path):
     )
     pytest.fail(
         "`make fit` no longer renders configs/physics_params.yaml — either the fitters "
+        "changed and the file needs regenerating, or the store is not the frozen "
+        "snapshot (A-09):\n" + "\n".join(list(diff)[:40])
+    )
+
+
+def test_refit_reproduces_the_committed_drivers(ingested_store, tmp_path):
+    """The same A-09 claim for the driver table, which is the file an examiner is likeliest
+    to read as a claim about real people. Both outputs go to tmp: without --drivers-out the
+    battery would write over the committed configs/drivers.yaml during a test run, and a
+    round-trip that overwrites its own reference cannot fail."""
+    refitted = tmp_path / "drivers.yaml"
+    run.main([
+        "--params-out", str(tmp_path / "physics_params.yaml"),
+        "--drivers-out", str(refitted),
+    ])
+
+    produced = refitted.read_text()
+    committed = COMMITTED_DRIVERS.read_text()
+    if produced == committed:
+        return
+
+    diff = difflib.unified_diff(
+        committed.splitlines(), produced.splitlines(), "committed", "refitted", n=1, lineterm=""
+    )
+    pytest.fail(
+        "`make fit` no longer renders configs/drivers.yaml — either the driver fits "
         "changed and the file needs regenerating, or the store is not the frozen "
         "snapshot (A-09):\n" + "\n".join(list(diff)[:40])
     )

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import pytest
 
 from senna.physics.fits.joint_pace import JointPaceFit, fit_joint_pace, pool_k_m
@@ -85,6 +86,59 @@ def test_vif_and_condition_reported(make_synthetic_race):
     assert fit.t0_s > 0.0
     assert fit.t_ref_s > 0.0
     assert fit.s_ref_s > 0.0
+
+
+def test_driver_effects_are_centred(make_synthetic_race):
+    race = make_synthetic_race()
+
+    fit = fit_joint_pace(
+        race.laps,
+        race.fuel_kg,
+        vif_max=SINGLE_RACE_VIF_MAX,
+        calibration_rounds=CALIBRATION_ROUNDS,
+    )
+
+    effects = fit.driver_effects_s
+    assert set(effects) == set(race.driver_effects_s)
+    # the design uses drop-one coding and t0_s already absorbs the effects' mean, so
+    # persisting them raw would shift every lap time by that mean. Nothing else in the
+    # suite would notice a constant pace shift, which is why this test exists (F17).
+    assert sum(effects.values()) == pytest.approx(0.0, abs=1e-9)
+    # centring cannot move the spread, so a named lineup and the N(0, sigma_driver_s)
+    # draw an unnamed grid falls back to stay distributionally matched (M1)
+    assert np.std(list(effects.values()), ddof=1) == pytest.approx(fit.sigma_driver_s)
+
+    # assert the gaps, not the levels: what the regression identifies is one driver
+    # against another, and the injected effects were never centred to begin with
+    baseline = "D00"
+    for code, injected_s in race.driver_effects_s.items():
+        gap_s = effects[code] - effects[baseline]
+        assert gap_s == pytest.approx(injected_s - race.driver_effects_s[baseline], abs=0.1)
+
+
+def test_driver_laps_and_seasons_are_recorded(make_synthetic_race):
+    """The sample behind each driver's number. "How do you know that?" is answered by the
+    lap count and the seasons sitting beside the value in drivers.yaml, and era 2024 pools
+    four of them — so a seat that only ran one must say so rather than borrow the pool's."""
+    this_year = make_synthetic_race(round_number=3)
+    last_year = make_synthetic_race(round_number=4)
+    # the same field one season earlier, minus a driver who had no seat that year
+    earlier = last_year.laps.assign(season=2025, session_id="2025-04-R")
+    rookie = earlier["driver"] == "D19"
+    laps = pd.concat([this_year.laps, earlier[~rookie]], ignore_index=True)
+    fuel_kg = pd.concat([this_year.fuel_kg, last_year.fuel_kg[~rookie]], ignore_index=True)
+
+    fit = fit_joint_pace(
+        laps, fuel_kg, vif_max=SINGLE_RACE_VIF_MAX, calibration_rounds=CALIBRATION_ROUNDS
+    )
+
+    # the laps that entered the regression, not the laps that arrived: SC and in/out laps
+    # are cleaned out, and a count that included them would overstate every driver's sample
+    clean = laps["is_green"] & laps["is_accurate"]
+    per_driver = clean.groupby(laps["driver"]).sum()
+    assert fit.driver_laps == {code: int(n) for code, n in per_driver.items()}
+    assert fit.driver_seasons["D00"] == (2025, 2026)
+    assert fit.driver_seasons["D19"] == (2026,)
 
 
 def test_refuses_validation_rounds(make_synthetic_race):

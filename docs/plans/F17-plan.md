@@ -144,7 +144,7 @@ drivers:
 | `drivers.<CODE>.<era>.seat_pace_mean_s` | fitted | **fitted** | `drivers.yaml` |
 | `drivers.<CODE>.<era>.deg_mult` | fitted where identified, else `1.0` | **fitted**, or **stylised** with `deg_mult_identified: false` | `drivers.yaml` |
 | `drivers.<CODE>.<era>.deg_mult_se`, `.n_laps`, `.seasons` | fitted | **fitted** — the sample behind each claim | `drivers.yaml` |
-| `driver_identity.min_laps_for_seat_pace` | **30** — mirrors `degradation.min_laps`; clears 628 of 652 era-2024 cells and 190 of 235 era-2026 ones, so it bites the thin cells without gutting coverage. Sized in the notebook. | **stylised** | `configs/fits.yaml` |
+| `driver_identity.min_laps_for_seat_pace` | **30** — mirrors `degradation.min_laps`; clears 628 of 652 era-2024 cells and 91 of 127 era-2026 ones, so it bites the thin cells without gutting coverage. Sized in the notebook. (The era-2026 figure read "190 of 235" when this plan was written, from a query that counted every 2026 session rather than the six calibration rounds the fit may see — corrected 13 Aug against the executed notebook.) | **stylised** | `configs/fits.yaml` |
 | `driver_identity.min_stints_for_deg_mult` | **12** — the observed era-2024 minimum, a floor rather than a filter | **stylised** | `configs/fits.yaml` |
 | `driver_identity.max_rel_se_for_deg_mult` | **0.25** proposed, sized in the notebook — the gate that actually bites | **stylised** | `configs/fits.yaml` |
 
@@ -155,12 +155,23 @@ draws from, and removing it would break the default path.
 null`. `validate_complete` refuses null leaves, so that entry would fail the writer's own
 gate. The fallback is code behaviour, documented in the file header, not a constant.
 
-**Nothing is added to any existing config fingerprint.** `train/run.py:52` already carries
-the precedent in a comment: the ablation harness appends `ablations` for its own runs only,
-so the headline's fingerprint cannot be broken by a later edit there. `drivers.yaml` gets
-the same treatment, appended only for runs that name a lineup. Adding it to `CONFIG_FILES`
-would change `env_config_hash` for runs that never read it and make the frozen triplet's
-recorded hash unreproducible.
+**`drivers.yaml` is added to no fingerprint that does not read it.** `train/run.py:52`
+carries the precedent: the ablation harness appends `ablations` for its own runs only, so
+the headline's fingerprint cannot be broken by a later edit there. `drivers.yaml` gets the
+same treatment — out of `CONFIG_FILES`, which would change `env_config_hash` for runs that
+never read a lineup, and into `M2_CONFIG_FILES` and the M2 envelope, because M2 names a
+lineup for every race and the hash has to identify what produced the number.
+
+**Corrected 13 Aug 2026, during the build.** This section originally said "nothing is added
+to any existing config fingerprint", and that was wrong the moment the three gates went into
+`configs/fits.yaml` — which is itself the seventh entry of `CONFIG_FILES` and of
+`bench/throughput.py`'s list. Measured across the diff, `train.CONFIG_FILES` moves
+`5e3ddb15d584` to `b9eae725babd` and the bench list `2a1ee1f3a859` to `8507264a38b8`. The
+first of those is the frozen headline's own version string, so it no longer recomputes from
+the live configs. Nothing breaks and no test fails: `tests/eval/test_freeze.py` already
+documents that recomputing the eleven-file fingerprint "would fail by design and prove
+nothing", because the configs were legitimately comment-edited after training. But the claim
+as written was false and a reader checking it would have found that out before I did.
 
 ### The two fits, stated precisely
 
@@ -371,6 +382,33 @@ in `lap_time_s`, one overwrite in `reset`, one dict persisted instead of average
 large is a config file of per-driver numbers an examiner will read as claims about real
 people. Every one needs to survive "how do you know that?", and the honest answers include
 "I don't, so it is 1.0".
+
+## Sizing corrections during the build (13 August 2026)
+
+The plan deferred both gate values to the notebook. Doing that sizing first changed one
+line of code as well as one constant, so it is recorded here rather than only in the
+notebook.
+
+**The standard error is clustered by stint.** Degradation residuals are correlated within a
+stint — a set that runs hot is slow for its whole life — so a lap-level error bar counts a
+stint's laps as that many independent observations. On the era-2024 fit it runs 2.3x small
+at the median, which is enough to walk a thin driver through any precision gate. The cluster
+key is `(session_id, stint)`; stint numbers restart every session, so either field alone
+under-clusters.
+
+**`max_rel_se_for_deg_mult` is 0.10, not the 0.25 the plan proposed.** Sized against the
+committed `(a, b)` distribution rather than an invented curve: a driver with the era-2024
+median 132 stints lands at relative standard error p90 0.019–0.051, an era-2026 median
+29-stint driver at 0.053–0.109, and a 12-stint driver at 0.084–0.220. 0.25 admitted every
+row including the thinnest. On the real fit 0.10 identifies 31 of 31 era-2024 drivers and
+15 of 22 in era 2026, which is the gate doing its job where the data is thin rather than
+manufacturing refusals where it is not.
+
+**A denominator guard the plan did not anticipate.** 26% of the 145 committed degradation
+curves sit at exactly `a = 0`, where the fitter hit its lower bound on a flat residual
+cloud, and 41% are below 1e-4. A driver whose whole sample came from those has no
+degradation to be relatively fast or slow at, so the estimator's denominator is zero. That
+reads as unidentified rather than as a division returning an infinity.
 
 ## What changed since the 9 August plan
 

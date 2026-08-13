@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from senna import config
+from senna.env.lineup import Lineup, resolve
 
 # Observation one-hot order (#4-8) and the pit head's compound choices (1..5).
 COMPOUNDS = ("SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET")
@@ -74,11 +75,21 @@ class CircuitScenario:
     pit_loss_sigma_s: float
     sc_burn_factor: float
     env: dict = field(repr=False)
+    # who is driving, when anyone said (F17). None is the default everywhere the project
+    # trains and evaluates, and it is the only value the frozen model has ever seen.
+    lineup: Lineup | None = None
 
 
 def build_scenario(
-    circuit: str, era: str = "2026", *, configs_dir: Path | None = None
+    circuit: str, era: str = "2026", *, drivers=None, configs_dir: Path | None = None
 ) -> CircuitScenario:
+    """`drivers` is an optional list of driver codes in seat order.
+
+    configs/drivers.yaml is read only when one is given, which is the same rule
+    ablations.yaml already follows. tests/env/fixtures/pinned_configs/ holds neither, and
+    the F16 golden replay that proves the extraction changed no behaviour is built from
+    that directory — a config loaded unconditionally here would take it down.
+    """
     def load(name):
         return config.load(name, configs_dir)
 
@@ -134,12 +145,13 @@ def build_scenario(
 
     status = load("physics_params")["globals"][f"status_pace_{era}"]
     hazards = params["hazards"]
+    grid_size = int(config.get(physics, "sporting.grid_size"))
 
     return CircuitScenario(
         circuit=circuit,
         era=era,
         total_laps=int(config.get(circuits, f"{circuit}.race_laps")),
-        grid_size=int(config.get(physics, "sporting.grid_size")),
+        grid_size=grid_size,
         usable_soc_mj=float(config.get(physics, "energy_store.usable_capacity_mj")),
         race_fuel_kg=float(config.get(physics, "mass.race_fuel_kg")),
         t0_s=t0_s,
@@ -177,6 +189,9 @@ def build_scenario(
         pit_loss_sigma_s=float(params["pit_loss"]["sigma_s"]),
         sc_burn_factor=float(config.get(load("fits"), "fuel.sc_burn_factor")),
         env=envc,
+        lineup=None if drivers is None else resolve(
+            drivers, circuit=circuit, era=era, n_cars=grid_size, configs_dir=configs_dir
+        ),
     )
 
 
