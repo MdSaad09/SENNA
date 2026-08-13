@@ -115,8 +115,12 @@ def run_counterfactual(race_cfg, inputs, *, policy, era: str, cfg, configs_dir=N
             circuit=circuit, era=era, scenario=scenario, laps_by_driver=ordered,
             weather_rows=inputs.weather_rows, grid=inputs.grid,
             real_total_laps=inputs.real_total_laps, seed=int(seed), cfg=cfg,
+            configs_dir=configs_dir,
         )
-        env = F1RaceEnv(circuit, era, twin=trace, configs_dir=configs_dir)
+        # the lineup as well as the trace: seat pace rides driver_s inside the twin, but
+        # the tyre-style multiplier lives on the scenario, so the env needs to be told who
+        # is driving for the counterfactual to be era-matched in wear too (F17)
+        env = F1RaceEnv(circuit, era, twin=trace, drivers=list(ordered), configs_dir=configs_dir)
         baseline_policy = RealStrategyReplay(real_plan, scenario, replay_cfg)
         baseline = run_episode(env, baseline_policy, seed=int(seed))
         agent = run_episode(env, policy, seed=int(seed))

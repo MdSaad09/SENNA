@@ -7,18 +7,27 @@ trivially winnable. So the events come from the ingested laps — the safety car
 fell, the red flag with its free tyre change (E-04), the rain arriving when it arrived
 (E-08) — and both legs of the pair race through them.
 
+Driver pace is fitted, not drawn (F17). This module has always been handed `laps_by_driver`
+keyed by real driver codes and then filled `driver_s` from `rng.normal` — it knew which seat
+was Verstappen's and gave him a coin flip, which made the counterfactual era-matched in its
+events and not in its pace. Each seat now takes the effect the joint regression measured for
+that driver at this circuit-era. Read it as the seat rather than the person: era 2024 pools
+2022-2025, so the number carries whatever car they drove in those seasons, and
+configs/drivers.yaml records the laps and seasons behind each one.
+
 What stays synthetic is stated rather than buried. Tyre failures are not identifiable from
 timing data, so no car loses one. Rival energy modes are balanced, the same reasoning the
-replay baseline already publishes: a 2024 strategy carries no 2026 energy decision. Driver
-pace offsets are drawn, not fitted, because per-driver skill is deliberately not modelled.
-And the wetness curve is a mapping from a rainfall flag, which is a stylised choice — it is
-the paragraph the British GP write-up owes (E-08).
+replay baseline already publishes: a 2024 strategy carries no 2026 energy decision. A seat
+the table cannot speak for — a phantom car padding a short field, or a driver with too few
+clean laps — keeps a drawn offset. And the wetness curve is a mapping from a rainfall flag,
+which is a stylised choice: it is the paragraph the British GP write-up owes (E-08).
 """
 
 import numpy as np
 
 from senna import config
 from senna.env import events
+from senna.env.lineup import resolve
 from senna.env.scenario import compound_code
 from senna.env.twin import EventTrace
 
@@ -54,7 +63,7 @@ def require_native_era_fits(circuit: str, era: str, *, configs_dir=None) -> None
 
 
 def trace_from_real_race(*, circuit, era, scenario, laps_by_driver, weather_rows, grid,
-                         real_total_laps, seed, cfg) -> EventTrace:
+                         real_total_laps, seed, cfg, configs_dir=None) -> EventTrace:
     """One EventTrace carrying a real race's events, rescaled onto the sim distance.
 
     Cars are indexed in `laps_by_driver` order, which is how the harness knows which column
@@ -91,11 +100,29 @@ def trace_from_real_race(*, circuit, era, scenario, laps_by_driver, weather_rows
     return EventTrace(
         circuit=circuit, era=era, seed=int(seed), n_laps=n_laps, n_cars=n_cars,
         grid=_grid_order(grid, laps_by_driver, n_cars),
-        driver_s=rng.normal(0.0, scenario.sigma_driver_s, n_cars),
+        driver_s=_seat_pace_s(
+            laps_by_driver, circuit=circuit, era=era, n_cars=n_cars, rng=rng,
+            sigma_driver_s=scenario.sigma_driver_s, configs_dir=configs_dir,
+        ),
         status=status, red_flag=red_flag, weather=weather, wetness=wetness,
         failed=np.zeros((n_laps, n_cars), dtype=bool),
         rival_pit=rival_pit, rival_mode=rival_mode,
     )
+
+
+def _seat_pace_s(laps_by_driver, *, circuit, era, n_cars, rng, sigma_driver_s, configs_dir):
+    """Seat offsets in car order, which is `laps_by_driver` order — the same order the
+    harness relies on to know which column is the driver being counterfactualled.
+
+    Drawn first and then overwritten, as the env's own reset does it, so a seat the table
+    has nothing for keeps a real offset. Zero would put it on the field average, and the
+    phantom cars padding a short field would all become quicker than most of the grid.
+    """
+    drawn_s = rng.normal(0.0, sigma_driver_s, n_cars)
+    named = resolve(
+        list(laps_by_driver), circuit=circuit, era=era, n_cars=n_cars, configs_dir=configs_dir
+    )
+    return np.where(np.isnan(named.seat_pace_s), drawn_s, named.seat_pace_s)
 
 
 def _status_from_digits(track_status) -> int | None:
