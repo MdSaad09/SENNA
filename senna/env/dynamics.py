@@ -123,6 +123,12 @@ def lap_time_s(*, compound, age, fuel_kg, modes, delivered_mj, request_mj, derat
     offset = _compound_lookup(compound, scenario.compound_offset_s, scenario)
     a = _compound_lookup(compound, scenario.deg_a, scenario)
     b = _compound_lookup(compound, scenario.deg_b, scenario)
+    if scenario.lineup is not None:
+        # per-driver tyre style (F17). T5's form is untouched — the multiplier scales the
+        # fitted amplitude, so a fresh set still costs nothing whoever is driving it, and
+        # the observation keeps reporting the pooled curve because that is the engineer's
+        # model of the tyre rather than this driver's realised wear (F20 owns the obs).
+        a = a * scenario.lineup.deg_mult[: a.size]
 
     deg = tyre_deg_s(scenario.t0_s, a, b, age)
     fuel_term = scenario.k_m_s_per_kg * fuel_kg

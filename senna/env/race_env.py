@@ -46,7 +46,7 @@ class F1RaceEnv(Env):
     def __init__(self, circuit: str, era: str = "2026", *, rival_band: str = "train",
                  configs_dir=None, record: bool = False, twin: EventTrace | None = None,
                  solo: bool = False, weather: str = "markov", hazards: str = "full",
-                 constraints: str = "mask", reward_mode: str = "v3"):
+                 constraints: str = "mask", reward_mode: str = "v3", drivers=None):
         if weather not in ("markov", "dry"):
             raise ValueError(f"weather must be 'markov' or 'dry', not '{weather}'")
         if hazards not in ("full", "sc_vsc", "none"):
@@ -59,7 +59,7 @@ class F1RaceEnv(Env):
             )
         self.circuit = circuit
         self.era = era
-        self.scenario = build_scenario(circuit, era, configs_dir=configs_dir)
+        self.scenario = build_scenario(circuit, era, drivers=drivers, configs_dir=configs_dir)
         self.total_laps = self.scenario.total_laps
         self.n_cars = 1 if solo else self.scenario.grid_size
         self._solo = solo
@@ -160,6 +160,13 @@ class F1RaceEnv(Env):
                 j = int(np.flatnonzero(grid == pin)[0])
                 grid[0], grid[j] = int(grid[j]), int(grid[0])
             driver_s = self._rng.normal(0.0, self.scenario.sigma_driver_s, n)
+            if self.scenario.lineup is not None:
+                # draw first, then overwrite the named seats. Skipping the draw would move
+                # every seeded race in the repo — the frozen model's evaluation, the Stage
+                # B traces, F14 — and this way a named race is the same race as the
+                # unnamed one at that seed, with people in it (F16's lesson, F17).
+                named_s = self.scenario.lineup.seat_pace_s[:n]
+                driver_s = np.where(np.isnan(named_s), driver_s, named_s)
 
         self._state = RaceState(
             n_cars=n,
