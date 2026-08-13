@@ -13,7 +13,7 @@ decomposes the trend instead of pretending the race resolved it. Either way
 the fitted trend reproduces what was observed; only the attribution moves.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
@@ -51,6 +51,14 @@ class JointPaceFit:
     # pool_k_m) but for the notebook's diagnostic that demonstrates exactly that
     k_m_ols_s_per_kg: float | None = None
     k_m_ols_se_s_per_kg: float | None = None
+    # the per-driver seat effects this regression already estimates, kept instead of
+    # summarised (F17). sigma_driver_s is their spread and stays what an unnamed grid
+    # draws from; these are what a named one reads. The sample behind each travels with
+    # it, because era 2024 pools four seasons and the honest answer to "how do you know
+    # Verstappen's number" names the laps and the seasons that produced it.
+    driver_effects_s: dict[str, float] = field(default_factory=dict)
+    driver_laps: dict[str, int] = field(default_factory=dict)
+    driver_seasons: dict[str, tuple[int, ...]] = field(default_factory=dict)
 
 
 def fit_joint_pace(
@@ -139,6 +147,14 @@ def fit_joint_pace(
         s_ref_s=float(np.std(lap_time_s, ddof=1)),
         n_laps=int(clean.sum()),
         n_excluded_no_tyre_age=n_ageless,
+        driver_effects_s=_centred_effects(coef, names, "driver=", fit_laps["driver"]),
+        driver_laps={
+            str(code): int(n) for code, n in fit_laps.groupby("driver").size().items()
+        },
+        driver_seasons={
+            str(code): tuple(sorted({int(s) for s in seasons}))
+            for code, seasons in fit_laps.groupby("driver")["season"]
+        },
         # the seasons that survived the clean mask, not the ones that arrived: a season
         # can pass every gate upstream and still contribute nothing here, which is the
         # F18 defect's shape and what assert_pace_season_coverage checks (E-12)
@@ -237,11 +253,11 @@ def _design_matrix(fit_laps: pd.DataFrame) -> tuple[np.ndarray, list[str]]:
     columns: list[np.ndarray] = [np.ones(n)]
     names = ["intercept"]
 
-    for field in ("session_id", "driver", "compound"):
-        levels = sorted(fit_laps[field].unique())
+    for factor in ("session_id", "driver", "compound"):
+        levels = sorted(fit_laps[factor].unique())
         for level in levels[1:]:  # drop-one: the first level is the baseline
-            columns.append((fit_laps[field] == level).to_numpy(dtype=float))
-            names.append(f"{field.replace('session_id', 'session')}={level}")
+            columns.append((fit_laps[factor] == level).to_numpy(dtype=float))
+            names.append(f"{factor.replace('session_id', 'session')}={level}")
 
     age = fit_laps["tyre_life"].to_numpy(dtype=float)
     for compound in sorted(fit_laps["compound"].unique()):
@@ -321,3 +337,25 @@ def _effects(coef: np.ndarray, names: list[str], prefix: str, n_groups: int) -> 
     if n_groups > len(fitted):  # the dropped baseline level sits at zero
         fitted = [0.0, *fitted]
     return np.asarray(fitted)
+
+
+def _centred_effects(
+    coef: np.ndarray, names: list[str], prefix: str, levels: pd.Series
+) -> dict[str, float]:
+    """Level -> coefficient, centred on their own mean, dropped baseline at zero.
+
+    Centring is not cosmetic and getting it wrong is silent. The design is drop-one coded,
+    so the coefficients are relative to whichever level sorted first, and t0_s above
+    already absorbs their mean. Assigning the raw values to driver_s would then shift
+    every lap time by that mean, and no test that does not look for it would notice.
+    Centred, the spread is untouched, so a named lineup and the N(0, sigma_driver_s) draw
+    an unnamed grid falls back to stay distributionally matched — which is what keeps the
+    paired-baseline metric reading the same quantity (F17, M1).
+    """
+    by_name = {name: float(coef[i]) for i, name in enumerate(names)}
+    raw = {
+        str(level): by_name.get(f"{prefix}{level}", 0.0)
+        for level in sorted(levels.unique())
+    }
+    mean = sum(raw.values()) / len(raw)
+    return {level: value - mean for level, value in raw.items()}
