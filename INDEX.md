@@ -4,15 +4,24 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F17 driver identity, In review 13 Aug 2026; next step `/land F17` when
-Saad is happy. `configs/drivers.yaml` now carries 31 era-2024 seats fitted over 2022-2025
-and 22 era-2026 seats over the calibration rounds, each with the laps and seasons behind it.
-Read them as **seat** effects, not skill: era 2024 pools four seasons of whatever car the
-driver was in, which is why the leaf is `seat_pace_s`. `drivers=None` stays the default
-everywhere the project trains and evaluates, and the F16 golden fixtures replay
-byte-identical, so the frozen triplet is untouched. **M2 was re-measured** (−3.66 → −4.58,
-sign test unchanged at 1W/8L/1T p=0.039) — see the decisions log below, including the
-finding that M2's five seeds per race now vary almost nothing.
+**Active feature:** none. F17 landed 13 Aug 2026. `configs/drivers.yaml` now carries 31
+era-2024 seats fitted over 2022-2025 and 22 era-2026 seats over the calibration rounds,
+each with the laps and seasons behind it. Read them as **seat** effects, not skill: era
+2024 pools four seasons of whatever car the driver was in, which is why the leaf is
+`seat_pace_s`. `drivers=None` stays the default everywhere the project trains and
+evaluates, the F16 golden fixtures replay byte-identical and `physics_params.yaml`
+re-rendered byte-identical, so the frozen triplet is untouched. **M2 was re-measured**
+(−3.66 → −4.58, sign test unchanged at 1W/8L/1T p=0.039) — see the decisions log.
+
+**Two things F17 left on the table.** `tests/api/` has three `slow` tests failing on main
+(`test_energy_series_covers_every_lap_within_the_store_bounds`,
+`test_a_baseline_run_streams_card_null_laps_and_a_normal_complete`,
+`test_a_replay_failure_fails_both_runs_and_clears_the_cache`), and the counterfactuals
+module is flaky besides — a different test fails run to run. Verified pre-existing against
+a main worktree during the F17 ship, so not F17's doing, but CI's fast suite does not run
+them and the freeze runbook does not either. Worth a session before the tag. Second:
+`configs/eval.yaml` `seeds_per_race: 5` now buys almost nothing for M2 (below), and cutting
+it is a live decision rather than an oversight.
 **Data-integrity defect found 11 Aug 2026, FIXED by F18 (Saad's call: refit on the full era):**
 `configs/physics_params.yaml` was fitted with only seasons 2024–2025 reaching the pace
 fits. Reproduced exactly at Bahrain era 2024 — committed `n_laps=1958, t0_s=98.597,
@@ -47,12 +56,12 @@ it would have become era 2024's only identified circuit and stamped −0.007421 
 other circuit in the era, inverting the 2026 mass transform for two thirds of
 `transforms.yaml`. Identification now requires a positive estimate as well as a separable
 design, and `pool_k_m` refuses a non-positive pool.
-**Next up:** F17 driver identity, then physics uncertainty, explanation
-language, F20 the single observation change (batched, because it invalidates the frozen
-triplet). F21 look-ahead and F22 multi-agent are stretch, in that order. The roadmap
-comes from Saad's sixteen-point architectural review (7 Aug 2026) and extends master
-spec v3.0 rather than implementing it — each feature needs a spec written before
-/plan-feature can read it.
+**Next up:** physics uncertainty (F19), then explanation language, then F20 the single
+observation change (batched, because it invalidates the frozen triplet). F21 look-ahead and
+F22 multi-agent are stretch, in that order. The roadmap comes from Saad's sixteen-point
+architectural review (7 Aug 2026) and extends master spec v3.0 rather than implementing it —
+**each feature needs a spec written before /plan-feature can read it**, and F19 has none
+yet, so the next session starts by writing `docs/spec/features/F19-*.md`.
 **Deferred:** the freeze (docs/freeze.md — tag v1.0.0, GitHub release with the snapshot
 asset, CI green) now waits for the F16–F20 arc to settle; tagging v1.0.0 immediately
 before restructuring the engine would freeze a build that is about to change. The demo
@@ -86,7 +95,7 @@ post-F17 state gets tagged.
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
-| F17 | Driver identity | F02, F16, F18 | In review 13 Aug 2026 | feature/F17-driver-identity | [F17](docs/learn/F17-driver-identity.md) |
+| F17 | Driver identity | F02, F16, F18 | Done 13 Aug 2026 | feature/F17-driver-identity | [F17](docs/learn/F17-driver-identity.md) |
 | F18 | Full-era refit and revalidation | F02, F16 | Done 12 Aug 2026 | feature/F18-full-era-refit | [F18](docs/learn/F18-full-era-refit.md) |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
