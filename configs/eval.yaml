@@ -33,8 +33,11 @@ m2:                                 # counterfactual vs actual, era-matched (F-2
   target_mean_delta: 1.0            # sourced 5.12 — v2's +1.5 kept as the stretch below
   stretch_mean_delta: 1.5           # sourced 5.12
   seeds_per_race: 5                 # stylised — the events are pinned by the real-race trace, so these
-                                    # seeds vary only pit service and driver offsets; five is enough to
-                                    # show a per-race delta is not one lucky service draw
+                                    # seeds vary only pit service and per-lap pace noise; five is enough
+                                    # to show a per-race delta is not one lucky service draw. Since F17
+                                    # the driver offsets are fitted rather than drawn, so they are no
+                                    # longer one of the things these seeds move: each seat carries the
+                                    # pace its driver was measured at, on every seed
   sign_test_alpha: 0.05             # sourced — standard two-sided level; at n=10 the exact paired sign
                                     # test needs 9/10 wins to clear it, and that bar is declared before
                                     # the first roll (a bootstrap CI at n=10 is descriptive, not a claim)

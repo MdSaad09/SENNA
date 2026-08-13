@@ -55,6 +55,25 @@ compounds the wetness allows. Any new caller of the engine owes the same guarant
 it calls, and owes a test that says so. This is the one contract the seam cannot enforce
 for you.
 
+**A lineup rides the scenario, not the state.** `F1RaceEnv(..., drivers=[...])` resolves
+`configs/drivers.yaml` into `scenario.lineup` at construction (`senna/env/lineup.py`), and
+that is the only place driver identity lives. `RaceState` gained nothing and `EventTrace`
+gained nothing — seat pace goes into the `driver_s` field both already had, and the
+tyre-style multiplier is read off the scenario inside `lap_time_s`, which already takes it.
+Three consequences worth knowing before you touch it:
+
+- **`drivers=None` reads no table at all.** Same rule as `ablations.yaml`. The F16 golden
+  replay builds from `tests/env/fixtures/pinned_configs/`, which has no `drivers.yaml` and
+  never will, so a config loaded unconditionally in `build_scenario` takes the identity
+  gate down with it.
+- **`reset` draws every seat's offset and then overwrites the named ones.** Do not
+  "optimise" the draw away for a named lineup. It is what keeps the variate stream
+  identical to an unnamed race at the same seed, which is what makes the golden fixtures
+  evidence for anything, and it is why an unnamed seat falls back for free.
+- **A twin still owns `driver_s`.** In a replay the trace's offsets win, as they always
+  have; only `deg_mult` comes from the lineup. `senna/eval/traces.py` fills the trace from
+  the same table, so the two agree without either knowing about the other.
+
 **No pandas anywhere reachable from the tick**, per `senna/CLAUDE.md`. The 5.6.2
 throughput gate rests on it.
 

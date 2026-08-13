@@ -8,7 +8,7 @@ wrong, and each has a test here whose only job is to catch that:
 - the multipliers are normalised to a lap-weighted mean of 1.0, or naming a lineup would
   shift tyre life for the whole field;
 - the standard error is clustered by stint, because a set that runs hot is slow for its
-  whole life and a lap-level error bar understates that by three to four times;
+  whole life and a lap-level error bar understates that by 2.3x at the era-2024 median;
 - a driver the design cannot pin down is published as 1.0 and unidentified, never as a
   noisy fitted value wearing a `fitted` tag (E-10, one layer down).
 
@@ -165,7 +165,7 @@ def test_deg_multiplier_falls_back_when_unidentified():
 def test_the_deg_multiplier_se_is_clustered_by_stint():
     """Degradation residuals are correlated within a stint, so a lap-level standard error
     counts eighteen laps of one hot set as eighteen independent observations. It understates
-    by three to four times on data with any per-stint component, which is enough to walk a
+    by 2.3x at the median on the real era-2024 fit, which is enough to walk a
     driver through a precision gate that should have refused them."""
     frame = _style_frame({"D00": 1.00}, stint_noise_s=0.5, lap_noise_s=0.05)
 

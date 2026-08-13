@@ -372,6 +372,33 @@ large is a config file of per-driver numbers an examiner will read as claims abo
 people. Every one needs to survive "how do you know that?", and the honest answers include
 "I don't, so it is 1.0".
 
+## Sizing corrections during the build (13 August 2026)
+
+The plan deferred both gate values to the notebook. Doing that sizing first changed one
+line of code as well as one constant, so it is recorded here rather than only in the
+notebook.
+
+**The standard error is clustered by stint.** Degradation residuals are correlated within a
+stint — a set that runs hot is slow for its whole life — so a lap-level error bar counts a
+stint's laps as that many independent observations. On the era-2024 fit it runs 2.3x small
+at the median, which is enough to walk a thin driver through any precision gate. The cluster
+key is `(session_id, stint)`; stint numbers restart every session, so either field alone
+under-clusters.
+
+**`max_rel_se_for_deg_mult` is 0.10, not the 0.25 the plan proposed.** Sized against the
+committed `(a, b)` distribution rather than an invented curve: a driver with the era-2024
+median 132 stints lands at relative standard error p90 0.019–0.051, an era-2026 median
+29-stint driver at 0.053–0.109, and a 12-stint driver at 0.084–0.220. 0.25 admitted every
+row including the thinnest. On the real fit 0.10 identifies 31 of 31 era-2024 drivers and
+15 of 22 in era 2026, which is the gate doing its job where the data is thin rather than
+manufacturing refusals where it is not.
+
+**A denominator guard the plan did not anticipate.** 26% of the 145 committed degradation
+curves sit at exactly `a = 0`, where the fitter hit its lower bound on a flat residual
+cloud, and 41% are below 1e-4. A driver whose whole sample came from those has no
+degradation to be relatively fast or slow at, so the estimator's denominator is zero. That
+reads as unidentified rather than as a division returning an infinity.
+
 ## What changed since the 9 August plan
 
 1. **`validate_origins` already exists.** F18 added it at `params_writer.py:53` and

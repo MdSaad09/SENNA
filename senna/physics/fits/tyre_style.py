@@ -126,9 +126,9 @@ def _one_driver(laps: pd.DataFrame) -> dict:
 
     mult = float(residual_s @ predicted_s) / signal
     error_s = residual_s - mult * predicted_s
-    # clustered by stint. A set that runs hot is slow for its whole life, so eighteen laps
-    # of one stint are one observation and not eighteen; the lap-level error bar runs three
-    # to four times small, which is enough to walk a thin driver through the gate.
+    # clustered by stint. A set that runs hot is slow for its whole life, so a stint's laps
+    # are one observation and not twenty; on the era-2024 fit the lap-level error bar runs
+    # 2.3x small at the median, which is enough to walk a thin driver through the gate.
     meat = sum(
         float((group["_predicted_s"] * group["_error_s"]).sum()) ** 2
         for _, group in laps.assign(_predicted_s=predicted_s, _error_s=error_s).groupby(

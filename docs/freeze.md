@@ -33,8 +33,11 @@ live seeds fingerprint matches, and no public page carries a rotten link.
         DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/senna \
           python -m pytest tests/physics/fits/test_refit_reproduces_committed.py -m slow
 
-   It skips rather than fails if either is missing, so read the result: two
-   skips means the promise went unchecked, not that it held.
+   It skips rather than fails if either is missing, so read the result: three
+   skips means the promise went unchecked, not that it held. Since F17 the module
+   covers `configs/drivers.yaml` as well as the physics, and reruns the battery
+   with both out-paths redirected — a run that wrote back over either committed
+   file would pass by overwriting the evidence.
 2. `make snapshot` against the ingested store, then commit the regenerated
    `data/snapshot/MANIFEST.md` if it changed (`docs:` commit).
 3. Tag, with the pins in the message:
