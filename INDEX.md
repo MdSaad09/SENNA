@@ -4,15 +4,15 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F17 driver identity, planned 13 Aug 2026; next step `/ship F17` in this
-same session. It was aborted on 11 Aug because driver effects must come from the same
-regression that produces the simulator's own constants, and since F18 they do — `t0_s` and
-`sigma_driver_s` are fitted on all four era seasons, which puts 31 drivers and 652
-driver-by-circuit cells behind the table. Plan: docs/plans/F17-plan.md. Two of its
-decisions matter beyond the build — M2 switches to fitted seat pace and is re-measured
-against its old 1W/8L/1T reading, and the config leaf is `seat_pace_s` rather than
-`pace_s`, because era 2024 pools four seasons of whatever car the driver was in and the
-number is a seat effect, not a skill measurement.
+**Active feature:** F17 driver identity, In review 13 Aug 2026; next step `/land F17` when
+Saad is happy. `configs/drivers.yaml` now carries 31 era-2024 seats fitted over 2022-2025
+and 22 era-2026 seats over the calibration rounds, each with the laps and seasons behind it.
+Read them as **seat** effects, not skill: era 2024 pools four seasons of whatever car the
+driver was in, which is why the leaf is `seat_pace_s`. `drivers=None` stays the default
+everywhere the project trains and evaluates, and the F16 golden fixtures replay
+byte-identical, so the frozen triplet is untouched. **M2 was re-measured** (−3.66 → −4.58,
+sign test unchanged at 1W/8L/1T p=0.039) — see the decisions log below, including the
+finding that M2's five seeds per race now vary almost nothing.
 **Data-integrity defect found 11 Aug 2026, FIXED by F18 (Saad's call: refit on the full era):**
 `configs/physics_params.yaml` was fitted with only seasons 2024–2025 reaching the pace
 fits. Reproduced exactly at Bahrain era 2024 — committed `n_laps=1958, t0_s=98.597,
@@ -86,7 +86,7 @@ post-F17 state gets tagged.
 | F14 | Evaluation suite M1–M11 + counterfactuals | F08, F09 | Done 28 Jul 2026 | feature/F14-evaluation | [F14](docs/learn/F14-evaluation.md) |
 | F15 | Demo, docs, reproducibility pack & freeze | F10–F14 | Done 29 Jul 2026 | feature/F15-demo-freeze | [F15](docs/learn/F15-demo-freeze.md) |
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
-| F17 | Driver identity | F02, F16, F18 | Planned 13 Aug 2026 | feature/F17-driver-identity | — |
+| F17 | Driver identity | F02, F16, F18 | In review 13 Aug 2026 | feature/F17-driver-identity | [F17](docs/learn/F17-driver-identity.md) |
 | F18 | Full-era refit and revalidation | F02, F16 | Done 12 Aug 2026 | feature/F18-full-era-refit | [F18](docs/learn/F18-full-era-refit.md) |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
