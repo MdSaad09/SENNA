@@ -4,7 +4,14 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none. F17 landed 13 Aug 2026. `configs/drivers.yaml` now carries 31
+**Active feature:** F23 — dashboard restructure and visual language. Planned 14 Aug 2026,
+next step `/ship F23`. It jumps the F19-F22 queue on Saad's call: the dashboard is the
+demo, and it is currently six unstyled routes. Three tabs (Strategy / Circuit / Analysis)
+replace the six flat ones, all six spec views survive as sections, and the palette is
+sampled from the reference screenshots Saad supplied on 11 Aug (`docs/reference_images/`).
+Frontend only — no backend change, no number on screen that is not already served.
+
+F17 landed 13 Aug 2026. `configs/drivers.yaml` now carries 31
 era-2024 seats fitted over 2022-2025 and 22 era-2026 seats over the calibration rounds,
 each with the laps and seasons behind it. Read them as **seat** effects, not skill: era
 2024 pools four seasons of whatever car the driver was in, which is why the leaf is
@@ -56,7 +63,7 @@ it would have become era 2024's only identified circuit and stamped −0.007421 
 other circuit in the era, inverting the 2026 mass transform for two thirds of
 `transforms.yaml`. Identification now requires a positive estimate as well as a separable
 design, and `pool_k_m` refuses a non-positive pool.
-**Next up:** physics uncertainty (F19), then explanation language, then F20 the single
+**Next up, after F23:** physics uncertainty (F19), then explanation language, then F20 the single
 observation change (batched, because it invalidates the frozen triplet). F21 look-ahead and
 F22 multi-agent are stretch, in that order. The roadmap comes from Saad's sixteen-point
 architectural review (7 Aug 2026) and extends master spec v3.0 rather than implementing it —
@@ -121,6 +128,7 @@ changed reward or curriculum gate, or different physics; not a rerun.
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
 | F17 | Driver identity | F02, F16, F18 | Done 13 Aug 2026 | feature/F17-driver-identity | [F17](docs/learn/F17-driver-identity.md) |
 | F18 | Full-era refit and revalidation | F02, F16 | Done 12 Aug 2026 | feature/F18-full-era-refit | [F18](docs/learn/F18-full-era-refit.md) |
+| F23 | Dashboard restructure and visual language | F11, F12, F13 | Planned 14 Aug 2026 | feature/F23-ui-revamp | — |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
