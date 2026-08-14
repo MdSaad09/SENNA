@@ -73,6 +73,30 @@ version's numbers. M2 has already drifted once — F18's refit turned an inconcl
 into 1W/8L/1T at p=0.039 — and F17 moves it again by design, so the live risk is three
 documents citing three different rolls. This does not block F17; it decides which
 post-F17 state gets tagged.
+**ANSWERED 14 Aug 2026 — the freeze-for-writing version is the one the repo already
+ships:** headline `senna-ppo-5e3ddb15d584-C-01769472`, era-matched
+`senna-ppo-39cabd466e03-C-03538944`. A full retrain on the post-F17 configs was run end to
+end (3-seed slate, both surrogates, era-matched fine-tune, M1-M11, both sensitivity passes,
+Chapter 7) and then **discarded on Saad's call**, because it reproduced the frozen triplet
+exactly and would have renamed every artifact for no measurable gain. The evidence is worth
+keeping even though the branch is not:
+
+- all three seeds selected the same checkpoint at the same step — 101 at 1,130,496/6.355,
+  211 at 4,227,072/6.295, 331 at 1,769,472/6.541667;
+- `policy.pth` and the optimizer state are **byte-for-byte identical** for the headline and
+  the era-matched model alike, so only wall-clock timestamps differ inside the archives;
+- both surrogates reproduce their fidelity to sixteen decimal places (pit 0.9975926576056974,
+  mode 0.9818947790761824; era-matched 0.9914987248087213 / 0.9824223633545032);
+- 11 of 13 M1-M11 store payloads byte-identical, the other two differing only in an embedded
+  `model_version` string, and Chapter 7's whole diff was two version strings and a commit hash.
+
+Two things follow. **F17 is confirmed inert on the default training path** by a third
+independent route, after the F16 golden fixtures and the byte-identical
+`physics_params.yaml`. And **a retrain cannot move any number in this repo unless something
+that affects learning changes** — the fingerprint drifted only because F17 added a
+`driver_identity` block to `configs/fits.yaml`, which sits in `train.CONFIG_FILES` and which
+training never reads. If a different result is ever wanted, the levers are new seeds, a
+changed reward or curriculum gate, or different physics; not a rerun.
 
 ## Feature ledger
 
