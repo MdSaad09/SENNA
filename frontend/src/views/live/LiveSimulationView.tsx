@@ -162,8 +162,8 @@ export default function LiveSimulationView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
-        <span className="text-neutral-200">
+      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
+        <span className="text-senna-text">
           live simulation — the trained agent racing in the simulator, not live timing
         </span>
         {run.data !== undefined && (
@@ -199,12 +199,12 @@ export default function LiveSimulationView() {
             </div>
           )}
           {deepLinkError !== null && (
-            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-neutral-400">
+            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-senna-faint">
               {deepLinkError}
             </div>
           )}
           {runId !== null && frames.length === 0 && (
-            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-neutral-400">
+            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-senna-faint">
               {run.isError
                 ? // a stale deep link after a data reset: the 404 detail is the
                   // honest answer, not an eternal "waiting"
@@ -219,7 +219,7 @@ export default function LiveSimulationView() {
         </section>
 
         {runId !== null && frames.length > 0 && (
-          <aside className="w-80 shrink-0 space-y-3 overflow-y-auto border-l border-neutral-800 p-3">
+          <aside className="w-80 shrink-0 space-y-3 overflow-y-auto border-l border-senna-line p-3">
             {energy.data !== undefined && playheadFrame !== undefined && (
               <SocBar
                 socMj={playheadFrame.agent.soc_mj}
@@ -228,14 +228,14 @@ export default function LiveSimulationView() {
             )}
             {card !== null && <DecisionCardPanel card={card} />}
             {card === null && allCardsNull && (
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-senna-faint">
                 no stored explanations for model version{" "}
                 {run.data?.model_version ?? "unknown"} — this run streams without cards
                 (a retrained model explains only its own runs, E-15)
               </p>
             )}
             {card === null && !allCardsNull && cards.size > 0 && (
-              <p className="text-xs text-neutral-500">no stored card for lap {cardLap}</p>
+              <p className="text-xs text-senna-faint">no stored card for lap {cardLap}</p>
             )}
           </aside>
         )}
@@ -253,14 +253,14 @@ export default function LiveSimulationView() {
           caption={ILLUSTRATIVE_MOTION_CAPTION}
         >
           {following ? (
-            <span className="rounded bg-neutral-800 px-2 py-0.5 text-xs text-neutral-300">
+            <span className="rounded bg-senna-raised px-2 py-0.5 text-xs text-senna-muted">
               live
             </span>
           ) : (
             <button
               type="button"
               onClick={goLive}
-              className="rounded border border-neutral-700 px-2 py-0.5 text-xs text-neutral-300 hover:bg-neutral-800"
+              className="rounded border border-senna-line px-2 py-0.5 text-xs text-senna-muted hover:bg-senna-raised"
             >
               go live
             </button>

@@ -12,7 +12,7 @@ export default function QualityToggle() {
       onClick={() => setBloom(!on)}
       title={bloomReason || "decided when the first canvas reports its GPU"}
       className={`rounded-full border px-3 py-1 text-xs ${
-        on ? "border-emerald-500 text-emerald-400" : "border-neutral-700 text-neutral-400"
+        on ? "border-senna-accent text-senna-accent" : "border-senna-line text-senna-faint"
       }`}
     >
       bloom {on ? "on" : "off"}

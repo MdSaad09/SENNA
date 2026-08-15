@@ -47,12 +47,12 @@ export default function TransportControls({
   }, [maxLap, subscribePlayhead]);
 
   return (
-    <div className="border-t border-neutral-800 px-4 py-2">
+    <div className="border-t border-senna-line px-4 py-2">
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => onPlayPause(!playing)}
-          className="rounded border border-neutral-700 px-3 py-1 text-sm hover:bg-neutral-800"
+          className="rounded border border-senna-line px-3 py-1 text-sm hover:bg-senna-raised"
         >
           {playing ? "pause" : "play"}
         </button>
@@ -63,14 +63,14 @@ export default function TransportControls({
             onClick={() => onSpeed(option)}
             className={`rounded px-2 py-1 text-xs ${
               option === speed
-                ? "bg-neutral-700 text-neutral-100"
-                : "text-neutral-400 hover:bg-neutral-800"
+                ? "bg-senna-line text-senna-text"
+                : "text-senna-faint hover:bg-senna-raised"
             }`}
           >
             {option}x
           </button>
         ))}
-        <span ref={lapReadout} className="ml-2 font-mono text-xs text-neutral-400">
+        <span ref={lapReadout} className="ml-2 font-mono text-xs text-senna-faint">
           lap 1 / {maxLap}
         </span>
         {children}
@@ -83,10 +83,10 @@ export default function TransportControls({
           defaultValue={0}
           onChange={(event) => onScrub(Number(event.target.value))}
           aria-label="scrub laps"
-          className="ml-auto w-64 accent-neutral-400"
+          className="ml-auto w-64 accent-senna-accent"
         />
       </div>
-      <p className="mt-1 text-xs text-neutral-600">{caption}</p>
+      <p className="mt-1 text-xs text-senna-ghost">{caption}</p>
     </div>
   );
 }

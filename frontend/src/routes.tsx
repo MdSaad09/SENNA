@@ -8,9 +8,10 @@
 // path builds an undici Request that jsdom's AbortSignal cannot satisfy, and this
 // single-page dashboard ships every view to every visitor anyway.
 
-import { Navigate, useLocation, type RouteObject } from "react-router-dom";
+import { type RouteObject } from "react-router-dom";
 
 import App from "./App";
+import KeepQuery from "./components/KeepQuery";
 import DecisionsView from "./views/analysis/DecisionsView";
 import CircuitExplorerView from "./views/circuit/CircuitExplorerView";
 import CounterfactualView from "./views/counterfactual/CounterfactualView";
@@ -19,14 +20,6 @@ import LiveSimulationView from "./views/live/LiveSimulationView";
 import RaceReplayView from "./views/replay/RaceReplayView";
 import StrategyView from "./views/strategy/StrategyView";
 import TyreSurfaceView from "./views/tyres/TyreSurfaceView";
-
-/** A redirect that keeps the query. `?run=`, `?seed=` and the counterfactual's
- *  `?year=&round=&driver=` are the whole payload of a demo link — dropping them on the
- *  hop would land the viewer on a configured section with nothing configured. */
-function KeepQuery({ to }: { to: string }) {
-  const { search } = useLocation();
-  return <Navigate to={{ pathname: to, search }} replace />;
-}
 
 export const routes: RouteObject[] = [
   {

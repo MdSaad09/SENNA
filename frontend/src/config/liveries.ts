@@ -3,7 +3,7 @@
 // liveries.f29 test walks every shipped file to hold that line.
 
 // stylised — a hand-picked wheel of distinct hues that read apart against the
-// neutral-950 track scene; no palette source, purely visual
+// near-black track scene; no palette source, purely visual
 export const TEAM_COLOURS = [
   "#e23d3d",
   "#3d7be2",

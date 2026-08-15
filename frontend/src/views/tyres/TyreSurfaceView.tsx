@@ -57,13 +57,13 @@ export default function TyreSurfaceView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
         <label className="flex items-center gap-1">
           circuit
           <select
             value={slug ?? ""}
             onChange={(event) => changeCircuit(event.target.value)}
-            className="rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-200"
+            className="rounded border border-senna-line bg-senna-surface px-2 py-1 text-senna-text"
           >
             {fitted.map((circuit) => (
               <option key={circuit.id} value={circuit.id}>
@@ -79,7 +79,7 @@ export default function TyreSurfaceView() {
               <select
                 value={activeEra ?? ""}
                 onChange={(event) => setEra(event.target.value)}
-                className="rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-200"
+                className="rounded border border-senna-line bg-senna-surface px-2 py-1 text-senna-text"
               >
                 {eras.map((value) => (
                   <option key={value} value={value}>
@@ -93,7 +93,7 @@ export default function TyreSurfaceView() {
               <select
                 value={activeCompound ?? ""}
                 onChange={(event) => setCompound(event.target.value)}
-                className="rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-200"
+                className="rounded border border-senna-line bg-senna-surface px-2 py-1 text-senna-text"
               >
                 {compounds.map((value) => (
                   <option key={value} value={value}>
@@ -113,10 +113,10 @@ export default function TyreSurfaceView() {
         </CanvasHost>
 
         {curves.isError && (
-          <div className="absolute inset-0 grid place-items-center text-center text-sm text-neutral-400">
+          <div className="absolute inset-0 grid place-items-center text-center text-sm text-senna-faint">
             <div>
               <p>no degradation fits for {(slug ?? "this circuit").replace(/_/g, " ")}</p>
-              <p className="mt-1 text-xs text-neutral-600">
+              <p className="mt-1 text-xs text-senna-ghost">
                 the surface needs a fitted model — run make fit after ingesting the event
               </p>
             </div>
@@ -130,13 +130,13 @@ export default function TyreSurfaceView() {
         )}
 
         {curve !== null && (
-          <div className="absolute right-3 top-3 max-w-xs rounded border border-neutral-800 bg-neutral-900/80 p-2 text-xs text-neutral-300">
+          <div className="absolute right-3 top-3 max-w-xs rounded border border-senna-line bg-senna-surface/80 p-2 text-xs text-senna-muted">
             <p>
               age {0}–{curve.cliff_age} laps · temperature {TYRE_TEMP_AXIS_MIN_C}–
               {TYRE_TEMP_AXIS_MAX_C} C · height is grip
             </p>
             {/* decision 1: the fit is age-only, so the temperature axis is illustration */}
-            <p className="mt-1 text-neutral-500">
+            <p className="mt-1 text-senna-faint">
               temperature response — stylised illustration, not fitted, not a prediction; the
               T5 fit is age-only
             </p>

@@ -188,8 +188,8 @@ export default function CounterfactualView() {
 
   const waitingRows =
     agentRunId !== null && (!agentComplete || !baselineComplete) ? (
-      <div className="absolute inset-0 z-20 grid place-items-center text-sm text-neutral-400">
-        <div className="space-y-1 rounded border border-neutral-800 bg-neutral-950/80 p-4">
+      <div className="absolute inset-0 z-20 grid place-items-center text-sm text-senna-faint">
+        <div className="space-y-1 rounded border border-senna-line bg-senna-ground/80 p-4">
           <p>{legLine(`agent run ${agentRunId}`, agentRun)}</p>
           {baselineRunId !== null && (
             <p>{legLine(`baseline run ${baselineRunId}`, baselineRun)}</p>
@@ -203,9 +203,9 @@ export default function CounterfactualView() {
       {headerReady && agentRun.data !== undefined ? (
         <header
           data-testid="counterfactual-honesty"
-          className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400"
+          className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint"
         >
-          <span className="text-neutral-200">
+          <span className="text-senna-text">
             {race.data !== undefined && year !== null
               ? `${race.data.event_name} ${year}, round ${round} — ${driver}`
               : "counterfactual"}
@@ -231,7 +231,7 @@ export default function CounterfactualView() {
           )}
         </header>
       ) : (
-        <header className="border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
+        <header className="border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
           counterfactual — in-simulator comparison under stated assumptions
         </header>
       )}
@@ -243,9 +243,9 @@ export default function CounterfactualView() {
           <div
             ref={agentPane}
             data-testid="pane-agent"
-            className="relative min-w-0 flex-1 border-r border-neutral-800"
+            className="relative min-w-0 flex-1 border-r border-senna-line"
           >
-            <p className="absolute left-2 top-2 rounded bg-neutral-950/70 px-2 py-0.5 text-xs text-neutral-300">
+            <p className="absolute left-2 top-2 rounded bg-senna-ground/70 px-2 py-0.5 text-xs text-senna-muted">
               SENNA agent strategy
             </p>
             {scenesReady && (
@@ -264,7 +264,7 @@ export default function CounterfactualView() {
             data-testid="pane-baseline"
             className="relative min-w-0 flex-1"
           >
-            <p className="absolute left-2 top-2 rounded bg-neutral-950/70 px-2 py-0.5 text-xs text-neutral-300">
+            <p className="absolute left-2 top-2 rounded bg-senna-ground/70 px-2 py-0.5 text-xs text-senna-muted">
               actual {year ?? ""} strategy (replayed in-simulator)
             </p>
             {scenesReady && (
@@ -281,7 +281,7 @@ export default function CounterfactualView() {
         </div>
 
         {agentRunId === null && postError === null && (
-          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-center text-sm text-neutral-400">
+          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-center text-sm text-senna-faint">
             <p>
               open a counterfactual with ?year=&round=&driver= in the URL — it enqueues
               the era-matched pair and pins the run ids here for sharing
@@ -289,7 +289,7 @@ export default function CounterfactualView() {
           </div>
         )}
         {postError !== null && (
-          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-sm text-neutral-400">
+          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-sm text-senna-faint">
             {postError}
           </div>
         )}

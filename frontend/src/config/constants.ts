@@ -48,14 +48,15 @@ export const PIT_ACTION_LABELS = [
 export const MODE_ACTION_LABELS = ["conserve energy", "run balanced", "attack", "defend"];
 
 // stylised — the divergence flash: long enough to register at 30x, rose because no
-// team colour or series tint claims it (liveries.ts, SocPanel, CircuitRibbon)
+// team colour, compound colour or palette token claims it (liveries.ts, palette.ts)
 export const DIVERGENCE_FLASH_MS = 900;
 export const DIVERGENCE_FLASH_TINT = "#f43f5e";
 
-// stylised — the app's neutral-950 backdrop; drei's scissored views never clear
-// unless the pane scene sets an explicit background, so the CSS show-through trick
-// the full-canvas views use cannot work there
-export const PANE_BACKGROUND = "#0a0a0a";
+// stylised — PALETTE.ground, repeated as a literal rather than imported because the
+// two must be identical and a test says so: drei's scissored views never clear unless
+// the pane scene sets an explicit background, so the CSS show-through trick the
+// full-canvas views use cannot work there, and a near-miss would show as a seam
+export const PANE_BACKGROUND = "#0b1014";
 
 // operational — half as eager as the server's own 0.5 s run poll (serving.yaml ws.status_poll_s)
 export const RUN_STATUS_POLL_MS = 1000;

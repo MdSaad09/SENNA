@@ -128,7 +128,18 @@ export interface SimulationResult {
   era: string | null;
   seed: number | null;
   config: Record<string, unknown> | null;
-  summary: { nominal_lap_s?: number; [key: string]: unknown } | null;
+  // The server types this `dict | None` (5.9.2), so the index signature stays and these
+  // named keys are a transcription of what worker/jobs.py actually writes — not a shape
+  // the API promises. `points` is deliberately absent: it is served RL-scaled (the FIA
+  // table over points_divisor 2.5) and no view should reach for it by accident.
+  summary: {
+    nominal_lap_s?: number;
+    final_position?: number;
+    race_time_s?: number;
+    total_laps?: number;
+    dnf?: boolean;
+    [key: string]: unknown;
+  } | null;
   created_at: string | null;
   started_at: string | null;
   finished_at: string | null;

@@ -15,6 +15,7 @@ import {
   TYRE_TEMP_REF_C,
 } from "../../config/constants";
 import { buildGripSurface } from "../../lib/gripSurface";
+import { SCENE } from "../../config/palette";
 
 // stylised — world size of the surface: age runs along X, temperature along Y, grip
 // lifts Z (the height). Visual framing only.
@@ -24,9 +25,9 @@ const GRIP_HEIGHT_M = 140;
 
 // stylised — grip ramp green (full) to red (worn); the extrapolation past the fitted
 // support washes toward amber so a stint stretched past the cliff reads as a warning
-const HIGH_GRIP_TINT = "#22c55e";
-const LOW_GRIP_TINT = "#dc2626";
-const CLIFF_TINT = "#f59e0b";
+const HIGH_GRIP_TINT = SCENE.gripHigh;
+const LOW_GRIP_TINT = SCENE.gripLow;
+const CLIFF_TINT = SCENE.gripCliff;
 // stylised — how strongly the extrapolation zone washes amber past the fitted support
 const EXTRAPOLATION_WASH = 0.45;
 

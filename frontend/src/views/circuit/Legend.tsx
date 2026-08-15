@@ -28,8 +28,8 @@ function elevationCaveat(detail: CircuitDetail): string {
 export default function Legend({ detail }: { detail: CircuitDetail }) {
   const flags = detail.flags;
   return (
-    <aside className="rounded border border-neutral-800 bg-neutral-900/80 p-3 text-xs text-neutral-300">
-      <h3 className="font-semibold text-neutral-200">
+    <aside className="rounded border border-senna-line bg-senna-surface/80 p-3 text-xs text-senna-muted">
+      <h3 className="font-semibold text-senna-text">
         {detail.id.replace(/_/g, " ")} — {detail.race_laps} laps
         {detail.lap_length_m !== null && `, ${(detail.lap_length_m / 1000).toFixed(3)} km`}
       </h3>

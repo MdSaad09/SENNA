@@ -12,6 +12,7 @@ import type { CarState } from "../../api/types";
 import { EGO_CAR_ID, LABEL_HEIGHT_M } from "../../config/constants";
 import { carLivery } from "../../config/liveries";
 import { labelledCars } from "../../lib/labels";
+import { PALETTE } from "../../config/palette";
 
 interface CarLabelsProps {
   cars: CarState[];
@@ -58,7 +59,7 @@ export default function CarLabels({
             <Html center zIndexRange={[10, 0]}>
               <div
                 className="pointer-events-none whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs"
-                style={{ backgroundColor: "#171717e6", color: livery.colour }}
+                style={{ backgroundColor: `${PALETTE.ground}e6`, color: livery.colour }}
               >
                 {livery.code}
                 {car !== undefined && ` P${car.position}`}

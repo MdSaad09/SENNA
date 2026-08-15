@@ -57,10 +57,10 @@ export default function RaceReplayView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
+      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
         {run.data !== undefined ? (
           <>
-            <span className="text-neutral-200">
+            <span className="text-senna-text">
               run {run.data.run_id} — {run.data.circuit_id?.replace(/_/g, " ")}
             </span>
             <span>{run.data.status}</span>
@@ -101,14 +101,14 @@ export default function RaceReplayView() {
           </div>
         )}
         {runId !== null && runComplete !== true && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+          <div className="absolute inset-0 grid place-items-center text-sm text-senna-faint">
             {run.data?.status === "failed"
               ? `run ${runId} failed — check the worker logs`
               : `run ${runId}: ${run.data?.status ?? "loading"}…`}
           </div>
         )}
         {runComplete === true && detail.data !== undefined && detail.data.gltf_url === null && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+          <div className="absolute inset-0 grid place-items-center text-sm text-senna-faint">
             {/* a deep-linked run on an unbuilt circuit: same honesty as View 1 (F-08) */}
             ribbon not built for {detail.data.id.replace(/_/g, " ")} — the run exists but
             cannot be drawn; run make circuits after ingesting the event

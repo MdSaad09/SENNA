@@ -9,6 +9,7 @@ import { InstancedMesh, Object3D } from "three";
 
 import type { CircuitCorner } from "../../api/types";
 import type { Centreline } from "../../lib/centreline";
+import { SCENE } from "../../config/palette";
 
 // stylised — marker post proportions and the number's hover height
 const POST_RADIUS_M = 1.2;
@@ -44,7 +45,7 @@ export default function CornerMarkers({
       <instancedMesh ref={posts} args={[undefined, undefined, corners.length]} frustumCulled={false}>
         {/* operational — 8 radial segments: round enough at marker size, 16 tris */}
         <cylinderGeometry args={[POST_RADIUS_M, POST_RADIUS_M, POST_HEIGHT_M, 8]} />
-        <meshStandardMaterial color="#e5e5e5" />
+        <meshStandardMaterial color={SCENE.cornerMarker} />
       </instancedMesh>
       {corners.map((corner) => {
         const [x, y, z] = centreline.sampleAt(corner.distance_m);
@@ -54,7 +55,7 @@ export default function CornerMarkers({
             position={[x, y, z + NUMBER_HEIGHT_M]}
             rotation={[Math.PI / 2, 0, 0]}
             fontSize={NUMBER_SIZE_M}
-            color="#fafafa"
+            color={SCENE.cornerLabel}
             anchorX="center"
             anchorY="middle"
           >

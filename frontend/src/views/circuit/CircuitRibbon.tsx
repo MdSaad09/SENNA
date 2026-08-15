@@ -14,13 +14,14 @@ import { ANNOTATION_LIFT_M } from "../../config/constants";
 import { buildCentreline, type Centreline } from "../../lib/centreline";
 import { buildStrip, type StripGeometry, type StripZone } from "../../lib/ribbonStrips";
 import CornerMarkers from "./CornerMarkers";
+import { SCENE } from "../../config/palette";
 
 // stylised — zone tints: braking amber, X-mode violet, harvest teal over braking;
 // exported so the Legend's swatches can never drift from the canvas
-export const BRAKING_TINT = "#d97706";
-export const XMODE_TINT = "#7c3aed";
-export const HARVEST_TINT = "#0d9488";
-const DECK_TINT = "#404040";
+export const BRAKING_TINT = SCENE.braking;
+export const XMODE_TINT = SCENE.xmode;
+export const HARVEST_TINT = SCENE.harvestZone;
+const DECK_TINT = SCENE.deck;
 
 // stylised — overlay opacities: braking and X-mode translucent so the deck reads
 // through, harvest nearly solid because it is the narrowest strip
@@ -181,7 +182,7 @@ export default function CircuitRibbon({
         />
       </mesh>
       <mesh geometry={geometries.startLine}>
-        <meshBasicMaterial color="#e5e5e5" side={DoubleSide} />
+        <meshBasicMaterial color={SCENE.cornerMarker} side={DoubleSide} />
       </mesh>
       {withCornerMarkers && detail.corners !== null && (
         <CornerMarkers centreline={centreline} corners={detail.corners} />
