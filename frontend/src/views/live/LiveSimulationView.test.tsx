@@ -14,7 +14,7 @@ import {
 } from "../../test/apiFixtures";
 import { FakeWebSocket, installFakeWebSocket } from "../../test/fakeSocket";
 import LiveSimulationView from "./LiveSimulationView";
-import { MemoryRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 vi.mock("@react-three/fiber", async () => (await import("../../test/mockR3F")).fiberMock());
 vi.mock("@react-three/drei", async () => (await import("../../test/mockR3F")).dreiMock());
@@ -41,10 +41,11 @@ function renderView(inStrictMode = false) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const view = (
     <QueryClientProvider client={queryClient}>
-      {/* F23: the view carries a 5.13 jump link, and a Link needs a router above it */}
-      <MemoryRouter>
+      {/* F23: a router, and a browser one — the view writes ?run= back through it,
+          and these tests assert that lands in window.location where a share copies it */}
+      <BrowserRouter>
         <LiveSimulationView />
-      </MemoryRouter>
+      </BrowserRouter>
     </QueryClientProvider>
   );
   render(inStrictMode ? <StrictMode>{view}</StrictMode> : view);

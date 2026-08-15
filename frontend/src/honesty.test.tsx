@@ -5,17 +5,25 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactElement } from "react";
+import { BrowserRouter } from "react-router-dom";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { ILLUSTRATIVE_MOTION_CAPTION } from "./components/TransportControls";
 import { useLiveStore } from "./stores/liveStore";
-import { installFetchStub } from "./test/apiFixtures";
+import {
+  decisionCardPitLap,
+  installFetchStub,
+  simulationResult,
+  strategyFrames,
+} from "./test/apiFixtures";
 import { installFakeWebSocket } from "./test/fakeSocket";
 import CircuitExplorerView from "./views/circuit/CircuitExplorerView";
 import CounterfactualView from "./views/counterfactual/CounterfactualView";
 import EnergyView from "./views/energy/EnergyView";
 import LiveSimulationView from "./views/live/LiveSimulationView";
 import RaceReplayView from "./views/replay/RaceReplayView";
+import DecisionsView from "./views/analysis/DecisionsView";
+import StrategyView from "./views/strategy/StrategyView";
 import TyreSurfaceView from "./views/tyres/TyreSurfaceView";
 
 vi.mock("@react-three/fiber", async () => (await import("./test/mockR3F")).fiberMock());
@@ -40,7 +48,13 @@ afterEach(() => {
 function renderAt(path: string, view: ReactElement) {
   window.history.replaceState(null, "", path);
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(<QueryClientProvider client={queryClient}>{view}</QueryClientProvider>);
+  // BrowserRouter reads the path just set: the sections write ?run= back through the
+  // router now, and several of them render 5.13 jump links
+  render(
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>{view}</BrowserRouter>
+    </QueryClientProvider>,
+  );
 }
 
 test("the energy section states the series are modelled, not telemetry (F-13)", async () => {
@@ -105,4 +119,75 @@ test("the circuit legend keeps all five caveats (5.10.2 row 1)", async () => {
   expect(
     screen.getByText("banking stylised — a visual treatment, not data (F-12)"),
   ).toBeInTheDocument();
+});
+
+// The two sections F23 added carry their own statements. They were not covered when this
+// file was first written, which is exactly the hole it exists to close — a restyle could
+// drop them and nothing would fail.
+
+const completedRun = {
+  ...simulationResult,
+  status: "complete",
+  config: { grid_position: 8 },
+  summary: { final_position: 2, race_time_s: 5412.4, dnf: false, total_laps: 6 },
+};
+
+function stubCompletedRun(extra: Record<string, unknown> = {}) {
+  restoreFetch();
+  // the specific keys must precede the bare run: "/v1/simulations/7" alone also matches
+  // the /frames and /decisions URLs and would feed them a run object
+  restoreFetch = installFetchStub({
+    "/v1/simulations/7/frames": strategyFrames(
+      6,
+      2,
+      { startCompound: "MEDIUM", stops: [{ lap: 4, compound: "HARD" }] },
+      22,
+    ),
+    ...extra,
+    "/v1/simulations/7": completedRun,
+  });
+}
+
+test("the strategy section states the stints are read back, not planned", async () => {
+  stubCompletedRun();
+  renderAt("/strategy/setup?run=7", <StrategyView />);
+  expect(
+    await screen.findByText(/there is no plan here that preceded the race/i),
+  ).toBeInTheDocument();
+  // and the reason the pit table has four columns and not five
+  expect(screen.getByText(/service time is not shown because it is not served/i)).toBeVisible();
+});
+
+test("the reward panel states it shows every served term and no others", async () => {
+  // decisionCardPitLap is lap 14, and the panel reads that lap's reward_terms out of the
+  // frames — so the run has to be long enough to contain it
+  stubCompletedRun({
+    "/v1/simulations/7/decisions": [decisionCardPitLap],
+    "/v1/simulations/7/frames": strategyFrames(
+      20,
+      2,
+      { startCompound: "MEDIUM", stops: [{ lap: 12, compound: "HARD" }] },
+      22,
+    ),
+  });
+  renderAt("/analysis/decisions?run=7", <DecisionsView />);
+  expect(
+    await screen.findByText(/every term the environment served for this lap, and no others/i),
+  ).toBeInTheDocument();
+});
+
+test("the alternatives panel states it is one lap's policy, not a search over strategies", async () => {
+  stubCompletedRun({ "/v1/simulations/7/decisions": [decisionCardPitLap] });
+  renderAt("/analysis/decisions?run=7", <DecisionsView />);
+  expect(
+    await screen.findByText(/not a search over whole\s+strategies/i),
+  ).toBeInTheDocument();
+  // compliance is by construction, never by a reward penalty (F-16)
+  expect(screen.getByText(/forbidden by the action mask/i)).toBeVisible();
+});
+
+test("a run with no stored explanations says so rather than explaining a ghost (E-15)", async () => {
+  stubCompletedRun({ "/v1/simulations/7/decisions": [] });
+  renderAt("/analysis/decisions?run=7", <DecisionsView />);
+  expect(await screen.findByText(/no stored explanations for model version/i)).toBeInTheDocument();
 });

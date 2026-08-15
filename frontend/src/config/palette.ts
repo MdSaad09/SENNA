@@ -15,10 +15,18 @@ export const PALETTE = {
   line: "#26333c", // the hairline border in all three shots
   text: "#e6edf1", // figures and headings
   muted: "#c9d0d7", // body copy
-  faint: "#637481", // micro-labels, axis ticks
-  ghost: "#515c63", // disclaimers and disabled state
+  // faint and ghost were sampled straight off the reference and measured 3.96:1 and
+  // 2.79:1 against the ground. ghost carries the R-07 footer and every 5.10.2 honesty
+  // statement at 11px, and 2.79:1 survives neither a projector nor video compression,
+  // so both are lifted to clear 4.5:1 with room to spare. The reference is a baseline
+  // to beat, and legibility of the disclaimers is not a place to match it.
+  faint: "#8a99a6", // micro-labels, axis ticks — 6.54:1
+  ghost: "#7d8994", // disclaimers and the footer — 5.35:1
   accent: "#6bd6c3", // the mint: wordmark, live state, the panel-header tick
-  danger: "#b13f4d", // failures, and the soft compound shares it
+  // deliberately NOT the soft-compound red: a DNF headline sits directly above a red
+  // stint block on the Strategy page, and the dev overlay uses the same token for
+  // "budget exceeded"
+  danger: "#d9556a",
 } as const;
 
 // stylised — the conventional soft-to-hard ranking reads red / amber / white, and the
@@ -40,9 +48,14 @@ export const CHART = {
   soc: "#4fb0d9", // state of charge: the one cool hue, distinct from the mint
   harvest: "#3f9e8f", // recovery, deliberately adjacent to the accent
   deploy: "#e08a3c", // spend, the warm opposite of harvest
-  pitMark: "#637481",
+  // three separate readings that the first cut of this palette collapsed onto one grey:
+  // the axis is furniture, the pit marks are data, and the divergence lap is the
+  // counterfactual's headline moment
+  pitMark: "#8a99a6",
   gridLine: "#1a242b",
   axis: "#637481",
+  cursor: "#c9d0d7",
+  divergence: "#d9556a",
   tooltipBg: "#0b1014",
   tooltipLine: "#26333c",
 } as const;

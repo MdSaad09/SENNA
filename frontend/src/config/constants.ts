@@ -75,10 +75,13 @@ export const PERF_SAMPLE_MS = 500; // operational — 2 Hz keeps the probe invis
 // be right for one circuit and Monaco is half the size of Spa.
 export const CAMERA = { fov: 50, near: 1, far: 20_000, position: [0, 900, 900] as const };
 
-// stylised — how much of the smaller viewport dimension the ribbon's bounding sphere
-// fills. Saad's note on the F23 reference was that the circuit model renders too small;
-// 0.82 leaves a margin for the legend and the corner labels without wasting the screen.
+// stylised — how much of the frustum the ribbon's bounding sphere is fitted to. Saad's
+// note on the F23 reference was that the circuit model renders too small. Read it as a
+// tangency fraction, not a screen fraction: a sphere fitted at 0.82 projects to about
+// 79% of the panel's tighter half-dimension (fitDistance.test.ts measures it), and an
+// elongated circuit fills less of that again because the sphere bounds its diagonal.
 export const RIBBON_VIEWPORT_FILL = 0.82;
+export const RIBBON_PROJECTED_FILL = 0.79; // stylised — the measured figure, printed on the view
 
 // operational — device-pixel-ratio clamp: retina sharpness without paying 3x pixels
 // on high-density laptop panels (the classic hidden fps cost)

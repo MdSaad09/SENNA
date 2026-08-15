@@ -15,7 +15,9 @@ const configRoot = fileURLToPath(new URL(".", import.meta.url));
 // yaml, so config/*.ts is where the frontend's numbers live (F11 divergence 6). The
 // convention has been hand-followed since F11 — this walk is what enforces it.
 const PROVENANCE_TAG = /\/\/.*\b(sourced|fitted|stylised|operational)\b/;
-const EXPORTED_CONST = /^export const (\w+)/;
+// `export const A = 1, B = 2` declares two; indented exports and re-exports also
+// escaped the anchored form this started with
+const EXPORTED_CONST = /^\s*export const (\w+)/;
 
 function configModules(): string[] {
   return readdirSync(configRoot)
@@ -23,15 +25,22 @@ function configModules(): string[] {
     .map((name) => join(configRoot, name));
 }
 
-/** The run of non-blank lines around `index` — a constant and the comment block that
- * introduces it. Grouped constants share one block, which is how constants.ts already
- * reads, so the tag may sit anywhere in the run rather than on one exact line. */
-function paragraphAround(lines: string[], index: number): string[] {
-  let start = index;
-  while (start > 0 && lines[start - 1].trim() !== "") start--;
-  let end = index;
-  while (end < lines.length - 1 && lines[end + 1].trim() !== "") end++;
-  return lines.slice(start, end + 1);
+/** The comment block introducing the constant at `index`, plus its own line. Grouped
+ * constants share one block, which is how constants.ts already reads, so the tag may sit
+ * anywhere in the run of comment lines directly above rather than on one exact line.
+ *
+ * Deliberately upward-only. The first cut of this walk scanned downward as well, so a
+ * tag written *below* an export satisfied it — the constant could be introduced by
+ * nothing at all. Grouping is still allowed, because constants.ts uses it on purpose
+ * (the three WS backoff values share one rationale, and splitting it three ways would
+ * say less), so the honest limit is this: a blank line ends the block, and an export
+ * cannot inherit a tag it is separated from. */
+function introducing(lines: string[], index: number): string[] {
+  const block = [lines[index]];
+  for (let above = index - 1; above >= 0 && lines[above].trim() !== ""; above--) {
+    block.push(lines[above]);
+  }
+  return block;
 }
 
 test("every exported frontend constant names its provenance", () => {
@@ -47,7 +56,7 @@ test("every exported frontend constant names its provenance", () => {
       const match = EXPORTED_CONST.exec(line);
       if (match === null) return;
       exported.push(match[1]);
-      const tagged = paragraphAround(lines, index).some((near) => PROVENANCE_TAG.test(near));
+      const tagged = introducing(lines, index).some((near) => PROVENANCE_TAG.test(near));
       expect(
         tagged,
         `${where}: ${match[1]} has no sourced/fitted/stylised/operational comment`,

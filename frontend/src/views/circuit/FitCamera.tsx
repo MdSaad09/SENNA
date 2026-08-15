@@ -6,40 +6,46 @@
 // bounds fixes every circuit at once instead of picking a distance that suits one.
 
 import { useThree } from "@react-three/fiber";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { PerspectiveCamera } from "three";
 
 import { CAMERA, RIBBON_VIEWPORT_FILL } from "../../config/constants";
+import { fitDistance } from "./fitDistance";
 
-/** The opening pose's direction, kept so the reframe changes the distance and nothing
- *  else — the three-quarter view is a deliberate look, not an accident of the number. */
-const DIRECTION = (() => {
-  const [x, y, z] = CAMERA.position;
-  const length = Math.hypot(x, y, z);
-  return [x / length, y / length, z / length] as const;
-})();
+const OPENING_DIRECTION = CAMERA.position;
 
 export default function FitCamera({ radius }: { radius: number }) {
   const { camera, size } = useThree();
+  const framed = useRef<number | null>(null);
 
   useEffect(() => {
     // the R3F mock returns a bare {} in jsdom; nothing to frame there
-    if (camera === undefined || size === undefined || radius <= 0) return;
+    if (camera === undefined || size === undefined) return;
 
-    const aspect = size.height === 0 ? 1 : size.width / size.height;
-    const halfVertical = ((camera as PerspectiveCamera).fov * Math.PI) / 360;
-    const halfHorizontal = Math.atan(Math.tan(halfVertical) * aspect);
-    // a portrait panel is bound by its width, a landscape one by its height
-    const half = Math.min(halfVertical, halfHorizontal);
-    const distance = radius / (RIBBON_VIEWPORT_FILL * Math.sin(half));
+    const distance = fitDistance(
+      radius,
+      (camera as PerspectiveCamera).fov,
+      size.height === 0 ? 1 : size.width / size.height,
+      RIBBON_VIEWPORT_FILL,
+    );
+    if (distance === 0) return;
+
+    // A resize must refit the distance but must NOT reclaim the direction: at the demo's
+    // circuit beat the presenter has usually orbited somewhere, and a screen-share layout
+    // change would otherwise snap the camera back to the opening three-quarter view
+    // mid-sentence. Only a new circuit (a new radius) resets the pose.
+    const fresh = framed.current !== radius;
+    const from = fresh ? OPENING_DIRECTION : camera.position.toArray();
+    const length = Math.hypot(from[0], from[1], from[2]) || 1;
 
     camera.position.set(
-      DIRECTION[0] * distance,
-      DIRECTION[1] * distance,
-      DIRECTION[2] * distance,
+      (from[0] / length) * distance,
+      (from[1] / length) * distance,
+      (from[2] / length) * distance,
     );
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
+    framed.current = radius;
   }, [camera, size, radius]);
 
   return null;

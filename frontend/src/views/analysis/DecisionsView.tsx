@@ -68,7 +68,7 @@ export default function DecisionsView() {
           <div className="grid gap-3 p-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
             <div className="flex min-w-0 flex-col gap-3">
               <Panel>
-                <PanelHeader title="decision" right={`lap ${card.lap} of ${available.length}`} />
+                <PanelHeader title="decision" right={`lap ${card.lap} · ${available.length} cards`} />
                 <div className="p-3">
                   <DecisionCardPanel card={card} />
                 </div>

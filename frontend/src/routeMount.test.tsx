@@ -1,14 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, cleanup, render, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { routes } from "./routes";
-import { installFetchStub } from "./test/apiFixtures";
+import { installFetchStub, simulationAccepted } from "./test/apiFixtures";
 import { installFakeWebSocket } from "./test/fakeSocket";
 
 // jsdom has no WebGL: Canvas becomes a bare <canvas> that swallows its children,
 // which is exactly the observable F-28 cares about — how many are mounted
+const runIdOfFixture = simulationAccepted.run_id;
+
 vi.mock("@react-three/fiber", async () => (await import("./test/mockR3F")).fiberMock());
 vi.mock("@react-three/drei", async () => (await import("./test/mockR3F")).dreiMock());
 
@@ -101,4 +103,25 @@ test("a legacy path redirects to its section and keeps the query (F15 deep links
     expect(router.state.location.search, legacy).toBe("?run=7");
     cleanup();
   }
+});
+
+test("a run started after mount reaches the nav and the 5.13 jump links", async () => {
+  // The regression this pins: the views used to write ?run= with a raw
+  // window.history.replaceState, which react-router's data router never observes. The
+  // URL looked right, but useLocation().search stayed on the pre-run query — so every
+  // tab link, every section-rail hop and both storyboard jumps handed on a URL with no
+  // run, and 5.13's 1:15 beat opened the energy view's own picker instead of the SOC
+  // trajectory. docs/demo/script.md asserts this property; now something checks it.
+  const router = renderRouterAt("/strategy/setup");
+  await waitFor(() => expect(router.state.location.pathname).toBe("/strategy/setup"));
+
+  const form = await screen.findByRole("button", { name: /simulate|queueing/i });
+  await act(async () => {
+    fireEvent.click(form);
+  });
+
+  await waitFor(() => expect(router.state.location.search).toContain(`run=${runIdOfFixture}`));
+
+  const analysis = screen.getByRole("link", { name: /analysis/i });
+  expect(analysis.getAttribute("href")).toContain(`run=${runIdOfFixture}`);
 });

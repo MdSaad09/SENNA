@@ -5,10 +5,13 @@
 // better and checkable: corner count, braking zones detected from telemetry speed drops,
 // X-mode sections inferred from full-throttle stretches, and the per-circuit harvest cap.
 //
-// Six of the 24 circuits in configs/circuits.yaml have no meta.json on disk, so every
-// field here can arrive null. That is a coverage gap to state, never a zero to render.
+// Several circuits listed in configs/circuits.yaml have no meta.json on disk, so every
+// field here can arrive null. That is a coverage gap to state, never a zero to render —
+// and the count is deliberately not written down, because a hard-coded circuit total is
+// the thing E-13 asks this codebase not to acquire.
 
 import type { CircuitDetail } from "../../api/types";
+import { RIBBON_PROJECTED_FILL } from "../../config/constants";
 import { Panel, PanelHeader } from "../../components/ui/Panel";
 import { Stat } from "../../components/ui/Stat";
 import { HonestyNote } from "../../components/ui/text";
@@ -43,6 +46,18 @@ export default function TrackCharacteristics({ detail }: { detail: CircuitDetail
           {/* the harvest cap is the 2026 constraint that actually binds; there is no
               per-lap deployment cap to show beside it, and there never was */}
           <Stat label="harvest cap" value={`${detail.h_max_mj} MJ`} />
+        </div>
+      </Panel>
+
+      <Panel>
+        <PanelHeader title="framing" right={`${Math.round(RIBBON_PROJECTED_FILL * 100)}%`} />
+        <div className="p-3">
+          <HonestyNote>
+            the ribbon is framed to fill about {Math.round(RIBBON_PROJECTED_FILL * 100)}% of the
+            panel, fitted to its bounding sphere rather than to the track outline — so a long,
+            thin circuit sits smaller than a tightly wound one of the same lap length.
+            Elevation is exaggerated and banking is a visual treatment, as the legend says.
+          </HonestyNote>
         </div>
       </Panel>
 

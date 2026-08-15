@@ -5,6 +5,7 @@ import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { clearProvenance, provenanceLog } from "../../api/provenance";
 import { installFetchStub } from "../../test/apiFixtures";
 import TyreSurfaceView from "./TyreSurfaceView";
+import { BrowserRouter } from "react-router-dom";
 
 // The surface mounts a canvas (View 4 is the 3D one), so the R3F boundary is mocked
 // exactly as the replay and route tests mock it; the shader never runs under jsdom,
@@ -30,7 +31,11 @@ function renderView() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={queryClient}>
-      <TyreSurfaceView />
+      {/* F23: ?run= and ?circuit= are written through the router now, not with a raw
+          history.replaceState the router cannot see */}
+      <BrowserRouter>
+        <TyreSurfaceView />
+      </BrowserRouter>
     </QueryClientProvider>,
   );
 }

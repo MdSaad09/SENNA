@@ -17,25 +17,27 @@ export default {
           line: "#26333c",
           text: "#e6edf1",
           muted: "#c9d0d7",
-          faint: "#637481",
-          ghost: "#515c63",
+          faint: "#8a99a6",
+          ghost: "#7d8994",
           accent: "#6bd6c3",
-          danger: "#b13f4d",
+          danger: "#d9556a",
         },
       },
       fontFamily: {
-        // the reference sets everything in one mono face; figures line up in tables
-        // without tabular-nums tricks and the micro-labels get their machined look
+        // stylised — the reference sets everything in one mono face; figures line up in
+        // tables and the micro-labels get their machined look
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
+      // stylised — the type scale, read off the reference. Three sizes and nothing
+      // between them: a micro caption, a label, and the figure it labels
       fontSize: {
         micro: ["0.625rem", { lineHeight: "1rem", letterSpacing: "0.18em" }],
         label: ["0.6875rem", { lineHeight: "1rem", letterSpacing: "0.08em" }],
         figure: ["0.9375rem", { lineHeight: "1.25rem" }],
       },
       borderRadius: {
-        // the reference's panels are square to within a pixel; anything rounder reads
-        // like a consumer app rather than an instrument
+        // stylised — the reference's panels are square to within a pixel; anything
+        // rounder reads like a consumer app rather than an instrument
         panel: "2px",
       },
     },

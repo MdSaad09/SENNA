@@ -81,13 +81,16 @@ export default function App() {
           <NavLink
             key={tab.path}
             to={{ pathname: tab.home, search }}
-            className={() =>
-              `-mb-px border-b-2 py-2.5 text-label uppercase tracking-[0.12em] ${
-                tab === active
-                  ? "border-senna-accent text-senna-text"
-                  : "border-transparent text-senna-faint hover:text-senna-muted"
-              }`
-            }
+            // `active` is the tab whose sections contain the current path, which is not
+            // what NavLink's own isActive means here: the tab's href points at its home
+            // section, so on /strategy/live isActive would be false. aria-current still
+            // needs to be right, so it is set from the same test the styling uses
+            aria-current={tab === active ? "page" : undefined}
+            className={`-mb-px border-b-2 py-2.5 text-label uppercase tracking-[0.12em] ${
+              tab === active
+                ? "border-senna-accent text-senna-text"
+                : "border-transparent text-senna-faint hover:text-senna-muted"
+            }`}
           >
             <span className="text-senna-ghost">{String(index + 1).padStart(2, "0")}</span>{" "}
             &middot; {tab.label}
@@ -106,7 +109,7 @@ export default function App() {
       {/* R-07: the unofficial-project footer stays on every view. The wording is the
           canonical F15 disclaimer — it also fronts the README and the video end card,
           and the three may never drift apart */}
-      <footer className="border-t border-senna-line px-5 py-1.5 text-[10px] text-senna-ghost">
+      <footer className="border-t border-senna-line px-5 py-1.5 text-micro text-senna-ghost">
         SENNA is an unofficial project and is not associated in any way with the Formula 1
         companies, the FIA or any team
       </footer>

@@ -5,6 +5,7 @@
 // 5.9.2 body accepts (F12 deferred the matrix to F13's live view; here it is).
 
 import { useState, type FormEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { apiPost } from "../api/client";
 import { useCircuits } from "../api/queries";
@@ -30,6 +31,7 @@ export default function RunPicker({
   fullMatrix = false,
 }: RunPickerProps) {
   const circuits = useCircuits();
+  const [, setSearchParams] = useSearchParams();
   const [slug, setSlug] = useState<string | null>(null);
   const [gridPosition, setGridPosition] = useState(DEFAULT_GRID_POSITION);
   const [seed, setSeed] = useState<string>("");
@@ -66,9 +68,16 @@ export default function RunPicker({
         ...(rivalBand !== "test" ? { rival_band: rivalBand } : {}),
       };
       const accepted = await apiPost<JobAccepted>("/v1/simulations", body);
-      const query = new URLSearchParams(window.location.search);
-      query.set("run", String(accepted.run_id));
-      window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
+      // through the router, not history.replaceState: a raw write is invisible to
+      // useLocation, so the nav and the 5.13 jump links would keep handing on the
+      // pre-run query and the next section would open its own picker
+      setSearchParams(
+        (current) => {
+          current.set("run", String(accepted.run_id));
+          return current;
+        },
+        { replace: true },
+      );
       onRun(accepted.run_id);
     } catch (thrown) {
       setError(thrown instanceof Error ? thrown.message : String(thrown));

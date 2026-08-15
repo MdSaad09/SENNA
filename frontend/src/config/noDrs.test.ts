@@ -32,7 +32,7 @@ function shipsToTheBrowser(file: string): boolean {
 test("no shipped frontend file mentions DRS (F23: there is no DRS in 2026)", () => {
   // a word boundary, not a lowercase substring: "drs" sits inside ordinary
   // identifiers and the substring compare the F-29 walk uses would false-positive
-  const drs = /\bDRS\b/;
+  const drs = /\bdrs\b/i;
   const shipped = [...walk(srcRoot).filter(shipsToTheBrowser), join(frontendRoot, "index.html")];
   expect(shipped.length).toBeGreaterThan(0);
 

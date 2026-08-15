@@ -55,6 +55,7 @@ export default function StrategyView() {
   // the frames land after the run row does; painting the timeline in between would show
   // a one-stint race that then rearranges itself, which reads as a bug
   const raceReadable = complete && frames.data !== undefined;
+  const framesFailed = frames.isError;
 
   return (
     <div className="flex h-full flex-col">
@@ -68,13 +69,19 @@ export default function StrategyView() {
       <div className="relative min-h-0 flex-1 overflow-y-auto">
         {!raceReadable && (
           <RunStatusOverlay
-            message={`run ${runId}: ${run.data?.status ?? "loading"}`}
-            hint={
-              run.data?.status === "failed"
-                ? "check the worker logs"
-                : "the worker is racing it now; the stints appear when it finishes"
+            message={
+              framesFailed
+                ? `run ${runId} finished, but its frames could not be loaded`
+                : `run ${runId}: ${run.data?.status ?? "loading"}`
             }
-            failed={run.data?.status === "failed"}
+            hint={
+              framesFailed
+                ? "the stints are read back from the stored frames — without them this page has nothing honest to draw"
+                : run.data?.status === "failed"
+                  ? "check the worker logs"
+                  : "the worker is racing it now; the stints appear when it finishes"
+            }
+            failed={framesFailed || run.data?.status === "failed"}
           />
         )}
 
@@ -107,7 +114,7 @@ export default function StrategyView() {
                 <Stat label="stints" value={stints.length} />
                 <Stat label="stops" value={Math.max(stints.length - 1, 0)} />
                 {summary?.total_laps != null && (
-                  <Stat label="laps" value={String(summary.total_laps)} />
+                  <Stat label="race laps" value={String(summary.total_laps)} />
                 )}
               </div>
 

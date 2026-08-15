@@ -4,6 +4,7 @@ import { afterEach, beforeEach, expect, test } from "vitest";
 
 import { installFetchStub, simulationResult, strategyFrames } from "../../test/apiFixtures";
 import StrategyView from "./StrategyView";
+import { BrowserRouter } from "react-router-dom";
 
 // The Strategy page is post-hoc: run it, then show what the agent did. Every figure
 // here is already served — worker/jobs.py:209-217 builds the summary, and the stints
@@ -62,7 +63,11 @@ function renderView() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={queryClient}>
-      <StrategyView />
+      {/* F23: ?run= and ?circuit= are written through the router now, not with a raw
+          history.replaceState the router cannot see */}
+      <BrowserRouter>
+        <StrategyView />
+      </BrowserRouter>
     </QueryClientProvider>,
   );
 }

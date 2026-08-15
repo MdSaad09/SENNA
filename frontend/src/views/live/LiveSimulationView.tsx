@@ -23,21 +23,7 @@ import ReplayScene from "../replay/ReplayScene";
 import JumpLink from "../../components/ui/JumpLink";
 import DecisionCardPanel from "./DecisionCardPanel";
 import SocBar from "./SocBar";
-
-function positiveIntParam(query: URLSearchParams, name: string): number | null {
-  const raw = query.get(name);
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
-
-// seed 0 is a legal server draw (secrets.randbelow), so ?seed=0 must round-trip
-function seedParam(query: URLSearchParams): number | null {
-  const raw = query.get("seed");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
-}
+import { positiveIntParam, seedParam, useWriteRunBack } from "../../lib/queryParams";
 
 // ?speed= is only honoured from the 5.9.3 set — the server would reject anything
 // else, and a silent drop beats surfacing an error over a shareable link
@@ -51,16 +37,10 @@ function speedParam(query: URLSearchParams): number | null {
 const subscribeLivePlayhead = (listener: (playheadLap: number) => void) =>
   useLiveStore.subscribe((state) => state.playheadLap, listener);
 
-function writeRunBack(runId: number): void {
-  // keep circuit and seed visible: the deep link stays shareable after it resolves
-  const query = new URLSearchParams(window.location.search);
-  query.set("run", String(runId));
-  window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
-}
-
 export default function LiveSimulationView() {
+  const writeRunBack = useWriteRunBack();
   const [runId, setRunId] = useState<number | null>(() =>
-    positiveIntParam(new URLSearchParams(window.location.search), "run"),
+    positiveIntParam("run"),
   );
   const [deepLinkError, setDeepLinkError] = useState<string | null>(null);
   const posted = useRef(false); // refs survive StrictMode's double effect — one POST
@@ -75,7 +55,7 @@ export default function LiveSimulationView() {
     const seed = seedParam(query);
     apiPost<JobAccepted>("/v1/simulations", {
       circuit_id: circuit,
-      grid_position: positiveIntParam(query, "grid") ?? DEFAULT_GRID_POSITION,
+      grid_position: positiveIntParam("grid", query) ?? DEFAULT_GRID_POSITION,
       ...(seed !== null ? { seed } : {}),
     })
       .then((accepted) => {
@@ -85,7 +65,7 @@ export default function LiveSimulationView() {
       .catch((thrown) => {
         setDeepLinkError(thrown instanceof Error ? thrown.message : String(thrown));
       });
-  }, [runId]);
+  }, [runId, writeRunBack]);
 
   useEffect(() => {
     if (runId === null) return;
@@ -94,7 +74,7 @@ export default function LiveSimulationView() {
     // circuit + grid + seed alone, so a pre-warmed demo run stays a hit whatever
     // lap or speed the link opens at
     const query = new URLSearchParams(window.location.search);
-    const startLap = positiveIntParam(query, "lap");
+    const startLap = positiveIntParam("lap", query);
     const startSpeed = speedParam(query);
     if (startSpeed !== null) useLiveStore.getState().setSpeed(startSpeed);
     const socket = new LiveSocket(runId, {

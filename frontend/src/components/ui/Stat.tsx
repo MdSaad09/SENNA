@@ -1,6 +1,6 @@
-// A labelled figure, and a labelled figure with a bar under it. The bar earns its own
-// component because the reward decomposition and the circuit characteristics rail both
-// draw one and neither should own the fill arithmetic.
+// A labelled figure, and a labelled figure with a bar under it. Meter has one call site
+// (the reward decomposition) and is kept separate anyway because the clamp is the sort of
+// arithmetic that goes wrong quietly inside a view.
 
 import type { ReactNode } from "react";
 

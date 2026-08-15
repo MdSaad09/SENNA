@@ -18,7 +18,7 @@ export default function RunStatusOverlay({ message, hint, failed = false }: RunS
         <p className={`text-label ${failed ? "text-senna-danger" : "text-senna-muted"}`}>
           {message}
         </p>
-        {hint !== undefined && <p className="mt-2 text-[11px] text-senna-ghost">{hint}</p>}
+        {hint !== undefined && <p className="mt-2 text-label text-senna-ghost">{hint}</p>}
       </div>
     </div>
   );

@@ -45,6 +45,10 @@ export const routes: RouteObject[] = [
       { path: "energy", element: <KeepQuery to="/analysis/energy" /> },
       { path: "tyres", element: <KeepQuery to="/analysis/tyres" /> },
       { path: "counterfactual", element: <KeepQuery to="/analysis/counterfactual" /> },
+
+      // an old bookmark or a typo lands inside the shell, not on react-router's bare
+      // error page, which would ship without the R-07 footer (spec: every view)
+      { path: "*", element: <KeepQuery to="/strategy/setup" /> },
     ],
   },
 ];

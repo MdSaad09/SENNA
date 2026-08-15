@@ -10,16 +10,10 @@ import { useEnergyProfile, useSimulation } from "../../api/queries";
 import RunPicker from "../../components/RunPicker";
 import EnergyBarsPanel from "./EnergyBarsPanel";
 import SocPanel from "./SocPanel";
-
-function runIdFromLocation(): number | null {
-  const raw = new URLSearchParams(window.location.search).get("run");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
+import { positiveIntParam } from "../../lib/queryParams";
 
 export default function EnergyView() {
-  const [runId, setRunId] = useState<number | null>(runIdFromLocation);
+  const [runId, setRunId] = useState<number | null>(() => positiveIntParam("run"));
   const run = useSimulation(runId);
   const runComplete = run.data?.status === "complete";
   const energy = useEnergyProfile(runId, runComplete === true);

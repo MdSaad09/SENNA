@@ -74,9 +74,9 @@ export default function DeltaChartPanel({
             />
             <ReferenceLine y={0} stroke={CHART.axis} />
             {divergenceLap !== null && (
-              <ReferenceLine x={divergenceLap} stroke={CHART.axis} strokeDasharray="4 2" />
+              <ReferenceLine x={divergenceLap} stroke={CHART.divergence} strokeDasharray="4 2" />
             )}
-            <ReferenceLine x={Math.min(cursorLap, lastLap)} stroke={CHART.pitMark} />
+            <ReferenceLine x={Math.min(cursorLap, lastLap)} stroke={CHART.cursor} />
             <Line
               type="stepAfter"
               dataKey="delta"

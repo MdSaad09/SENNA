@@ -16,19 +16,13 @@ import TransportControls, {
 } from "../../components/TransportControls";
 import { useReplayStore } from "../../stores/replayStore";
 import ReplayScene from "./ReplayScene";
-
-function runIdFromLocation(): number | null {
-  const raw = new URLSearchParams(window.location.search).get("run");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
+import { positiveIntParam } from "../../lib/queryParams";
 
 const subscribeReplayPlayhead = (listener: (playheadLap: number) => void) =>
   useReplayStore.subscribe((state) => state.playheadLap, listener);
 
 export default function RaceReplayView() {
-  const [runId, setRunId] = useState<number | null>(runIdFromLocation);
+  const [runId, setRunId] = useState<number | null>(() => positiveIntParam("run"));
   const run = useSimulation(runId);
   const runComplete = run.data?.status === "complete";
   const frames = useRunFrames(runId, runComplete === true);

@@ -21,25 +21,11 @@ import CounterfactualClock from "./CounterfactualClock";
 import DeltaChartPanel from "./DeltaChartPanel";
 import SplitCanvas, { ScenePane } from "./SplitCanvas";
 import JumpLink from "../../components/ui/JumpLink";
+import { positiveIntParam, seedParam, useWriteRunBack } from "../../lib/queryParams";
 
 const SPLIT_CAPTION =
   `${ILLUSTRATIVE_MOTION_CAPTION}; the quality toggle has no effect on this route — ` +
   "bloom composits the root scene and the panes render scissored";
-
-function intParam(query: URLSearchParams, name: string): number | null {
-  const raw = query.get(name);
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
-
-// seed 0 is a legal server draw (secrets.randbelow), so ?seed=0 must round-trip
-function seedParam(query: URLSearchParams): number | null {
-  const raw = query.get("seed");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
-}
 
 const subscribeSharedPlayhead = (listener: (playheadLap: number) => void) =>
   useReplayStore.subscribe((state) => state.playheadLap, listener);
@@ -55,8 +41,9 @@ function configString(run: SimulationResult | undefined, key: string): string | 
 }
 
 export default function CounterfactualView() {
+  const writeRunBack = useWriteRunBack();
   const [agentRunId, setAgentRunId] = useState<number | null>(() =>
-    intParam(new URLSearchParams(window.location.search), "run"),
+    positiveIntParam("run"),
   );
   const [postedBaselineId, setPostedBaselineId] = useState<number | null>(null);
   const [postError, setPostError] = useState<string | null>(null);
@@ -65,8 +52,8 @@ export default function CounterfactualView() {
   useEffect(() => {
     if (agentRunId !== null || posted.current) return;
     const query = new URLSearchParams(window.location.search);
-    const year = intParam(query, "year");
-    const round = intParam(query, "round");
+    const year = positiveIntParam("year", query);
+    const round = positiveIntParam("round", query);
     const driver = query.get("driver");
     if (year === null || round === null || driver === null) return;
     posted.current = true;
@@ -78,16 +65,14 @@ export default function CounterfactualView() {
       ...(seed !== null ? { seed } : {}),
     })
       .then((accepted) => {
-        const next = new URLSearchParams(window.location.search);
-        next.set("run", String(accepted.run_id));
-        window.history.replaceState(null, "", `${window.location.pathname}?${next}`);
+        writeRunBack(accepted.run_id);
         setPostedBaselineId(accepted.baseline_run_id ?? null);
         setAgentRunId(accepted.run_id);
       })
       .catch((thrown) => {
         setPostError(thrown instanceof Error ? thrown.message : String(thrown));
       });
-  }, [agentRunId]);
+  }, [agentRunId, writeRunBack]);
 
   const agentRun = useSimulation(agentRunId);
   const baselineRunId =

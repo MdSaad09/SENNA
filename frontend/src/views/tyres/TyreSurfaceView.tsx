@@ -12,6 +12,7 @@ import CanvasHost from "../../components/CanvasHost";
 import { TYRE_TEMP_AXIS_MAX_C, TYRE_TEMP_AXIS_MIN_C } from "../../config/constants";
 import FitPanel from "./FitPanel";
 import GripSurface from "./GripSurface";
+import { useSearchParams } from "react-router-dom";
 
 function circuitFromLocation(): string | null {
   return new URLSearchParams(window.location.search).get("circuit");
@@ -22,6 +23,7 @@ function unique(values: string[]): string[] {
 }
 
 export default function TyreSurfaceView() {
+  const [, setSearchParams] = useSearchParams();
   const circuits = useCircuits();
   const [slug, setSlug] = useState<string | null>(circuitFromLocation);
   const [era, setEra] = useState<string | null>(null);
@@ -45,9 +47,13 @@ export default function TyreSurfaceView() {
   const curve = served.find((c) => c.era === activeEra && c.compound === activeCompound) ?? null;
 
   function changeCircuit(next: string) {
-    const query = new URLSearchParams(window.location.search);
-    query.set("circuit", next);
-    window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
+    setSearchParams(
+      (current) => {
+        current.set("circuit", next);
+        return current;
+      },
+      { replace: true },
+    );
     setSlug(next);
     setEra(null);
     setCompound(null);
