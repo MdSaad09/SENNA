@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    /* every figure on the dashboard sits in a column that has to line up: stint laps,
+       SOC values, SHAP weights, the pit table */
+    font-variant-numeric: tabular-nums;
+  }
+
+  body {
+    @apply bg-senna-ground text-senna-muted font-mono;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-1 ring-senna-accent;
+  }
+
+  /* the default scrollbar is a bright slab against a near-black ground */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-senna-ground;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-senna-line;
+    border-radius: 2px;
+  }
+}
