@@ -23,6 +23,7 @@ import ViewHeader from "../../components/ui/ViewHeader";
 import { EGO_CAR_ID } from "../../config/constants";
 import { positiveIntParam } from "../../lib/queryParams";
 import PitSchedule from "./PitSchedule";
+import RaceStoryChart from "./RaceStoryChart";
 import StintTimeline from "./StintTimeline";
 import { stintsFromFrames } from "./stints";
 
@@ -120,6 +121,12 @@ export default function StrategyView() {
 
               <div className="px-4 pb-4">
                 <StintTimeline stints={stints} />
+              </div>
+
+              {/* the race itself: where the agent came from, where the stops fell, and
+                  what the safety car did to both */}
+              <div className="border-t border-senna-line px-2 pb-3 pt-2">
+                <RaceStoryChart frames={frames.data ?? []} egoId={EGO_CAR_ID} stints={stints} />
               </div>
             </Panel>
 

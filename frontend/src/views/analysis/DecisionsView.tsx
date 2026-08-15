@@ -37,7 +37,11 @@ export default function DecisionsView() {
 
   const available = cards.data ?? [];
   const card = available.find((entry) => entry.lap === selectedLap) ?? available[0];
-  const rewardTerms = frames.data?.find((frame) => frame.lap === card?.lap)?.agent.reward_terms;
+  // decision cards number laps from 0 (the observation's lap index at decision time)
+  // and frames from 1, so joining on equality found nothing and this panel silently
+  // never rendered. Match the frame the decision was taken on.
+  const rewardTerms = frames.data?.find((frame) => frame.lap === (card?.lap ?? -1) + 1)?.agent
+    .reward_terms;
 
   return (
     <div className="flex h-full flex-col">

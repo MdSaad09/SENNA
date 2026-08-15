@@ -10,7 +10,11 @@ import { useEffect, useMemo } from "react";
 import { BufferAttribute, BufferGeometry, DoubleSide, Group, Mesh } from "three";
 
 import type { CircuitDetail } from "../../api/types";
-import { ANNOTATION_LIFT_M, CAMERA } from "../../config/constants";
+import {
+  ANNOTATION_LIFT_M,
+  CAMERA,
+  RIBBON_WIDTH_EXAGGERATION,
+} from "../../config/constants";
 import { buildCentreline, type Centreline } from "../../lib/centreline";
 import { buildStrip, type StripGeometry, type StripZone } from "../../lib/ribbonStrips";
 import { SCENE } from "../../config/palette";
@@ -77,7 +81,7 @@ function ribbonPositions(gltf: unknown): Float32Array {
 export function useRibbon(gltfUrl: string): RibbonFrame {
   const gltf = useGLTF(gltfUrl);
   return useMemo(() => {
-    const positions = ribbonPositions(gltf);
+    const positions = widenRibbon(ribbonPositions(gltf));
     const centreline = buildCentreline(positions);
     let minX = Infinity, minY = Infinity, minZ = Infinity;
     let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
@@ -115,6 +119,23 @@ function silhouetteRadius(positions: Float32Array, centre: [number, number, numb
     furthest = Math.max(furthest, perpendicular);
   }
   return Math.sqrt(furthest);
+}
+
+/** Push each station's two edge vertices apart from their midpoint. The centreline is
+ *  the midpoint, so it is untouched — only the drawn width changes, and the annotation
+ *  strips built from these positions widen with it. */
+function widenRibbon(positions: Float32Array): Float32Array {
+  const widened = positions.slice();
+  for (let i = 0; i < widened.length; i += 6) {
+    for (let axis = 0; axis < 3; axis++) {
+      const left = widened[i + axis];
+      const right = widened[i + 3 + axis];
+      const centre = (left + right) / 2;
+      widened[i + axis] = centre + (left - centre) * RIBBON_WIDTH_EXAGGERATION;
+      widened[i + 3 + axis] = centre + (right - centre) * RIBBON_WIDTH_EXAGGERATION;
+    }
+  }
+  return widened;
 }
 
 function ribbonGeometry(positions: Float32Array): BufferGeometry {

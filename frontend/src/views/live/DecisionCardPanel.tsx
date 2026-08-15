@@ -7,6 +7,7 @@
 import type { DecisionCard } from "../../api/types";
 import { MODE_ACTION_LABELS, PIT_ACTION_LABELS } from "../../config/constants";
 import { PALETTE } from "../../config/palette";
+import { featureLabel } from "../../config/featureLabels";
 
 function DriverBars({ head, drivers }: { head: string; drivers: [string, number][] }) {
   const scale = Math.max(...drivers.map(([, shap]) => Math.abs(shap)), 1e-9);
@@ -14,7 +15,9 @@ function DriverBars({ head, drivers }: { head: string; drivers: [string, number]
     <ul data-testid={`card-drivers-${head}`} className="mt-1 space-y-1">
       {drivers.map(([name, shap]) => (
         <li key={name} className="flex items-center gap-2 text-xs">
-          <span className="w-28 shrink-0 truncate text-senna-faint">{name}</span>
+          <span className="w-56 shrink-0 truncate text-senna-muted" title={name}>
+            {featureLabel(name)}
+          </span>
           <span className="relative h-2 flex-1">
             <span
               className="absolute inset-y-0 rounded-sm"

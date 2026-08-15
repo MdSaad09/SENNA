@@ -91,6 +91,13 @@ export const DPR_RANGE: [number, number] = [1, 2];
 // (the value is baked into the committed GLBs, so a yaml retune requires make circuits)
 export const ELEVATION_EXAGGERATION = 1.5;
 
+// stylised — the ribbon is widened by this factor for display, the same kind of honest
+// exaggeration elevation already gets, and the legend quotes both. A 12 m track on a
+// 5.2 km circuit framed to fill the panel is about two pixels: true to scale and
+// unreadable. 3x is enough to read as a road without closing up the tight hairpins that
+// E-17 warns about, and it is applied in the browser so the exported GLB stays true.
+export const RIBBON_WIDTH_EXAGGERATION = 3;
+
 // stylised — the 2026 car footprint as a readable box, visual only
 export const CAR_DIMENSIONS_M = { length: 5.6, width: 2.0, height: 1.0 };
 

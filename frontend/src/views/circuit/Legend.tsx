@@ -3,7 +3,7 @@
 // data, not hardcoded copy (5.10.2 row 1).
 
 import type { CircuitDetail } from "../../api/types";
-import { ELEVATION_EXAGGERATION } from "../../config/constants";
+import { ELEVATION_EXAGGERATION, RIBBON_WIDTH_EXAGGERATION } from "../../config/constants";
 import { BRAKING_TINT, HARVEST_TINT, XMODE_TINT } from "./CircuitRibbon";
 import { Panel } from "../../components/ui/Panel";
 
@@ -50,6 +50,10 @@ export default function Legend({ detail }: { detail: CircuitDetail }) {
           stretches, not official section data
         </li>
         <li>{elevationCaveat(detail)}</li>
+        <li>
+          track drawn {RIBBON_WIDTH_EXAGGERATION}x its real width — at true scale a 12 m road
+          on a multi-kilometre circuit is about two pixels
+        </li>
         <li>banking {flags?.banking ?? "stylised"} — a visual treatment, not data (F-12)</li>
       </ul>
     </Panel>

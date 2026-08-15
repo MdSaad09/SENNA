@@ -89,16 +89,14 @@ export default function CircuitExplorerView() {
           </div>
         )}
 
-        {detail.data !== undefined && detail.data.gltf_url !== null && (
-          <div className="absolute bottom-3 left-3 max-w-sm">
-            <Legend detail={detail.data} />
-          </div>
-        )}
       </section>
 
       {detail.data !== undefined && (
-        <aside className="w-72 shrink-0 overflow-y-auto border-l border-senna-line p-3">
+        <aside className="flex w-72 shrink-0 flex-col gap-3 overflow-y-auto border-l border-senna-line p-3">
           <TrackCharacteristics detail={detail.data} />
+          {/* the legend used to float over the canvas, covering the circuit it was
+              describing; it reads better beside the numbers it qualifies */}
+          {detail.data.gltf_url !== null && <Legend detail={detail.data} />}
         </aside>
       )}
     </div>

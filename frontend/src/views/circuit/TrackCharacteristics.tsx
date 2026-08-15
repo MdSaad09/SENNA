@@ -12,9 +12,11 @@
 
 import type { CircuitDetail } from "../../api/types";
 import { RIBBON_PROJECTED_FILL } from "../../config/constants";
+import { SCENE } from "../../config/palette";
 import { Panel, PanelHeader } from "../../components/ui/Panel";
 import { Stat } from "../../components/ui/Stat";
 import { HonestyNote } from "../../components/ui/text";
+import LapStrip from "./LapStrip";
 
 function xmodeShare(detail: CircuitDetail): string | null {
   if (detail.xmode_sections === null || detail.lap_length_m === null) return null;
@@ -48,6 +50,72 @@ export default function TrackCharacteristics({ detail }: { detail: CircuitDetail
           <Stat label="harvest cap" value={`${detail.h_max_mj} MJ`} />
         </div>
       </Panel>
+
+      {detail.lap_length_m !== null && detail.xmode_sections !== null && (
+        <Panel>
+          <PanelHeader title="the lap, unrolled" />
+          <div className="p-3">
+            <LapStrip
+              lapLengthM={detail.lap_length_m}
+              xmode={detail.xmode_sections}
+              braking={detail.braking_zones ?? []}
+            />
+            <div className="mt-2 flex gap-3 text-micro uppercase text-senna-faint">
+              <span className="flex items-center gap-1">
+                <span aria-hidden className="h-2 w-2" style={{ backgroundColor: SCENE.xmode }} />
+                x-mode
+              </span>
+              <span className="flex items-center gap-1">
+                <span aria-hidden className="h-2 w-2" style={{ backgroundColor: SCENE.braking }} />
+                braking
+              </span>
+            </div>
+          </div>
+        </Panel>
+      )}
+
+      {detail.braking_zones !== null && detail.braking_zones.length > 0 && (
+        <Panel>
+          <PanelHeader
+            title="braking zones"
+            right={`${detail.braking_zones.length} detected`}
+          />
+          <table className="w-full text-label">
+            <thead>
+              <tr className="border-b border-senna-line text-micro uppercase text-senna-faint">
+                <th scope="col" className="px-3 py-1.5 text-left font-normal">At</th>
+                <th scope="col" className="px-3 py-1.5 text-right font-normal">Entry</th>
+                <th scope="col" className="px-3 py-1.5 text-right font-normal">Min</th>
+                <th scope="col" className="px-3 py-1.5 text-right font-normal">Drop</th>
+              </tr>
+            </thead>
+            <tbody>
+              {detail.braking_zones.map((zone) => (
+                <tr key={zone.start_m} className="border-b border-senna-line/40 last:border-b-0">
+                  <td className="px-3 py-1.5 text-senna-faint">
+                    {(zone.start_m / 1000).toFixed(2)} km
+                  </td>
+                  <td className="px-3 py-1.5 text-right text-senna-muted">
+                    {Math.round(zone.entry_kmh)}
+                  </td>
+                  <td className="px-3 py-1.5 text-right text-senna-muted">
+                    {Math.round(zone.min_kmh)}
+                  </td>
+                  <td className="px-3 py-1.5 text-right text-senna-text">
+                    &minus;{Math.round(zone.entry_kmh - zone.min_kmh)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="border-t border-senna-line p-3">
+            <HonestyNote>
+              km/h, detected from telemetry speed drops over 50 km/h within 100 m — a reading
+              of one fast lap, not a published corner table.
+            </HonestyNote>
+          </div>
+        </Panel>
+      )}
 
       <Panel>
         <PanelHeader title="framing" right={`${Math.round(RIBBON_PROJECTED_FILL * 100)}%`} />
