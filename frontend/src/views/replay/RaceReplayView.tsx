@@ -18,6 +18,7 @@ import { useReplayStore } from "../../stores/replayStore";
 import ReplayScene from "./ReplayScene";
 import { positiveIntParam } from "../../lib/queryParams";
 import ViewHeader from "../../components/ui/ViewHeader";
+import TimingTower from "../../components/TimingTower";
 
 const subscribeReplayPlayhead = (listener: (playheadLap: number) => void) =>
   useReplayStore.subscribe((state) => state.playheadLap, listener);
@@ -43,6 +44,9 @@ export default function RaceReplayView() {
   const nominalLapS = run.data?.summary?.nominal_lap_s;
   const carCount = frames.data?.[0]?.cars.length;
   const agentNow = frames.data?.[hudLap - 1]?.agent;
+  const carsNow = frames.data?.[hudLap - 1]?.cars;
+  const selectedCarId = useReplayStore((state) => state.selectedCarId);
+  const selectCar = useReplayStore((state) => state.selectCar);
   const ready =
     runComplete === true &&
     frames.data !== undefined &&
@@ -62,7 +66,6 @@ export default function RaceReplayView() {
             {carCount !== undefined && <span>{`${carCount} cars`}</span>}
             {run.data.seed !== null && <span>seed {run.data.seed}</span>}
             {run.data.model_version !== null && <span>{run.data.model_version}</span>}
-            {run.data.env_config_hash !== null && <span>cfg {run.data.env_config_hash}</span>}
             {agentNow !== undefined && (
               <span className="font-mono">
                 agent soc {agentNow.soc_mj.toFixed(2)} MJ · harvest{" "}
@@ -75,7 +78,10 @@ export default function RaceReplayView() {
         )}
       </ViewHeader>
 
-      <section className="relative min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* min-w-0: without it the canvas sizes to its content in a flex row and shoves
+            the timing tower off the right edge */}
+        <section className="relative min-h-0 min-w-0 flex-1">
         <CanvasHost>
           {ready && (
             <Suspense fallback={null}>
@@ -110,6 +116,21 @@ export default function RaceReplayView() {
           </div>
         )}
       </section>
+
+      {ready && carsNow !== undefined && (
+        <aside className="w-64 shrink-0 overflow-y-auto border-l border-senna-line">
+          <div className="border-b border-senna-line bg-senna-raised px-2 py-1.5 text-micro uppercase text-senna-muted">
+            lap {hudLap} of {frames.data?.length ?? 0}
+          </div>
+          <TimingTower
+            cars={carsNow}
+            egoId={EGO_CAR_ID}
+            selectedId={selectedCarId}
+            onSelect={selectCar}
+          />
+        </aside>
+      )}
+      </div>
 
       {ready && frames.data !== undefined && (
         <TransportControls

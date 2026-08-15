@@ -94,6 +94,13 @@ export const ELEVATION_EXAGGERATION = 1.5;
 // stylised — the 2026 car footprint as a readable box, visual only
 export const CAR_DIMENSIONS_M = { length: 5.6, width: 2.0, height: 1.0 };
 
+// stylised — car markers are drawn this many times life size. At true scale a 5.6 m car
+// on a 5.2 km circuit framed to fill the panel is about one pixel, which is why the
+// replay rendered as an empty track. 6x puts a marker at roughly 1.5% of the circuit's
+// width: findable at a glance, still small enough that a pack reads as separate cars.
+// The replay caption says the markers are not to scale.
+export const CAR_MARKER_SCALE = 6;
+
 // stylised — in-pit cars pull aside and shrink; there is no pit-lane spline in the
 // F04 artifacts (plan divergence 3), and the legend says so
 export const PIT_LATERAL_OFFSET_M = 9;

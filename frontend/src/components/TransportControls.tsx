@@ -95,4 +95,5 @@ export default function TransportControls({
 export const ILLUSTRATIVE_MOTION_CAPTION =
   "mid-lap positions are illustrative — the simulator is lap-quantised, motion " +
   "between laps is spline-interpolated from gap-to-leader (stylised); the pit " +
-  "pull-aside is stylised too, there is no modelled pit lane";
+  "pull-aside is stylised too, there is no modelled pit lane; car markers are drawn " +
+  "well above life size so they can be seen at circuit zoom";

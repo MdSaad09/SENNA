@@ -15,7 +15,11 @@ import {
   SRGBColorSpace,
 } from "three";
 
-import { CAR_DIMENSIONS_M, SPRITE_LABEL_SIZE_M } from "../../config/constants";
+import {
+  CAR_DIMENSIONS_M,
+  CAR_MARKER_SCALE,
+  SPRITE_LABEL_SIZE_M,
+} from "../../config/constants";
 import { carLivery } from "../../config/liveries";
 import { atlasLayout, buildAtlasCanvas } from "../../lib/labelAtlas";
 
@@ -119,7 +123,10 @@ export default function CarInstances({ count, refs, onSelect }: CarInstancesProp
     sprites.geometry.setAttribute("aUvOffset", new InstancedBufferAttribute(offsets, 2));
   }, [count, refs.sprites, spriteMaterial]);
 
-  const { length, width, height } = CAR_DIMENSIONS_M;
+  // enlarged so the markers are visible at circuit zoom; proportions are untouched
+  const length = CAR_DIMENSIONS_M.length * CAR_MARKER_SCALE;
+  const width = CAR_DIMENSIONS_M.width * CAR_MARKER_SCALE;
+  const height = CAR_DIMENSIONS_M.height * CAR_MARKER_SCALE;
   return (
     <group>
       {/* frustumCulled off everywhere: the base geometry's bounding sphere knows
