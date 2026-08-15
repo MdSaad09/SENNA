@@ -44,5 +44,5 @@ for id in "$RUN" "$CF"; do
 done
 
 echo
-echo "demo deep link:  $FRONTEND/live?circuit=$CIRCUIT&seed=$SEED&lap=$LAP&speed=30&year=2024&round=1&driver=VER"
-echo "counterfactual:  $FRONTEND/counterfactual?year=2024&round=1&driver=VER&seed=$SEED"
+echo "demo deep link:  $FRONTEND/strategy/live?circuit=$CIRCUIT&seed=$SEED&lap=$LAP&speed=30&year=2024&round=1&driver=VER"
+echo "counterfactual:  $FRONTEND/analysis/counterfactual?year=2024&round=1&driver=VER&seed=$SEED"

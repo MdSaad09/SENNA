@@ -9,15 +9,20 @@ import { useCircuit, useCircuits } from "../../api/queries";
 import type { CircuitDetail } from "../../api/types";
 import CanvasHost from "../../components/CanvasHost";
 import CircuitRibbon, { useRibbon } from "./CircuitRibbon";
+import FitCamera from "./FitCamera";
 import Legend from "./Legend";
+import TrackCharacteristics from "./TrackCharacteristics";
 
 function RibbonScene({ detail, gltfUrl }: { detail: CircuitDetail; gltfUrl: string }) {
   const ribbon = useRibbon(gltfUrl);
   const [cx, cy, cz] = ribbon.centre;
   return (
-    <group position={[-cx, -cy, -cz]}>
-      <CircuitRibbon detail={detail} ribbon={ribbon} />
-    </group>
+    <>
+      <FitCamera radius={ribbon.radius} />
+      <group position={[-cx, -cy, -cz]}>
+        <CircuitRibbon detail={detail} ribbon={ribbon} />
+      </group>
+    </>
   );
 }
 
@@ -90,6 +95,12 @@ export default function CircuitExplorerView() {
           </div>
         )}
       </section>
+
+      {detail.data !== undefined && (
+        <aside className="w-72 shrink-0 overflow-y-auto border-l border-senna-line p-3">
+          <TrackCharacteristics detail={detail.data} />
+        </aside>
+      )}
     </div>
   );
 }

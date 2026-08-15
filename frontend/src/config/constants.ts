@@ -69,8 +69,16 @@ export const DEV_OVERLAY_KEY = "`"; // operational — the backtick toggles the 
 
 export const PERF_SAMPLE_MS = 500; // operational — 2 Hz keeps the probe invisible to the frame budget
 
-// stylised — camera framing for a 3-6 km ribbon; far plane clears the longest circuit
+// stylised — camera framing for a 3-6 km ribbon; far plane clears the longest circuit.
+// `position` is the opening pose only: FitCamera immediately reframes along the same
+// direction once the GLB's bounds are known (F23), because one fixed distance can only
+// be right for one circuit and Monaco is half the size of Spa.
 export const CAMERA = { fov: 50, near: 1, far: 20_000, position: [0, 900, 900] as const };
+
+// stylised — how much of the smaller viewport dimension the ribbon's bounding sphere
+// fills. Saad's note on the F23 reference was that the circuit model renders too small;
+// 0.82 leaves a margin for the legend and the corner labels without wasting the screen.
+export const RIBBON_VIEWPORT_FILL = 0.82;
 
 // operational — device-pixel-ratio clamp: retina sharpness without paying 3x pixels
 // on high-density laptop panels (the classic hidden fps cost)

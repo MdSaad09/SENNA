@@ -20,6 +20,7 @@ import TransportControls, {
 import { DEFAULT_GRID_POSITION, PLAYBACK_SPEEDS } from "../../config/constants";
 import { useLiveStore } from "../../stores/liveStore";
 import ReplayScene from "../replay/ReplayScene";
+import JumpLink from "../../components/ui/JumpLink";
 import DecisionCardPanel from "./DecisionCardPanel";
 import SocBar from "./SocBar";
 
@@ -227,6 +228,11 @@ export default function LiveSimulationView() {
               />
             )}
             {card !== null && <DecisionCardPanel card={card} />}
+            {/* 5.13's 0:45 beat: one click from the card to the same race against the
+                real one. The query rides along, so the pair is already configured */}
+            {card !== null && (
+              <JumpLink to="/analysis/counterfactual">compare with the real race</JumpLink>
+            )}
             {card === null && allCardsNull && (
               <p className="text-xs text-senna-faint">
                 no stored explanations for model version{" "}

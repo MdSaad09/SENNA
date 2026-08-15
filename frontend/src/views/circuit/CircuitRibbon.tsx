@@ -43,6 +43,10 @@ export interface RibbonFrame {
   positions: Float32Array;
   centreline: Centreline;
   centre: [number, number, number];
+  /** bounding-sphere radius about `centre`, in metres — what FitCamera frames against.
+   *  A sphere rather than a box because circuits are not axis-aligned and Monaco read
+   *  half the size of Spa under a width-only fit. */
+  radius: number;
 }
 
 function ribbonPositions(gltf: unknown): Float32Array {
@@ -82,6 +86,7 @@ export function useRibbon(gltfUrl: string): RibbonFrame {
       positions,
       centreline,
       centre: [(minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2],
+      radius: Math.hypot(maxX - minX, maxY - minY, maxZ - minZ) / 2,
     };
   }, [gltf]);
 }

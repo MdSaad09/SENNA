@@ -20,6 +20,7 @@ import { useReplayStore } from "../../stores/replayStore";
 import CounterfactualClock from "./CounterfactualClock";
 import DeltaChartPanel from "./DeltaChartPanel";
 import SplitCanvas, { ScenePane } from "./SplitCanvas";
+import JumpLink from "../../components/ui/JumpLink";
 
 const SPLIT_CAPTION =
   `${ILLUSTRATIVE_MOTION_CAPTION}; the quality toggle has no effect on this route — ` +
@@ -317,6 +318,10 @@ export default function CounterfactualView() {
             divergenceLap={comparison!.divergenceLap}
             baselineEndsLap={comparison!.baselineEndsLap}
           />
+          {/* 5.13's 1:15 beat: straight to the energy ledger of the agent's own leg */}
+          <div className="px-4 pb-3">
+            <JumpLink to="/analysis/energy">where the energy went</JumpLink>
+          </div>
         </>
       )}
     </div>
