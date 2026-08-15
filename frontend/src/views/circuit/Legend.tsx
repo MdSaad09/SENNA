@@ -3,8 +3,9 @@
 // data, not hardcoded copy (5.10.2 row 1).
 
 import type { CircuitDetail } from "../../api/types";
-import { ELEVATION_EXAGGERATION } from "../../config/constants";
+import { ELEVATION_EXAGGERATION, RIBBON_WIDTH_EXAGGERATION } from "../../config/constants";
 import { BRAKING_TINT, HARVEST_TINT, XMODE_TINT } from "./CircuitRibbon";
+import { Panel } from "../../components/ui/Panel";
 
 function Swatch({ colour }: { colour: string }) {
   return (
@@ -28,8 +29,8 @@ function elevationCaveat(detail: CircuitDetail): string {
 export default function Legend({ detail }: { detail: CircuitDetail }) {
   const flags = detail.flags;
   return (
-    <aside className="rounded border border-neutral-800 bg-neutral-900/80 p-3 text-xs text-neutral-300">
-      <h3 className="font-semibold text-neutral-200">
+    <Panel className="p-3 text-xs text-senna-muted">
+      <h3 className="font-semibold text-senna-text">
         {detail.id.replace(/_/g, " ")} — {detail.race_laps} laps
         {detail.lap_length_m !== null && `, ${(detail.lap_length_m / 1000).toFixed(3)} km`}
       </h3>
@@ -49,8 +50,12 @@ export default function Legend({ detail }: { detail: CircuitDetail }) {
           stretches, not official section data
         </li>
         <li>{elevationCaveat(detail)}</li>
+        <li>
+          track drawn {RIBBON_WIDTH_EXAGGERATION}x its real width — at true scale a 12 m road
+          on a multi-kilometre circuit is about two pixels
+        </li>
         <li>banking {flags?.banking ?? "stylised"} — a visual treatment, not data (F-12)</li>
       </ul>
-    </aside>
+    </Panel>
   );
 }

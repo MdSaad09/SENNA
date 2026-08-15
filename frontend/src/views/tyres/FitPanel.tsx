@@ -23,17 +23,17 @@ function confidence(curve: DegradationCurve): string {
 
 export default function FitPanel({ curve }: { curve: DegradationCurve }) {
   return (
-    <aside className="rounded border border-neutral-800 bg-neutral-900/80 p-3 text-xs text-neutral-300">
-      <h3 className="font-semibold text-neutral-200">
+    <aside className="rounded border border-senna-line bg-senna-surface/80 p-3 text-xs text-senna-muted">
+      <h3 className="font-semibold text-senna-text">
         {curve.compound} · {curve.era} — grip(age) = 1 − a·age^b (T5)
       </h3>
-      <p className="mt-1 font-mono text-neutral-300">
+      <p className="mt-1 font-mono text-senna-muted">
         a = {curve.a}, b = {curve.b}
         {curve.n_laps !== null && ` · ${curve.n_laps} laps`}
         {curve.max_age_seen !== null && ` · seen to age ${curve.max_age_seen}`} · cliff at age{" "}
         {curve.cliff_age}
       </p>
-      <p data-testid="fit-confidence" className="mt-1 text-neutral-400">
+      <p data-testid="fit-confidence" className="mt-1 text-senna-faint">
         <span>{confidence(curve)}</span>
       </p>
     </aside>

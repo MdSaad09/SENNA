@@ -6,14 +6,18 @@
 
 import type { DecisionCard } from "../../api/types";
 import { MODE_ACTION_LABELS, PIT_ACTION_LABELS } from "../../config/constants";
+import { PALETTE } from "../../config/palette";
+import { featureLabel } from "../../config/featureLabels";
 
 function DriverBars({ head, drivers }: { head: string; drivers: [string, number][] }) {
   const scale = Math.max(...drivers.map(([, shap]) => Math.abs(shap)), 1e-9);
   return (
     <ul data-testid={`card-drivers-${head}`} className="mt-1 space-y-1">
       {drivers.map(([name, shap]) => (
-        <li key={name} className="flex items-center gap-2 text-xs">
-          <span className="w-28 shrink-0 truncate text-neutral-400">{name}</span>
+        <li key={name} className="flex items-center gap-2 text-label">
+          <span className="w-[45%] shrink-0 text-senna-muted" title={name}>
+            {featureLabel(name)}
+          </span>
           <span className="relative h-2 flex-1">
             <span
               className="absolute inset-y-0 rounded-sm"
@@ -22,12 +26,12 @@ function DriverBars({ head, drivers }: { head: string; drivers: [string, number]
                 // sign as direction from a centre line: pushes toward the action go
                 // right, pushes away go left — the SHAP reading, not a ranking
                 left: shap >= 0 ? "50%" : `${50 - (Math.abs(shap) / scale) * 50}%`,
-                backgroundColor: shap >= 0 ? "#a3a3a3" : "#525252",
+                backgroundColor: shap >= 0 ? PALETTE.muted : PALETTE.ghost,
               }}
             />
-            <span className="absolute inset-y-0 left-1/2 w-px bg-neutral-700" />
+            <span className="absolute inset-y-0 left-1/2 w-px bg-senna-line" />
           </span>
-          <span className="w-12 shrink-0 text-right font-mono text-neutral-500">
+          <span className="w-12 shrink-0 text-right font-mono text-senna-faint">
             {shap >= 0 ? "+" : ""}
             {shap.toFixed(2)}
           </span>
@@ -41,28 +45,28 @@ export default function DecisionCardPanel({ card }: { card: DecisionCard }) {
   const pitLabel = PIT_ACTION_LABELS[card.action.pit];
   const modeLabel = MODE_ACTION_LABELS[card.action.mode];
   return (
-    <article className="space-y-3 rounded border border-neutral-800 p-3 text-sm">
+    <article className="space-y-3 rounded border border-senna-line p-3 text-sm">
       <header>
-        <p className="font-semibold text-neutral-100">{card.decision}</p>
-        <p className="mt-1 text-xs text-neutral-400">{card.plain_language}</p>
+        <p className="font-semibold text-senna-text">{card.decision}</p>
+        <p className="mt-1 text-xs text-senna-faint">{card.plain_language}</p>
       </header>
 
       <section>
-        <h3 className="text-xs uppercase tracking-wide text-neutral-500">
+        <h3 className="text-xs uppercase tracking-wide text-senna-faint">
           pit call — {pitLabel} ({Math.round(card.probs.pit[card.action.pit] * 100)}%)
         </h3>
         <DriverBars head="pit" drivers={card.drivers.pit} />
       </section>
 
       <section>
-        <h3 className="text-xs uppercase tracking-wide text-neutral-500">
+        <h3 className="text-xs uppercase tracking-wide text-senna-faint">
           energy mode — {modeLabel} ({Math.round(card.probs.mode[card.action.mode] * 100)}%)
         </h3>
         <DriverBars head="mode" drivers={card.drivers.mode} />
       </section>
 
       {card.flip.length > 0 && (
-        <section className="text-xs text-neutral-400">
+        <section className="text-xs text-senna-faint">
           {card.flip.map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -71,7 +75,7 @@ export default function DecisionCardPanel({ card }: { card: DecisionCard }) {
 
       <footer
         data-testid="card-honesty"
-        className="border-t border-neutral-800 pt-2 text-xs text-neutral-500"
+        className="border-t border-senna-line pt-2 text-xs text-senna-faint"
       >
         <p>{card.honesty.statement}</p>
         {/* the 5.13 demo points a finger at surrogate fidelity, so the agreement
@@ -80,7 +84,7 @@ export default function DecisionCardPanel({ card }: { card: DecisionCard }) {
         <p className="mt-1.5 flex items-center gap-2">
           <span
             data-testid="fidelity-badge"
-            className="rounded-full bg-neutral-800 px-2 py-0.5 font-mono text-neutral-300"
+            className="rounded-full bg-senna-raised px-2 py-0.5 font-mono text-senna-muted"
           >
             {Object.entries(card.honesty.fidelity)
               .map(([head, top1]) => `${head} ${(top1 * 100).toFixed(1)}%`)

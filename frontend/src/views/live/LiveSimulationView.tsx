@@ -17,26 +17,19 @@ import RunPicker from "../../components/RunPicker";
 import TransportControls, {
   ILLUSTRATIVE_MOTION_CAPTION,
 } from "../../components/TransportControls";
-import { DEFAULT_GRID_POSITION, PLAYBACK_SPEEDS } from "../../config/constants";
+import {
+  DEFAULT_GRID_POSITION,
+  EGO_CAR_ID,
+  PLAYBACK_SPEEDS,
+} from "../../config/constants";
 import { useLiveStore } from "../../stores/liveStore";
 import ReplayScene from "../replay/ReplayScene";
+import JumpLink from "../../components/ui/JumpLink";
 import DecisionCardPanel from "./DecisionCardPanel";
 import SocBar from "./SocBar";
-
-function positiveIntParam(query: URLSearchParams, name: string): number | null {
-  const raw = query.get(name);
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
-
-// seed 0 is a legal server draw (secrets.randbelow), so ?seed=0 must round-trip
-function seedParam(query: URLSearchParams): number | null {
-  const raw = query.get("seed");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
-}
+import { positiveIntParam, seedParam, useWriteRunBack } from "../../lib/queryParams";
+import ViewHeader from "../../components/ui/ViewHeader";
+import TimingTower from "../../components/TimingTower";
 
 // ?speed= is only honoured from the 5.9.3 set — the server would reject anything
 // else, and a silent drop beats surfacing an error over a shareable link
@@ -50,16 +43,10 @@ function speedParam(query: URLSearchParams): number | null {
 const subscribeLivePlayhead = (listener: (playheadLap: number) => void) =>
   useLiveStore.subscribe((state) => state.playheadLap, listener);
 
-function writeRunBack(runId: number): void {
-  // keep circuit and seed visible: the deep link stays shareable after it resolves
-  const query = new URLSearchParams(window.location.search);
-  query.set("run", String(runId));
-  window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
-}
-
 export default function LiveSimulationView() {
+  const writeRunBack = useWriteRunBack();
   const [runId, setRunId] = useState<number | null>(() =>
-    positiveIntParam(new URLSearchParams(window.location.search), "run"),
+    positiveIntParam("run"),
   );
   const [deepLinkError, setDeepLinkError] = useState<string | null>(null);
   const posted = useRef(false); // refs survive StrictMode's double effect — one POST
@@ -74,7 +61,7 @@ export default function LiveSimulationView() {
     const seed = seedParam(query);
     apiPost<JobAccepted>("/v1/simulations", {
       circuit_id: circuit,
-      grid_position: positiveIntParam(query, "grid") ?? DEFAULT_GRID_POSITION,
+      grid_position: positiveIntParam("grid", query) ?? DEFAULT_GRID_POSITION,
       ...(seed !== null ? { seed } : {}),
     })
       .then((accepted) => {
@@ -84,7 +71,7 @@ export default function LiveSimulationView() {
       .catch((thrown) => {
         setDeepLinkError(thrown instanceof Error ? thrown.message : String(thrown));
       });
-  }, [runId]);
+  }, [runId, writeRunBack]);
 
   useEffect(() => {
     if (runId === null) return;
@@ -93,7 +80,7 @@ export default function LiveSimulationView() {
     // circuit + grid + seed alone, so a pre-warmed demo run stays a hit whatever
     // lap or speed the link opens at
     const query = new URLSearchParams(window.location.search);
-    const startLap = positiveIntParam(query, "lap");
+    const startLap = positiveIntParam("lap", query);
     const startSpeed = speedParam(query);
     if (startSpeed !== null) useLiveStore.getState().setSpeed(startSpeed);
     const socket = new LiveSocket(runId, {
@@ -123,6 +110,17 @@ export default function LiveSimulationView() {
   const cardLap = useLiveStore((state) => Math.max(1, Math.ceil(state.playheadLap)));
   const cards = useLiveStore((state) => state.cards);
   const frames = useLiveStore((state) => state.frames);
+  // the frame at the playhead, quantised to the lap so the tower re-renders once a lap
+  // the playhead can sit a lap ahead of what has streamed; clamp to the newest frame
+  // rather than blanking the tower at exactly the moment the race is most interesting
+  const carsNow = useLiveStore(
+    (state) =>
+      state.frames[
+        Math.min(Math.max(0, Math.ceil(state.playheadLap) - 1), state.frames.length - 1)
+      ]?.cars,
+  );
+  const selectedCarId = useLiveStore((state) => state.selectedCarId);
+  const selectCar = useLiveStore((state) => state.selectCar);
 
   const setPlaying = useLiveStore((state) => state.setPlaying);
   const setSpeed = useLiveStore((state) => state.setSpeed);
@@ -162,8 +160,8 @@ export default function LiveSimulationView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
-        <span className="text-neutral-200">
+      <ViewHeader>
+        <span className="text-senna-text">
           live simulation — the trained agent racing in the simulator, not live timing
         </span>
         {run.data !== undefined && (
@@ -174,10 +172,10 @@ export default function LiveSimulationView() {
             {run.data.model_version !== null && <span>{run.data.model_version}</span>}
           </>
         )}
-      </header>
+      </ViewHeader>
 
-      <div className="flex min-h-0 flex-1">
-        <section className="relative min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <section className="relative min-h-0 min-w-0 flex-1">
           <CanvasHost>
             {sceneReady && (
               <Suspense fallback={null}>
@@ -199,12 +197,12 @@ export default function LiveSimulationView() {
             </div>
           )}
           {deepLinkError !== null && (
-            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-neutral-400">
+            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-senna-faint">
               {deepLinkError}
             </div>
           )}
           {runId !== null && frames.length === 0 && (
-            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-neutral-400">
+            <div className="absolute inset-0 grid place-items-center px-8 text-sm text-senna-faint">
               {run.isError
                 ? // a stale deep link after a data reset: the 404 detail is the
                   // honest answer, not an eternal "waiting"
@@ -219,23 +217,41 @@ export default function LiveSimulationView() {
         </section>
 
         {runId !== null && frames.length > 0 && (
-          <aside className="w-80 shrink-0 space-y-3 overflow-y-auto border-l border-neutral-800 p-3">
+          <aside className="w-80 shrink-0 space-y-3 overflow-y-auto border-l border-senna-line p-3">
             {energy.data !== undefined && playheadFrame !== undefined && (
               <SocBar
                 socMj={playheadFrame.agent.soc_mj}
                 usableSocMj={energy.data.usable_soc_mj}
               />
             )}
+            {carsNow !== undefined && (
+              <div className="rounded-panel border border-senna-line">
+                <div className="border-b border-senna-line bg-senna-raised px-2 py-1.5 text-micro uppercase text-senna-muted">
+                  lap {cardLap} of {headLap}
+                </div>
+                <TimingTower
+                  cars={carsNow}
+                  egoId={EGO_CAR_ID}
+                  selectedId={selectedCarId}
+                  onSelect={selectCar}
+                />
+              </div>
+            )}
             {card !== null && <DecisionCardPanel card={card} />}
+            {/* 5.13's 0:45 beat: one click from the card to the same race against the
+                real one. The query rides along, so the pair is already configured */}
+            {card !== null && (
+              <JumpLink to="/analysis/counterfactual">compare with the real race</JumpLink>
+            )}
             {card === null && allCardsNull && (
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-senna-faint">
                 no stored explanations for model version{" "}
                 {run.data?.model_version ?? "unknown"} — this run streams without cards
                 (a retrained model explains only its own runs, E-15)
               </p>
             )}
             {card === null && !allCardsNull && cards.size > 0 && (
-              <p className="text-xs text-neutral-500">no stored card for lap {cardLap}</p>
+              <p className="text-xs text-senna-faint">no stored card for lap {cardLap}</p>
             )}
           </aside>
         )}
@@ -253,14 +269,14 @@ export default function LiveSimulationView() {
           caption={ILLUSTRATIVE_MOTION_CAPTION}
         >
           {following ? (
-            <span className="rounded bg-neutral-800 px-2 py-0.5 text-xs text-neutral-300">
+            <span className="rounded bg-senna-raised px-2 py-0.5 text-xs text-senna-muted">
               live
             </span>
           ) : (
             <button
               type="button"
               onClick={goLive}
-              className="rounded border border-neutral-700 px-2 py-0.5 text-xs text-neutral-300 hover:bg-neutral-800"
+              className="rounded border border-senna-line px-2 py-0.5 text-xs text-senna-muted hover:bg-senna-raised"
             >
               go live
             </button>

@@ -6,8 +6,8 @@ export default function StubView({ title, arrives }: { title: string; arrives: s
   return (
     <section className="grid h-full place-items-center">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold text-neutral-300">{title}</h2>
-        <p className="mt-2 text-sm text-neutral-500">arrives in {arrives}</p>
+        <h2 className="text-2xl font-semibold text-senna-muted">{title}</h2>
+        <p className="mt-2 text-sm text-senna-faint">arrives in {arrives}</p>
       </div>
     </section>
   );

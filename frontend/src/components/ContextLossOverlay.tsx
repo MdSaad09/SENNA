@@ -33,16 +33,16 @@ export function ContextLossOverlay() {
   return (
     <div
       role="alert"
-      className="absolute inset-0 z-20 grid place-items-center bg-neutral-950/90"
+      className="absolute inset-0 z-20 grid place-items-center bg-senna-ground/90"
     >
       <div className="text-center">
-        <p className="text-sm text-neutral-300">
+        <p className="text-sm text-senna-muted">
           The browser reclaimed the 3D context — usually memory pressure, not a crash.
         </p>
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="mt-4 rounded border border-neutral-600 px-4 py-1.5 text-sm hover:bg-neutral-800"
+          className="mt-4 rounded border border-senna-line px-4 py-1.5 text-sm hover:bg-senna-raised"
         >
           Reload the view
         </button>

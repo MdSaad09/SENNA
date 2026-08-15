@@ -16,19 +16,15 @@ import TransportControls, {
 } from "../../components/TransportControls";
 import { useReplayStore } from "../../stores/replayStore";
 import ReplayScene from "./ReplayScene";
-
-function runIdFromLocation(): number | null {
-  const raw = new URLSearchParams(window.location.search).get("run");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
+import { positiveIntParam } from "../../lib/queryParams";
+import ViewHeader from "../../components/ui/ViewHeader";
+import TimingTower from "../../components/TimingTower";
 
 const subscribeReplayPlayhead = (listener: (playheadLap: number) => void) =>
   useReplayStore.subscribe((state) => state.playheadLap, listener);
 
 export default function RaceReplayView() {
-  const [runId, setRunId] = useState<number | null>(runIdFromLocation);
+  const [runId, setRunId] = useState<number | null>(() => positiveIntParam("run"));
   const run = useSimulation(runId);
   const runComplete = run.data?.status === "complete";
   const frames = useRunFrames(runId, runComplete === true);
@@ -48,6 +44,9 @@ export default function RaceReplayView() {
   const nominalLapS = run.data?.summary?.nominal_lap_s;
   const carCount = frames.data?.[0]?.cars.length;
   const agentNow = frames.data?.[hudLap - 1]?.agent;
+  const carsNow = frames.data?.[hudLap - 1]?.cars;
+  const selectedCarId = useReplayStore((state) => state.selectedCarId);
+  const selectCar = useReplayStore((state) => state.selectCar);
   const ready =
     runComplete === true &&
     frames.data !== undefined &&
@@ -57,17 +56,16 @@ export default function RaceReplayView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
+      <ViewHeader>
         {run.data !== undefined ? (
           <>
-            <span className="text-neutral-200">
+            <span className="text-senna-text">
               run {run.data.run_id} — {run.data.circuit_id?.replace(/_/g, " ")}
             </span>
             <span>{run.data.status}</span>
             {carCount !== undefined && <span>{`${carCount} cars`}</span>}
             {run.data.seed !== null && <span>seed {run.data.seed}</span>}
             {run.data.model_version !== null && <span>{run.data.model_version}</span>}
-            {run.data.env_config_hash !== null && <span>cfg {run.data.env_config_hash}</span>}
             {agentNow !== undefined && (
               <span className="font-mono">
                 agent soc {agentNow.soc_mj.toFixed(2)} MJ · harvest{" "}
@@ -78,9 +76,12 @@ export default function RaceReplayView() {
         ) : (
           <span>no run loaded — start one below, car {EGO_CAR_ID} is the agent</span>
         )}
-      </header>
+      </ViewHeader>
 
-      <section className="relative min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* min-w-0: without it the canvas sizes to its content in a flex row and shoves
+            the timing tower off the right edge */}
+        <section className="relative min-h-0 min-w-0 flex-1">
         <CanvasHost>
           {ready && (
             <Suspense fallback={null}>
@@ -101,20 +102,35 @@ export default function RaceReplayView() {
           </div>
         )}
         {runId !== null && runComplete !== true && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+          <div className="absolute inset-0 grid place-items-center text-sm text-senna-faint">
             {run.data?.status === "failed"
               ? `run ${runId} failed — check the worker logs`
               : `run ${runId}: ${run.data?.status ?? "loading"}…`}
           </div>
         )}
         {runComplete === true && detail.data !== undefined && detail.data.gltf_url === null && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+          <div className="absolute inset-0 grid place-items-center text-sm text-senna-faint">
             {/* a deep-linked run on an unbuilt circuit: same honesty as View 1 (F-08) */}
             ribbon not built for {detail.data.id.replace(/_/g, " ")} — the run exists but
             cannot be drawn; run make circuits after ingesting the event
           </div>
         )}
       </section>
+
+      {ready && carsNow !== undefined && (
+        <aside className="w-64 shrink-0 overflow-y-auto border-l border-senna-line">
+          <div className="border-b border-senna-line bg-senna-raised px-2 py-1.5 text-micro uppercase text-senna-muted">
+            lap {hudLap} of {frames.data?.length ?? 0}
+          </div>
+          <TimingTower
+            cars={carsNow}
+            egoId={EGO_CAR_ID}
+            selectedId={selectedCarId}
+            onSelect={selectCar}
+          />
+        </aside>
+      )}
+      </div>
 
       {ready && frames.data !== undefined && (
         <TransportControls

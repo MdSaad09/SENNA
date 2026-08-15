@@ -19,6 +19,7 @@ import { egoOnlyLabels, labelledCars } from "../../lib/labels";
 import { monotoneCubic, unwrapProgress } from "../../lib/progress";
 import { useReplayStore } from "../../stores/replayStore";
 import CircuitRibbon, { useRibbon } from "../circuit/CircuitRibbon";
+import FitCamera from "../circuit/FitCamera";
 import CarInstances, { type CarMeshRefs } from "./CarInstances";
 import CarLabels from "./CarLabels";
 
@@ -180,7 +181,13 @@ export default function ReplayScene({
   return (
     <group>
       <group position={[-cx, -cy, -cz]}>
-        <CircuitRibbon detail={detail} ribbon={ribbon} withCornerMarkers={false} />
+        <FitCamera radius={ribbon.radius} />
+        <CircuitRibbon
+          detail={detail}
+          ribbon={ribbon}
+          withCornerMarkers={false}
+          withZones={false}
+        />
       </group>
       {/* car matrices are written in recentred coordinates already */}
       <CarInstances

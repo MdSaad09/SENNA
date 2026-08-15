@@ -1,14 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, cleanup, render, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { routes } from "./routes";
-import { installFetchStub } from "./test/apiFixtures";
+import { installFetchStub, simulationAccepted } from "./test/apiFixtures";
 import { installFakeWebSocket } from "./test/fakeSocket";
 
 // jsdom has no WebGL: Canvas becomes a bare <canvas> that swallows its children,
 // which is exactly the observable F-28 cares about — how many are mounted
+const runIdOfFixture = simulationAccepted.run_id;
+
 vi.mock("@react-three/fiber", async () => (await import("./test/mockR3F")).fiberMock());
 vi.mock("@react-three/drei", async () => (await import("./test/mockR3F")).dreiMock());
 
@@ -55,12 +57,16 @@ test("navigation swaps the canvas and never stacks a second one (F-28)", async (
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
+  // every canonical section under the three F23 tabs, so the one-canvas rule is
+  // proved across the whole map and not just the paths that happen to hold a scene
   const hops: [string, number][] = [
-    ["/replay?run=7", 1],
-    ["/energy", 0], // the energy view is 2D recharts (decision 2), no canvas
-    ["/live", 1], // F13: CanvasHost mounts unconditionally, picker or stream
-    ["/tyres", 1], // the tyre surface owns a CanvasHost
-    ["/counterfactual", 1], // F13: two panes, still one canvas (F-28)
+    ["/strategy/setup", 0], // configuration rail and a post-hoc summary, no scene
+    ["/strategy/replay?run=7", 1],
+    ["/strategy/live?run=7", 1], // F13: CanvasHost mounts unconditionally, picker or stream
+    ["/analysis/energy?run=7", 0], // 2D recharts (F11 decision 2), no canvas
+    ["/analysis/tyres", 1], // the tyre surface owns a CanvasHost
+    ["/analysis/decisions?run=7", 0], // cards are HTML (A-03)
+    ["/analysis/counterfactual", 1], // F13: two panes, still one canvas (F-28)
     ["/circuit", 1],
   ];
   for (const [path, expected] of hops) {
@@ -74,8 +80,48 @@ test("navigation swaps the canvas and never stacks a second one (F-28)", async (
   expect(peak, "two canvases were mounted at the same time").toBeLessThanOrEqual(1);
 });
 
-test("the root path redirects to the circuit explorer", async () => {
+test("the root path redirects to the strategy setup section", async () => {
+  // F23 leads with Strategy; before it, "/" pinned to the circuit explorer
   const router = renderRouterAt("/");
-  await waitFor(() => expect(router.state.location.pathname).toBe("/circuit"));
-  await waitFor(() => expect(canvasCount()).toBe(1));
+  await waitFor(() => expect(router.state.location.pathname).toBe("/strategy/setup"));
+});
+
+test("a legacy path redirects to its section and keeps the query (F15 deep links)", async () => {
+  // the demo URLs, the README and scripts/warm_demo.sh all open flat paths carrying
+  // a query; losing ?run= in the redirect would land the view unconfigured
+  const redirects: [string, string][] = [
+    ["/replay?run=7", "/strategy/replay"],
+    ["/live?run=7", "/strategy/live"],
+    ["/energy?run=7", "/analysis/energy"],
+    ["/tyres?run=7", "/analysis/tyres"],
+    ["/counterfactual?run=7", "/analysis/counterfactual"],
+    ["/circuit?run=7", "/circuit"], // the one path that does not move
+  ];
+  for (const [legacy, canonical] of redirects) {
+    const router = renderRouterAt(legacy);
+    await waitFor(() => expect(router.state.location.pathname, legacy).toBe(canonical));
+    expect(router.state.location.search, legacy).toBe("?run=7");
+    cleanup();
+  }
+});
+
+test("a run started after mount reaches the nav and the 5.13 jump links", async () => {
+  // The regression this pins: the views used to write ?run= with a raw
+  // window.history.replaceState, which react-router's data router never observes. The
+  // URL looked right, but useLocation().search stayed on the pre-run query — so every
+  // tab link, every section-rail hop and both storyboard jumps handed on a URL with no
+  // run, and 5.13's 1:15 beat opened the energy view's own picker instead of the SOC
+  // trajectory. docs/demo/script.md asserts this property; now something checks it.
+  const router = renderRouterAt("/strategy/setup");
+  await waitFor(() => expect(router.state.location.pathname).toBe("/strategy/setup"));
+
+  const form = await screen.findByRole("button", { name: /run race|queueing/i });
+  await act(async () => {
+    fireEvent.click(form);
+  });
+
+  await waitFor(() => expect(router.state.location.search).toContain(`run=${runIdOfFixture}`));
+
+  const analysis = screen.getByRole("link", { name: /analysis/i });
+  expect(analysis.getAttribute("href")).toContain(`run=${runIdOfFixture}`);
 });

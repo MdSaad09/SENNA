@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
 
+import { PALETTE } from "./palette";
 import {
   ANNOTATION_LIFT_M,
   DEFAULT_GRID_POSITION,
@@ -67,7 +68,7 @@ test("the live-socket constants hold their sized values", () => {
 test("the counterfactual styling constants hold their stylised values", () => {
   expect(DIVERGENCE_FLASH_MS).toBe(900); // long enough to register at 30x
   expect(DIVERGENCE_FLASH_TINT).toBe("#f43f5e"); // rose — clashes with no team colour
-  expect(PANE_BACKGROUND).toBe("#0a0a0a"); // scissored panes must clear explicitly
+  expect(PANE_BACKGROUND).toBe(PALETTE.ground); // scissored panes must clear to the page ground
 });
 
 test("the action labels mirror cards.py verbatim (A-03)", () => {

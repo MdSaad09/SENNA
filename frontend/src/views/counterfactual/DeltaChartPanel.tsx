@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { EGO_ACCENT } from "../../config/liveries";
 import { useReplayStore } from "../../stores/replayStore";
 import type { DeltaPoint } from "../../lib/divergence";
+import { CHART } from "../../config/palette";
 
 interface DeltaChartPanelProps {
   series: DeltaPoint[];
@@ -49,12 +50,12 @@ export default function DeltaChartPanel({
   const lastLap = series.length === 0 ? 1 : series[series.length - 1].lap;
 
   return (
-    <section className="border-t border-neutral-800 px-4 py-2">
-      <div className="flex items-baseline gap-4 text-xs text-neutral-400">
-        <h2 className="font-semibold text-neutral-200">position delta</h2>
+    <section className="border-t border-senna-line px-4 py-2">
+      <div className="flex items-baseline gap-4 text-xs text-senna-faint">
+        <h2 className="font-semibold text-senna-text">position delta</h2>
         <span>baseline minus SENNA per lap — positive means the strategy gains places</span>
         {divergenceLap !== null && (
-          <span className="text-neutral-300">strategies diverge on lap {divergenceLap}</span>
+          <span className="text-senna-muted">strategies diverge on lap {divergenceLap}</span>
         )}
         {baselineEndsLap !== null && (
           <span>baseline ends on lap {baselineEndsLap} — the chart stops there</span>
@@ -64,18 +65,18 @@ export default function DeltaChartPanel({
       <div className="h-40">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={series} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke="#262626" strokeDasharray="3 3" />
-            <XAxis dataKey="lap" stroke="#525252" fontSize={11} />
-            <YAxis stroke="#525252" fontSize={11} allowDecimals={false} />
+            <CartesianGrid stroke={CHART.gridLine} strokeDasharray="3 3" />
+            <XAxis dataKey="lap" stroke={CHART.axis} fontSize={11} />
+            <YAxis stroke={CHART.axis} fontSize={11} allowDecimals={false} />
             <Tooltip
               isAnimationActive={false}
-              contentStyle={{ backgroundColor: "#171717", border: "1px solid #404040" }}
+              contentStyle={{ backgroundColor: CHART.tooltipBg, border: `1px solid ${CHART.tooltipLine}` }}
             />
-            <ReferenceLine y={0} stroke="#525252" />
+            <ReferenceLine y={0} stroke={CHART.axis} />
             {divergenceLap !== null && (
-              <ReferenceLine x={divergenceLap} stroke="#737373" strokeDasharray="4 2" />
+              <ReferenceLine x={divergenceLap} stroke={CHART.divergence} strokeDasharray="4 2" />
             )}
-            <ReferenceLine x={Math.min(cursorLap, lastLap)} stroke="#a3a3a3" />
+            <ReferenceLine x={Math.min(cursorLap, lastLap)} stroke={CHART.cursor} />
             <Line
               type="stepAfter"
               dataKey="delta"

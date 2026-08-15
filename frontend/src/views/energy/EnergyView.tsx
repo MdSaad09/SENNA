@@ -10,26 +10,21 @@ import { useEnergyProfile, useSimulation } from "../../api/queries";
 import RunPicker from "../../components/RunPicker";
 import EnergyBarsPanel from "./EnergyBarsPanel";
 import SocPanel from "./SocPanel";
-
-function runIdFromLocation(): number | null {
-  const raw = new URLSearchParams(window.location.search).get("run");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
+import { positiveIntParam } from "../../lib/queryParams";
+import ViewHeader from "../../components/ui/ViewHeader";
 
 export default function EnergyView() {
-  const [runId, setRunId] = useState<number | null>(runIdFromLocation);
+  const [runId, setRunId] = useState<number | null>(() => positiveIntParam("run"));
   const run = useSimulation(runId);
   const runComplete = run.data?.status === "complete";
   const energy = useEnergyProfile(runId, runComplete === true);
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
+      <ViewHeader>
         {run.data !== undefined ? (
           <>
-            <span className="text-neutral-200">
+            <span className="text-senna-text">
               run {run.data.run_id} — {run.data.circuit_id?.replace(/_/g, " ")}
             </span>
             <span>{run.data.status}</span>
@@ -38,7 +33,7 @@ export default function EnergyView() {
         ) : (
           <span>no run loaded — start one below to see its energy trace</span>
         )}
-      </header>
+      </ViewHeader>
 
       <section className="relative min-h-0 flex-1 overflow-y-auto">
         {runId === null && (
@@ -54,7 +49,7 @@ export default function EnergyView() {
         )}
 
         {runId !== null && runComplete !== true && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+          <div className="absolute inset-0 grid place-items-center text-sm text-senna-faint">
             {run.data?.status === "failed"
               ? `run ${runId} failed — check the worker logs`
               : `run ${runId}: ${run.data?.status ?? "loading"}…`}
@@ -62,7 +57,7 @@ export default function EnergyView() {
         )}
 
         {runComplete === true && energy.isError && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-neutral-400">
+          <div className="absolute inset-0 grid place-items-center text-sm text-senna-faint">
             run {runId} finished, but its energy ledger could not be loaded
           </div>
         )}
@@ -72,7 +67,7 @@ export default function EnergyView() {
             <SocPanel profile={energy.data} />
             <EnergyBarsPanel profile={energy.data} />
             {/* F-13: the series are simulator-internal — no telemetry SOC channel exists */}
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-senna-faint">
               modelled, calibrated to 2026 aggregate behaviour
             </p>
           </div>

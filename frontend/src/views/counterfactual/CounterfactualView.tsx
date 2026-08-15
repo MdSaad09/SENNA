@@ -20,25 +20,12 @@ import { useReplayStore } from "../../stores/replayStore";
 import CounterfactualClock from "./CounterfactualClock";
 import DeltaChartPanel from "./DeltaChartPanel";
 import SplitCanvas, { ScenePane } from "./SplitCanvas";
+import JumpLink from "../../components/ui/JumpLink";
+import { positiveIntParam, seedParam, useWriteRunBack } from "../../lib/queryParams";
 
 const SPLIT_CAPTION =
   `${ILLUSTRATIVE_MOTION_CAPTION}; the quality toggle has no effect on this route — ` +
   "bloom composits the root scene and the panes render scissored";
-
-function intParam(query: URLSearchParams, name: string): number | null {
-  const raw = query.get(name);
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
-
-// seed 0 is a legal server draw (secrets.randbelow), so ?seed=0 must round-trip
-function seedParam(query: URLSearchParams): number | null {
-  const raw = query.get("seed");
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
-}
 
 const subscribeSharedPlayhead = (listener: (playheadLap: number) => void) =>
   useReplayStore.subscribe((state) => state.playheadLap, listener);
@@ -54,8 +41,9 @@ function configString(run: SimulationResult | undefined, key: string): string | 
 }
 
 export default function CounterfactualView() {
+  const writeRunBack = useWriteRunBack();
   const [agentRunId, setAgentRunId] = useState<number | null>(() =>
-    intParam(new URLSearchParams(window.location.search), "run"),
+    positiveIntParam("run"),
   );
   const [postedBaselineId, setPostedBaselineId] = useState<number | null>(null);
   const [postError, setPostError] = useState<string | null>(null);
@@ -64,8 +52,8 @@ export default function CounterfactualView() {
   useEffect(() => {
     if (agentRunId !== null || posted.current) return;
     const query = new URLSearchParams(window.location.search);
-    const year = intParam(query, "year");
-    const round = intParam(query, "round");
+    const year = positiveIntParam("year", query);
+    const round = positiveIntParam("round", query);
     const driver = query.get("driver");
     if (year === null || round === null || driver === null) return;
     posted.current = true;
@@ -77,16 +65,14 @@ export default function CounterfactualView() {
       ...(seed !== null ? { seed } : {}),
     })
       .then((accepted) => {
-        const next = new URLSearchParams(window.location.search);
-        next.set("run", String(accepted.run_id));
-        window.history.replaceState(null, "", `${window.location.pathname}?${next}`);
+        writeRunBack(accepted.run_id);
         setPostedBaselineId(accepted.baseline_run_id ?? null);
         setAgentRunId(accepted.run_id);
       })
       .catch((thrown) => {
         setPostError(thrown instanceof Error ? thrown.message : String(thrown));
       });
-  }, [agentRunId]);
+  }, [agentRunId, writeRunBack]);
 
   const agentRun = useSimulation(agentRunId);
   const baselineRunId =
@@ -188,8 +174,8 @@ export default function CounterfactualView() {
 
   const waitingRows =
     agentRunId !== null && (!agentComplete || !baselineComplete) ? (
-      <div className="absolute inset-0 z-20 grid place-items-center text-sm text-neutral-400">
-        <div className="space-y-1 rounded border border-neutral-800 bg-neutral-950/80 p-4">
+      <div className="absolute inset-0 z-20 grid place-items-center text-sm text-senna-faint">
+        <div className="space-y-1 rounded border border-senna-line bg-senna-ground/80 p-4">
           <p>{legLine(`agent run ${agentRunId}`, agentRun)}</p>
           {baselineRunId !== null && (
             <p>{legLine(`baseline run ${baselineRunId}`, baselineRun)}</p>
@@ -203,9 +189,9 @@ export default function CounterfactualView() {
       {headerReady && agentRun.data !== undefined ? (
         <header
           data-testid="counterfactual-honesty"
-          className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400"
+          className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint"
         >
-          <span className="text-neutral-200">
+          <span className="text-senna-text">
             {race.data !== undefined && year !== null
               ? `${race.data.event_name} ${year}, round ${round} — ${driver}`
               : "counterfactual"}
@@ -231,7 +217,7 @@ export default function CounterfactualView() {
           )}
         </header>
       ) : (
-        <header className="border-b border-neutral-800 px-4 py-2 text-xs text-neutral-400">
+        <header className="border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
           counterfactual — in-simulator comparison under stated assumptions
         </header>
       )}
@@ -243,9 +229,9 @@ export default function CounterfactualView() {
           <div
             ref={agentPane}
             data-testid="pane-agent"
-            className="relative min-w-0 flex-1 border-r border-neutral-800"
+            className="relative min-w-0 flex-1 border-r border-senna-line"
           >
-            <p className="absolute left-2 top-2 rounded bg-neutral-950/70 px-2 py-0.5 text-xs text-neutral-300">
+            <p className="absolute left-2 top-2 rounded bg-senna-ground/70 px-2 py-0.5 text-xs text-senna-muted">
               SENNA agent strategy
             </p>
             {scenesReady && (
@@ -264,7 +250,7 @@ export default function CounterfactualView() {
             data-testid="pane-baseline"
             className="relative min-w-0 flex-1"
           >
-            <p className="absolute left-2 top-2 rounded bg-neutral-950/70 px-2 py-0.5 text-xs text-neutral-300">
+            <p className="absolute left-2 top-2 rounded bg-senna-ground/70 px-2 py-0.5 text-xs text-senna-muted">
               actual {year ?? ""} strategy (replayed in-simulator)
             </p>
             {scenesReady && (
@@ -281,7 +267,7 @@ export default function CounterfactualView() {
         </div>
 
         {agentRunId === null && postError === null && (
-          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-center text-sm text-neutral-400">
+          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-center text-sm text-senna-faint">
             <p>
               open a counterfactual with ?year=&round=&driver= in the URL — it enqueues
               the era-matched pair and pins the run ids here for sharing
@@ -289,7 +275,7 @@ export default function CounterfactualView() {
           </div>
         )}
         {postError !== null && (
-          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-sm text-neutral-400">
+          <div className="absolute inset-0 z-20 grid place-items-center px-8 text-sm text-senna-faint">
             {postError}
           </div>
         )}
@@ -317,6 +303,10 @@ export default function CounterfactualView() {
             divergenceLap={comparison!.divergenceLap}
             baselineEndsLap={comparison!.baselineEndsLap}
           />
+          {/* 5.13's 1:15 beat: straight to the energy ledger of the agent's own leg */}
+          <div className="px-4 pb-3">
+            <JumpLink to="/analysis/energy">where the energy went</JumpLink>
+          </div>
         </>
       )}
     </div>

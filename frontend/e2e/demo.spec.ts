@@ -13,7 +13,7 @@ const DEMO_BEAT_BUDGET_MS = 15_000;
 // committed ribbon, native fits, ASCII slug). Seed 55's agent stop is lap 10 — the
 // latest of the auditioned bank — so the lap-8 seek lands just before the pit call.
 // Keep in sync with scripts/warm_demo.sh, docs/demo/script.md and the README.
-const DEMO_URL = "/live?circuit=bahrain_grand_prix&seed=55&lap=8&speed=30";
+const DEMO_URL = "/strategy/live?circuit=bahrain_grand_prix&seed=55&lap=8&speed=30";
 
 test("the demo deep link puts cars on track inside the 15-second first beat (5.13)", async ({
   page,

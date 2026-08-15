@@ -9,15 +9,20 @@ import { useCircuit, useCircuits } from "../../api/queries";
 import type { CircuitDetail } from "../../api/types";
 import CanvasHost from "../../components/CanvasHost";
 import CircuitRibbon, { useRibbon } from "./CircuitRibbon";
+import FitCamera from "./FitCamera";
 import Legend from "./Legend";
+import TrackCharacteristics from "./TrackCharacteristics";
 
 function RibbonScene({ detail, gltfUrl }: { detail: CircuitDetail; gltfUrl: string }) {
   const ribbon = useRibbon(gltfUrl);
   const [cx, cy, cz] = ribbon.centre;
   return (
-    <group position={[-cx, -cy, -cz]}>
-      <CircuitRibbon detail={detail} ribbon={ribbon} />
-    </group>
+    <>
+      <FitCamera radius={ribbon.radius} />
+      <group position={[-cx, -cy, -cz]}>
+        <CircuitRibbon detail={detail} ribbon={ribbon} />
+      </group>
+    </>
   );
 }
 
@@ -35,8 +40,8 @@ export default function CircuitExplorerView() {
 
   return (
     <div className="flex h-full">
-      <aside className="w-56 shrink-0 overflow-y-auto border-r border-neutral-800 p-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+      <aside className="w-56 shrink-0 overflow-y-auto border-r border-senna-line p-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-senna-faint">
           circuit library
         </h2>
         <ul className="mt-2 space-y-1">
@@ -47,13 +52,13 @@ export default function CircuitExplorerView() {
                 onClick={() => setSlug(circuit.id)}
                 className={`w-full rounded px-2 py-1 text-left text-sm ${
                   circuit.id === slug
-                    ? "bg-neutral-800 text-neutral-100"
-                    : "text-neutral-400 hover:bg-neutral-900"
+                    ? "bg-senna-raised text-senna-text"
+                    : "text-senna-faint hover:bg-senna-surface"
                 }`}
               >
                 {circuit.id.replace(/_/g, " ")}
                 {!circuit.coverage.ribbon && (
-                  <span className="ml-1 text-xs text-neutral-600">(no ribbon yet)</span>
+                  <span className="ml-1 text-xs text-senna-ghost">(no ribbon yet)</span>
                 )}
               </button>
             </li>
@@ -73,9 +78,9 @@ export default function CircuitExplorerView() {
 
         {detail.data !== undefined && detail.data.gltf_url === null && (
           <div className="absolute inset-0 grid place-items-center">
-            <div className="text-center text-sm text-neutral-400">
+            <div className="text-center text-sm text-senna-faint">
               <p>ribbon not built for this circuit yet</p>
-              <p className="mt-1 text-xs text-neutral-600">
+              <p className="mt-1 text-xs text-senna-ghost">
                 coverage: ribbon {String(detail.data.coverage.ribbon)}, degradation fit{" "}
                 {String(detail.data.coverage.deg_fit)} — run make circuits after ingesting
                 the event
@@ -84,12 +89,16 @@ export default function CircuitExplorerView() {
           </div>
         )}
 
-        {detail.data !== undefined && detail.data.gltf_url !== null && (
-          <div className="absolute bottom-3 left-3 max-w-sm">
-            <Legend detail={detail.data} />
-          </div>
-        )}
       </section>
+
+      {detail.data !== undefined && (
+        <aside className="flex w-72 shrink-0 flex-col gap-3 overflow-y-auto border-l border-senna-line p-3">
+          <TrackCharacteristics detail={detail.data} />
+          {/* the legend used to float over the canvas, covering the circuit it was
+              describing; it reads better beside the numbers it qualifies */}
+          {detail.data.gltf_url !== null && <Legend detail={detail.data} />}
+        </aside>
+      )}
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   raceDetail2024,
 } from "../../test/apiFixtures";
 import CounterfactualView from "./CounterfactualView";
+import { BrowserRouter } from "react-router-dom";
 
 vi.mock("@react-three/fiber", async () => (await import("../../test/mockR3F")).fiberMock());
 vi.mock("@react-three/drei", async () => (await import("../../test/mockR3F")).dreiMock());
@@ -35,7 +36,11 @@ function renderView(inStrictMode = false) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const view = (
     <QueryClientProvider client={queryClient}>
-      <CounterfactualView />
+      {/* F23: a router, and a browser one — the view writes ?run= back through it,
+          and these tests assert that lands in window.location where a share copies it */}
+      <BrowserRouter>
+        <CounterfactualView />
+      </BrowserRouter>
     </QueryClientProvider>
   );
   render(inStrictMode ? <StrictMode>{view}</StrictMode> : view);

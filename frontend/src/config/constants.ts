@@ -48,14 +48,15 @@ export const PIT_ACTION_LABELS = [
 export const MODE_ACTION_LABELS = ["conserve energy", "run balanced", "attack", "defend"];
 
 // stylised — the divergence flash: long enough to register at 30x, rose because no
-// team colour or series tint claims it (liveries.ts, SocPanel, CircuitRibbon)
+// team colour, compound colour or palette token claims it (liveries.ts, palette.ts)
 export const DIVERGENCE_FLASH_MS = 900;
 export const DIVERGENCE_FLASH_TINT = "#f43f5e";
 
-// stylised — the app's neutral-950 backdrop; drei's scissored views never clear
-// unless the pane scene sets an explicit background, so the CSS show-through trick
-// the full-canvas views use cannot work there
-export const PANE_BACKGROUND = "#0a0a0a";
+// stylised — PALETTE.ground, repeated as a literal rather than imported because the
+// two must be identical and a test says so: drei's scissored views never clear unless
+// the pane scene sets an explicit background, so the CSS show-through trick the
+// full-canvas views use cannot work there, and a near-miss would show as a seam
+export const PANE_BACKGROUND = "#0b1014";
 
 // operational — half as eager as the server's own 0.5 s run poll (serving.yaml ws.status_poll_s)
 export const RUN_STATUS_POLL_MS = 1000;
@@ -68,8 +69,19 @@ export const DEV_OVERLAY_KEY = "`"; // operational — the backtick toggles the 
 
 export const PERF_SAMPLE_MS = 500; // operational — 2 Hz keeps the probe invisible to the frame budget
 
-// stylised — camera framing for a 3-6 km ribbon; far plane clears the longest circuit
+// stylised — camera framing for a 3-6 km ribbon; far plane clears the longest circuit.
+// `position` is the opening pose only: FitCamera immediately reframes along the same
+// direction once the GLB's bounds are known (F23), because one fixed distance can only
+// be right for one circuit and Monaco is half the size of Spa.
 export const CAMERA = { fov: 50, near: 1, far: 20_000, position: [0, 900, 900] as const };
+
+// stylised — how much of the frustum the ribbon's silhouette is fitted to. Saad's note on
+// the F23 reference was that the circuit model renders too small. Read it as a tangency
+// fraction, not a screen fraction: fitted at 0.82, the silhouette circle projects to about
+// 79% of the panel's tighter half-dimension (fitDistance.test.ts measures it), and the
+// track outline inside that circle reads smaller again because it is not round.
+export const RIBBON_VIEWPORT_FILL = 0.82;
+export const RIBBON_PROJECTED_FILL = 0.79; // stylised — the measured projection, shown on the view
 
 // operational — device-pixel-ratio clamp: retina sharpness without paying 3x pixels
 // on high-density laptop panels (the classic hidden fps cost)
@@ -79,8 +91,22 @@ export const DPR_RANGE: [number, number] = [1, 2];
 // (the value is baked into the committed GLBs, so a yaml retune requires make circuits)
 export const ELEVATION_EXAGGERATION = 1.5;
 
+// stylised — the ribbon is widened by this factor for display, the same kind of honest
+// exaggeration elevation already gets, and the legend quotes both. A 12 m track on a
+// 5.2 km circuit framed to fill the panel is about two pixels: true to scale and
+// unreadable. 3x is enough to read as a road without closing up the tight hairpins that
+// E-17 warns about, and it is applied in the browser so the exported GLB stays true.
+export const RIBBON_WIDTH_EXAGGERATION = 3;
+
 // stylised — the 2026 car footprint as a readable box, visual only
 export const CAR_DIMENSIONS_M = { length: 5.6, width: 2.0, height: 1.0 };
+
+// stylised — car markers are drawn this many times life size. At true scale a 5.6 m car
+// on a 5.2 km circuit framed to fill the panel is about one pixel, which is why the
+// replay rendered as an empty track. 6x puts a marker at roughly 1.5% of the circuit's
+// width: findable at a glance, still small enough that a pack reads as separate cars.
+// The replay caption says the markers are not to scale.
+export const CAR_MARKER_SCALE = 6;
 
 // stylised — in-pit cars pull aside and shrink; there is no pit-lane spline in the
 // F04 artifacts (plan divergence 3), and the legend says so
@@ -106,6 +132,12 @@ export const TYRE_TEMP_REF_C = 30;
 // stylised — how far the stylised temperature response may bend grip from the fitted
 // slice, at the axis extremes; understated on purpose, the label owns the honesty
 export const TYRE_TEMP_GRIP_PENALTY = 0.08;
+// stylised — the grip surface is 320 units square (GripSurface's age and temperature
+// axes), so this is half its diagonal. FitCamera framed it with the circuit CAMERA
+// otherwise, which sits 1273 units back for a 5 km ribbon and rendered the surface as a
+// small flat lozenge in a large black panel
+export const GRIP_SURFACE_RADIUS_M = 226;
+
 // operational — surface tessellation; one grid mesh in a single draw call either way,
 // so the density is only a smoothness-vs-vertex-count choice
 export const GRIP_AGE_SAMPLES = 64;
