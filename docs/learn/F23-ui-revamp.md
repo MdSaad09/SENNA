@@ -406,12 +406,33 @@ circuit beat the presenter has usually orbited somewhere, and a screen-share lay
 snapping the camera back to the opening three-quarter view mid-sentence is the kind of thing
 that ends up in the recording. Only a new circuit resets the pose.
 
-One refinement came from looking at the rendered screen rather than the maths: the radius is
-half the diagonal of the two *largest* extents, not all three. Elevation is exaggerated 1.5x
-by the F04 ribbon config and it is the axis the camera looks down, so folding it into the
-bounding sphere inflated the radius and pushed every circuit further away than it needed to
-be. The elevation axis is identified as the smallest span rather than assumed, because which
-axis carries it depends on the export.
+The last refinement came from looking at the rendered screen rather than the maths, and it
+took two goes — worth telling honestly, because the first go was a confident wrong answer.
+
+The fit originally framed a **bounding sphere** around the circuit. Albert Park still filled
+only about 40% of the panel, which is the exact complaint the fit existed to answer. The
+first diagnosis was that elevation was to blame: the F04 config exaggerates it 1.5x, and it
+is the axis the camera looks down, so surely it was inflating the radius. That change was
+made, measured — and made no difference at all. A circuit spans a couple of kilometres
+across and perhaps thirty metres up; `hypot(2000, 1500, 30)` is `hypot(2000, 1500)` to three
+decimal places. The reasoning was plausible and the arithmetic said no.
+
+The real cause is that a circuit is a **flat, irregular curve viewed from 45 degrees**, and a
+sphere around a flat curve is mostly empty air. So the radius is now the circuit's
+*silhouette* — the furthest any vertex sits from the axis the camera looks along:
+
+```ts
+const along = px * ux + py * uy + pz * uz;
+const perpendicular = Math.max(px * px + py * py + pz * pz - along * along, 0);
+```
+
+That is Pythagoras: split each vertex into the part along the view axis and the part across
+it, and keep the largest across. The foreshortening of the 45-degree view is taken out for
+free, because it is already in the geometry. The circuit now fills about half the panel in
+each direction.
+
+The lesson here is not about cameras. It is that "plausible cause, confident fix" survived
+right up until it was measured, and only measuring killed it.
 
 ### `frontend/src/honesty.test.tsx` — the guard
 
