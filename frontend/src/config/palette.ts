@@ -67,7 +67,10 @@ export const SCENE = {
   braking: "#d08a2c",
   xmode: "#8b6fd4",
   harvestZone: "#3f9e8f",
-  deck: "#1a242b",
+  // the tarmac. Must sit clearly above `raised`, or the ribbon reads as a thin outline
+  // against the canvas and the annotation strips look like the whole track — which is
+  // what the first cut of this palette did by mapping it onto the panel tone
+  deck: "#38474f",
   cornerMarker: "#c9d0d7",
   cornerLabel: "#e6edf1",
   gripHigh: "#3f9e58",

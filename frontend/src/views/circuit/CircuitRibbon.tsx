@@ -10,11 +10,11 @@ import { useEffect, useMemo } from "react";
 import { BufferAttribute, BufferGeometry, DoubleSide, Group, Mesh } from "three";
 
 import type { CircuitDetail } from "../../api/types";
-import { ANNOTATION_LIFT_M } from "../../config/constants";
+import { ANNOTATION_LIFT_M, CAMERA } from "../../config/constants";
 import { buildCentreline, type Centreline } from "../../lib/centreline";
 import { buildStrip, type StripGeometry, type StripZone } from "../../lib/ribbonStrips";
-import CornerMarkers from "./CornerMarkers";
 import { SCENE } from "../../config/palette";
+import CornerMarkers from "./CornerMarkers";
 
 // stylised — zone tints: braking amber, X-mode violet, harvest teal over braking;
 // exported so the Legend's swatches can never drift from the canvas
@@ -43,9 +43,13 @@ export interface RibbonFrame {
   positions: Float32Array;
   centreline: Centreline;
   centre: [number, number, number];
-  /** bounding-sphere radius about `centre`, in metres — what FitCamera frames against.
-   *  A sphere rather than a box because circuits are not axis-aligned and Monaco read
-   *  half the size of Spa under a width-only fit. */
+  /** the radius FitCamera frames against, in metres: the circuit's silhouette as seen
+   *  down the opening camera direction — the furthest any vertex sits from the view axis.
+   *
+   *  Not a bounding sphere. A circuit is a flat, irregular curve and the camera looks at
+   *  it from 45 degrees, so a sphere around it is mostly empty air: Albert Park framed to
+   *  0.82 of a sphere filled about 40% of the panel, which is the "model renders too
+   *  small" complaint the fit was supposed to answer. */
   radius: number;
 }
 
@@ -82,13 +86,35 @@ export function useRibbon(gltfUrl: string): RibbonFrame {
       minY = Math.min(minY, positions[i + 1]); maxY = Math.max(maxY, positions[i + 1]);
       minZ = Math.min(minZ, positions[i + 2]); maxZ = Math.max(maxZ, positions[i + 2]);
     }
+    const [cx, cy, cz] = [(minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2];
     return {
       positions,
       centreline,
-      centre: [(minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2],
-      radius: Math.hypot(maxX - minX, maxY - minY, maxZ - minZ) / 2,
+      centre: [cx, cy, cz],
+      radius: silhouetteRadius(positions, [cx, cy, cz]),
     };
   }, [gltf]);
+}
+
+/** The furthest any ribbon vertex sits from the axis through `centre` along the opening
+ *  camera direction — i.e. the radius of the circuit's outline as the camera first sees
+ *  it, with the foreshortening of the 45-degree view already taken out. */
+function silhouetteRadius(positions: Float32Array, centre: [number, number, number]): number {
+  const [dx, dy, dz] = CAMERA.position;
+  const length = Math.hypot(dx, dy, dz) || 1;
+  const [ux, uy, uz] = [dx / length, dy / length, dz / length];
+
+  let furthest = 0;
+  for (let i = 0; i < positions.length; i += 3) {
+    const px = positions[i] - centre[0];
+    const py = positions[i + 1] - centre[1];
+    const pz = positions[i + 2] - centre[2];
+    const along = px * ux + py * uy + pz * uz;
+    // Pythagoras on the component perpendicular to the view axis
+    const perpendicular = Math.max(px * px + py * py + pz * pz - along * along, 0);
+    furthest = Math.max(furthest, perpendicular);
+  }
+  return Math.sqrt(furthest);
 }
 
 function ribbonGeometry(positions: Float32Array): BufferGeometry {

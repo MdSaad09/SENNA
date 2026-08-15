@@ -30,7 +30,7 @@ export default function TrackCharacteristics({ detail }: { detail: CircuitDetail
     <div className="flex flex-col gap-3">
       <Panel>
         <PanelHeader title="circuit" right={detail.id.replace(/_/g, " ")} />
-        <div className="grid grid-cols-2 gap-y-3 p-3">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3 p-3">
           <Stat label="race laps" value={detail.race_laps} />
           <Stat
             label="lap length"
@@ -53,10 +53,12 @@ export default function TrackCharacteristics({ detail }: { detail: CircuitDetail
         <PanelHeader title="framing" right={`${Math.round(RIBBON_PROJECTED_FILL * 100)}%`} />
         <div className="p-3">
           <HonestyNote>
-            the ribbon is framed to fill about {Math.round(RIBBON_PROJECTED_FILL * 100)}% of the
-            panel, fitted to its bounding sphere rather than to the track outline — so a long,
-            thin circuit sits smaller than a tightly wound one of the same lap length.
-            Elevation is exaggerated and banking is a visual treatment, as the legend says.
+            the camera is fitted to this circuit&apos;s silhouette — its outline as seen from
+            this angle — so that the silhouette spans about{" "}
+            {Math.round(RIBBON_PROJECTED_FILL * 100)}% of the panel&apos;s shorter axis. The
+            track reads smaller than that, because an irregular outline leaves more margin
+            than a circle would. Elevation is exaggerated and banking is a visual treatment,
+            as the legend says.
           </HonestyNote>
         </div>
       </Panel>
