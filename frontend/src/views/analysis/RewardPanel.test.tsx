@@ -37,3 +37,20 @@ test("a payload missing a term invents no label for it", () => {
   expect(termRows().map((row) => row.getAttribute("data-term"))).toEqual(["pace", "position"]);
   expect(screen.queryByText(/terminal/i)).toBeNull();
 });
+
+test("an unexpected term is shown under its own key, not captioned or hidden", () => {
+  // F08's penalty arm appends a fourth key (race_env.py:365, constraints="penalty").
+  // build_env never sets that on the serving path, so this is unreachable today — but if
+  // it ever arrives, printing it raw is the honest failure: inventing a caption would put
+  // words in the env's mouth, and dropping it would hide a term from a decomposition
+  // whose whole claim is that it shows all of them.
+  render(<RewardPanel terms={{ pace: 0.4, position: -0.1, terminal: 7.2, violation_penalty: -2 }} />);
+  const rows = termRows();
+  expect(rows.map((row) => row.getAttribute("data-term"))).toEqual([
+    "pace",
+    "position",
+    "terminal",
+    "violation_penalty",
+  ]);
+  expect(rows[3]).toHaveTextContent("violation_penalty");
+});
