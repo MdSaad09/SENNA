@@ -2,24 +2,31 @@
 // C01-C22. Nothing here may reference a real team, sponsor or driver — the
 // liveries.f29 test walks every shipped file to hold that line.
 
-// stylised — a hand-picked wheel of distinct hues that read apart against the
-// near-black track scene; no palette source, purely visual
+// stylised — eleven hues spaced around the wheel, held at the saturation and lightness
+// the rest of the dashboard runs at (see config/palette.ts). The first cut of these was a
+// fully saturated rainbow chosen against a neutral scene; on the F23 ground it read as a
+// bag of sweets next to a muted teal instrument, which is the one thing the palette exists
+// to prevent. They still have to separate 22 cars at sprite size, so hue does the work and
+// saturation stays out of it.
 export const TEAM_COLOURS = [
-  "#e23d3d",
-  "#3d7be2",
-  "#3de28f",
-  "#e2c43d",
-  "#a03de2",
-  "#e2733d",
-  "#3dcfe2",
-  "#e23da8",
-  "#8fe23d",
-  "#7a86a8",
-  "#c4b08e",
+  "#d96b6b",
+  "#6b9dd9",
+  "#6bd699",
+  "#d9c46b",
+  "#a86bd9",
+  "#d9946b",
+  "#6bcdd9",
+  "#d96bab",
+  "#a8d96b",
+  "#8f9bb3",
+  "#c2b191",
 ];
 
-// stylised — the ego car keeps its team colour but gets this accent ring in the UI
-export const EGO_ACCENT = "#ffffff";
+// stylised — the ego car keeps its team colour but gets the dashboard accent wherever the
+// UI has to point at it, so "ours" is the same mint in the timing tower, the delta chart
+// and the scene. Written out rather than imported: palette.ts is the source, and the
+// liveries walk (F-29) reads this file as text
+export const EGO_ACCENT = "#6bd6c3";
 
 export interface Livery {
   colour: string;

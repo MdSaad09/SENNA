@@ -182,7 +182,12 @@ export default function ReplayScene({
     <group>
       <group position={[-cx, -cy, -cz]}>
         <FitCamera radius={ribbon.radius} />
-        <CircuitRibbon detail={detail} ribbon={ribbon} withCornerMarkers={false} />
+        <CircuitRibbon
+          detail={detail}
+          ribbon={ribbon}
+          withCornerMarkers={false}
+          withZones={false}
+        />
       </group>
       {/* car matrices are written in recentred coordinates already */}
       <CarInstances

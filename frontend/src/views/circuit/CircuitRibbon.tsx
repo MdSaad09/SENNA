@@ -165,12 +165,17 @@ interface CircuitRibbonProps {
   detail: CircuitDetail;
   ribbon: RibbonFrame;
   withCornerMarkers?: boolean;
+  /** braking, harvest and X-mode strips. They are what View 1 is *for*; under a race they
+   *  paint the whole lap amber and violet and the cars have to compete with them for
+   *  attention, so the replay and live views draw the deck bare. */
+  withZones?: boolean;
 }
 
 export default function CircuitRibbon({
   detail,
   ribbon,
   withCornerMarkers = true,
+  withZones = true,
 }: CircuitRibbonProps) {
   const { positions, centreline } = ribbon;
 
@@ -209,6 +214,8 @@ export default function CircuitRibbon({
       <mesh geometry={geometries.deck}>
         <meshStandardMaterial color={DECK_TINT} side={DoubleSide} />
       </mesh>
+      {withZones && (
+        <>
       <mesh geometry={geometries.braking}>
         <meshBasicMaterial
           color={BRAKING_TINT}
@@ -233,6 +240,8 @@ export default function CircuitRibbon({
           side={DoubleSide}
         />
       </mesh>
+        </>
+      )}
       <mesh geometry={geometries.startLine}>
         <meshBasicMaterial color={SCENE.cornerMarker} side={DoubleSide} />
       </mesh>

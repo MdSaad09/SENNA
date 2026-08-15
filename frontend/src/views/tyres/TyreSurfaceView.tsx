@@ -9,10 +9,19 @@ import { useEffect, useState } from "react";
 
 import { useCircuits, useDegradationCurves } from "../../api/queries";
 import CanvasHost from "../../components/CanvasHost";
-import { TYRE_TEMP_AXIS_MAX_C, TYRE_TEMP_AXIS_MIN_C } from "../../config/constants";
+import {
+  GRIP_SURFACE_RADIUS_M,
+  TYRE_TEMP_AXIS_MAX_C,
+  TYRE_TEMP_AXIS_MIN_C,
+} from "../../config/constants";
 import FitPanel from "./FitPanel";
+import FitCamera from "../circuit/FitCamera";
+import GripCurves from "./GripCurves";
 import GripSurface from "./GripSurface";
 import { useSearchParams } from "react-router-dom";
+import { Panel, PanelHeader } from "../../components/ui/Panel";
+import { HonestyNote } from "../../components/ui/text";
+import { COMPOUND_COLOURS } from "../../config/palette";
 
 function circuitFromLocation(): string | null {
   return new URLSearchParams(window.location.search).get("circuit");
@@ -45,6 +54,8 @@ export default function TyreSurfaceView() {
   const activeCompound =
     compound !== null && compounds.includes(compound) ? compound : (compounds[0] ?? null);
   const curve = served.find((c) => c.era === activeEra && c.compound === activeCompound) ?? null;
+  // every compound fitted for this circuit-era, so the chart can put them side by side
+  const eraCurves = served.filter((entry) => entry.era === activeEra);
 
   function changeCircuit(next: string) {
     setSearchParams(
@@ -112,8 +123,10 @@ export default function TyreSurfaceView() {
         )}
       </header>
 
-      <section className="relative min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+      <section className="relative min-h-0 min-w-0 flex-1">
         <CanvasHost>
+          {curve !== null && <FitCamera radius={GRIP_SURFACE_RADIUS_M} />}
           {curve !== null && <GripSurface curve={curve} />}
           <OrbitControls makeDefault />
         </CanvasHost>
@@ -130,25 +143,59 @@ export default function TyreSurfaceView() {
         )}
 
         {curve !== null && (
-          <div className="absolute bottom-3 left-3 max-w-md">
-            <FitPanel curve={curve} />
-          </div>
-        )}
-
-        {curve !== null && (
-          <div className="absolute right-3 top-3 max-w-xs rounded border border-senna-line bg-senna-surface/80 p-2 text-xs text-senna-muted">
-            <p>
-              age {0}–{curve.cliff_age} laps · temperature {TYRE_TEMP_AXIS_MIN_C}–
-              {TYRE_TEMP_AXIS_MAX_C} C · height is grip
-            </p>
-            {/* decision 1: the fit is age-only, so the temperature axis is illustration */}
-            <p className="mt-1 text-senna-faint">
-              temperature response — stylised illustration, not fitted, not a prediction; the
-              T5 fit is age-only
-            </p>
+          <div className="absolute left-3 top-3 rounded-panel border border-senna-line bg-senna-surface/85 px-2 py-1 text-micro uppercase text-senna-faint">
+            age {0}–{curve.cliff_age} laps &middot; temperature {TYRE_TEMP_AXIS_MIN_C}–
+            {TYRE_TEMP_AXIS_MAX_C} C &middot; height is grip
           </div>
         )}
       </section>
+
+      {eraCurves.length > 0 && (
+        <aside className="flex w-96 shrink-0 flex-col gap-3 overflow-y-auto border-l border-senna-line p-3">
+          <Panel>
+            <PanelHeader title="grip against tyre age" right={`${eraCurves.length} compounds`} />
+            <div className="p-2">
+              <GripCurves curves={eraCurves} />
+              <div className="mt-2 flex flex-wrap gap-3">
+                {eraCurves.map((entry) => (
+                  <span
+                    key={entry.compound}
+                    className="flex items-center gap-1.5 text-micro uppercase text-senna-faint"
+                  >
+                    <span
+                      aria-hidden
+                      className="h-2 w-2"
+                      style={{ backgroundColor: COMPOUND_COLOURS[entry.compound] }}
+                    />
+                    {entry.compound} &middot; cliff {entry.cliff_age}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-2">
+                <HonestyNote>
+                  the fitted decay costs only a few percent of grip across a stint — what ends a
+                  stint is the dashed cliff, a failure the simulator enforces rather than a slope
+                  the curve reaches. A dashed curve is a low-confidence fit.
+                </HonestyNote>
+              </div>
+            </div>
+          </Panel>
+
+          {curve !== null && <FitPanel curve={curve} />}
+
+          <Panel>
+            <PanelHeader title="the temperature axis" />
+            <div className="p-3">
+              {/* decision 1: the fit is age-only, so the temperature axis is illustration */}
+              <HonestyNote>
+                temperature response — stylised illustration, not fitted, not a prediction; the
+                T5 fit is age-only
+              </HonestyNote>
+            </div>
+          </Panel>
+        </aside>
+      )}
+      </div>
     </div>
   );
 }

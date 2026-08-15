@@ -132,6 +132,12 @@ export const TYRE_TEMP_REF_C = 30;
 // stylised — how far the stylised temperature response may bend grip from the fitted
 // slice, at the axis extremes; understated on purpose, the label owns the honesty
 export const TYRE_TEMP_GRIP_PENALTY = 0.08;
+// stylised — the grip surface is 320 units square (GripSurface's age and temperature
+// axes), so this is half its diagonal. FitCamera framed it with the circuit CAMERA
+// otherwise, which sits 1273 units back for a 5 km ribbon and rendered the surface as a
+// small flat lozenge in a large black panel
+export const GRIP_SURFACE_RADIUS_M = 226;
+
 // operational — surface tessellation; one grid mesh in a single draw call either way,
 // so the density is only a smoothness-vs-vertex-count choice
 export const GRIP_AGE_SAMPLES = 64;
