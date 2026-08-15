@@ -1,12 +1,15 @@
 # SENNA — design and implementation
 
 A Formula 1 race-strategy engine for the 2026 regulations: a lap-level simulator, a
-masked reinforcement-learning agent, a SHAP explanation layer, a six-view dashboard,
-and an eleven-metric evaluation suite that reproduces from a clean clone.
+masked reinforcement-learning agent, a SHAP explanation layer, a three-tab dashboard over
+the six specified views, and an eleven-metric evaluation suite that reproduces from a
+clean clone.
 
-Code frozen at commit `79c4434`, 29 July 2026. The `v1.0.0` tag and its release are the
-one remaining freeze step (`docs/freeze.md`). MSc dissertation, COMP702, University of
-Liverpool.
+Current at commit `97c02d2`, 15 August 2026. The engine, its results and the frozen model
+triplet have been unchanged since 29 July (`79c4434`); everything since is the engine
+extraction, the full-era refit, driver identity and the dashboard restructure. The
+`v1.0.0` tag and its release are the one remaining freeze step (`docs/freeze.md`). MSc
+dissertation, COMP702, University of Liverpool.
 
 ---
 
@@ -944,8 +947,16 @@ SHAP-per-lap race in-process.
 
 ### 5.11 The dashboard
 
-**Role.** Six views — circuit explorer, race replay, energy, tyre surface, live simulation,
-counterfactual — and the only part of the system an examiner watches rather than reads.
+**Role.** The only part of the system an examiner watches rather than reads. Three tabs —
+Strategy, Circuit, Analysis — carrying the six specified views as sections (circuit explorer,
+race replay, energy, tyre surface, live simulation, counterfactual) plus two the restructure
+added: a post-hoc strategy page and a decisions page.
+
+**The tabs are a consequence, not a taste call.** 5.10.3 allows one mounted canvas, so the
+six views could not fold into one scrolling page — the boundary between two canvas sections
+crossing the viewport would co-mount both. Sections on a rail is what a one-canvas rule
+permits, and the six pre-restructure paths survive as query-preserving redirects because the
+demo deep links point at them.
 
 **Two constraints shape every file.** The frame budget, which in React terms means nothing
 that updates at 60 fps may be React; and the interpretability contract crossing the browser
@@ -979,11 +990,33 @@ from one module and rendered verbatim by all three views that use it.
 codes C01–C22. A test walks every shipped source file against a deny list of team, sponsor
 and driver marks; it is the one place in the frontend those names may be spelled out.
 
-**Outcome.** 7,900 lines of TypeScript, 155 tests across 30 files. The full field renders
-in 3 draw calls, countable from the three instanced meshes the scene mounts; the whole
-replay scene was estimated at about 9 against the 150 budget during planning, and real
-draw-call counts are read from the dev overlay at runtime rather than committed, because
-the test DOM cannot see them.
+**One palette, and a walk that enforces it.** Colour lived in two surfaces that knew nothing
+about each other: Tailwind utilities in classNames, and inline hexes in the recharts and R3F
+code — to the point where one view imported a tint out of another view's file to keep two
+blues in step. All of it now resolves to `config/palette.ts`, sampled from the reference
+screenshots by decoding the PNGs and counting dominant colours, and `provenance.test.ts`
+walks `config/*.ts` and fails any export that does not name its origin. That walk scans
+upward only: a tag written *below* an export used to satisfy it, which meant a constant could
+be introduced by nothing at all.
+
+**The honesty statements are pinned by test.** 5.10.2 gives every view a sentence about what
+it is not — energy series are modelled, the counterfactual is in-simulator, mid-lap motion is
+synthesis. Before `honesty.test.tsx` a restyle could delete any of them and nothing failed.
+
+**Outcome.** 6,900 lines of TypeScript source and 3,500 of tests, 200 tests across 38 files.
+The full field renders in 3 draw calls, countable from the three instanced meshes the scene
+mounts; the whole replay scene was estimated at about 9 against the 150 budget during
+planning, and real draw-call counts are read from the dev overlay at runtime rather than
+committed, because the test DOM cannot see them.
+
+**The lesson worth carrying out of this subsystem is negative.** The restructure passed 200
+tests, two subagent reviews and a clean gate while shipping pages nobody could read: a replay
+of 22 shapes with no timing beside them, a circuit rendered as a two-pixel hairline, a tyre
+view drawing a surface for a fact a surface cannot show, and a reward panel that never
+appeared because decision cards number laps from zero and frames from one. jsdom has no
+layout engine, so a query for the timing tower would have found all 22 rows while nothing was
+on screen. Automated checks prove behaviour; only looking at the artefact proves
+communication, and a UI feature needs both.
 
 ### 5.12 Evaluation
 
@@ -1467,7 +1500,7 @@ senna/            16,238 lines of Python (with api/ and worker/)
   bench/             139   throughput benchmark
 api/               1,066   FastAPI routes, schemas, WebSocket
 worker/              352   RQ jobs
-frontend/src/      7,912   React 18 + R3F 8, six views
+frontend/src/     10,336   React 18 + R3F 8, three tabs over six spec views
 tests/            12,367   486 test functions
 configs/           4,400   21 yaml files, every constant with provenance
 docs/             17,007   spec split, plans, 17 lessons, results, this document
