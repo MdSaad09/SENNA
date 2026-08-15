@@ -4,8 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F23 — dashboard restructure and visual language. Planned 14 Aug 2026,
-next step `/ship F23`. It jumps the F19-F22 queue on Saad's call: the dashboard is the
+**Active feature:** F23 — dashboard restructure and visual language. In review 15 Aug 2026,
+next step `/land F23`. It jumps the F19-F22 queue on Saad's call: the dashboard is the
 demo, and it is currently six unstyled routes. Three tabs (Strategy / Circuit / Analysis)
 replace the six flat ones, all six spec views survive as sections, and the palette is
 sampled from the reference screenshots Saad supplied on 11 Aug (`docs/reference_images/`).
@@ -128,7 +128,7 @@ changed reward or curriculum gate, or different physics; not a rerun.
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
 | F17 | Driver identity | F02, F16, F18 | Done 13 Aug 2026 | feature/F17-driver-identity | [F17](docs/learn/F17-driver-identity.md) |
 | F18 | Full-era refit and revalidation | F02, F16 | Done 12 Aug 2026 | feature/F18-full-era-refit | [F18](docs/learn/F18-full-era-refit.md) |
-| F23 | Dashboard restructure and visual language | F11, F12, F13 | Planned 14 Aug 2026 | feature/F23-ui-revamp | — |
+| F23 | Dashboard restructure and visual language | F11, F12, F13 | In review 15 Aug 2026 | feature/F23-ui-revamp | [F23](docs/learn/F23-ui-revamp.md) |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
