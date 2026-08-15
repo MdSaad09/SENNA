@@ -13,6 +13,7 @@ import {
   raceDetail2024,
 } from "../../test/apiFixtures";
 import CounterfactualView from "./CounterfactualView";
+import { MemoryRouter } from "react-router-dom";
 
 vi.mock("@react-three/fiber", async () => (await import("../../test/mockR3F")).fiberMock());
 vi.mock("@react-three/drei", async () => (await import("../../test/mockR3F")).dreiMock());
@@ -35,7 +36,10 @@ function renderView(inStrictMode = false) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const view = (
     <QueryClientProvider client={queryClient}>
-      <CounterfactualView />
+      {/* F23: the view carries a 5.13 jump link, and a Link needs a router above it */}
+      <MemoryRouter>
+        <CounterfactualView />
+      </MemoryRouter>
     </QueryClientProvider>
   );
   render(inStrictMode ? <StrictMode>{view}</StrictMode> : view);
