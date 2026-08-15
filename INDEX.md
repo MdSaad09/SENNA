@@ -4,12 +4,21 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** F23 — dashboard restructure and visual language. In review 15 Aug 2026,
-next step `/land F23`. It jumps the F19-F22 queue on Saad's call: the dashboard is the
-demo, and it is currently six unstyled routes. Three tabs (Strategy / Circuit / Analysis)
-replace the six flat ones, all six spec views survive as sections, and the palette is
-sampled from the reference screenshots Saad supplied on 11 Aug (`docs/reference_images/`).
-Frontend only — no backend change, no number on screen that is not already served.
+**Active feature:** none. F23 landed 15 Aug 2026. The dashboard is three tabs
+(Strategy / Circuit / Analysis) with a section rail; all six spec views survive as
+sections and every colour lives in `frontend/src/config/palette.ts`, sampled from the
+reference screenshots Saad supplied on 11 Aug. Frontend only — no backend change, and no
+number on screen that the API did not already serve.
+
+**F23's lesson is that a green suite is not a working page.** 200 tests, two subagent
+reviews and a clean gate all passed while the replay was 22 shapes going round a loop
+with no figure beside them, the circuit was a two-pixel hairline, the tyre view drew a
+flat surface for a fact a surface cannot show, and the reward decomposition never
+rendered at all (cards number laps from 0, frames from 1, and the join was equality).
+Every one of those was found by looking at a screenshot. The review battery did find the
+two real logic defects — stints cut on compound change instead of `in_pit`, and `?run=`
+written with `history.replaceState` where react-router never sees it — so both kinds of
+check earned their place. Add a look-at-the-artefact step to any UI feature.
 
 F17 landed 13 Aug 2026. `configs/drivers.yaml` now carries 31
 era-2024 seats fitted over 2022-2025 and 22 era-2026 seats over the calibration rounds,
@@ -128,7 +137,7 @@ changed reward or curriculum gate, or different physics; not a rerun.
 | F16 | Race engine extraction | F05, F06 | Done 8 Aug 2026 | feature/F16-engine-extraction | [F16](docs/learn/F16-engine-extraction.md) |
 | F17 | Driver identity | F02, F16, F18 | Done 13 Aug 2026 | feature/F17-driver-identity | [F17](docs/learn/F17-driver-identity.md) |
 | F18 | Full-era refit and revalidation | F02, F16 | Done 12 Aug 2026 | feature/F18-full-era-refit | [F18](docs/learn/F18-full-era-refit.md) |
-| F23 | Dashboard restructure and visual language | F11, F12, F13 | In review 15 Aug 2026 | feature/F23-ui-revamp | [F23](docs/learn/F23-ui-revamp.md) |
+| F23 | Dashboard restructure and visual language | F11, F12, F13 | Done 15 Aug 2026 | feature/F23-ui-revamp | [F23](docs/learn/F23-ui-revamp.md) |
 
 Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
 there is no persistent "building" state; if a session dies mid-/ship, the branch holds
