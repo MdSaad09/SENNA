@@ -61,8 +61,10 @@ export default function RunPicker({
         circuit_id: chosen,
         grid_position: gridPosition,
         ...(trimmedSeed !== "" ? { seed: Number(trimmedSeed) } : {}),
-        // omit the defaults so the request body stays byte-identical to F11/F12's
-        // and the E-15 cache key namespace does not fork on equivalent requests
+        // these three are optional with server-side defaults, so omitting them and
+        // sending them are equivalent: sim_cache_key digests getattr over the validated
+        // SimulationCreate (senna/serve/cache.py:29) and the stored config is its
+        // model_dump, so both already see the defaults filled in
         ...(era !== "2026" ? { era } : {}),
         ...(weather !== "dry" ? { weather_profile: weather } : {}),
         ...(rivalBand !== "test" ? { rival_band: rivalBand } : {}),

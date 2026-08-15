@@ -923,7 +923,6 @@ explorer is *for*; under a race they are noise, and `withZones={false}` turns th
 you unify a visual language, enumerate every surface that draws — panels, charts, scenes, and
 the things moving across them — because the ones you forget are the ones that look wrong.**
 
-
 ## What we deliberately did not build
 
 Three absences, each with a reason a reviewer can check.
@@ -1009,9 +1008,9 @@ it.
                    RaceSetupRail       FitCamera    RewardPanel
                    stints.ts (in_pit)  (silhouette) (card.lap + 1)
                    PitSchedule         widenRibbon  AlternativesPanel
-                   RaceStoryChart      LapStrip     featureLabels.ts
-                   TimingTower ────────┘            (32 dims, plain English)
-                   (replay + live)
+                   RaceStoryChart      LapStrip     featureLabels.ts (32)
+                   TimingTower         Legend       GripCurves (tyres)
+                   (replay + live)     (off canvas)
                             └─────────────┴────────────┘
                                     one canvas at a time (5.10.3 / F-28)
                                     every 5.10.2 statement (honesty.test.tsx)
@@ -1036,8 +1035,10 @@ All commands from `frontend/`.
 
    You'll know it worked when you get 38 files and 200 tests green. The pre-F23 baseline was
    30 files and 155 tests; the 45 new ones are mostly guards rather than features, which is
-   the honest description of this feature. Note the other number: the second wave added seven
-   components and 200 is also what the suite said before it. Exercise 7 is about that.
+   the honest description of this feature. Note the other number: everything after the first
+   wave — the tower, the race chart, the rail, the lap strip, the label map, the grip curves —
+   is six new files and not one new test, and 200 is what the suite said before all of it.
+   Exercise 7 is about that.
 
 2. **Break the stint derivation, then break the test that should have caught it.** In
    `src/views/strategy/stints.ts`, change the `boundary` line to the old form:
@@ -1101,10 +1102,11 @@ All commands from `frontend/`.
    in the DOM, absent from the page — is the whole reason the screenshots caught what the
    suite could not. Revert.
 
-7. **Give the tower its first test.** The second wave added seven components and no test file:
-   `TimingTower.tsx`, `RaceStoryChart.tsx`, `LapStrip.tsx` and `featureLabels.ts` are untouched
-   by the suite, and `RaceSetupRail.tsx` is reached only sideways, through
-   `StrategyView.test.tsx`'s grid assertions. That is the honest state of it. Write `src/components/TimingTower.test.tsx` with two
+7. **Give the tower its first test.** Everything after the first wave shipped without one:
+   `TimingTower.tsx`, `RaceStoryChart.tsx`, `LapStrip.tsx`, `GripCurves.tsx` and
+   `featureLabels.ts` are untouched by the suite, and `RaceSetupRail.tsx` is reached only
+   sideways, through `StrategyView.test.tsx`'s grid assertions. That is the honest state of
+   it. Write `src/components/TimingTower.test.tsx` with two
    cases: cars handed in car-id order render in classification order, and the leader's row
    reads `leader` while a car with `gap_ahead_s: null` and `position: 5` reads the em dash.
    You'll know it worked when both pass, and when reversing the sort comparator turns the first
@@ -1132,7 +1134,15 @@ All commands from `frontend/`.
    real run and watch the reward panel be absent on arrival and one lap late after a click.
    Restore the `+ 1` and write down where a test would have to sit to catch this.
 
-10. **Watch the demo path end to end.**
+10. **Extrapolate a tyre past the failure that ended it.** In
+    `src/views/tyres/GripCurves.tsx`, delete the `if (age <= curve.cliff_age)` condition so
+    every row carries every compound. Open the tyre section at Bahrain. You'll know it worked
+    when the soft's line keeps going to age 34 instead of stopping at 31 — a smooth, confident
+    curve describing laps on a tyre that has already failed, drawn in exactly the same weight
+    as the true part. Restore it, then write one sentence on what `connectNulls={false}` is
+    doing and what recharts would have drawn without it.
+
+11. **Watch the demo path end to end.**
 
    ```
    make up && make demo-warm
@@ -1177,6 +1187,10 @@ All commands from `frontend/`.
 9. The circuit ribbon is drawn three times its real width and the car markers six times life
    size. Justify that in a dissertation about interpretability, and say how it differs from
    the elevation exaggeration you already had.
+
+10. Spec 5.10.2 asks the tyre view for a 3D grip surface that makes the cliff visible.
+    Defend keeping the surface while putting a 2D chart beside it, with the arithmetic that
+    shows why the surface alone could not do the job.
 
 ---
 
@@ -1276,6 +1290,17 @@ All commands from `frontend/`.
    either way: the widening scales both edge vertices about their midpoint, which is the
    centreline the car positions and annotation strips are built from.
 
+10. **The surface is the right object for how grip decays and the wrong one for when a tyre
+    ends, so it stays and the second fact gets its own chart.** Put Bahrain's fitted hard
+    through its own law: `1 - 0.000878 x 30^1.0671 = 0.967`, about three percent of grip
+    across a whole stint, which is a nearly flat sheet however you frame it. The cliff 5.10.2
+    wants visible is not on that sheet at all — it is a discrete failure the simulator
+    enforces at a fitted age (`cliff_age_laps` in `scenario.py`, the same function the env
+    calls), so no amount of surface can render it as a slope. The 2D chart draws every
+    compound the circuit has, stops each line at its own cliff and dashes the cliff in the
+    compound's colour, which puts the real trade — decay rate against survival — on one pair
+    of axes.
+
 ## Ledger update
 
 These rows were appended to `docs/learn/00-curriculum.md`:
@@ -1296,3 +1321,5 @@ These rows were appended to `docs/learn/00-curriculum.md`:
 | The seam a unit test cannot see | F23 | `RewardPanel`'s four tests construct `terms` and pass it in, so they could not notice that its only caller joined decision cards (laps from 0) to frames (laps from 1) and found nothing — the panel was correct and never rendered. |
 | Stated exaggeration, applied where it belongs | F23 | Elevation's 1.5x is baked into the F04 GLB; the ribbon's 3x width and the car markers' 6x are applied in the browser so the exported geometry stays true, and the legend and caption quote both factors (F-12). |
 | Change the label, not the guard | F23 | The setup rail's "points zone" caption tripped the blunt `/\bpoints\b/i` no-points guard, so the wording changed: a guard with an exception list has a way through it, and one word is cheaper than a weakened rule. |
+| Draw the object the fact needs | F23 | 5.10.2 asks the tyre view to make the cliff visible and a grip surface cannot, because the cliff is a discrete failure at a fitted age, not a slope (Bahrain's hard loses 3% of grip over 30 laps) — so the surface stays and a per-compound 2D chart carries the meaning, each line stopped at its own cliff. |
+| Enumerate every surface that draws | F23 | "One palette" covered panels and missed the F11 liveries and the replay's annotation strips, so fully saturated cars and an amber-and-violet road sat on a muted instrument; a visual unification is done only when scenes and the things moving across them are on the list. |
