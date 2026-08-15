@@ -5,6 +5,7 @@
 import type { CircuitDetail } from "../../api/types";
 import { ELEVATION_EXAGGERATION } from "../../config/constants";
 import { BRAKING_TINT, HARVEST_TINT, XMODE_TINT } from "./CircuitRibbon";
+import { Panel } from "../../components/ui/Panel";
 
 function Swatch({ colour }: { colour: string }) {
   return (
@@ -28,7 +29,7 @@ function elevationCaveat(detail: CircuitDetail): string {
 export default function Legend({ detail }: { detail: CircuitDetail }) {
   const flags = detail.flags;
   return (
-    <aside className="rounded border border-senna-line bg-senna-surface/80 p-3 text-xs text-senna-muted">
+    <Panel className="p-3 text-xs text-senna-muted">
       <h3 className="font-semibold text-senna-text">
         {detail.id.replace(/_/g, " ")} — {detail.race_laps} laps
         {detail.lap_length_m !== null && `, ${(detail.lap_length_m / 1000).toFixed(3)} km`}
@@ -51,6 +52,6 @@ export default function Legend({ detail }: { detail: CircuitDetail }) {
         <li>{elevationCaveat(detail)}</li>
         <li>banking {flags?.banking ?? "stylised"} — a visual treatment, not data (F-12)</li>
       </ul>
-    </aside>
+    </Panel>
   );
 }

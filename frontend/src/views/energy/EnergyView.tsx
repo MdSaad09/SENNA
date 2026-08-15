@@ -11,6 +11,7 @@ import RunPicker from "../../components/RunPicker";
 import EnergyBarsPanel from "./EnergyBarsPanel";
 import SocPanel from "./SocPanel";
 import { positiveIntParam } from "../../lib/queryParams";
+import ViewHeader from "../../components/ui/ViewHeader";
 
 export default function EnergyView() {
   const [runId, setRunId] = useState<number | null>(() => positiveIntParam("run"));
@@ -20,7 +21,7 @@ export default function EnergyView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
+      <ViewHeader>
         {run.data !== undefined ? (
           <>
             <span className="text-senna-text">
@@ -32,7 +33,7 @@ export default function EnergyView() {
         ) : (
           <span>no run loaded — start one below to see its energy trace</span>
         )}
-      </header>
+      </ViewHeader>
 
       <section className="relative min-h-0 flex-1 overflow-y-auto">
         {runId === null && (

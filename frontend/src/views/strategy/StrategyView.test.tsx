@@ -77,8 +77,8 @@ test("the headline reads the grid slot into the finishing position", async () =>
   const headline = await screen.findByTestId("strategy-headline");
   expect(headline).toHaveTextContent("P8"); // config.grid_position
   expect(headline).toHaveTextContent("P2"); // summary.final_position
-  // and the real race time reaches the screen, raw seconds or clock form
-  expect(document.body.textContent).toMatch(/5412|1:30:12/);
+  // 5412.4 s of served race time, as the clock the header prints
+  expect(document.body.textContent).toContain("1:30:12");
 });
 
 test("no points appear anywhere, because the served figure is RL-scaled", async () => {

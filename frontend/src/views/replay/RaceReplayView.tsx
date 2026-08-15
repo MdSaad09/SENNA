@@ -17,6 +17,7 @@ import TransportControls, {
 import { useReplayStore } from "../../stores/replayStore";
 import ReplayScene from "./ReplayScene";
 import { positiveIntParam } from "../../lib/queryParams";
+import ViewHeader from "../../components/ui/ViewHeader";
 
 const subscribeReplayPlayhead = (listener: (playheadLap: number) => void) =>
   useReplayStore.subscribe((state) => state.playheadLap, listener);
@@ -51,7 +52,7 @@ export default function RaceReplayView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
+      <ViewHeader>
         {run.data !== undefined ? (
           <>
             <span className="text-senna-text">
@@ -72,7 +73,7 @@ export default function RaceReplayView() {
         ) : (
           <span>no run loaded — start one below, car {EGO_CAR_ID} is the agent</span>
         )}
-      </header>
+      </ViewHeader>
 
       <section className="relative min-h-0 flex-1">
         <CanvasHost>

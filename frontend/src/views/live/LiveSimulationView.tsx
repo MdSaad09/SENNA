@@ -24,6 +24,7 @@ import JumpLink from "../../components/ui/JumpLink";
 import DecisionCardPanel from "./DecisionCardPanel";
 import SocBar from "./SocBar";
 import { positiveIntParam, seedParam, useWriteRunBack } from "../../lib/queryParams";
+import ViewHeader from "../../components/ui/ViewHeader";
 
 // ?speed= is only honoured from the 5.9.3 set — the server would reject anything
 // else, and a silent drop beats surfacing an error over a shareable link
@@ -143,7 +144,7 @@ export default function LiveSimulationView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-senna-line px-4 py-2 text-xs text-senna-faint">
+      <ViewHeader>
         <span className="text-senna-text">
           live simulation — the trained agent racing in the simulator, not live timing
         </span>
@@ -155,7 +156,7 @@ export default function LiveSimulationView() {
             {run.data.model_version !== null && <span>{run.data.model_version}</span>}
           </>
         )}
-      </header>
+      </ViewHeader>
 
       <div className="flex min-h-0 flex-1">
         <section className="relative min-h-0 flex-1">
