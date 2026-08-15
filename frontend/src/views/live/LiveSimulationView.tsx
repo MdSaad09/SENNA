@@ -17,7 +17,11 @@ import RunPicker from "../../components/RunPicker";
 import TransportControls, {
   ILLUSTRATIVE_MOTION_CAPTION,
 } from "../../components/TransportControls";
-import { DEFAULT_GRID_POSITION, PLAYBACK_SPEEDS } from "../../config/constants";
+import {
+  DEFAULT_GRID_POSITION,
+  EGO_CAR_ID,
+  PLAYBACK_SPEEDS,
+} from "../../config/constants";
 import { useLiveStore } from "../../stores/liveStore";
 import ReplayScene from "../replay/ReplayScene";
 import JumpLink from "../../components/ui/JumpLink";
@@ -25,6 +29,7 @@ import DecisionCardPanel from "./DecisionCardPanel";
 import SocBar from "./SocBar";
 import { positiveIntParam, seedParam, useWriteRunBack } from "../../lib/queryParams";
 import ViewHeader from "../../components/ui/ViewHeader";
+import TimingTower from "../../components/TimingTower";
 
 // ?speed= is only honoured from the 5.9.3 set — the server would reject anything
 // else, and a silent drop beats surfacing an error over a shareable link
@@ -105,6 +110,17 @@ export default function LiveSimulationView() {
   const cardLap = useLiveStore((state) => Math.max(1, Math.ceil(state.playheadLap)));
   const cards = useLiveStore((state) => state.cards);
   const frames = useLiveStore((state) => state.frames);
+  // the frame at the playhead, quantised to the lap so the tower re-renders once a lap
+  // the playhead can sit a lap ahead of what has streamed; clamp to the newest frame
+  // rather than blanking the tower at exactly the moment the race is most interesting
+  const carsNow = useLiveStore(
+    (state) =>
+      state.frames[
+        Math.min(Math.max(0, Math.ceil(state.playheadLap) - 1), state.frames.length - 1)
+      ]?.cars,
+  );
+  const selectedCarId = useLiveStore((state) => state.selectedCarId);
+  const selectCar = useLiveStore((state) => state.selectCar);
 
   const setPlaying = useLiveStore((state) => state.setPlaying);
   const setSpeed = useLiveStore((state) => state.setSpeed);
@@ -158,8 +174,8 @@ export default function LiveSimulationView() {
         )}
       </ViewHeader>
 
-      <div className="flex min-h-0 flex-1">
-        <section className="relative min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <section className="relative min-h-0 min-w-0 flex-1">
           <CanvasHost>
             {sceneReady && (
               <Suspense fallback={null}>
@@ -207,6 +223,19 @@ export default function LiveSimulationView() {
                 socMj={playheadFrame.agent.soc_mj}
                 usableSocMj={energy.data.usable_soc_mj}
               />
+            )}
+            {carsNow !== undefined && (
+              <div className="rounded-panel border border-senna-line">
+                <div className="border-b border-senna-line bg-senna-raised px-2 py-1.5 text-micro uppercase text-senna-muted">
+                  lap {cardLap} of {headLap}
+                </div>
+                <TimingTower
+                  cars={carsNow}
+                  egoId={EGO_CAR_ID}
+                  selectedId={selectedCarId}
+                  onSelect={selectCar}
+                />
+              </div>
             )}
             {card !== null && <DecisionCardPanel card={card} />}
             {/* 5.13's 0:45 beat: one click from the card to the same race against the

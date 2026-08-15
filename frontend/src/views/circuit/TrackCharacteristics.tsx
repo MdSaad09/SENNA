@@ -121,12 +121,9 @@ export default function TrackCharacteristics({ detail }: { detail: CircuitDetail
         <PanelHeader title="framing" right={`${Math.round(RIBBON_PROJECTED_FILL * 100)}%`} />
         <div className="p-3">
           <HonestyNote>
-            the camera is fitted to this circuit&apos;s silhouette — its outline as seen from
-            this angle — so that the silhouette spans about{" "}
-            {Math.round(RIBBON_PROJECTED_FILL * 100)}% of the panel&apos;s shorter axis. The
-            track reads smaller than that, because an irregular outline leaves more margin
-            than a circle would. Elevation is exaggerated and banking is a visual treatment,
-            as the legend says.
+            fitted to the circuit&apos;s silhouette, which spans about{" "}
+            {Math.round(RIBBON_PROJECTED_FILL * 100)}% of the panel&apos;s shorter axis; an
+            irregular outline reads smaller again.
           </HonestyNote>
         </div>
       </Panel>

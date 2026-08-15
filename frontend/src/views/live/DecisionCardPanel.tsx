@@ -14,8 +14,8 @@ function DriverBars({ head, drivers }: { head: string; drivers: [string, number]
   return (
     <ul data-testid={`card-drivers-${head}`} className="mt-1 space-y-1">
       {drivers.map(([name, shap]) => (
-        <li key={name} className="flex items-center gap-2 text-xs">
-          <span className="w-56 shrink-0 truncate text-senna-muted" title={name}>
+        <li key={name} className="flex items-center gap-2 text-label">
+          <span className="w-[45%] shrink-0 text-senna-muted" title={name}>
             {featureLabel(name)}
           </span>
           <span className="relative h-2 flex-1">

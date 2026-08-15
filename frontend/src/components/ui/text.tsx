@@ -11,5 +11,12 @@ export function MicroLabel({ children }: { children: ReactNode }) {
  *  honesty.test.tsx pins all six. Deliberately quiet but never hidden: the credibility
  *  of the whole dashboard rests on these being present and legible. */
 export function HonestyNote({ children }: { children: ReactNode }) {
-  return <p className="text-label leading-relaxed text-senna-ghost">{children}</p>;
+  return (
+    <p className="flex gap-1.5 text-micro leading-[1.6] tracking-normal text-senna-ghost">
+      <span aria-hidden className="select-none text-senna-line">
+        &#8213;
+      </span>
+      <span>{children}</span>
+    </p>
+  );
 }

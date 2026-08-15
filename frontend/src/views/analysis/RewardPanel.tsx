@@ -45,10 +45,8 @@ export default function RewardPanel({ terms }: { terms: Record<string, number> }
 
         <div className="mt-3">
           <HonestyNote>
-            every term the environment served for this lap, and no others — this run&apos;s reward
-            has three and they are all here. Bars are scaled against the largest term on the lap
-            (or against 1.0, whichever is bigger), so they compare the terms with each other
-            rather than against any budget.
+            every term the environment served for this lap, and no others. Bars are scaled
+            against the largest term on the lap, or 1.0, whichever is bigger.
           </HonestyNote>
         </div>
       </div>

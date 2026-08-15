@@ -81,10 +81,9 @@ export default function AlternativesPanel({ card }: { card: DecisionCard }) {
       />
       <div className="border-t border-senna-line p-3">
         <HonestyNote>
-          these are the masked policy probabilities for this one lap, not a search over whole
-          strategies — the agent never enumerated a race plan. Struck-through actions were
-          forbidden by the action mask, which is how compliance is achieved here: by
-          construction, never by a reward penalty.
+          masked policy probabilities for this one lap, not a search over whole strategies —
+          the agent never enumerated a race plan. Struck-through actions were forbidden by the
+          action mask: compliance by construction, never by a reward penalty.
         </HonestyNote>
       </div>
     </Panel>

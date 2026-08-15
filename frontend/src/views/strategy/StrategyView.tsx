@@ -14,15 +14,15 @@
 import { useState } from "react";
 
 import { useRunFrames, useSimulation } from "../../api/queries";
-import RunPicker from "../../components/RunPicker";
 import { Panel, PanelHeader } from "../../components/ui/Panel";
 import RunStatusOverlay from "../../components/ui/RunStatusOverlay";
 import { Stat } from "../../components/ui/Stat";
 import { HonestyNote } from "../../components/ui/text";
 import ViewHeader from "../../components/ui/ViewHeader";
 import { EGO_CAR_ID } from "../../config/constants";
-import { positiveIntParam } from "../../lib/queryParams";
+import { positiveIntParam, useWriteRunBack } from "../../lib/queryParams";
 import PitSchedule from "./PitSchedule";
+import RaceSetupRail from "./RaceSetupRail";
 import RaceStoryChart from "./RaceStoryChart";
 import StintTimeline from "./StintTimeline";
 import { stintsFromFrames } from "./stints";
@@ -37,17 +37,10 @@ function raceClock(seconds: number): string {
 
 export default function StrategyView() {
   const [runId, setRunId] = useState<number | null>(() => positiveIntParam("run"));
+  const writeRunBack = useWriteRunBack();
   const run = useSimulation(runId);
   const complete = run.data?.status === "complete";
   const frames = useRunFrames(runId, complete);
-
-  if (runId === null) {
-    return (
-      <div className="grid h-full place-items-center overflow-y-auto p-6">
-        <RunPicker onRun={setRunId} heading="strategy — run a race" fullMatrix />
-      </div>
-    );
-  }
 
   const summary = run.data?.summary ?? null;
   const gridPosition = (run.data?.config as { grid_position?: number } | null)?.grid_position;
@@ -58,17 +51,44 @@ export default function StrategyView() {
   const raceReadable = complete && frames.data !== undefined;
   const framesFailed = frames.isError;
 
+  const start = () => {
+    // a new run replaces what is on screen; the URL follows so the page is shareable
+    return (id: number) => {
+      setRunId(id);
+      writeRunBack(id);
+    };
+  };
+
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full">
+      <RaceSetupRail
+        onRun={start()}
+        currentCircuit={run.data?.circuit_id ?? null}
+        currentGrid={gridPosition}
+      />
+
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       <ViewHeader>
+        {runId === null && <span>no run yet — configure one on the left</span>}
+        {runId !== null && (
+          <>
         <span className="text-senna-muted">run {runId}</span>
         {run.data?.circuit_id != null && <span>{run.data.circuit_id.replace(/_/g, " ")}</span>}
         {run.data?.era != null && <span>era {run.data.era}</span>}
         {run.data?.model_version != null && <span>{run.data.model_version}</span>}
+          </>
+        )}
       </ViewHeader>
 
       <div className="relative min-h-0 flex-1 overflow-y-auto">
-        {!raceReadable && (
+        {runId === null && (
+          <RunStatusOverlay
+            message="no race on screen yet"
+            hint="pick a circuit and a grid slot on the left, then run it — the stints, the pit schedule and the race chart all read back from what the agent actually did"
+          />
+        )}
+
+        {runId !== null && !raceReadable && (
           <RunStatusOverlay
             message={
               framesFailed
@@ -137,12 +157,13 @@ export default function StrategyView() {
 
             {/* the page's 5.10.2 statement: everything above is one simulated race */}
             <HonestyNote>
-              stints read back from run {runId}&apos;s stored frames — the agent chose them lap by
-              lap in the simulator, and there is no plan here that preceded the race. Pit service
-              time is not shown because it is not served.
+              read back from run {runId}&apos;s stored frames: the agent chose these lap by lap,
+              and there is no plan here that preceded the race. Pit service time is not shown
+              because it is not served.
             </HonestyNote>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

@@ -133,9 +133,11 @@ test("a run still going shows its status, not an empty stint bar", async () => {
   expect(screen.queryByTestId("pit-schedule")).toBeNull();
 });
 
-test("the grid control offers 22 slots and refuses 23", async () => {
+test("the grid control offers 22 slots and cannot express 23", async () => {
   // sourced — SimulationCreate bounds, 5.9.2 (ge=1, le=22). The reference screenshot
-  // runs its starting-position slider P1-P20; the 2026 grid is 22 cars, 11 teams
+  // runs its starting-position slider P1-P20; the 2026 grid is 22 cars, 11 teams.
+  // A range input clamps rather than rejecting, which is the stronger guarantee: P23
+  // is not a value the control can hold, so the server never sees it
   window.history.replaceState(null, "", "/strategy/setup");
   renderView();
 
@@ -144,7 +146,8 @@ test("the grid control offers 22 slots and refuses 23", async () => {
   expect(gridPosition).toHaveAttribute("max", "22");
 
   fireEvent.change(gridPosition, { target: { value: "22" } });
-  expect(gridPosition.checkValidity()).toBe(true);
+  expect(gridPosition.value).toBe("22");
   fireEvent.change(gridPosition, { target: { value: "23" } });
-  expect(gridPosition.validity.rangeOverflow).toBe(true);
+  expect(gridPosition.value).toBe("22");
+  expect(screen.getByTestId("grid-readout")).toHaveTextContent("P22");
 });

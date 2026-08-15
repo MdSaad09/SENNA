@@ -115,7 +115,7 @@ test("a run started after mount reaches the nav and the 5.13 jump links", async 
   const router = renderRouterAt("/strategy/setup");
   await waitFor(() => expect(router.state.location.pathname).toBe("/strategy/setup"));
 
-  const form = await screen.findByRole("button", { name: /simulate|queueing/i });
+  const form = await screen.findByRole("button", { name: /run race|queueing/i });
   await act(async () => {
     fireEvent.click(form);
   });
