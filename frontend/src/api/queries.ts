@@ -9,6 +9,7 @@ import { apiGet } from "./client";
 import type {
   CircuitDetail,
   CircuitSummary,
+  DecisionCard,
   DegradationCurve,
   EnergyProfile,
   LapFrame,
@@ -71,6 +72,16 @@ export function useEnergyProfile(runId: number | null, runComplete: boolean) {
     queryFn: () => apiGet<EnergyProfile>(`/v1/energy/${runId}`),
     enabled: runId !== null && runComplete,
     staleTime: Infinity, // the ledger is fixed once the run finishes (E-16)
+  });
+}
+
+export function useDecisions(runId: number | null, runComplete: boolean) {
+  return useQuery({
+    queryKey: ["decisions", runId],
+    queryFn: () => apiGet<DecisionCard[]>(`/v1/simulations/${runId}/decisions`),
+    enabled: runId !== null && runComplete,
+    retry: false, // a 404 is an honest "this model has no stored explanations" (E-15)
+    staleTime: Infinity, // cards are fixed once the run finishes
   });
 }
 
