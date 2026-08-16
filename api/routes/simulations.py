@@ -1,8 +1,11 @@
-"""POST /simulations and the reads over its stored results (5.9.2). The POST draws a
-missing seed before the cache key exists, checks the E-15 key, writes the queued row
-and hands the race to the RQ worker — a request handler never simulates (F-26).
-Serving reads filter on status IS NOT NULL so F09's eval-card rows, which share these
-tables under their own purpose, 404 here instead of 500ing.
+"""POST /simulations and the reads over its stored results (5.9.2).
+
+The POST draws a missing seed, writes the run row, and races it to completion on a
+worker thread before answering — about eighteen seconds for a full grand prix. The
+dissertation build has no queue and no cache, so there is no E-15 stale-key hazard to
+guard: every request runs its own race. Serving reads filter on status IS NOT NULL so
+F09's eval-card rows, which share these tables under their own purpose, 404 here
+instead of 500ing.
 """
 
 import os
@@ -11,29 +14,17 @@ from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from sqlalchemy import delete, insert, select
+from sqlalchemy import insert, select
 
 from api.deps import serving_config
 from api.schemas import DecisionCard, JobAccepted, LapFrame, SimulationCreate, SimulationResult
 from senna.data.schema import AgentDecision, LapFrameRow, SimulationRun
 from senna.env.scenario import build_scenario
-from senna.serve.cache import sim_cache_key, ttl_seconds
 from senna.serve.loader import UnknownModelVersionError, read_manifest
+from senna.serve.runner import run_simulation
 
 router = APIRouter()
 
-
-def run_is_stale(row, *, queue_cfg: dict) -> bool:
-    """A queued/running row older than the configured multiple of the job budget:
-    the work horse died before it could report (OOM, a platform SIGKILL), so its
-    cache key must stop answering and the WS must stop waiting (E-15)."""
-    if row.status not in ("queued", "running"):
-        return False
-    anchor = row.started_at or row.created_at
-    if anchor is None:
-        return True
-    age_s = (datetime.now(UTC).replace(tzinfo=None) - anchor).total_seconds()
-    return age_s > queue_cfg["stale_after_timeouts"] * queue_cfg["job_timeout_s"]
 
 
 def validated_manifest(req: SimulationCreate) -> dict:
@@ -66,51 +57,13 @@ def draw_seed(req: SimulationCreate) -> SimulationCreate:
     return req.model_copy(update={"seed": secrets.randbelow(bound)})
 
 
-async def fresh_cache_hit(request: Request, key: str):
-    """The run row a live E-15 key answers with, or None after clearing a dead key.
-    One implementation for every enqueue path — a fork here is where a stale-cache
-    bug would hide (F13 plan)."""
-    cached = await request.app.state.redis.get(key)
-    if cached is None:
-        return None
-    async with request.app.state.engine.connect() as conn:
-        hit = (await conn.execute(
-            select(SimulationRun).where(SimulationRun.id == int(cached))
-        )).first()
-    if hit is not None and hit.status == "complete":
-        return hit
-    if hit is not None and not run_is_stale(hit, queue_cfg=serving_config()["queue"]):
-        return hit  # queued/running and fresh: dedupe in flight
-    # the run behind the key is dead — failed, deleted, or a work horse that
-    # never reported. The key must not answer for it for 7 days (E-15).
-    await request.app.state.redis.delete(key)
-    return None
 
 
-async def claim_key_or_yield(request: Request, key: str, run_ids: tuple[int, ...]) -> int | None:
-    """SET NX the key to run_ids[0]; on losing the race, delete every orphan row we
-    just inserted and return the winner's id so the caller answers with it."""
-    prior = await request.app.state.redis.set(key, run_ids[0], nx=True,
-                                              ex=ttl_seconds(), get=True)
-    if prior is None:
-        return None
-    async with request.app.state.engine.begin() as conn:
-        await conn.execute(delete(SimulationRun).where(SimulationRun.id.in_(run_ids)))
-    return int(prior)
-
-
-async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
-                      extra_config: dict | None = None) -> JobAccepted:
-    # file+yaml IO off the event loop, which also owns every WS stream
+async def start_run(request: Request, req: SimulationCreate, *, purpose: str,
+                    extra_config: dict | None = None) -> JobAccepted:
+    # file+yaml IO off the event loop
     manifest = await run_in_threadpool(validated_manifest, req)
     req = draw_seed(req)
-    key = sim_cache_key(manifest["model_version"], manifest["fingerprint"], req,
-                        purpose=purpose)
-    queue_cfg = serving_config()["queue"]
-
-    hit = await fresh_cache_hit(request, key)
-    if hit is not None:
-        return JobAccepted(run_id=hit.id)
 
     async with request.app.state.engine.begin() as conn:
         run_id = (await conn.execute(
@@ -123,21 +76,16 @@ async def enqueue_run(request: Request, req: SimulationCreate, *, purpose: str,
             ).returning(SimulationRun.id)
         )).scalar_one()
 
-    winner = await claim_key_or_yield(request, key, (run_id,))
-    if winner is not None:
-        return JobAccepted(run_id=winner)
-
-    await run_in_threadpool(
-        request.app.state.queue.enqueue, "worker.jobs.run_simulation", run_id,
-        job_timeout=queue_cfg["job_timeout_s"],
-        result_ttl=queue_cfg["result_ttl_s"], failure_ttl=queue_cfg["result_ttl_s"],
-    )
+    # the race itself, on a thread so the event loop keeps serving reads
+    await run_in_threadpool(run_simulation, run_id)
     return JobAccepted(run_id=run_id)
 
 
 @router.post("/simulations", response_model=JobAccepted, status_code=202)
 async def create_simulation(request: Request, req: SimulationCreate):
-    return await enqueue_run(request, req, purpose="serve")
+    """202 is kept from 5.9.2 even though the race is finished when this returns: the
+    body is still a job handle and the client still reads the result back by id."""
+    return await start_run(request, req, purpose="serve")
 
 
 async def _serving_row(request: Request, run_id: int):

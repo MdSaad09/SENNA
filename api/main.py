@@ -1,23 +1,21 @@
-"""The SENNA API (5.9.2). The lifespan owns the async engine, the redis client and
-the RQ handle; simulations run in the worker, never here (F-26) — the event loop
-belongs to the WebSocket. Every response carries X-Model-Version (5.11.2) without
-touching a 5.9.2 body shape, errors included: a version-less 404 is still an answer
-someone will screenshot.
+"""The SENNA API (5.9.2). The lifespan owns the async engine and nothing else.
+
+The dissertation build has no queue and no worker: a race runs inline on a thread when
+it is asked for, which takes about eighteen seconds and costs the deployment two fewer
+services. Every response still carries X-Model-Version (5.11.2) without touching a 5.9.2
+body shape, errors included: a version-less 404 is still an answer someone will
+screenshot.
 """
 
-import asyncio
 import os
 from contextlib import asynccontextmanager
 
-import redis
-import redis.asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from rq import Queue
 
-from api import routes, ws
-from api.deps import redis_url, serving_config
+from api import routes
+from api.deps import serving_config
 from senna import config
 from senna.data.db import database_url, engine_for
 from senna.serve.loader import read_manifest
@@ -32,16 +30,10 @@ async def lifespan(app: FastAPI):
         version=os.environ.get("MODEL_VERSION")
     )["model_version"]
     app.state.engine = engine_for(database_url())
-    app.state.redis = redis.asyncio.from_url(redis_url(), decode_responses=True)
-    rq_conn = redis.Redis.from_url(redis_url())
-    app.state.queue = Queue(serving_config()["queue"]["name"], connection=rq_conn)
-    app.state.playback_sleep = asyncio.sleep  # tests swap in a recorder (E-16 clock)
     try:
         yield
     finally:
         await app.state.engine.dispose()
-        await app.state.redis.aclose()
-        rq_conn.close()
 
 
 def create_app() -> FastAPI:
@@ -63,7 +55,6 @@ def create_app() -> FastAPI:
 
     for router in routes.ALL:
         app.include_router(router, prefix="/api/v1")
-    app.include_router(ws.router)
 
     ribbons = config.REPO_ROOT / "data" / "circuits"
     if ribbons.is_dir():

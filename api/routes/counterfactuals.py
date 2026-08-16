@@ -16,23 +16,17 @@ from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, insert, select, update
 
-from api.deps import serving_config
-from api.routes.simulations import (
-    claim_key_or_yield,
-    draw_seed,
-    fresh_cache_hit,
-    validated_manifest,
-)
+from api.routes.simulations import draw_seed, validated_manifest
 from api.schemas import JobAccepted, SimulationCreate
 from senna.data.schema import Event, Lap, Session, SessionResult, SimulationRun
 from senna.env.scenario import build_scenario
-from senna.serve.cache import sim_cache_key
 from senna.serve.loader import (
     UnknownModelVersionError,
     era_model_version,
     read_manifest,
 )
 from senna.serve.mapping import circuit_slug
+from senna.serve.runner import run_counterfactual
 from senna.strategy.extract import plan_from_rows
 
 router = APIRouter()
@@ -119,18 +113,6 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
     except UnknownModelVersionError:
         era_matched, served = "pending-F14", manifest
     sim = draw_seed(sim)
-    # E-15: the key names the model that actually produces the frames, so baking the
-    # era-matched triplet cold-starts its own namespace instead of answering a new
-    # request with a pre-bake run labelled era-matched
-    key = sim_cache_key(served["model_version"], served["fingerprint"], sim,
-                        purpose="counterfactual")
-
-    hit = await fresh_cache_hit(request, key)
-    if hit is not None:
-        # the stored agent config carries the pairing, so a dedupe answers with the
-        # whole pair, never a one-legged comparison (E-15)
-        return JobAccepted(run_id=hit.id,
-                           baseline_run_id=(hit.config or {}).get("baseline_run_id"))
 
     identity = {"year": req.year, "round": req.round, "driver": req.driver}
     now = datetime.now(UTC).replace(tzinfo=None)
@@ -165,22 +147,7 @@ async def create_counterfactual(request: Request, req: CounterfactualCreate):
                             "policy": "real_replay", "agent_run_id": agent_id})
         )
 
-    winner = await claim_key_or_yield(request, key, (agent_id, baseline_id))
-    if winner is not None:
-        async with request.app.state.engine.connect() as conn:
-            row = (await conn.execute(
-                select(SimulationRun).where(SimulationRun.id == winner)
-            )).first()
-        return JobAccepted(
-            run_id=winner,
-            baseline_run_id=(row.config or {}).get("baseline_run_id") if row else None,
-        )
-
-    queue_cfg = serving_config()["queue"]
-    await run_in_threadpool(
-        request.app.state.queue.enqueue, "worker.jobs.run_counterfactual",
-        agent_id, baseline_id,
-        job_timeout=queue_cfg["job_timeout_s"],
-        result_ttl=queue_cfg["result_ttl_s"], failure_ttl=queue_cfg["result_ttl_s"],
-    )
+    # both legs, inline: a one-legged comparison must never look complete, so the
+    # pair runs or fails together (F-24)
+    await run_in_threadpool(run_counterfactual, agent_id, baseline_id)
     return JobAccepted(run_id=agent_id, baseline_run_id=baseline_id)
