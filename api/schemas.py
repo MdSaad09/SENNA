@@ -107,13 +107,9 @@ class CircuitSummary(BaseModel):
 
 
 class CircuitDetail(CircuitSummary):
-    gltf_url: str | None          # relative — the browser resolves it against
-    lap_length_m: float | None    # VITE_API_BASE, so no server hostname leaks (F-27)
-    corners: list | None
-    braking_zones: list | None
-    xmode_sections: list | None
-    flags: dict | None            # meta.json stylised/inferred flags, verbatim — the
-                                  # View 1 legend derives its caveats from these (F11)
+    compounds: dict               # era -> compound -> "native" | "transferred" (T5):
+                                  # whether this circuit's tyre model was fitted here
+                                  # or borrowed from a cluster donor
 
 
 class RaceDetail(BaseModel):

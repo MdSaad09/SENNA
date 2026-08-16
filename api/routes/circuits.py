@@ -1,9 +1,9 @@
-"""The circuit library (E-13): the index is configs/circuits.yaml, coverage is
-computed from what actually exists on disk and in the fits, and the ribbon URL is
-relative so no server hostname can bake into a payload (F-27).
+"""The circuit library (E-13): the index is configs/circuits.yaml and coverage is
+computed from the fits rather than asserted. The dissertation build has no ribbon
+pipeline, so a circuit's geometry — lap length, corners, braking zones — is not served;
+what the simulator actually needs from a circuit is its race distance, its harvest cap
+and whether it has fitted degradation, and all three come from config.
 """
-
-import json
 
 from fastapi import APIRouter, HTTPException
 
@@ -12,11 +12,26 @@ from senna import config
 
 router = APIRouter()
 
+SLICKS = ("SOFT", "MEDIUM", "HARD")
+
 
 def _coverage(slug: str, fitted_circuits: dict) -> dict:
-    ribbon = (config.REPO_ROOT / "data" / "circuits" / slug / "ribbon.glb").is_file()
-    deg_fit = "degradation" in fitted_circuits.get(slug, {})
-    return {"ribbon": ribbon, "deg_fit": deg_fit}
+    return {"deg_fit": "degradation" in fitted_circuits.get(slug, {})}
+
+
+def _compounds(slug: str, fitted_circuits: dict) -> dict:
+    """Per era, which slicks have a fit and whether it is native or T5-transferred.
+    This is the honest answer to "can the simulator model this tyre here" — a
+    transferred curve is a borrowed one, and the write-up says so (T5)."""
+    deg = (fitted_circuits.get(slug) or {}).get("degradation") or {}
+    out = {}
+    for era, block in deg.items():
+        out[str(era)] = {
+            compound: ("native" if not fit.get("source_circuit") else "transferred")
+            for compound, fit in (block or {}).items()
+            if compound in SLICKS
+        }
+    return out
 
 
 @router.get("/circuits", response_model=list[CircuitSummary])
@@ -34,21 +49,8 @@ def circuit_detail(slug: str):
     entry = config.load("circuits").get(slug)
     if entry is None:
         raise HTTPException(404, f"no circuit '{slug}' — the library is data-driven (E-13)")
-    coverage = _coverage(slug, config.load("physics_params")["circuits"])
-
-    meta = {}
-    meta_path = config.REPO_ROOT / "data" / "circuits" / slug / "meta.json"
-    if meta_path.is_file():
-        meta = json.loads(meta_path.read_text())
-
+    fitted = config.load("physics_params")["circuits"]
     return CircuitDetail(
         id=slug, race_laps=entry["race_laps"], h_max_mj=entry["h_max_mj"],
-        coverage=coverage,
-        gltf_url=(f"/api/v1/assets/circuits/{slug}/ribbon.glb"
-                  if coverage["ribbon"] else None),
-        lap_length_m=meta.get("lap_length_m"),
-        corners=meta.get("corners"),
-        braking_zones=meta.get("braking_zones"),
-        xmode_sections=meta.get("xmode_sections"),
-        flags=meta.get("flags"),
+        coverage=_coverage(slug, fitted), compounds=_compounds(slug, fitted),
     )

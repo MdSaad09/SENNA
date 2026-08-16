@@ -4,7 +4,7 @@ Seed pairing alone would not do — the RNG stream consumes a policy-dependent n
 variates, so two policies on one seed diverge in their events after the first
 different stop (plan decision 2; the evals.py recorded-baseline convention). The
 outside world — the run rows, the frozen triplet, Redis, the frame builder — is
-stubbed at worker.jobs' own import seams; the env layer is the observation point, so
+stubbed at senna.serve.runner's own import seams; the env layer is the observation point, so
 the assertion is behavioural: one recording roll donates, two twin rolls receive the
 identical object.
 """
@@ -13,10 +13,10 @@ from types import SimpleNamespace
 
 import numpy as np
 
-import worker.jobs as jobs
+import senna.serve.runner as jobs
 from senna.env.twin import EventTrace
+from senna.serve.runner import run_counterfactual
 from tests.serve.conftest import CIRCUIT, SEED
-from worker.jobs import run_counterfactual
 
 AGENT_RUN_ID = 71
 BASELINE_RUN_ID = 72
@@ -145,19 +145,6 @@ class StubLogger:
         return np.array([0, 1])  # stay out, balanced
 
 
-class StubRedisConn:
-    def set(self, *args, **kwargs):
-        pass
-
-    def delete(self, *args):
-        pass
-
-    def publish(self, channel, message):
-        pass
-
-    def close(self):
-        pass
-
 
 def _run_rows():
     shared = {"circuit_id": CIRCUIT, "era": "2024", "grid_position": 5,
@@ -193,7 +180,6 @@ def test_the_pair_job_hands_one_recorded_trace_to_both_twin_rolls(monkeypatch):
         model=None, venv=SimpleNamespace(normalize_obs=lambda obs: obs),
         fidelity={"heads": {}}, boosters={}, background=None,
     )
-    monkeypatch.setenv("REDIS_URL", "redis://stub-host:6399/0")
     monkeypatch.setattr(jobs, "build_env", stub_build_env)
     monkeypatch.setattr(jobs, "load_serving_model", lambda *args, **kwargs: stub_serving)
     monkeypatch.setattr(jobs, "Sb3Policy", lambda *args, **kwargs: SimpleNamespace())
@@ -203,10 +189,6 @@ def test_the_pair_job_hands_one_recorded_trace_to_both_twin_rolls(monkeypatch):
                                                   "agent": {}, "events": []}, None))
     monkeypatch.setattr(jobs, "database_url", lambda: "postgresql+asyncpg://stub")
     monkeypatch.setattr(jobs, "engine_for", lambda url: StubEngine(_run_rows()))
-    monkeypatch.setattr(
-        jobs, "redis",
-        SimpleNamespace(Redis=SimpleNamespace(from_url=lambda url: StubRedisConn())),
-    )
 
     run_counterfactual(AGENT_RUN_ID, BASELINE_RUN_ID)
 

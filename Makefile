@@ -1,5 +1,5 @@
 # A-09 reproducibility pack — every target is real. The pipeline, in dependency order:
-#   ingest -> fit / synth -> circuits -> train / headline -> explain -> finetune ->
+#   ingest -> fit / synth -> train / headline -> explain -> finetune ->
 #   eval (the M1-M11 suite) -> sensitivity / sensitivity-m2 -> report
 # plus the pack around it: snapshot / restore (the frozen data), verify (what a clean
 # clone can prove), test / lint (CI's gates, locally), up (the whole stack), and the
@@ -9,7 +9,7 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint test migrate ingest fit synth synth-figures circuits bench train ablate headline rescore eval explain finetune suite sensitivity sensitivity-m2 snapshot restore verify report demo-warm demo-check api worker up
+.PHONY: lock lint test migrate ingest fit synth synth-figures bench train ablate headline rescore eval explain finetune suite sensitivity sensitivity-m2 snapshot restore verify report demo-warm api app up
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -48,14 +48,6 @@ synth:
 # from the held-out 2026 rounds (7+). Reads rounds 7+ through heldout.py only (E-14).
 synth-figures:
 	python -m senna.physics.synth.validate
-
-# build one GLTF ribbon + metadata per ingested circuit into data/circuits/, which is
-# committed whole (INDEX decision, 22 Jul 2026). Reads Postgres for the dry-session pick
-# and the FastF1 cache for geometry — local only, never CI (needs both). Regenerate after
-# a fresh ingest, not after a refit: geometry is a function of track data, and F18 skipped
-# this target for that reason — 41 tracked files of binary churn that means nothing.
-circuits:
-	python -m senna.circuits.build
 
 # measure env steps/s across workers — the 5.6.2 number that prices the training plan.
 # narrow with WORKERS=8 or STEPS=50000; record the result and hardware in INDEX (OQ-2).
@@ -115,17 +107,18 @@ explain:
 		$(if $(RACES),--card-races $(RACES)) $(if $(SKIP_PERSIST),--skip-persist) \
 		$(if $(TRIPLET),--triplet $(TRIPLET)) $(if $(ERA),--era $(ERA))
 
-# local serving against compose postgres/redis (F10). `make api` migrates first and
-# reloads on edit; `make worker` is the same entrypoint Railway runs. Source .env
-# (or export DATABASE_URL/REDIS_URL) before either.
+# local serving against compose postgres (F10). `make api` migrates first and reloads
+# on edit; `make app` is the Streamlit interface, which talks to the API over HTTP.
+# Source .env (or export DATABASE_URL) before either. There is no worker and no queue:
+# a race runs inside the request that asks for it.
 api:
 	python -m alembic upgrade head
 	python -m uvicorn api.main:app --reload --port 8000
 
-worker:
-	./scripts/start_worker.sh
+app:
+	streamlit run app/Home.py --server.port 8501
 
-# everything at once: postgres, redis, api, worker, frontend dev server
+# everything at once: postgres, api, streamlit
 up:
 	docker compose up --build
 

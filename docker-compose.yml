@@ -17,16 +17,6 @@ services:
       timeout: 3s
       retries: 10
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
   api:
     build:
       context: .
@@ -34,63 +24,24 @@ services:
     environment:
       # service names are fine here: these values never reach a browser (5.11.2, F-27)
       DATABASE_URL: postgresql+asyncpg://senna:senna@postgres:5432/senna
-      REDIS_URL: redis://redis:6379/0
     ports:
       - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
 
-  worker:
-    # same image as the api (5.11.1); only the start command differs
+  # the Streamlit interface — the only thing a reader opens. It talks to the API over
+  # HTTP, so the research code has exactly one entry point and the interface has none
+  # of its own (MH4 on GH1's backend).
+  app:
     build:
       context: .
       dockerfile: Dockerfile.api
-    command: scripts/start_worker.sh
+    command: streamlit run app/Home.py --server.port 8501 --server.address 0.0.0.0
     environment:
-      DATABASE_URL: postgresql+asyncpg://senna:senna@postgres:5432/senna
-      REDIS_URL: redis://redis:6379/0
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    healthcheck:
-      # operational — the worker runs `rq worker`, no HTTP server; the F10 probe hit
-      # port 8000 in this container and reported unhealthy since first boot (F15).
-      # An rq worker registers itself in Redis, so registration is the honest liveness
-      # signal compose can see; count>0 suffices because compose runs exactly one.
-      test:
-        [
-          "CMD",
-          "python",
-          "-c",
-          "import os; from redis import Redis; from rq import Worker; assert Worker.count(connection=Redis.from_url(os.environ['REDIS_URL'])) > 0",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  frontend:
-    image: node:20-alpine
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-      # masks the host's mac-native node_modules; the container installs its own
-      - /app/node_modules
-    environment:
-      VITE_API_BASE: /api
-      # ws:// straight at the published api port — master spec 5.11.2 wins over the
-      # feature spec's /ws proxy idea (plan divergence 6); browser-reachable, so no
-      # Docker hostname (F-27)
-      VITE_WS_BASE: ws://localhost:8000/ws
-      # proxy target is server-side, so the compose service name is allowed (F-27)
-      API_PROXY_TARGET: http://api:8000
-    command: sh -c "npm ci && npm run dev -- --host --port 5173"
+      SENNA_API_BASE: http://api:8000/api/v1
     ports:
-      - "5173:5173"
+      - "8501:8501"
     depends_on:
       - api
 

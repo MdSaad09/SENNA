@@ -4,26 +4,6 @@
 # explicit engineering default, stated and reviewable, distinct from stylised
 # visual choices.
 
-cache:
-  ttl_days: 7 # sourced — E-15: the backstop TTL; versioned keys are the real guard
-  key_prefix: sim # sourced — 5.9.3 key scheme sim:{model_version}:{env_hash}:...
-
-channels:
-  events_prefix: events # sourced — 5.9.3: pub/sub channel events:{run_id}
-
-queue:
-  name: default # sourced — 5.9.3: "queue default RQ"
-  job_timeout_s: 600 # operational — RQ's own default is a silent 180 s; a full race
-                     # with per-lap TreeSHAP and pit-lap flip probes takes seconds,
-                     # so this is an order-of-magnitude margin, not a tuned figure
-  result_ttl_s: 86400 # operational — results live in Postgres (E-16); RQ's copy is
-                      # queue bookkeeping only, one day keeps a failed job visible
-                      # on the dashboard across a working day
-  stale_after_timeouts: 2 # operational — a queued/running row older than two job
-                          # budgets means the work horse died before it could report
-                          # (OOM, SIGKILL): its cache key is deleted and the request
-                          # re-runs rather than pointing at a corpse for 7 days (E-15)
-
 playback:
   # 1x means one wall-clock second per simulated second; each multiplier divides the
   # stored lap time. The clock reads persisted frames and never re-runs physics
@@ -49,10 +29,6 @@ cors:
 live_cards:
   flip_on_pit_only: true # sourced — 5.8.2: flip probes are "for headline decisions",
                          # and a pit call is the headline; stay-out laps skip the sweep
-
-ws:
-  status_poll_s: 0.5 # operational — store poll cadence while a run is still
-                     # queued or running; the race itself finishes in seconds
 
 weather_profiles: # sourced — the 5.9.2 request literals, mapped onto the env's two
   dry: dry        # modes. mixed and wet_risk both run the markov chain until the env

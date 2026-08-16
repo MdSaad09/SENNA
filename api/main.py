@@ -12,11 +12,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from api import routes
 from api.deps import serving_config
-from senna import config
 from senna.data.db import database_url, engine_for
 from senna.serve.loader import read_manifest
 
@@ -55,11 +53,6 @@ def create_app() -> FastAPI:
 
     for router in routes.ALL:
         app.include_router(router, prefix="/api/v1")
-
-    ribbons = config.REPO_ROOT / "data" / "circuits"
-    if ribbons.is_dir():
-        # CircuitDetail.gltf_url points here, relative on purpose (F-27)
-        app.mount("/api/v1/assets/circuits", StaticFiles(directory=ribbons))
 
     return app
 
