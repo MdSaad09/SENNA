@@ -17,10 +17,6 @@ pytestmark = [
         not os.environ.get("DATABASE_URL"),
         reason="needs Postgres; set DATABASE_URL (CI provides a service container)",
     ),
-    pytest.mark.skipif(
-        not os.environ.get("REDIS_URL"),
-        reason="needs Redis; set REDIS_URL (CI provides a service container)",
-    ),
 ]
 
 HEADLINE_MANIFEST = config.REPO_ROOT / "models" / "headline" / "manifest.json"
@@ -28,7 +24,7 @@ HEADLINE_MANIFEST = config.REPO_ROOT / "models" / "headline" / "manifest.json"
 
 @pytest.mark.slow
 @pytest.mark.skipif(not HEADLINE_MANIFEST.is_file(), reason="needs the baked headline triplet")
-def test_post_drain_and_read_back_the_whole_round_trip(client, fresh_schema, flush_redis):
+def test_post_drain_and_read_back_the_whole_round_trip(client, fresh_schema):
     run_id = create_and_drain(client, {"circuit_id": CIRCUIT, "grid_position": 5, "seed": SEED})
 
     run = client.get(f"/api/v1/simulations/{run_id}").json()
@@ -54,7 +50,7 @@ def test_post_drain_and_read_back_the_whole_round_trip(client, fresh_schema, flu
     assert all(card["honesty"]["model_version"] == baked for card in decisions)
 
 
-def test_a_missing_seed_is_drawn_server_side_and_echoed(client, fresh_schema, flush_redis):
+def test_a_missing_seed_is_drawn_server_side_and_echoed(client, fresh_schema):
     accepted = client.post("/api/v1/simulations", json={"circuit_id": CIRCUIT, "grid_position": 5})
     assert accepted.status_code < 300, accepted.text
     run = client.get(f"/api/v1/simulations/{accepted.json()['run_id']}").json()
@@ -62,20 +58,20 @@ def test_a_missing_seed_is_drawn_server_side_and_echoed(client, fresh_schema, fl
     assert isinstance(run["seed"], int)
 
 
-def test_an_unknown_circuit_is_a_404(client, fresh_schema, flush_redis):
+def test_an_unknown_circuit_is_a_404(client, fresh_schema):
     response = client.post(
         "/api/v1/simulations", json={"circuit_id": "nowhere_grand_prix", "grid_position": 5}
     )
     assert response.status_code == 404
 
 
-def test_a_2024_grid_slot_beyond_the_20_car_field_is_a_422(client, fresh_schema, flush_redis):
+def test_a_2024_grid_slot_beyond_the_20_car_field_is_a_422(client, fresh_schema):
     # physics_2024 fields 20 cars; grid_position must respect the era, not the 2026 bound
     body = {"circuit_id": CIRCUIT, "era": "2024", "grid_position": 21}
     assert client.post("/api/v1/simulations", json=body).status_code == 422
 
 
-def test_an_unknown_model_version_is_refused_at_post(client, fresh_schema, flush_redis):
+def test_an_unknown_model_version_is_refused_at_post(client, fresh_schema):
     body = {"circuit_id": CIRCUIT, "grid_position": 5,
             "model_version": "senna-ppo-000000000000-A-00000000"}
     response = client.post("/api/v1/simulations", json=body)
@@ -84,13 +80,13 @@ def test_an_unknown_model_version_is_refused_at_post(client, fresh_schema, flush
 
 
 @pytest.mark.skipif(not HEADLINE_MANIFEST.is_file(), reason="needs the baked headline triplet")
-def test_the_baked_model_version_is_accepted_explicitly(client, fresh_schema, flush_redis):
+def test_the_baked_model_version_is_accepted_explicitly(client, fresh_schema):
     baked = json.loads(HEADLINE_MANIFEST.read_text())["model_version"]
     body = {"circuit_id": CIRCUIT, "grid_position": 5, "model_version": baked, "seed": SEED}
     assert client.post("/api/v1/simulations", json=body).status_code < 300
 
 
-def test_the_requested_weather_profile_is_echoed_verbatim(client, fresh_schema, flush_redis):
+def test_the_requested_weather_profile_is_echoed_verbatim(client, fresh_schema):
     # mixed and wet_risk both map onto the markov weather engine (plan Q2); the recorded
     # profile must stay distinct or the mapping limitation becomes invisible
     for offset, profile in enumerate(("mixed", "wet_risk")):

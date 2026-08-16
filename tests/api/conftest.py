@@ -1,14 +1,12 @@
 """Shared fixtures for the F10 serving-API suite. Suite seed 1105 keeps it apart from
 fits (99), synth (271), env (512), strategy (704), train (846) and explain (933), so a
 cross-suite coincidence cannot mask a bug (5.5.5). The app lifespan owns Postgres and
-Redis, so `client` skips unless DATABASE_URL and REDIS_URL are both set (CI provides
+so `client` skips unless DATABASE_URL is set (CI provides
 service containers). Jobs drain in-process through rq's SimpleWorker, which imports
 torch and xgboost — hence the OpenMP guard before anything heavy loads.
 
 Running these with the compose stack UP needs an isolated queue: the live worker
 consumes the same rq queue name and would steal test jobs into the wrong database.
-Point the run at its own Redis db — REDIS_URL=redis://localhost:6379/1 — as CI's
-dedicated service container does implicitly (found in F15's full-suite gate).
 """
 
 import asyncio
@@ -71,42 +69,43 @@ def reset_schema() -> None:
     asyncio.run(rebuild())
 
 
-def flush_serving_keys() -> None:
-    import redis
-
-    conn = redis.Redis.from_url(os.environ["REDIS_URL"])
-    for pattern in _SERVING_KEY_PATTERNS:
-        keys = list(conn.scan_iter(match=pattern))
-        if keys:
-            conn.delete(*keys)
-    conn.close()
-
 
 def drain_queue() -> None:
-    """Run every queued job to completion in this process (rq SimpleWorker, burst)."""
-    import redis
-    from rq import Queue, SimpleWorker
+    """A no-op kept so the tests read the same as before. There is no queue on this
+    branch: POST /simulations races the run inside the request, so by the time the
+    response arrives the work the drain used to do is already done."""
 
-    from senna import config
 
-    class ThreadableWorker(SimpleWorker):
-        # signal handlers only install in the main thread, and the health-latency
-        # test drains from a thread on purpose — without this the drain dies at
-        # startup and "a job mid-flight" silently becomes "an empty queue"
-        def _install_signal_handlers(self) -> None:
-            pass
+def all_run_rows() -> list[dict]:
+    """Every simulation row, oldest first. Used where a run fails before its id reaches
+    the client — inline execution raises through the request, so the rows are the only
+    handle on what happened. Both legs of a pair are wanted and they carry different
+    purposes, so this filters on nothing."""
+    import asyncio
 
-    queue_name = config.load("serving")["queue"]["name"]
-    conn = redis.Redis.from_url(os.environ["REDIS_URL"])
-    ThreadableWorker([Queue(queue_name, connection=conn)], connection=conn).work(burst=True)
-    conn.close()
+    from sqlalchemy import select
+
+    from senna.data.db import database_url, engine_for
+    from senna.data.schema import SimulationRun
+
+    async def read() -> list[dict]:
+        engine = engine_for(database_url())
+        try:
+            async with engine.connect() as conn:
+                rows = (await conn.execute(
+                    select(SimulationRun).order_by(SimulationRun.id)
+                )).all()
+            return [{"id": r.id, "status": r.status, "summary": r.summary} for r in rows]
+        finally:
+            await engine.dispose()
+
+    return asyncio.run(read())
 
 
 def create_and_drain(client, body: dict) -> int:
-    """POST a simulation, run its job to completion, hand back the run id."""
+    """POST a simulation and hand back the run id; the race is finished on return."""
     accepted = client.post("/api/v1/simulations", json=body)
     assert accepted.status_code < 300, accepted.text
-    drain_queue()
     return accepted.json()["run_id"]
 
 
@@ -207,22 +206,48 @@ def fresh_schema():
     reset_schema()
 
 
-@pytest.fixture
-def flush_redis():
-    if not os.environ.get("REDIS_URL"):
-        pytest.skip("needs Redis; set REDIS_URL (CI provides a service container)")
-    flush_serving_keys()
-    yield
-    flush_serving_keys()
-
 
 @pytest.fixture
 def client():
-    if not (os.environ.get("DATABASE_URL") and os.environ.get("REDIS_URL")):
-        pytest.skip("the app lifespan owns Postgres and Redis; set DATABASE_URL and REDIS_URL")
+    if not os.environ.get("DATABASE_URL"):
+        pytest.skip("the app lifespan owns Postgres; set DATABASE_URL")
     from fastapi.testclient import TestClient
 
     from api.main import app
 
     with TestClient(app) as running:
         yield running
+
+
+@pytest.fixture
+def stub_pair_runner(monkeypatch):
+    """Replace the inline counterfactual race with a completion marker.
+
+    Route tests are about routing — validation, 404s, the pairing linkage, which model
+    the era-matched leg selects. Racing two grands prix inside each of them would make
+    the suite unusable and would test the runner, which tests/serve already does at its
+    own seams."""
+    import asyncio
+
+    from sqlalchemy import update
+
+    import api.routes.counterfactuals as route
+    from senna.data.db import database_url, engine_for
+    from senna.data.schema import SimulationRun
+
+    def complete(agent_id: int, baseline_id: int) -> None:
+        async def mark() -> None:
+            engine = engine_for(database_url())
+            try:
+                async with engine.begin() as conn:
+                    await conn.execute(
+                        update(SimulationRun)
+                        .where(SimulationRun.id.in_((agent_id, baseline_id)))
+                        .values(status="complete", summary={"stubbed": True})
+                    )
+            finally:
+                await engine.dispose()
+
+        asyncio.run(mark())
+
+    monkeypatch.setattr(route, "run_counterfactual", complete)

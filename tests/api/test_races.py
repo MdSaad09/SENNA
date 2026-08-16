@@ -13,10 +13,6 @@ pytestmark = [
         not os.environ.get("DATABASE_URL"),
         reason="needs Postgres; set DATABASE_URL (CI provides a service container)",
     ),
-    pytest.mark.skipif(
-        not os.environ.get("REDIS_URL"),
-        reason="needs Redis; set REDIS_URL (CI provides a service container)",
-    ),
 ]
 
 

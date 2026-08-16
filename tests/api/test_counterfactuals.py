@@ -9,19 +9,17 @@ difference between the two frame streams is strategy, never luck (plan decision 
 
 import json
 import os
-import time
 
 import pytest
-import redis
 
 from senna import config
-from senna.serve.cache import events_channel
 from senna.strategy.replay import RealStrategyReplay
 from tests.api.conftest import (
     HAM_REAL_STOPS,
     RACE_ROUND,
     RACE_SEASON,
     SEED,
+    all_run_rows,
     drain_queue,
     seed_2024_bahrain,
 )
@@ -70,10 +68,6 @@ pytestmark = [
         not os.environ.get("DATABASE_URL"),
         reason="needs Postgres; set DATABASE_URL (CI provides a service container)",
     ),
-    pytest.mark.skipif(
-        not os.environ.get("REDIS_URL"),
-        reason="needs Redis; set REDIS_URL (CI provides a service container)",
-    ),
 ]
 
 
@@ -84,24 +78,23 @@ def _post_pair(client, *, driver="HAM", seed=None):
     return client.post("/api/v1/counterfactuals", json=body)
 
 
-def test_body_validation_requires_year_round_and_driver(client, fresh_schema, flush_redis):
+def test_body_validation_requires_year_round_and_driver(client, fresh_schema):
     response = client.post("/api/v1/counterfactuals", json={"year": RACE_SEASON, "round": 1})
     assert response.status_code == 422
 
 
-def test_an_unraced_event_is_a_404(client, fresh_schema, flush_redis):
+def test_an_unraced_event_is_a_404(client, fresh_schema):
     body = {"year": 2031, "round": 9, "driver": "VER"}
     assert client.post("/api/v1/counterfactuals", json=body).status_code == 404
 
 
-def test_a_driver_not_in_the_results_is_a_404(client, fresh_schema, flush_redis):
+def test_a_driver_not_in_the_results_is_a_404(client, fresh_schema):
     seed_2024_bahrain()
     body = {"year": RACE_SEASON, "round": RACE_ROUND, "driver": "ZZZ"}
     assert client.post("/api/v1/counterfactuals", json=body).status_code == 404
 
 
-def test_a_driver_whose_laps_carry_no_stints_is_a_404_naming_the_gap(client, fresh_schema,
-                                                                     flush_redis):
+def test_a_driver_whose_laps_carry_no_stints_is_a_404_naming_the_gap(client, fresh_schema):
     # VER has a results row and laps, but the laps carry no stint column — there is
     # no real strategy to extract, and the detail must say which data is missing
     seed_2024_bahrain()
@@ -110,8 +103,7 @@ def test_a_driver_whose_laps_carry_no_stints_is_a_404_naming_the_gap(client, fre
     assert "stint" in response.json()["detail"].lower()
 
 
-def test_a_stint_without_compound_data_is_a_404_not_a_worker_crash(client, fresh_schema,
-                                                                   flush_redis):
+def test_a_stint_without_compound_data_is_a_404_not_a_worker_crash(client, fresh_schema):
     # ALO's stints carry null compounds: the replay cannot pick a tyre, and that must
     # surface at POST time with the gap named, never as a runtime pair failure
     seed_2024_bahrain()
@@ -120,8 +112,9 @@ def test_a_stint_without_compound_data_is_a_404_not_a_worker_crash(client, fresh
     assert "compound" in response.json()["detail"].lower()
 
 
-def test_the_post_answers_with_a_linked_pair_of_queued_runs(client, fresh_schema,
-                                                            flush_redis, baked_era_root):
+def test_the_post_answers_with_a_linked_and_finished_pair(
+    client, fresh_schema, stub_pair_runner, baked_era_root
+):
     seed_2024_bahrain()
     accepted = _post_pair(client)
     assert accepted.status_code == 202, accepted.text
@@ -131,8 +124,8 @@ def test_the_post_answers_with_a_linked_pair_of_queued_runs(client, fresh_schema
 
     agent = client.get(f"/api/v1/simulations/{agent_id}").json()
     baseline = client.get(f"/api/v1/simulations/{baseline_id}").json()
-    assert agent["status"] == "queued"
-    assert baseline["status"] == "queued"
+    assert agent["status"] == "complete"
+    assert baseline["status"] == "complete"
     # the pairing is persisted both ways so reloads and cache hits can recover it
     assert agent["config"]["baseline_run_id"] == baseline_id
     assert agent["config"]["pairing"] == "event_trace"
@@ -150,9 +143,9 @@ def test_the_post_answers_with_a_linked_pair_of_queued_runs(client, fresh_schema
     assert baseline["model_version"] is None  # no policy network runs the replay
 
 
-def test_counterfactual_route_degrades_to_pending_when_unbaked(client, fresh_schema,
-                                                               flush_redis,
-                                                               unbaked_era_root):
+def test_counterfactual_route_degrades_to_pending_when_unbaked(
+    client, fresh_schema, stub_pair_runner, unbaked_era_root
+):
     """The graceful degrade F14 specced and never tested: a clone whose era triplet
     has no surrogate still answers, on the headline, and says so (F-24)."""
     seed_2024_bahrain()
@@ -166,20 +159,22 @@ def test_counterfactual_route_degrades_to_pending_when_unbaked(client, fresh_sch
     assert agent["model_version"] == headline["model_version"]  # the honest fallback
 
 
-def test_a_seeded_post_dedupes_to_the_same_pair(client, fresh_schema, flush_redis):
+def test_a_seeded_post_makes_a_fresh_pair_every_time(client, fresh_schema, stub_pair_runner):
+    """The queued build deduped identical requests through the E-15 cache key. There is
+    no cache here, so the honest behaviour is a new pair per request — stated rather
+    than inherited, because a reader comparing branches will notice."""
     seed_2024_bahrain()
     first = _post_pair(client, seed=SEED)
     assert first.status_code == 202, first.text  # CounterfactualCreate accepts a seed
     again = _post_pair(client, seed=SEED)
-    assert again.status_code < 300, again.text
-    # E-15 dedupe must return the whole pair, not just the agent leg
-    assert again.json()["run_id"] == first.json()["run_id"]
-    assert again.json()["baseline_run_id"] == first.json()["baseline_run_id"]
+    assert again.status_code == 202, again.text
+    assert again.json()["run_id"] != first.json()["run_id"]
+    assert again.json()["baseline_run_id"] != first.json()["baseline_run_id"]
+
 
 
 @pytest.mark.slow
-def test_the_pair_completes_with_identical_sc_events_and_an_honest_baseline(client, fresh_schema,
-                                                                            flush_redis):
+def test_the_pair_completes_with_identical_sc_events_and_an_honest_baseline(client, fresh_schema):
     seed_2024_bahrain()
     # this test drains real jobs, so it runs against the committed models root — the
     # served version is read off the era triplet's own manifest, never a literal
@@ -232,13 +227,12 @@ def test_the_pair_completes_with_identical_sc_events_and_an_honest_baseline(clie
 
 
 @pytest.mark.slow
-def test_a_replay_failure_fails_both_runs_and_clears_the_cache(client, fresh_schema,
-                                                               flush_redis, monkeypatch):
+def test_a_replay_failure_fails_both_runs(client, fresh_schema, monkeypatch):
+    """A one-legged comparison must never look complete (F-24). The pair runs inline
+    now, so the failure surfaces on the POST itself rather than flipping a queued row
+    later — but the invariant is the same one: both rows end up failed, and neither is
+    left claiming a result the other cannot answer."""
     seed_2024_bahrain()
-    accepted = _post_pair(client, seed=SEED + 900)
-    assert accepted.status_code == 202, accepted.text
-    agent_id = accepted.json()["run_id"]
-    baseline_id = accepted.json()["baseline_run_id"]
 
     def explode(self, obs, info, mask):
         raise RuntimeError("injected replay failure")
@@ -247,26 +241,11 @@ def test_a_replay_failure_fails_both_runs_and_clears_the_cache(client, fresh_sch
     # whole pair, never leave a one-legged comparison
     monkeypatch.setattr(RealStrategyReplay, "act", explode)
 
-    conn = redis.Redis.from_url(os.environ["REDIS_URL"], decode_responses=True)
-    pubsub = conn.pubsub(ignore_subscribe_messages=True)
-    pubsub.subscribe(events_channel(agent_id), events_channel(baseline_id))
-    try:
-        drain_queue()  # in-process, so the monkeypatch reaches the job
+    with pytest.raises(RuntimeError, match="injected replay failure"):
+        _post_pair(client, seed=SEED + 900)
 
-        assert client.get(f"/api/v1/simulations/{agent_id}").json()["status"] == "failed"
-        assert client.get(f"/api/v1/simulations/{baseline_id}").json()["status"] == "failed"
-        # E-15: a failed pair must not answer a retry for seven days
-        assert not list(conn.scan_iter(match="sim:*"))
-
-        received = {}
-        deadline = time.monotonic() + 5
-        while len(received) < 2 and time.monotonic() < deadline:
-            message = pubsub.get_message(timeout=0.2)
-            if message and message["type"] == "message":
-                received[message["channel"]] = message["data"]
-        # a socket waiting on either half of the pair must be told, not left hanging
-        assert received == {events_channel(agent_id): "failed",
-                            events_channel(baseline_id): "failed"}
-    finally:
-        pubsub.close()
-        conn.close()
+    rows = all_run_rows()
+    assert len(rows) == 2, f"expected an agent and a baseline row, got {len(rows)}"
+    assert {row["status"] for row in rows} == {"failed"}
+    for row in rows:
+        assert "injected replay failure" in (row["summary"] or {}).get("error", "")

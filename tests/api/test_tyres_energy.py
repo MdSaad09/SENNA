@@ -16,10 +16,6 @@ pytestmark = [
         not os.environ.get("DATABASE_URL"),
         reason="needs Postgres; set DATABASE_URL (CI provides a service container)",
     ),
-    pytest.mark.skipif(
-        not os.environ.get("REDIS_URL"),
-        reason="needs Redis; set REDIS_URL (CI provides a service container)",
-    ),
 ]
 
 
@@ -71,8 +67,7 @@ def test_tyres_404_for_a_circuit_without_a_fitted_block(client):
 
 
 @pytest.mark.slow
-def test_energy_series_covers_every_lap_within_the_store_bounds(client, fresh_schema,
-                                                                flush_redis):
+def test_energy_series_covers_every_lap_within_the_store_bounds(client, fresh_schema):
     run_id = create_and_drain(client, {"circuit_id": CIRCUIT, "grid_position": 5, "seed": SEED})
 
     profile = client.get(f"/api/v1/energy/{run_id}").json()
@@ -90,7 +85,7 @@ def test_energy_series_covers_every_lap_within_the_store_bounds(client, fresh_sc
 
 
 @pytest.mark.slow
-def test_energy_profile_serves_usable_soc_and_modes(client, fresh_schema, flush_redis):
+def test_energy_profile_serves_usable_soc_and_modes(client, fresh_schema):
     run_id = create_and_drain(client, {"circuit_id": CIRCUIT, "grid_position": 5, "seed": SEED})
 
     profile = client.get(f"/api/v1/energy/{run_id}").json()
