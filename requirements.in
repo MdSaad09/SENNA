@@ -22,8 +22,9 @@ greenlet>=3                 # sqlalchemy's async bridge; declared because the un
                             # lock's own marker skips macOS arm64, where Saad develops
 alembic>=1.13,<2            # 5.9.1
 asyncpg>=0.29,<1            # 5.9.1
-redis>=5,<6                 # 5.9.1
-rq>=1.16,<2                 # 5.9.1: simplest adequate queue (F-26)
+streamlit>=1.36             # MH4: the interface. Reads the API over HTTP and owns no
+                            # simulation of its own; altair ships with it, which is what
+                            # the position and grip charts are drawn with
 
 wandb>=0.17                 # 5.9.1
 
@@ -32,7 +33,6 @@ pyyaml>=6                   # senna.config reads configs/*.yaml (F01); was trans
 scipy>=1.11                 # curve_fit for the degradation power law (F02); was transitive-only
 scikit-learn>=1.4           # KMeans + silhouette for T5 cluster transfer (F02); was via shap
 matplotlib>=3.8             # residual plots in the calibration notebooks (F02); was via fastf1
-pygltflib>=1.16             # writes the binary GLB track ribbons (F04, spec 5.10.1)
 ipykernel                   # the kernel the calibration notebooks run on; floats
 nbclient                    # headless notebook execution for make-style reruns; floats
 

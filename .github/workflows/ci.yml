@@ -31,6 +31,9 @@ jobs:
       - run: ruff check .
       - run: alembic upgrade head  # the migration itself must apply cleanly (F01)
       - run: alembic check  # and match schema.py — drift would hide behind create_all tests
-      - run: pytest -m "not slow"
+      # two invocations: Streamlit's AppTest leaves its runtime installed, and a
+      # SubprocVecEnv spawned afterwards re-executes a page in the child process
+      - run: pytest -m "not slow" --ignore=tests/app
+      - run: pytest -m "not slow" tests/app
       - run: make verify  # F15: the chapter regenerates byte-for-byte and no public link rots
 

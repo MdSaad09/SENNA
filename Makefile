@@ -161,8 +161,14 @@ report:
 #   DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/senna_test \
 #     REDIS_URL=redis://localhost:6379/0 make test
 # A green run with skips is not a green run; check the skip count against CI's.
+# two invocations on purpose. Streamlit's AppTest leaves its script runtime installed
+# in the process, and a SubprocVecEnv spawned afterwards re-executes a page in the child
+# — which shows up as the throughput bench dying on an EOFError with a page script
+# calling the API behind it. Isolating the page tests is cheaper and clearer than
+# fighting Streamlit's teardown, and running them here means they cannot be forgotten.
 test:
-	python -m pytest -m "not slow" -q
+	python -m pytest -m "not slow" -q --ignore=tests/app
+	python -m pytest -m "not slow" -q tests/app
 
 # freeze the ingested store (A-09): pg_dump to data/snapshot/ (gitignored) and rewrite
 # the committed MANIFEST.md — sha256, size, per-table counts. The dump rides the tagged
