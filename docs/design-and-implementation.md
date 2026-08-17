@@ -11,7 +11,7 @@ an RQ worker and a telemetry-derived circuit-ribbon pipeline — and §10.3 says
 removed here and why. Nothing in the research core differs: the same ingest, the same
 fits, the same environment, the same frozen model triplet, the same metrics.
 
-Current at commit `97c02d2`, 15 August 2026. The engine, its results and the frozen model
+Current at commit `8a1abe3`, 17 August 2026. The engine, its results and the frozen model
 triplet have been unchanged since 29 July (`79c4434`); everything since is the engine
 extraction, the full-era refit, driver identity and the dashboard restructure. The
 `v1.0.0` tag and its release are the one remaining freeze step (`docs/freeze.md`). MSc
