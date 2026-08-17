@@ -9,7 +9,7 @@
 # Recipes call `python` directly, so run these inside the project env: either
 # `uv run make <target>` (e.g. `uv run make bench`) or activate .venv first.
 
-.PHONY: lock lint test migrate ingest fit synth synth-figures bench train ablate headline rescore eval explain finetune suite sensitivity sensitivity-m2 snapshot restore verify report demo-warm api app up
+.PHONY: lock lint test migrate ingest fit synth synth-figures bench train ablate headline rescore eval explain finetune suite archetypes robustness sensitivity sensitivity-m2 snapshot restore verify report demo-warm api app up
 
 lock:
 	uv pip compile requirements.in -o requirements.txt --universal --python-version 3.11 \
@@ -137,6 +137,15 @@ suite:
 # the E-02 harvest-cap robustness pass: rolls the frozen agent at the cap it trained
 # under and at the FIA's refined figure, on the same seeds, and writes the store row the
 # report renders. CIRCUITS= narrows it (a subset writes to store/subset, never the root).
+# the three-archetype view of the published metrics (a slice, never a re-run) and the
+# decision-level robustness arms. archetypes needs only the committed store; robustness
+# needs models/headline because it races the frozen agent under perturbed physics.
+archetypes:
+	python -m senna.eval.archetypes
+
+robustness:
+	OMP_NUM_THREADS=1 python -m senna.eval.robustness --seeds $(if $(SEEDS),$(SEEDS),20)
+
 sensitivity:
 	OMP_NUM_THREADS=1 python -m senna.eval.sensitivity $(if $(CIRCUITS),--circuits $(CIRCUITS))
 

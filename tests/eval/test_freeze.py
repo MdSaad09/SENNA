@@ -24,9 +24,11 @@ HEADLINE_MANIFEST = config.REPO_ROOT / "models/headline/manifest.json"
 ERA2024_MANIFEST = config.REPO_ROOT / "models/era2024/manifest.json"
 FREEZE_RUNBOOK = config.REPO_ROOT / "docs/freeze.md"
 
-# these two fingerprint their own overlay inputs at run time (sensitivity.py) rather
-# than copying the training-time manifest hash, so they chain differently below
-_OWN_HASH_FILES = {"harvest_sensitivity", "m2_sensitivity"}
+# these fingerprint their own overlay inputs at run time rather than copying the
+# training-time manifest hash, so they chain differently below. They are the studies that
+# mutate a config on purpose: claiming the frozen fingerprint would say the numbers came
+# from configs they deliberately changed.
+_OWN_HASH_FILES = {"harvest_sensitivity", "m2_sensitivity", "robustness"}
 
 
 def test_report_reproduces_committed_doc(tmp_path):
@@ -84,5 +86,17 @@ def test_freeze_chain_is_internally_consistent():
 
     m2s = json.loads((STORE / "m2_sensitivity.json").read_text())["envelope"]
     assert m2s["config_hash"] == config.fingerprint(M2_CONFIG_FILES)
+
     assert m2s["seeds_fingerprint"] == seeds_now
     assert m2s["model_versions"]["era2024"] == era2024["model_version"]
+
+    # the robustness arms mutate physics_params on purpose, so they chain the same way:
+    # their own overlay inputs, the frozen agent they race, and the frozen seed bank
+    robustness_path = STORE / "robustness.json"
+    if robustness_path.is_file():
+        from senna.eval.robustness import ROBUSTNESS_CONFIG_FILES
+
+        robustness = json.loads(robustness_path.read_text())["envelope"]
+        assert robustness["config_hash"] == config.fingerprint(ROBUSTNESS_CONFIG_FILES)
+        assert robustness["model_versions"]["headline"] == headline["model_version"]
+        assert robustness["seeds_fingerprint"] == seeds_now

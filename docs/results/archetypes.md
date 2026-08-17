@@ -163,3 +163,52 @@ result than +2.279 places. It is the one the evidence supports.
   different experiment from the one these numbers came from.
 - **Human-strategist comparison beyond M2's ten races.** Ten is what the counterfactual
   bank holds.
+
+## Strategy robustness — does the agent read the physics, or this physics?
+
+An agent that memorised one parameter set would make the same call whatever you did to
+the world. One that learned the structure of the problem should move its stop the way a
+strategist would predict when you change what a stop is worth.
+
+Two knobs, each moved up and down, on the three archetypes. Each arm is a copy of the
+config tree with one field changed and nothing else, raced on the **published test bank's
+own seeds** — the same races the reported metrics came from, so a shifted stop is the
+perturbation talking rather than a different draw. 60 races per arm.
+
+| Arm | Predicted | Moved earlier | Moved later | Unchanged | Agreed with prediction |
+|---|---|---|---|---|---|
+| Tyre degradation +10% | earlier | 6 | 0 | 54 | **6 of 6** |
+| Tyre degradation −10% | later | 2 | 8 | 50 | **8 of 10** |
+| Pit loss +2 s | later | 0 | 0 | **60** | — |
+| Pit loss −2 s | earlier | 0 | 0 | **60** | — |
+
+Reproduce with `python -m senna.eval.robustness --seeds 20`.
+
+**Degradation: the right direction, rarely.** When the agent's stop moves under a
+degradation change it moves the way it should — 14 of 16 moves across the two arms — which
+is evidence it is reading tyre state rather than replaying a fixed plan. But the stop is
+unchanged in roughly 85% of races. A 10% change in wear rate is mostly invisible in its
+behaviour.
+
+**Pit loss: no response at all, and the reason is architectural.** Two seconds on a
+roughly 24-second stop — about 8%, and the difference between a clean stop and a fumbled
+one — did not move the first stop in a single race out of 60, in either direction.
+
+That is not the agent ignoring evidence. **Pit loss is not in the observation.** The
+32-dimensional observation (`senna/explain/features.py`) carries `pit_count_norm`, how
+many stops have been made, and `pit_lane_open`, whether the lane is available. It carries
+nothing about what a stop *costs*. The environment applies a per-circuit pit loss to the
+lap time, and the policy never sees the number, so it cannot condition on it. Whatever
+circuit-specific pit behaviour the agent has, it learned through features that correlate
+with pit loss rather than from pit loss itself.
+
+This is the most useful thing the study found, and it is a limitation of the design rather
+than of the training: **an agent asked to decide when a stop is worth taking was never
+told what a stop costs.** The obvious next step is to add pit loss to the observation and
+retrain, which would test whether the insensitivity is the missing input or something
+deeper. That is out of scope here — the frozen triplet is what every reported number is
+measured on, and changing the observation invalidates all of them.
+
+Read this beside the conditional-advantage result above. Both point the same way: the
+agent's competence is narrower than the headline suggests. It reads tyre state, in the
+right direction, some of the time. It cannot read the cost of acting on it.
