@@ -195,8 +195,8 @@ restore:
 # page carries a rotten link. CI runs this same target (F15 gate).
 verify:
 	python -m pytest tests/eval/test_freeze.py -q
-	python scripts/check_links.py README.md INDEX.md docs/deploy.md docs/freeze.md \
-		docs/demo/script.md data/snapshot/MANIFEST.md
+	python scripts/check_links.py README.md INDEX.md docs/freeze.md \
+		docs/GETTING-STARTED.md docs/demo/script.md data/snapshot/MANIFEST.md
 
 # pre-run the demo simulations against the local stack so the 5.13 deep link opens
 # mid-race instead of blocking on a cold simulation (E-15: the warm run IS the run)

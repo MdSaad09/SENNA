@@ -10,16 +10,19 @@ Formula 1 companies, the FIA or any team.*
 
 ## See it run
 
-    docker compose up --build     # postgres, redis, api, worker, frontend — from a clean clone
-    make demo-warm                # pre-runs the demo simulations
-    open "http://localhost:5173/strategy/live?circuit=bahrain_grand_prix&seed=55&lap=8&speed=30&year=2024&round=1&driver=VER"
+    docker compose up --build     # postgres, api, streamlit — from a clean clone
+    open http://localhost:8501
 
-That link opens mid-race: 22 cars on a telemetry-built track ribbon, the agent's
-state of charge draining and refilling, and two laps later a decision card with
-the SHAP drivers behind the pit call. One click to Counterfactual races the
-agent against VER's actual 2024 Bahrain strategy in the same simulator; one
-click to Energy shows it banking charge before an attack. The serving stack is
-frozen models baked into the image — no training code runs anywhere near it.
+Pick a circuit, a grid slot and a seed, and the agent races it — 57 laps of
+Bahrain in about eighteen seconds, decided lap by lap inside the request that
+asked for them. What comes back is the strategy as driven: the stint plan, the
+pit laps, the classification. Explainability opens any one call in that race,
+hardest evidence first — the reward decomposition, then the alternatives the
+policy weighed, and SHAP last and collapsed, because SHAP here explains a
+surrogate whose agreement with the policy is measured (99.7% on pit calls)
+rather than assumed. Playback walks the stored frames a lap at a time, 22 cars
+re-sorting as they go. The serving stack is frozen models baked into the image;
+no training code runs near it.
 
 ## Why this might interest you
 
@@ -82,8 +85,8 @@ Three tiers, by what you have:
 - **A clean clone, nothing else**: `make verify` — the results chapter
   regenerates byte-for-byte and the freeze chain checks out. `make report`
   rewrites it.
-- **Docker**: the full serving stack and the demo, as above. The frozen models,
-  surrogates and track ribbons are committed and baked in.
+- **Docker**: the serving stack and the interface, as above. The frozen triplets
+  and the explaining surrogates are committed and baked in.
 - **The full pipeline** (local, hours): `make ingest` (FastF1/OpenF1 into
   Postgres), `make fit`, `make synth`, `make train`, `make eval`,
   `make report`. Seeds come from the frozen manifest in `configs/seeds.yaml`;
@@ -101,8 +104,8 @@ is absent: the M2 counterfactual battery and its coefficient sensitivity
 ## The map
 
     senna/       data ingest, physics fits, synthetic-2026 generator, F1RaceEnv, training, explainability
-    api/ worker/ FastAPI + WebSocket streaming; RQ worker running the frozen triplets
-    frontend/    React 18 + react-three-fiber, six views
+    api/         FastAPI over the frozen triplets; a race runs inline, on a thread
+    app/         the Streamlit interface, three pages, owning no simulation of its own
     configs/     every constant, each with a provenance comment — the anti-black-box artifact
     docs/spec/   the master specification, split per section; docs/results/ the generated evidence
     docs/demo/   the demo scripts; docs/freeze.md what the release tag pins

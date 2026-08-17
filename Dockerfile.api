@@ -7,29 +7,35 @@ RUN apt-get update \
 
 WORKDIR /app
 
+# pyproject sets package = false: senna, api and app are never installed, they resolve
+# from the repo root being on sys.path. uvicorn puts the working directory there and
+# pytest has pythonpath = ["."], but `streamlit run app/Home.py` adds the *script's*
+# directory instead — /app/app — so the app service cannot import `app` or `senna`
+# without this. One env var covers both entrypoints.
+ENV PYTHONPATH=/app
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY api/ api/
-COPY worker/ worker/
+COPY app/ app/
 COPY senna/ senna/
 COPY configs/ configs/
 COPY migrations/ migrations/
 COPY alembic.ini .
 COPY scripts/ scripts/
 # the frozen serving artifacts bake in (F-26): Railway filesystems are ephemeral,
-# so a redeploy must reproduce the exact triplet, surrogate and ribbons from the
-# repo — nothing is ever mounted. senna.config resolves REPO_ROOT to /app, so the
+# so a redeploy must reproduce the exact triplet and surrogate from the repo —
+# nothing is ever mounted. senna.config resolves REPO_ROOT to /app, so the
 # loader finds these at /app/models without any env override.
 COPY models/headline/ models/headline/
 # the era-matched 2024 triplet serves the counterfactual view (F-24); committed in
 # F14 but only baked here in F15 — an image without it can never clear pending-F14
 COPY models/era2024/ models/era2024/
 COPY models/explain/ models/explain/
-COPY data/circuits/ data/circuits/
 
-RUN chmod +x scripts/start_api.sh scripts/start_worker.sh
+RUN chmod +x scripts/start_api.sh
 
 EXPOSE 8000
-# the worker runs this same image with scripts/start_worker.sh (5.11.1)
+# the streamlit service runs this same image with its own command (docker-compose.yml)
 CMD ["scripts/start_api.sh"]
