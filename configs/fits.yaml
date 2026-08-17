@@ -44,6 +44,12 @@ degradation:
                              #   superlinear wear; inside the bounds by design
   curve_maxfev: 10000        # stylised — scipy default is too small for the
                              #   flat-residual circuits that end at a = 0
+  signal_floor_frac_of_s_ref: 0.5  # operational — F24: a curve whose predicted delta at
+                             #   its own max observed age is under half the circuit's
+                             #   clean-lap sigma (s_ref_s) is indistinguishable from lap
+                             #   noise over the range the data covers. Below it the fit
+                             #   is stored unidentified and repaired from the pooled
+                             #   curve — never serialised as a zero (the run-491 defect)
 
 driver_identity:             # F17 — the gates on what may be said about a named driver
   min_laps_for_seat_pace: 30 # stylised — clean laps a driver needs at one circuit-era

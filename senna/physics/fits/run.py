@@ -23,7 +23,12 @@ from senna import config
 from senna.data.db import database_url, engine_for
 from senna.physics.fits import frames
 from senna.physics.fits.clusters import assign_clusters, transfer_degradation
-from senna.physics.fits.degradation import fit_degradation
+from senna.physics.fits.degradation import (
+    fit_degradation,
+    fit_pooled_degradation,
+    pooled_curve_for,
+    repair_degradation,
+)
 from senna.physics.fits.energy import session_energy_frame
 from senna.physics.fits.fuel import session_fuel
 from senna.physics.fits.gate import (
@@ -189,6 +194,10 @@ class _Battery:
         # layer below "is the season in the store" (gate.assert_pace_season_coverage)
         self.pace_seasons: dict[str, set[int]] = {}
         self.deg: dict[tuple[str, str], dict] = {}
+        # era -> compound -> pooled DegradationFit, and the F24 repair record:
+        # (slug, era, compound) -> "pooled" | "prior_cross_era" for every substitution
+        self.pooled_deg: dict[str, dict] = {}
+        self.deg_sources: dict[tuple[str, str, str], str] = {}
         # era -> driver code -> DegStyleFit, pooled over every circuit of that era: a
         # per-circuit style would be fitting noise, and the multiplier form pools cleanly
         self.deg_style: dict[str, dict] = {}
@@ -273,11 +282,14 @@ class _Battery:
             [deg_cfg["curve_bounds"]["a"][0], deg_cfg["curve_bounds"]["b"][0]],
             [deg_cfg["curve_bounds"]["a"][1], deg_cfg["curve_bounds"]["b"][1]],
         )
+        floor_frac = float(deg_cfg["signal_floor_frac_of_s_ref"])
         for (slug, era), residuals in self.residuals.items():
+            joint = self.joint[(slug, era)]
             self.deg[(slug, era)] = fit_degradation(
                 residuals,
-                self.joint[(slug, era)].t0_s,
+                joint.t0_s,
                 bounds=bounds,
+                signal_floor_s=floor_frac * joint.s_ref_s,
                 min_laps=deg_cfg["min_laps"],
                 min_stints=deg_cfg["min_stints"],
                 min_drivers=deg_cfg["min_drivers"],
@@ -286,6 +298,40 @@ class _Battery:
                 maxfev=deg_cfg["curve_maxfev"],
             )
             log.info("degradation %s/%s: %s", slug, era, sorted(self.deg[(slug, era)]))
+        self._repair_degradation(bounds, deg_cfg, floor_frac)
+
+    def _repair_degradation(self, bounds, deg_cfg: dict, floor_frac: float) -> None:
+        """The F24 ladder: pool every circuit's fractional residuals per era, then
+        substitute each unidentified circuit fit from its era's pooled curve or the
+        other era's. A bound-clipped a = 0 was stored as a measurement for two
+        evaluation cycles, and the trained policy found the free tyres (M9)."""
+        rows_by_era: dict[str, list] = {}
+        floors_by_era: dict[str, list] = {}
+        for (slug, era), residuals in self.residuals.items():
+            joint = self.joint[(slug, era)]
+            rows_by_era.setdefault(era, []).append(
+                residuals.assign(frac_residual=residuals["pace_residual_s"] / joint.t0_s)
+            )
+            floors_by_era.setdefault(era, []).append(floor_frac * joint.s_ref_s / joint.t0_s)
+        self.pooled_deg = {
+            era: fit_pooled_degradation(
+                pd.concat(rows, ignore_index=True),
+                bounds=bounds,
+                p0=deg_cfg["curve_p0"],
+                maxfev=deg_cfg["curve_maxfev"],
+                # the median circuit's floor: one pooled curve cannot honour 25
+                # per-circuit sigmas, and the median is robust to the outlier laps
+                signal_floor_frac=float(np.median(floors_by_era[era])),
+            )
+            for era, rows in rows_by_era.items()
+        }
+        for era, pooled in sorted(self.pooled_deg.items()):
+            summary = {c: f"a={fit.a:.6f} b={fit.b:.3f} id={fit.identified}"
+                       for c, fit in sorted(pooled.items())}
+            log.info("degradation pooled %s: %s", era, summary)
+        self.deg, self.deg_sources = repair_degradation(self.deg, self.pooled_deg)
+        for (slug, era, compound), source in sorted(self.deg_sources.items()):
+            log.info("degradation repair %s/%s %s <- %s", slug, era, compound, source)
 
     async def _run_tyre_style(self) -> None:
         if not self.deg:
@@ -446,22 +492,34 @@ class _Battery:
             ]
             transferred = {}
             for compound in SLICKS:
+                # F24: a donor must have measured wear in both eras — a repaired
+                # (pooled-substituted) fit may race, but it may not donate; ratio
+                # transfer through an unidentified curve just launders the clip
                 donors = [
                     mate
                     for mate in mates
-                    if compound in self.deg[(mate, "2026")]
-                    and compound in self.deg.get((mate, "2024"), {})
+                    if _identified(self.deg[(mate, "2026")], compound)
+                    and _identified(self.deg.get((mate, "2024"), {}), compound)
                 ]
                 target_2024 = self.deg.get((slug, "2024"), {}).get(compound)
-                if not donors or target_2024 is None:
+                if donors and target_2024 is not None and target_2024.a > 0:
+                    transferred[compound] = transfer_degradation(
+                        target_era2024_a=target_2024.a,
+                        donor_era2024_a=self._donor_mean(donors, "2024", compound, "a"),
+                        donor_2026_a=self._donor_mean(donors, "2026", compound, "a"),
+                        donor_2026_b=self._donor_mean(donors, "2026", compound, "b"),
+                        source_circuit=",".join(sorted(donors)),
+                    )
                     continue
-                transferred[compound] = transfer_degradation(
-                    target_era2024_a=target_2024.a,
-                    donor_era2024_a=self._donor_mean(donors, "2024", compound, "a"),
-                    donor_2026_a=self._donor_mean(donors, "2026", compound, "a"),
-                    donor_2026_b=self._donor_mean(donors, "2026", compound, "b"),
-                    source_circuit=",".join(sorted(donors)),
-                )
+                rung = pooled_curve_for("2026", compound, self.pooled_deg)
+                if rung is None:
+                    log.info("clusters: %s 2026 %s — no identified donor and no pooled "
+                             "curve; left unfitted for the mask (F-16)", slug, compound)
+                    continue
+                source, pooled = rung
+                transferred[compound] = {
+                    "a": pooled.a, "b": pooled.b, "low_confidence": True, "source": source,
+                }
             if transferred:
                 self.transferred[(slug, "2026")] = transferred
                 log.info("clusters: %s 2026 degradation transferred from %s", slug,
@@ -490,7 +548,7 @@ class _Battery:
         for slug in self._slugs():
             circuit: dict = {}
             _put_joint(circuit, slug, self.joint, grade_c_pool_eras)
-            _put_degradation(circuit, slug, self.deg, self.transferred)
+            _put_degradation(circuit, slug, self.deg, self.transferred, self.deg_sources)
             if slug in self.hazards:
                 circuit["hazards"] = {
                     kind: {
@@ -752,31 +810,56 @@ def _put_joint(circuit: dict, slug: str, joint: dict, grade_c_pool_eras: set[str
         }
 
 
-def _put_degradation(circuit: dict, slug: str, deg: dict, transferred: dict) -> None:
+def _identified(compounds: dict, compound: str) -> bool:
+    fit = compounds.get(compound)
+    return fit is not None and fit.identified
+
+
+def _put_degradation(
+    circuit: dict, slug: str, deg: dict, transferred: dict, sources: dict
+) -> None:
     for (fit_slug, era), compounds in deg.items():
         if fit_slug != slug:
             continue
-        circuit.setdefault("degradation", {})[era] = {
-            compound: {
+        rows = {}
+        for compound, fit in compounds.items():
+            source = sources.get((fit_slug, era, compound))
+            if not fit.identified and source is None:
+                # the F24 write gate: a bound-clip is never serialised as a curve.
+                # The compound is simply not fitted here, and the mask takes it
+                # (F-16) — a written zero is how run 491's free tyres happened.
+                log.info("degradation %s/%s %s: unidentified and unrepaired — not written",
+                         fit_slug, era, compound)
+                continue
+            row = {
                 "a": (round(fit.a, 6), DEG_NB),
                 "b": (round(fit.b, 4), DEG_NB),
                 "n_laps": (fit.n_laps, DEG_NB),
                 "max_age_seen": (fit.max_age_seen, DEG_NB),
                 "low_confidence": (fit.low_confidence, DEG_NB),
+                "identified": (fit.identified, DEG_NB + " — F24 signal floor"),
                 # source_circuit appears only on cluster transfers (T5)
             }
-            for compound, fit in compounds.items()
-        }
+            if source is not None:
+                row["source"] = (source, DEG_NB + " — F24 repair ladder")
+            rows[compound] = row
+        circuit.setdefault("degradation", {})[era] = rows
     if (slug, "2026") in transferred:
-        circuit.setdefault("degradation", {})["2026"] = {
-            compound: {
-                "a": (round(row["a"], 6), DEG_NB + " — cluster transfer (T5)"),
-                "b": (round(row["b"], 4), DEG_NB + " — cluster transfer (T5)"),
+        rows = {}
+        for compound, row in transferred[(slug, "2026")].items():
+            if "source_circuit" in row:
+                origin = DEG_NB + " — cluster transfer (T5)"
+                provenance = {"source_circuit": (row["source_circuit"], DEG_NB)}
+            else:
+                origin = DEG_NB + " — F24 pooled fallback (no identified donor)"
+                provenance = {"source": (row["source"], origin)}
+            rows[compound] = {
+                "a": (round(row["a"], 6), origin),
+                "b": (round(row["b"], 4), origin),
                 "low_confidence": (True, DEG_NB),
-                "source_circuit": (row["source_circuit"], DEG_NB),
+                **provenance,
             }
-            for compound, row in transferred[(slug, "2026")].items()
-        }
+        circuit.setdefault("degradation", {})["2026"] = rows
 
 
 def _cli() -> argparse.ArgumentParser:

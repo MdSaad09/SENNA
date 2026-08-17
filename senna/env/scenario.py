@@ -106,10 +106,20 @@ def build_scenario(
 
     offsets = jp["compound_offsets_s"]
     age_fallback = config.get(envc, "obs.tyre_age_norm_laps")
-    available = tuple(c for c in SLICKS if c in deg)
-    if len(available) < 2:
+    # F24 backstop: a slick with zero fitted wear never reaches the mask — free
+    # tyres are how run 491 pitted on lap 3 and ran one set 55 laps to P2. The
+    # allow flag is true only in tests/env/fixtures/pinned_configs, where the F16
+    # golden photograph must keep serving the world exactly as it ran.
+    allow_zero_deg = bool(config.get(envc, "race.allow_zero_deg_compounds"))
+    available = tuple(
+        c for c in SLICKS
+        if c in deg and (allow_zero_deg or float(deg[c]["a"]) > 0.0)
+    )
+    min_dry = int(config.get(envc, "race.min_dry_compounds"))
+    if len(available) < min_dry:
         raise ValueError(
-            f"{circuit} ({era}): only {available} — cannot honour the two-compound rule"
+            f"{circuit} ({era}): only {available} wearing dry compounds — the "
+            "two-compound rule (F-20) is unsatisfiable below race.min_dry_compounds"
         )
     deg_a = {c: float(deg[c]["a"]) for c in available}
     deg_b = {c: float(deg[c]["b"]) for c in available}
