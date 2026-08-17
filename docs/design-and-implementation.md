@@ -1,9 +1,15 @@
 # SENNA — design and implementation
 
 A Formula 1 race-strategy engine for the 2026 regulations: a lap-level simulator, a
-masked reinforcement-learning agent, a SHAP explanation layer, a three-tab dashboard over
-the six specified views, and an eleven-metric evaluation suite that reproduces from a
-clean clone.
+masked reinforcement-learning agent, a SHAP explanation layer, a Streamlit interface
+and an evaluation suite that reproduces from a clean clone.
+
+**This is the dissertation build.** It is the system the proposal described, scoped to
+what the dissertation claims: Streamlit over FastAPI, no queue, no 3D. A fuller build
+exists on `main` — a React and React-Three-Fiber dashboard, a WebSocket playback clock,
+an RQ worker and a telemetry-derived circuit-ribbon pipeline — and §10.3 says what was
+removed here and why. Nothing in the research core differs: the same ingest, the same
+fits, the same environment, the same frozen model triplet, the same metrics.
 
 Current at commit `97c02d2`, 15 August 2026. The engine, its results and the frozen model
 triplet have been unchanged since 29 July (`79c4434`); everything since is the engine
@@ -99,7 +105,7 @@ Ten subsystems, sixteen delivered features, one frozen codebase:
 | Opponents | Three drawn rival archetypes, three scripted baselines, and a dynamic-programming oracle |
 | Training | MaskablePPO through a competence-gated curriculum, plus four ablation arms |
 | Explainability | Distilled surrogates, TreeSHAP attributions, counterfactual flip probes and decision cards |
-| Serving + UI | FastAPI, an RQ worker, a WebSocket playback clock, and a six-view React/R3F dashboard |
+| Serving + UI | FastAPI racing inline, and a three-page Streamlit interface over it |
 | Evaluation | Eleven metrics on held-out ground, era-matched counterfactuals, and a reproducible report |
 
 Roughly 16,200 lines of Python across the package, API and worker; 7,900 lines of
@@ -120,7 +126,7 @@ Four things this system does that a template project would not:
    under a split frozen before any fit existed — which is how the synthetic layer's
    failure became a measurable result rather than an unexamined assumption.
 4. **A variance decomposition** separating what the event draw explains from what the
-   decisions explain: 75.8% of finishing-position variance is the draw, a conservative
+   decisions explain: 78.6% of finishing-position variance is the draw, a conservative
    lower bound.
 
 ---
@@ -218,8 +224,6 @@ before it.
 FastF1/Jolpica ─┐
                 ├─► ingest ──► Postgres ──┬─► physics fits ──► physics_params.yaml ─┐
 OpenF1 ─────────┘                         │                                          │
-                                          ├─► circuit ribbons ──► data/circuits/*.glb │
-                                          │                                          │
                                           └─► synthetic 2026 ──► transforms.yaml ◄────┤
                                                                         │             │
                                                                         ▼             │
@@ -231,9 +235,9 @@ OpenF1 ─────────┘                         │               
                                     │                              oracle             │
                                     ▼                                                 │
                           frozen triplet ──► SHAP surrogate ──► decision cards        │
-                                    │                │                                │
-                                    ▼                ▼                                │
-                            FastAPI + RQ worker + WebSocket ──► React/R3F dashboard   │
+                                    │                                                 │
+                                    ▼                                                 │
+                            FastAPI ──► Streamlit interface                            │
                                     │                                                 │
                                     └──────────► evaluation suite (M1–M11) ───────────┘
                                                           │
@@ -275,16 +279,19 @@ browser ──HTTP/WS──► api (FastAPI, uvicorn)
                                 └──► postgres (frames + cards, one transaction)
 ```
 
-FastAPI runs every request handler and every open WebSocket on one asyncio event loop.
-A 70-lap simulation inside a handler would freeze every connected stream and the health
-endpoint with it, so simulations run in the RQ worker and never in the request path
-(`F-26`). Even yaml reads leave the loop through `run_in_threadpool`.
+FastAPI runs every request handler on one asyncio event loop, so a 70-lap simulation
+executed on that loop would freeze the health endpoint and every other reader with it.
+The queued build answered this by moving simulations into a separate worker process
+(`F-26`); this build answers it by racing them on a thread through `run_in_threadpool`,
+which keeps the loop free without a queue, a broker or a second process. Even yaml reads
+leave the loop the same way. It is a weaker guarantee than process isolation — a thread
+shares the interpreter — and it is measured rather than asserted: a health-latency test
+probes `/health` while a race is mid-request and holds it to the configured p95.
 
-The WebSocket is not a live feed. The worker persists the whole race in one transaction
-before any client connects; the socket is a playback clock over stored rows (`E-16`).
-That makes pause, scrub and reconnect ordinary reads — a seek is a list index move, and
-a dropped connection needs no recovery because the next socket replays from the same
-store.
+Playback is the reader's problem, not the server's. The race is persisted in one
+transaction before the response returns, so every subsequent view of it — the strategy
+page, the explanation page, the lap-by-lap advance — is an ordinary read of stored rows
+(`E-16`). A seek is a list index move and there is no stream to drop.
 
 The worker runs RQ's `SimpleWorker` rather than the default forking worker. The default
 forks a work horse per job, which discards the model cache and re-imports torch for
@@ -914,109 +921,100 @@ decision had the two views disagreeing about direction.
 
 ### 5.10 Serving
 
-**Role.** Give the simulator an address: validate and enqueue in the API, simulate in the
-worker, stream from storage.
+**Role.** Give the simulator an address: validate in the API, race it, read it back.
 
-Design decisions are covered in §3.2 (the process split, the playback clock, the worker
-topology). Three more are worth stating.
+**The race runs inside the request.** `POST /simulations` validates the body, draws a seed
+if none was given, writes the run row, and races the whole grand prix on a worker thread
+before answering — about eighteen seconds, measured. There is no queue, no Redis and no
+separate worker process, which takes the deployment from five services to three and takes
+two failure modes out of the reproduction story. The cost is a request that holds for
+eighteen seconds; a research interface can wait, and `/health` staying responsive under
+that load is measured rather than assumed, because the only thing protecting it is that
+the racing happens on a thread rather than on the event loop.
 
-**The cache key gained a scenario digest, recorded as a divergence.** The specification's
-literal key is model version, environment hash and seed — which means Bahrain and Monaco
-on seed 42 collide into one cached race. The shipped key adds a digest over the scenario
-fields plus a purpose discriminator, so a counterfactual leg can never satisfy a plain
-simulation request. The model version and environment hash come from the served triplet's
-manifest and are never recomputed at serve time, so a retrain cold-starts its own cache
-namespace by construction rather than by a flush someone must remember (`E-15`).
+**Removing the cache removed a hazard rather than a feature.** The queued build cached
+completed simulations under a key carrying the model version and the environment hash,
+precisely so that a retrained model could not serve a previous model's decisions to the
+SHAP panel (`E-15`). With no cache there is nothing to go stale: every request runs its
+own race. The environment hash is still written to the run row, as provenance rather than
+as a key.
 
-**A cache hit is checked, never trusted.** A queued or running row older than twice the job
-timeout is treated as a work horse that died, its key deleted, and the run re-queued.
-Without that, the key answers with a corpse for seven days and the WebSocket waits forever.
-Concurrent identical requests are resolved by an atomic Redis claim rather than a lock, so
-double-clicking costs one insert and zero races.
+One further decision is worth stating.
 
 **The era registry degrades loudly.** Weights without a fitted surrogate are treated as
 "not baked yet", because a missing surrogate would fail the pairing check mid-job and turn
 a graceful fallback into a broken endpoint. Until the era-matched surrogate existed, the
 counterfactual view served the frozen 2026 model and wrote `pending-F14` into the run
-config, which the dashboard rendered as a visible caveat.
+config, which the interface renders as a visible caveat.
 
-**Outcome.** Twelve REST endpoints plus one WebSocket across eight route modules; 84 tests
-across the API and serving packages, including a health-latency test that measures the
-250 ms threshold directly while a stream is being consumed and a worker drains a full
-SHAP-per-lap race in-process.
+**Outcome.** Twelve REST endpoints across eight route modules; 41 API tests, none skipped,
+including a health-latency test that holds `/health` to its 250 ms p95 while a full
+SHAP-per-lap race runs inside a request in the same process. That suite previously gated
+on `REDIS_URL` as well as `DATABASE_URL`, so a run without Redis skipped 39 of 45 tests
+and reported green — the same trap as §7.2's vacuous test, found by removing the gate.
 
-### 5.11 The dashboard
+### 5.11 The interface
 
-**Role.** The only part of the system an examiner watches rather than reads. Three tabs —
-Strategy, Circuit, Analysis — carrying the six specified views as sections (circuit explorer,
-race replay, energy, tyre surface, live simulation, counterfactual) plus two the restructure
-added: a post-hoc strategy page and a decisions page.
+**Role.** The only part of the system a reader operates rather than reads. Three Streamlit
+pages: configure and run a race, ask why a call was made, watch the race unfold.
 
-**The tabs are a consequence, not a taste call.** 5.10.3 allows one mounted canvas, so the
-six views could not fold into one scrolling page — the boundary between two canvas sections
-crossing the viewport would co-mount both. Sections on a rail is what a one-canvas rule
-permits, and the six pre-restructure paths survive as query-preserving redirects because the
-demo deep links point at them.
+**Streamlit over a decoupled frontend, which is the proposal's own order.** MH4 specified a
+Streamlit dashboard as the must-have and put a FastAPI backend with a React frontend in the
+stretch scope. This build delivers MH4's interface on GH1's backend: Streamlit calls the API
+over HTTP and owns no simulation of its own, so the research code has exactly one entry
+point and the interface has none. The reader's browser never talks to anything but
+Streamlit, which is also what keeps a Docker hostname out of a client-reachable URL
+(`F-27`).
 
-**Two constraints shape every file.** The frame budget, which in React terms means nothing
-that updates at 60 fps may be React; and the interpretability contract crossing the browser
-boundary, which means every number on screen arrived from an API response and the dev
-overlay traces it back to the response that carried it.
+**Post-hoc by design.** The interface offers no plan and no score before a race, because the
+agent has neither — it decides lap by lap inside the simulator. The reference mockups in the
+proposal show an "Optimal Strategy" scored out of 100 alongside ranked alternatives; that is
+a picture of a planner, and building it would mean either building a planner or printing a
+number nothing in this system produces. The page runs a race and then reports it.
 
-**Nothing re-renders at frame rate.** Per-frame data mutates through refs, the render loop
-reads state through a non-subscribing getter, and the transport slider tracks the playhead
-through a transient subscription that writes the DOM value directly. React renders at lap
-rate, driven by selectors whose output changes once per lap.
+**Position only in the headline, for a specific reason.** `summary.points` is real but
+RL-scaled: `terminal_points` divides the FIA table by `points_divisor` 2.5, so a P2 finish
+serves as 7.2. Printing that reads as wrong to anyone who knows the sport, and deriving 18
+in the browser would put a computed number on a screen whose rule is that figures come from
+the API. The headline is the grid slot and the finishing position, both served.
 
-**Twenty-two cars in three draw calls.** One instanced mesh for bodies with per-instance
-colour, one for the detail fin, and one quad instanced mesh whose per-instance UV offset
-picks each car's code out of a single canvas atlas. Draw calls, not triangles, kill a frame
-budget. DOM labels are capped at four — podium plus selection — with everyone else on
-instanced sprite text, and the cap is a pure function so a property test can pin it.
+**The pit table has four columns and not five.** The proposal's mockup carries a service-time
+column reading 2.4 s. `senna/env/engine.py` computes a per-stop `pit_time_s`, folds it into
+the lap time and never copies it into `info`, so no such number is served. A test pins the
+column set, because a plausible figure in that column is the easiest kind of fabrication to
+introduce by accident.
 
-**One canvas per route, enforced architecturally** (`F-28`). The shell owns no canvas, each
-canvas view owns exactly one, and the router swaps route elements in a single commit — two
-canvases would require two mounted routes, which the router cannot do. The counterfactual's
-split screen is the interesting exception: one canvas behind two pane divs, each pane
-scissor-rendering its own scene, sharing one camera so any visual difference between halves
-is strategy rather than viewpoint.
+**The explanation hierarchy is enforced by layout.** Reward decomposition is primary and
+first, counterfactual comparison secondary, SHAP exploratory and behind a collapsed panel —
+the proposal's own order (§7.3), made structural rather than stated. The demotion is what
+makes SHAP defensible: it explains a surrogate fitted to the agent's decisions, whose
+agreement with the policy is measured at 99.76% and 98.19%, and the layout says which of
+those two things is being explained.
 
-**Motion between laps is declared synthesis.** The simulator is lap-quantised, so per-lap
-progress fractions are interpolated with a monotone cubic — Catmull-Rom was rejected because
-its overshoot renders as a car visibly driving backwards. The caption saying so is exported
-from one module and rendered verbatim by all three views that use it.
+**Plain English for the observation.** SHAP hands back the names in
+`senna/explain/features.py` — `compound_is_soft`, `override_window`,
+`last_lap_harvest_frac`. Rendered raw and truncated to fit a column they read as
+`compound_is_so…`, which is a variable dump rather than interpretability: a reader who
+cannot parse a label cannot check the claim. A mapping keyed on the served name supplies the
+wording, and an unmapped feature falls through to its raw name rather than being silently
+mislabelled.
 
-**Generic liveries, enforced by test** (`F-29`). Eleven invented team colours, two cars each,
-codes C01–C22. A test walks every shipped source file against a deny list of team, sponsor
-and driver marks; it is the one place in the frontend those names may be spelled out.
+**The race is still visible without a scene.** The 3D replay is not on this branch, so
+playback is a position-against-lap chart advancing a lap at a time with the timing order
+re-sorting beside it — the same stored frames the scene drew from, minus the geometry. A
+strategy tool that never shows a race is a worse tool, and the chart carries the thing that
+actually matters strategically, which is where the agent was relative to everyone else.
 
-**One palette, and a walk that enforces it.** Colour lived in two surfaces that knew nothing
-about each other: Tailwind utilities in classNames, and inline hexes in the recharts and R3F
-code — to the point where one view imported a tint out of another view's file to keep two
-blues in step. All of it now resolves to `config/palette.ts`, sampled from the reference
-screenshots by decoding the PNGs and counting dominant colours, and `provenance.test.ts`
-walks `config/*.ts` and fails any export that does not name its origin. That walk scans
-upward only: a tag written *below* an export used to satisfy it, which meant a constant could
-be introduced by nothing at all.
+**Every number came from an HTTP response.** The interface performs no arithmetic on physics
+and holds no simulation state. The one derivation it does is reading stints back out of the
+stored frames, and that lives in the package (`senna/serve/stints.py`) with a property test,
+not in a page.
 
-**The honesty statements are pinned by test.** 5.10.2 gives every view a sentence about what
-it is not — energy series are modelled, the counterfactual is in-simulator, mid-lap motion is
-synthesis. Before `honesty.test.tsx` a restyle could delete any of them and nothing failed.
-
-**Outcome.** 6,900 lines of TypeScript source and 3,500 of tests, 200 tests across 38 files.
-The full field renders in 3 draw calls, countable from the three instanced meshes the scene
-mounts; the whole replay scene was estimated at about 9 against the 150 budget during
-planning, and real draw-call counts are read from the dev overlay at runtime rather than
-committed, because the test DOM cannot see them.
-
-**The lesson worth carrying out of this subsystem is negative.** The restructure passed 200
-tests, two subagent reviews and a clean gate while shipping pages nobody could read: a replay
-of 22 shapes with no timing beside them, a circuit rendered as a two-pixel hairline, a tyre
-view drawing a surface for a fact a surface cannot show, and a reward panel that never
-appeared because decision cards number laps from zero and frames from one. jsdom has no
-layout engine, so a query for the timing tower would have found all 22 rows while nothing was
-on screen. Automated checks prove behaviour; only looking at the artefact proves
-communication, and a UI feature needs both.
+**Outcome.** Three pages, about 700 lines of Python, and ten tests that drive them headlessly
+through Streamlit's own `AppTest` and assert the 5.10.2 honesty statements are still on
+them. Those tests run as a separate invocation: `AppTest` leaves the script runtime installed
+in the process, and a `SubprocVecEnv` spawned afterwards re-executes a page in the child —
+which surfaced as the throughput benchmark dying on an `EOFError`.
 
 ### 5.12 Evaluation
 
@@ -1242,15 +1240,82 @@ reward's defensible role to interpretability rather than performance.
 ### 6.4 The novel result
 
 The luck decomposition: fixing the policy and varying event draws against varying decision
-noise attributes **75.8%** of finishing-position variance to the event draw, with a
-confidence interval of [0.679, 0.820] across 24 circuits at a mean policy entropy of 0.605
+noise attributes **78.6%** of finishing-position variance to the event draw, with a
+confidence interval of [0.704, 0.861] across 24 circuits at a mean policy entropy of 0.539
 nats. Entangled variance — re-sampled decisions meeting different downstream events — is
 charged to the decision side, which makes the published figure a conservative lower bound.
 
 This is the answer to a question strategy analytics usually dodges: how much of a result is
 the strategy at all. Most of it is not.
 
-### 6.5 Sensitivity studies
+### 6.5 The advantage is conditional on the tyre model
+
+Reporting the three archetypes the proposal promised produced the chapter's sharpest
+result, and it was not the one being looked for. Sliced to Shanghai, Melbourne and Monaco,
+the headline **+2.279 places disappears**: those three average **+0.07** with every
+confidence interval spanning zero.
+
+Grouping all 24 circuits by where their 2026 degradation curve came from explains it.
+
+| Circuits | Pairs | M1 delta | Median regret | Agent stops | Oracle stops |
+|---|---|---|---|---|---|
+| Calibrated from real 2026 running | 60 | **+0.07** | 49.3 s | 1.18 | 1.62 |
+| Synthesised by the T5 transform | 360 | **+3.31** | 25.9 s | 1.14 | 1.36 |
+| Unusable — one low-confidence, one degenerate | 40 | −2.30 | 512.4 s | 1.63 | 2.53 |
+
+The published figure is carried by the circuits whose tyre model was invented. Where the
+model is anchored to real running, the agent is at parity with a scripted heuristic.
+
+The mechanism is already in the metric table, seen from a second angle. **The agent
+under-stops.** The oracle wants 1.62 stops where the model is real and the agent makes
+1.18; where it is synthesised the optimum is 1.36 and the agent makes 1.14 — much closer.
+That is M9: 37.92 tyre failures per 100 races, an agent buying track position by
+over-running its tyres. The T5 transform smooths degradation, which makes over-running
+cheap; a curve fitted from real running does not, and the habit gives back everything it
+gained. No race in the bank ends in a retirement, so the cost is pure time.
+
+Degradation magnitude alone does not explain it — it correlates with the advantage at
+r = +0.53 across the 24, but Shanghai and Bahrain have near-identical degradation and
+differ by eight places. Three explanations remain live and this evaluation does not
+separate them: the transform may leave exploitable regularity the heuristic does not
+chase, the rival pace models are fitted from the same data so the field may be tighter
+where that data exists, or five circuits is too few to exclude character effects.
+
+The claim the evidence supports is therefore narrower than the headline: **SENNA beats
+scripted strategies inside its own simulator by a margin that depends on the tyre model,
+and that model's fidelity to a real 2026 season has not been established.** Read with M8,
+which failed on all five circuits tested. Full tables in `docs/results/archetypes.md`.
+
+### 6.6 Strategy robustness, and an input the agent never had
+
+Two knobs moved up and down on the three archetypes, raced on the published bank's own
+seeds, reading the *decision* rather than the outcome: which way the first stop moved
+against what a strategist would predict.
+
+| Arm | Predicted | Earlier | Later | Unchanged | Agreed |
+|---|---|---|---|---|---|
+| Degradation +10% | earlier | 6 | 0 | 54 | 6 of 6 |
+| Degradation −10% | later | 2 | 8 | 50 | 8 of 10 |
+| Pit loss +2 s | later | 0 | 0 | **60** | — |
+| Pit loss −2 s | earlier | 0 | 0 | **60** | — |
+
+Degradation moves the stop the right way when it moves it at all — 14 of 16 — which is
+evidence the agent reads tyre state rather than replaying a fixed plan. It does not move
+in roughly 85% of races.
+
+Pit loss moved nothing, in either direction, and the reason is architectural rather than
+behavioural. **Pit loss is not in the observation.** The 32 dimensions carry
+`pit_count_norm` and `pit_lane_open` and nothing about what a stop costs; the environment
+applies a per-circuit pit loss to the lap time and the policy never sees the number. An
+agent asked to decide when a stop is worth taking was never told the price. Whatever
+circuit-specific pit behaviour it has, it learned through features that correlate with pit
+loss rather than from pit loss itself.
+
+That is a finding about the design, not about the training, and it is the clearest piece of
+future work the project produced: add pit loss to the observation and retrain. It is out of
+scope here because the frozen triplet is what every reported number is measured on.
+
+### 6.7 Sensitivity studies
 
 Two overlay studies price assumptions rather than asserting them.
 
@@ -1312,12 +1377,17 @@ maturing is stronger than one that claims it arrived complete.
 ### 7.3 Continuous integration
 
 Every push runs, over the whole repository: lint, migration application plus schema-drift
-check, the fast test suite against ephemeral Postgres and Redis containers, the frontend
-type check, lint, tests and production build, a grep of the production bundle for
-Docker-internal hostnames, and `make verify`.
+check, the fast test suite against an ephemeral Postgres container, and `make verify`. The
+suite runs as two invocations rather than one: Streamlit's `AppTest` leaves its script
+runtime installed in the process, and a `SubprocVecEnv` spawned afterwards re-executes a
+page in the child — which showed up as the throughput benchmark dying on an `EOFError`.
+Isolating the page tests was cheaper than fighting Streamlit's teardown, and running both
+halves in CI and in `make test` is what stops the isolated half being forgotten.
 
-One local-only gate exists deliberately: the demo browser check needs a warmed stack and a
-real browser, so it runs by hand before recording rather than in CI.
+Two gates are local-only and deliberately so: the eleven-metric suite needs the frozen
+triplet, which is gitignored, and the robustness arms need it too. Both write to the
+committed store, and `make verify` checks that what the report reproduces from matches the
+model the repository ships — so CI verifies the chain even though it cannot run the races.
 
 ---
 
@@ -1372,6 +1442,18 @@ the committed run ledger is the record.
 ## 9. Limitations
 
 Stated plainly, because every one of them is a question an examiner can ask.
+
+**The headline advantage depends on the tyre model being synthesised.** +2.279 places over
+24 circuits becomes +0.07 on the five circuits whose 2026 degradation is fitted from real
+2026 running, and +3.31 on the eighteen where the T5 transform supplied it (§6.5). The
+mechanism is the under-stopping M9 measures. The defensible claim is that the agent beats
+scripted strategies inside its own simulator by a margin conditional on a tyre model whose
+fidelity has not been established — not that it beats them by 2.279 places.
+
+**The agent cannot see what a stop costs.** Pit loss is absent from the 32-dimensional
+observation, and a two-second perturbation moves its first stop in zero of sixty races
+(§6.6). The single most important quantity in a pit-stop trade-off is not an input to the
+policy that makes it.
 
 **The synthetic layer's transform is wrong in a known direction.** Simulated 2026 laps run
 3.7–6.1 s fast because the straight-line gain outweighs the corner loss. Every downstream result
@@ -1437,6 +1519,61 @@ substitute for the argument the dissertation has to make about it.
 
 ---
 
+### 10.3 Divergences from the COMP702 proposal
+
+The proposal split the work into must-have (MH) and good-to-have (GH) items so there would
+be a pre-agreed point at which to stop adding scope. Every one of the seven good-to-haves
+was reached. What follows is every place the delivered system differs from the document,
+because a marker reading both will find them and each has a reason.
+
+| Proposal | Delivered | Why |
+|---|---|---|
+| **MH4** Streamlit dashboard reading from PostgreSQL | Streamlit reading the FastAPI backend | MH4's interface on GH1's backend. The research code keeps one entry point rather than two, and a second database client in the interface would be a second place for a query to drift. |
+| **MH5** reward decomposition of "tyre, position, energy" | Three terms: pace shaping, potential-based position, terminal points | The reward evolved during F05. Tyre and energy state enter through the pace term rather than as separate reward channels; potential-based shaping was chosen because it is the form that provably does not change the optimal policy. The mechanism the proposal asked for is delivered; the three names are not the three named. |
+| **§4.1** PPO via Stable-Baselines3 | MaskablePPO via sb3-contrib | The proposal's algorithm argument — a mixed discrete action space, a stable clipped objective, a mature implementation — holds unchanged for MaskablePPO, which is PPO with action masking. The masking is what produces M10: legality by construction, zero coerced actions over 480 races, and legality kept out of the reward entirely. A deviation that strengthens the central compliance claim. |
+| **§7.1** Monte Carlo strategy search baseline, budget raised to plateau | A full-information oracle: a 1–3 stop grid search re-solved on the frozen event trace | A different object. The oracle is a *ceiling* the agent falls short of (M3 regret), not a competitor it beats, and its search space and seven assumptions are published verbatim. The proposal's concern — that a starved search would flatter the agent — is answered more strongly by a full-information oracle than by a budgeted rollout search, because the oracle cannot be starved. RQ1's "search-based baseline" is satisfied; the specific method is not the one described. |
+| **GH3** full 20-driver grid | 22 cars, 11 teams | A correction toward the regulations the project is about: 2026 adds an eleventh team. |
+| **GH4** yellow, red, safety car, virtual safety car | Green, VSC, SC, RED | Three flags plus green. Local yellows are folded into the neutralisation model: in a lap-quantised simulator a local yellow does not change a lap-scale strategic decision the way a full-course neutralisation does. Four flags were promised and three are modelled. |
+| **§7.1** four metrics: race time, position, energy efficiency, pit efficiency | Eleven metrics (M1–M11) | The four map onto M3, M1, M4 and M6. The other seven were added because the four do not catch the failure modes this agent actually has — M9's tyre failures and M11's luck share are both load-bearing in the results chapter and neither was promised. |
+| **§7.2** regulation comparison, 2025 versus 2026 | 2024 versus 2026 | 2025 has no fitted era in the pipeline. The comparison measures the same confound — a 2026-physics agent scored on an earlier car — one season further back. |
+| **§10** UI mockup: config panel, strategy timeline, reward decomposition, alternatives | The same four, plus lap-by-lap playback | The mockup also showed an optimal-strategy score out of 100 and a ranked candidate list from a planner. Neither exists; §5.11 says why. |
+| **Ethics C1** optional usability evaluation | Not conducted | The proposal made it conditional on supervisor confirmation. No human participants were involved at any point. |
+
+Two of these are worth stating out loud rather than leaving in a table, because they are
+the ones a viva will press on.
+
+**The Streamlit-versus-React question is not a shortfall.** The proposal's own risk table
+says the stretch full-stack build "can be dropped without affecting the core", with
+Streamlit delivering a complete tool on its own. Both were built. This branch ships the
+one the proposal called the must-have; `main` holds the other, and the reason for
+presenting the narrower one is that the dissertation should claim what it can defend at
+depth rather than everything that exists.
+
+**The oracle-for-Monte-Carlo substitution changes what RQ1 can claim.** A Monte Carlo
+search is a competitor: the agent can beat it, and "outperforms a search-based baseline"
+would be a result. An oracle is a bound: the agent cannot beat it, and M3 reports how far
+short it falls — a median 30.5 s of race time given away. That is a more demanding
+comparison and a weaker-sounding sentence, and the honest phrasing of RQ1's answer is
+therefore "outperforms scripted baselines, and is measured against a full-information
+upper bound" rather than "outperforms search."
+
+### 10.4 What this build removed, and what it kept
+
+Removed from the active path: the React and React-Three-Fiber dashboard, the WebSocket
+playback clock, the RQ worker, Redis and its cache, the telemetry-derived circuit-ribbon
+pipeline with its GLB artifacts, and the deployment runbook. All of it remains on `main`.
+
+Kept, deliberately, against a first instinct to cut: the 22-car field, every dynamic race
+event, the curriculum, all three baselines, the synthetic 2026 layer, the eleven-metric
+framework and the provenance discipline. The reasoning in each case was the same — the
+research question is strategy under uncertainty, and cutting the sources of uncertainty
+would leave a demonstration that PPO can fit a tyre-wear curve.
+
+One thing was relocated rather than removed. The episode runner, the decision-card builder
+and the SHAP explainers lived in the worker process; they are research code, not queue
+plumbing, so they moved into the package as `senna/serve/runner.py` and the API is now one
+caller of them.
+
 ## Appendix A — identifier glossary
 
 Identifiers relevant to this document and to the code it describes, with what they govern.
@@ -1463,8 +1600,10 @@ never pool · `E-04` red-flag free tyre change · `E-05` pit-lane FIFO ·
 `E-10` joint fuel/evolution fit · `E-11` session naming ·
 `E-12` resumable throttled ingest · `E-13` a new circuit with no data until its first
 session · `E-14` frozen split ·
-`E-15` cache and explanation invalidation · `E-16` WebSocket replay from store ·
-`E-17` ribbon self-intersection · `E-18` WebGL context loss.
+`E-15` cache and explanation invalidation (no cache on this branch; the explanation half
+still applies) · `E-16` playback replays from the store, never re-simulates ·
+`E-17` ribbon self-intersection and `E-18` WebGL context loss — both belong to the 3D
+build on `main`.
 
 **Removals (`R-xx`)** — what the v3 design deleted and why.
 `R-02` twelve reward terms · `R-03` the 4 MJ/lap mechanic · `R-04` Ergast ·
@@ -1486,25 +1625,26 @@ fidelity · `A-05` oracle regret · `A-06` paired-seed evaluation with bootstrap
 ## Appendix B — repository map
 
 ```
-senna/            16,238 lines of Python (with api/ and worker/)
-  data/            1,611   ingest, cleaning, schema, snapshot, the wipe guard
-  physics/fits/    1,591   the fitting battery
-  physics/synth/   1,929   T1–T8 and the 5.4.1 validation
-  circuits/          667   telemetry → GLB ribbons
-  env/             1,885   F1RaceEnv, masks, dynamics, events, twin, rivals
+senna/            15,870 lines of Python
+  data/            1,617   ingest, cleaning, schema, snapshot, the wipe guard
+  physics/fits/    2,185   the fitting battery
+  physics/synth/   1,929   T1-T8 and the 5.4.1 validation
+  env/             2,184   F1RaceEnv, masks, dynamics, events, twin, rivals
   strategy/          891   baselines, oracle, plans, rollout
   train/           1,725   curriculum, gates, checkpoints, ablations, selection
   explain/         1,192   distillation, TreeSHAP, flip probes, cards
-  eval/            2,796   M1–M11, sensitivities, store, report
-  serve/             345   model loader, cache keys, frame builder
+  eval/            3,308   M1-M11, archetypes, robustness, sensitivities, store, report
+  serve/             651   model loader, frame builder, episode runner, stints
   bench/             139   throughput benchmark
-api/               1,066   FastAPI routes, schemas, WebSocket
-worker/              352   RQ jobs
-frontend/src/     10,336   React 18 + R3F 8, three tabs over six spec views
-tests/            12,367   486 test functions
-configs/           4,400   21 yaml files, every constant with provenance
-docs/             17,007   spec split, plans, 17 lessons, results, this document
+api/                 777   FastAPI routes and schemas
+app/                 799   three Streamlit pages, the client and the palette
+tests/            14,366   534 test functions
+configs/           4,400   20 yaml files, every constant with provenance
+docs/             ~18,000  spec split, plans, lessons, results, this document
 ```
+
+`senna/circuits/` (the telemetry-to-GLB ribbon pipeline), `worker/` (RQ jobs) and
+`frontend/` (React and R3F) are on `main` and not on this branch — §10.4.
 
 ## Appendix C — where the evidence lives
 
@@ -1518,10 +1658,14 @@ docs/             17,007   spec split, plans, 17 lessons, results, this document
 | Ablation results | `docs/results/F08-ablations.md`, `models/runs.json` |
 | Surrogate fidelity | `docs/results/F09-explainability.md`, `models/explain/<version>/fidelity.json` |
 | Evaluation results | `docs/results/F14-evaluation.md`, `docs/results/F14/store/*.json` |
+| Three archetypes, four categories | `docs/results/archetypes.md`, `.../store/archetypes.json` |
+| The advantage is tyre-model conditional | `.../store/archetypes.json` → `conditional_advantage` |
+| Strategy robustness and the pit-loss gap | `.../store/robustness.json`, `senna/eval/robustness.py` |
+| Divergences from the proposal | §10.3 of this document |
 | Frozen data snapshot | `data/snapshot/MANIFEST.md` |
 | Decisions and their dates | `INDEX.md` decisions log |
-| Per-feature reasoning | `docs/plans/F00-plan.md` … `docs/plans/F15-plan.md` |
-| Per-feature explanation | `docs/learn/F00-*.md` … `docs/learn/F15-*.md` |
+| Per-feature reasoning | `docs/plans/F00-plan.md` … `docs/plans/F23-plan.md` |
+| Per-feature explanation | `docs/learn/F00-*.md` … `docs/learn/F23-*.md` |
 
 ## Appendix D — divergences from the master specification
 
