@@ -12,14 +12,18 @@ configs/physics_params.yaml, so an arm is a copy of the config tree with one fie
 scaled and nothing else touched — a diff of an overlay is the complete statement of what
 changed, which is the same discipline the harvest and energy-coefficient studies use.
 
-  tyre degradation, the `a` coefficient of grip(age) = 1 - a*age^b
-      harder wear should pull the stop EARLIER
-  pit loss, the mean seconds a stop costs
-      an expensive stop should push it LATER, and toward fewer stops
-
 Direction is the finding, not magnitude. A stop that moves two laps the right way is
 evidence the agent is reading the trade; a stop that does not move at all is evidence it
 is not, whatever the size of the perturbation.
+
+Not every knob supports that reading, and the difference is recorded rather than
+smoothed over. A knob is `controlled` when the perturbation changes the physics and
+leaves the race otherwise intact, so a moved stop can only be the policy responding.
+A knob is `confounded` when it changes the event distribution itself: raise the
+safety-car rate and a different safety car happens on a different lap, so the stop
+moves whether or not the policy noticed anything. Confounded arms are still worth
+running — a policy that cannot respond to a changed world is worth knowing about — but
+their movement is not evidence of a decision, and the payload says so per arm.
 """
 
 import argparse
@@ -44,10 +48,33 @@ log = logging.getLogger(__name__)
 ROBUSTNESS_CONFIG_FILES = ["physics_params", "circuits", "eval", "env"]
 
 KNOBS = {
-    "tyre_degradation": {"field": "degradation", "delta": 0.10, "unit": "relative",
-                         "earlier_when": "up"},
-    "pit_loss": {"field": "pit_loss", "delta": 2.0, "unit": "seconds",
-                 "earlier_when": "down"},
+    # controlled: the physics moves, the race does not
+    "tyre_degradation": {
+        "delta": 0.10, "unit": "relative", "kind": "controlled", "earlier_when": "up",
+        "rationale": "harder wear should pull the stop earlier",
+    },
+    "pit_loss": {
+        "delta": 2.0, "unit": "seconds", "kind": "controlled", "earlier_when": "down",
+        "rationale": "an expensive stop should be delayed",
+    },
+    "energy_coefficients": {
+        # what a megajoule is worth: conserve cost, attack gain, derate penalty
+        "delta": 0.20, "unit": "relative", "kind": "controlled", "earlier_when": None,
+        "rationale": "no directional prediction — this asks whether pit timing couples "
+                     "to the energy model at all, and the expected answer is that it "
+                     "should not move much",
+    },
+    # confounded: the event distribution itself moves, so the race is a different race
+    "safety_car_rate": {
+        "delta": 0.50, "unit": "relative", "kind": "confounded", "earlier_when": None,
+        "rationale": "more neutralisations means more cheap stops, but it also means a "
+                     "different race; movement here is not by itself a decision",
+    },
+    "rain_probability": {
+        "delta": 0.50, "unit": "relative", "kind": "confounded", "earlier_when": None,
+        "rationale": "the agent observes the weather it is in, never a forecast, so it "
+                     "cannot anticipate this — only react once the track is wet",
+    },
 }
 
 
@@ -66,6 +93,38 @@ def _shift_pit_loss(params: dict, circuits: list[str], seconds: float) -> None:
             block["mean_s"] = max(float(block["mean_s"]) + seconds, 1.0)
 
 
+# the energy-mode block: what a megajoule buys and what running dry costs
+ENERGY_FIELDS = ("conserve_pace_cost_s_per_mj", "attack_pace_gain_s",
+                 "derate_penalty_s_per_mj")
+
+
+def _scale_energy(physics: dict, factor: float) -> None:
+    for field in ENERGY_FIELDS:
+        if field in physics.get("fitted", {}):
+            physics["fitted"][field] = float(physics["fitted"][field]) * factor
+
+
+def _scale_safety_car(params: dict, circuits: list[str], factor: float) -> None:
+    """Both neutralisation kinds together: raising one and not the other would change
+    which kind of neutralisation happens as well as how often."""
+    for slug in circuits:
+        for kind in ("sc", "vsc"):
+            block = (params["circuits"][slug].get("hazards") or {}).get(kind) or {}
+            for field in ("lambda_per_lap", "p_per_race"):
+                if field in block:
+                    # a probability cannot exceed one however hard the arm pushes
+                    block[field] = min(float(block[field]) * factor, 1.0)
+
+
+def _scale_rain(env_cfg: dict, factor: float) -> None:
+    """Scale the dry->damp transition and renormalise the row. The Markov rows must sum
+    to one, so the probability taken from staying dry is what goes into becoming damp."""
+    rows = env_cfg["weather"]["markov"]
+    dry, damp, wet = (float(v) for v in rows["dry"])
+    damp = min(damp * factor, 1.0)
+    rows["dry"] = [max(1.0 - damp - wet, 0.0), damp, wet]
+
+
 def build_overlay(*, base_configs_dir, dest: Path, knob: str, direction: str,
                   circuits: list[str]) -> Path:
     """One config tree with one knob moved and nothing else."""
@@ -73,23 +132,42 @@ def build_overlay(*, base_configs_dir, dest: Path, knob: str, direction: str,
         shutil.rmtree(dest)
     shutil.copytree(Path(base_configs_dir), dest)
 
-    path = dest / "physics_params.yaml"
-    params = yaml.safe_load(path.read_text())
     spec = KNOBS[knob]
     sign = 1.0 if direction == "up" else -1.0
+    factor = 1.0 + sign * spec["delta"]
 
-    if knob == "tyre_degradation":
-        _scale_degradation(params, circuits, 1.0 + sign * spec["delta"])
+    if knob in ("tyre_degradation", "pit_loss", "safety_car_rate"):
+        path = dest / "physics_params.yaml"
+        params = yaml.safe_load(path.read_text())
+        if knob == "tyre_degradation":
+            _scale_degradation(params, circuits, factor)
+        elif knob == "pit_loss":
+            _shift_pit_loss(params, circuits, sign * spec["delta"])
+        else:
+            _scale_safety_car(params, circuits, factor)
+        path.write_text(yaml.safe_dump(params, sort_keys=False))
+    elif knob == "energy_coefficients":
+        path = dest / "physics_2026.yaml"
+        physics = yaml.safe_load(path.read_text())
+        _scale_energy(physics, factor)
+        path.write_text(yaml.safe_dump(physics, sort_keys=False))
     else:
-        _shift_pit_loss(params, circuits, sign * spec["delta"])
+        path = dest / "env.yaml"
+        env_cfg = yaml.safe_load(path.read_text())
+        _scale_rain(env_cfg, factor)
+        path.write_text(yaml.safe_dump(env_cfg, sort_keys=False))
 
-    path.write_text(yaml.safe_dump(params, sort_keys=False))
     return dest
 
 
-def expected_direction(knob: str, direction: str) -> str:
-    """What a strategist would predict the first stop does under this arm."""
-    return "earlier" if direction == KNOBS[knob]["earlier_when"] else "later"
+def expected_direction(knob: str, direction: str) -> str | None:
+    """What a strategist would predict the first stop does under this arm, or None where
+    there is no defensible prediction to make. An arm with no prediction is not a failed
+    arm: it measures whether the agent couples to that input at all."""
+    earlier_when = KNOBS[knob]["earlier_when"]
+    if earlier_when is None:
+        return None
+    return "earlier" if direction == earlier_when else "later"
 
 
 def compare(baseline: dict, arm: dict) -> dict:
@@ -112,8 +190,10 @@ def compare(baseline: dict, arm: dict) -> dict:
     }
 
 
-def agreement(comparison: dict, predicted: str) -> float | None:
+def agreement(comparison: dict, predicted: str | None) -> float | None:
     """The share of races that moved the predicted way, of those that moved at all."""
+    if predicted is None:
+        return None
     moved = comparison["moved_earlier"] + comparison["moved_later"]
     if not moved:
         return None
@@ -140,6 +220,38 @@ def _roll(policy, *, circuits, banks, seeds: int, configs_dir) -> dict:
         chosen = list(banks[circuit])[:seeds]
         out[circuit] = (chosen, record.roll_live_batch(
             policy, circuit=circuit, seeds=chosen, configs_dir=configs_dir))
+    return out
+
+
+# stylised — three slots spanning the grid: a front-row start, the midfield default the
+# demo link uses, and a start behind most of the field. Enough to show whether strategy
+# depends on where the race begins, without pretending twenty-two arms would say more.
+GRID_SLOTS = (2, 8, 16)
+
+
+def grid_sweep(policy, *, circuits, banks, seeds: int, configs_dir) -> dict:
+    """Unlike the knobs, this changes the scenario rather than the world model: the
+    physics is identical and the agent starts somewhere else. Grid position is visible
+    to the policy — `position_frac` and `places_gained_frac` are both in the observation
+    — so an agent whose stop does not move with it is not being starved of the input."""
+    from senna.env import F1RaceEnv
+    from senna.strategy.rollout import run_episode
+
+    out = {}
+    for slot in GRID_SLOTS:
+        laps: list[int] = []
+        for circuit in circuits:
+            env = F1RaceEnv(circuit, "2026", rival_band="test", configs_dir=configs_dir)
+            for seed in list(banks[circuit])[:seeds]:
+                result = run_episode(env, policy, seed=int(seed),
+                                     options={"grid_position": slot})
+                stops = list(result.pit_laps or [])
+                if stops:
+                    laps.append(int(stops[0]))
+        out[f"P{slot}"] = {
+            "n": len(laps),
+            "mean_first_stop_lap": (sum(laps) / len(laps)) if laps else None,
+        }
     return out
 
 
@@ -180,13 +292,18 @@ def run(*, seeds: int, circuits: list[str] | None = None, configs_dir=None,
                 arms[label] = {
                     "knob": knob, "direction": direction,
                     "perturbation": KNOBS[knob]["delta"], "unit": KNOBS[knob]["unit"],
+                    "kind": KNOBS[knob]["kind"], "rationale": KNOBS[knob]["rationale"],
                     "predicted": predicted,
                     "direction_agreement": agreement(comparison, predicted),
                     **comparison,
                 }
 
+    log.info("grid sweep %s", list(GRID_SLOTS))
+    grid = grid_sweep(policy, circuits=circuits, banks=banks, seeds=seeds,
+                      configs_dir=base_dir)
+
     return {"model_version": manifest["model_version"], "seeds": seeds,
-            "circuits": circuits, "arms": arms}
+            "circuits": circuits, "arms": arms, "grid_sweep": grid}
 
 
 def main() -> None:

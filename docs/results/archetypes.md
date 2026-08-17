@@ -170,45 +170,92 @@ An agent that memorised one parameter set would make the same call whatever you 
 the world. One that learned the structure of the problem should move its stop the way a
 strategist would predict when you change what a stop is worth.
 
-Two knobs, each moved up and down, on the three archetypes. Each arm is a copy of the
-config tree with one field changed and nothing else, raced on the **published test bank's
-own seeds** — the same races the reported metrics came from, so a shifted stop is the
-perturbation talking rather than a different draw. 60 races per arm.
+Six perturbations on the three archetypes, raced on the **published test bank's own
+seeds** — the same races the reported metrics came from, so a shifted stop is the
+perturbation talking rather than a different draw. Each arm is a copy of the config tree
+with one field changed and nothing else. 60 races per arm.
 
-| Arm | Predicted | Moved earlier | Moved later | Unchanged | Agreed with prediction |
-|---|---|---|---|---|---|
-| Tyre degradation +10% | earlier | 6 | 0 | 54 | **6 of 6** |
-| Tyre degradation −10% | later | 2 | 8 | 50 | **8 of 10** |
-| Pit loss +2 s | later | 0 | 0 | **60** | — |
-| Pit loss −2 s | earlier | 0 | 0 | **60** | — |
+The arms are not all the same kind of experiment, and the difference decides what
+movement means:
 
-Reproduce with `python -m senna.eval.robustness --seeds 20`.
+- **controlled** — the physics moves and the race is otherwise intact, so a shifted stop
+  can only be the policy responding.
+- **confounded** — the perturbation changes the event distribution itself. Raise the
+  safety-car rate and a different safety car happens on a different lap, so the stop
+  moves whether or not the policy noticed anything.
+- **scenario** — the world model is untouched and the agent simply starts somewhere else.
 
-**Degradation: the right direction, rarely.** When the agent's stop moves under a
-degradation change it moves the way it should — 14 of 16 moves across the two arms — which
-is evidence it is reading tyre state rather than replaying a fixed plan. But the stop is
-unchanged in roughly 85% of races. A 10% change in wear rate is mostly invisible in its
-behaviour.
+| Arm | Kind | Predicted | Earlier | Later | Unchanged | Agreed |
+|---|---|---|---|---|---|---|
+| Tyre degradation +10% | controlled | earlier | 6 | 0 | 54 | **6 of 6** |
+| Tyre degradation −10% | controlled | later | 2 | 8 | 50 | **8 of 10** |
+| Pit loss +2 s | controlled | later | 0 | 0 | **60** | — |
+| Pit loss −2 s | controlled | earlier | 0 | 0 | **60** | — |
+| Energy coefficients +20% | controlled | none | 0 | 0 | **60** | — |
+| Energy coefficients −20% | controlled | none | 0 | 0 | **60** | — |
+| Safety-car rate +50% | confounded | none | 4 | 0 | 56 | — |
+| Safety-car rate −50% | confounded | none | 1 | 2 | 57 | — |
+| Rain probability +50% | confounded | none | 0 | 0 | **60** | — |
+| Rain probability −50% | confounded | none | 2 | 0 | 58 | — |
 
-**Pit loss: no response at all, and the reason is architectural.** Two seconds on a
-roughly 24-second stop — about 8%, and the difference between a clean stop and a fumbled
-one — did not move the first stop in a single race out of 60, in either direction.
+Grid sweep, physics untouched, mean lap of the first stop: **P2 → 4.42, P8 → 4.55,
+P16 → 4.80**.
 
-That is not the agent ignoring evidence. **Pit loss is not in the observation.** The
-32-dimensional observation (`senna/explain/features.py`) carries `pit_count_norm`, how
-many stops have been made, and `pit_lane_open`, whether the lane is available. It carries
-nothing about what a stop *costs*. The environment applies a per-circuit pit loss to the
-lap time, and the policy never sees the number, so it cannot condition on it. Whatever
-circuit-specific pit behaviour the agent has, it learned through features that correlate
-with pit loss rather than from pit loss itself.
+Reproduce with `python -m senna.eval.robustness --seeds 20`, about twenty seconds.
 
-This is the most useful thing the study found, and it is a limitation of the design rather
-than of the training: **an agent asked to decide when a stop is worth taking was never
-told what a stop costs.** The obvious next step is to add pit loss to the observation and
-retrain, which would test whether the insensitivity is the missing input or something
-deeper. That is out of scope here — the frozen triplet is what every reported number is
-measured on, and changing the observation invalidates all of them.
+### What the arms say
 
-Read this beside the conditional-advantage result above. Both point the same way: the
-agent's competence is narrower than the headline suggests. It reads tyre state, in the
-right direction, some of the time. It cannot read the cost of acting on it.
+**Degradation: the right direction, rarely.** When the stop moves under a degradation
+change it moves the way it should — 14 of the 16 moves across both arms — which is
+evidence the agent reads tyre state rather than replaying a plan. It does not move in
+roughly 85% of races.
+
+**Pit loss: no response, and the reason is architectural.** Two seconds on a
+twenty-four-second stop, about 8%, moved nothing in either direction. **Pit loss is not
+in the observation.** The 32 dimensions carry `pit_count_norm` and `pit_lane_open` and
+nothing about what a stop costs; the environment applies a per-circuit pit loss to the
+lap time and the policy never sees the number. An agent asked to decide when a stop is
+worth taking was never told the price.
+
+**Energy: cleanly decoupled, which is the answer we wanted.** No prediction was made
+here — the question was whether pit timing bleeds into the energy model — and a 20% swing
+in what a megajoule is worth moved no stop at all. The two decisions are independent in
+the policy as they are in the design.
+
+**Grid position: the information is there and unused.** Starting P2 rather than P16
+moves the first stop by four tenths of a lap. Unlike pit loss this is not a missing
+input: `position_frac` and `places_gained_frac` are both observed. The agent can see
+where it started and does not change its plan because of it.
+
+### The finding underneath all of them
+
+The arms keep returning "unchanged" because there is very little to change. The agent
+has close to one strategy:
+
+| | Agent | Oracle |
+|---|---|---|
+| First stop, median lap | **3** | 17 |
+| First stop, mean lap | 5.0 | 18.8 |
+| Stops per race | 1.18 | 1.62 |
+| Laps run on the final set | **52.9 mean, 75 max** | — |
+
+It boxes almost immediately and then runs to the flag. On circuits whose tyre cliff sits
+at 31–34 laps, a mean final stint of 52.9 laps is not a strategy that occasionally fails —
+it is one that must.
+
+That single behaviour explains four results that were being read as four problems. M6's
+pit-window accuracy of 0.21 is a stop nowhere near the post-hoc optimum. M9's 37.92 tyre
+failures per 100 races are those final stints arriving at the cliff. The under-stopping
+against the oracle is the same fact counted differently. And the advantage vanishing where
+degradation is real (above) is what happens when a forgiving tyre model stops forgiving.
+
+So the honest summary of this study is not "the agent is robust". Of six perturbations,
+one produces a directionally correct response in about 15% of races and five produce
+almost nothing. **The policy is close to open-loop**: it has learned an opening move and
+carries it out largely regardless of the world it is placed in. That it is the *right*
+opening move often enough to beat a scripted baseline on eighteen circuits is a real
+result, and a much narrower one than the headline suggests.
+
+The obvious next step is the one the pit-loss arm points at — put pit loss in the
+observation and retrain — and it is out of scope here, because the frozen triplet is what
+every reported number in this document is measured on.

@@ -25,12 +25,17 @@ class EpisodeResult:
     laps: tuple = ()  # per-lap rows, only when the caller asks (F14 M4/M9/M10)
 
 
-def run_episode(env, policy, *, seed, capture: bool = False) -> EpisodeResult:
+def run_episode(env, policy, *, seed, capture: bool = False,
+                options: dict | None = None) -> EpisodeResult:
     """capture=True keeps a per-lap row per step — the energy, status and legality detail
     the metric suite needs and the terminal info dict flattens away. It is off by default
     because the training gates roll millions of these and would pay for a list they never
-    read."""
-    obs, info = env.reset(seed=seed)
+    read.
+
+    options rides through to env.reset, which is how a caller pins a grid slot or hands
+    the env a twin trace. Default None, so every existing caller keeps the env's own
+    choice of grid."""
+    obs, info = env.reset(seed=seed, options=options)
     policy.reset(obs, info, rng=np.random.default_rng([seed, _POLICY_STREAM]))
 
     actions, laps, total_reward = [], [], 0.0

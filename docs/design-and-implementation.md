@@ -1286,34 +1286,50 @@ scripted strategies inside its own simulator by a margin that depends on the tyr
 and that model's fidelity to a real 2026 season has not been established.** Read with M8,
 which failed on all five circuits tested. Full tables in `docs/results/archetypes.md`.
 
-### 6.6 Strategy robustness, and an input the agent never had
+### 6.6 Strategy robustness, and a policy closer to open-loop than expected
 
-Two knobs moved up and down on the three archetypes, raced on the published bank's own
-seeds, reading the *decision* rather than the outcome: which way the first stop moved
-against what a strategist would predict.
+Six perturbations on the three archetypes, raced on the published bank's own seeds,
+reading the *decision* rather than the outcome: which way the first stop moved against
+what a strategist would predict. The arms are separated by what they perturb, because it
+changes what movement means — a *controlled* arm moves the physics and leaves the race
+intact, a *confounded* arm moves the event distribution so the race itself differs, and
+the grid sweep changes neither and simply starts the agent elsewhere.
 
-| Arm | Predicted | Earlier | Later | Unchanged | Agreed |
-|---|---|---|---|---|---|
-| Degradation +10% | earlier | 6 | 0 | 54 | 6 of 6 |
-| Degradation −10% | later | 2 | 8 | 50 | 8 of 10 |
-| Pit loss +2 s | later | 0 | 0 | **60** | — |
-| Pit loss −2 s | earlier | 0 | 0 | **60** | — |
+| Arm | Kind | Predicted | Moved | Agreed |
+|---|---|---|---|---|
+| Degradation ±10% | controlled | earlier / later | 6 and 10 of 60 | **14 of 16** |
+| Pit loss ±2 s | controlled | later / earlier | **0 of 60** | — |
+| Energy coefficients ±20% | controlled | none | **0 of 60** | — |
+| Safety-car rate ±50% | confounded | none | 4 and 3 of 60 | — |
+| Rain probability ±50% | confounded | none | 0 and 2 of 60 | — |
+| Grid P2 → P16 | scenario | — | first stop 4.42 → 4.80 laps | — |
 
-Degradation moves the stop the right way when it moves it at all — 14 of 16 — which is
-evidence the agent reads tyre state rather than replaying a fixed plan. It does not move
-in roughly 85% of races.
+Three of these are informative on their own. Degradation moves the stop the right way
+whenever it moves it at all, which is evidence the agent reads tyre state rather than
+replaying a plan — but it does not move in roughly 85% of races. Energy is cleanly
+decoupled from pit timing, which is what the design intends. And **pit loss is not in the
+observation**: the 32 dimensions carry `pit_count_norm` and `pit_lane_open` and nothing
+about what a stop costs, so an agent asked when a stop is worth taking was never told the
+price. Grid position is the opposite case — `position_frac` and `places_gained_frac` are
+both observed, so the agent can see where it started and does not act on it.
 
-Pit loss moved nothing, in either direction, and the reason is architectural rather than
-behavioural. **Pit loss is not in the observation.** The 32 dimensions carry
-`pit_count_norm` and `pit_lane_open` and nothing about what a stop costs; the environment
-applies a per-circuit pit loss to the lap time and the policy never sees the number. An
-agent asked to decide when a stop is worth taking was never told the price. Whatever
-circuit-specific pit behaviour it has, it learned through features that correlate with pit
-loss rather than from pit loss itself.
+The arms keep returning "unchanged" because there is very little to change. The agent has
+close to one strategy: **median first stop on lap 3 against the oracle's 17, 1.18 stops per
+race, and a mean of 52.9 laps run on the final set** — up to 75 — on circuits whose tyre
+cliff sits at 31 to 34 laps. A final stint of that length does not occasionally fail; it
+must.
 
-That is a finding about the design, not about the training, and it is the clearest piece of
-future work the project produced: add pit loss to the observation and retrain. It is out of
-scope here because the frozen triplet is what every reported number is measured on.
+That single behaviour is four of the reported results seen from one angle. M6's pit-window
+accuracy of 0.21 is a stop nowhere near the optimum. M9's 37.92 tyre failures per 100 races
+are those stints arriving at the cliff. The under-stopping against the oracle in §6.5 is
+the same fact counted differently. And the advantage disappearing where degradation is
+fitted from real running is what happens when a forgiving tyre model stops forgiving.
+
+The honest summary is therefore not that the agent is robust. **The policy is close to
+open-loop**: it has learned an opening move and executes it largely regardless of the
+world it is placed in. That the opening move is right often enough to beat a scripted
+baseline on eighteen circuits is a genuine result, and a far narrower one than +2.279
+places suggests. Full tables in `docs/results/archetypes.md`.
 
 ### 6.7 Sensitivity studies
 
@@ -1450,10 +1466,13 @@ mechanism is the under-stopping M9 measures. The defensible claim is that the ag
 scripted strategies inside its own simulator by a margin conditional on a tyre model whose
 fidelity has not been established — not that it beats them by 2.279 places.
 
-**The agent cannot see what a stop costs.** Pit loss is absent from the 32-dimensional
-observation, and a two-second perturbation moves its first stop in zero of sixty races
-(§6.6). The single most important quantity in a pit-stop trade-off is not an input to the
-policy that makes it.
+**The policy is close to open-loop.** Of six perturbations, one moves the agent's stop in
+about 15% of races and five move it almost not at all (§6.6). It boxes on a median lap 3
+against an oracle's 17 and then runs a mean 52.9 laps to the flag on circuits whose cliff
+is at 31 to 34. Two distinct causes sit underneath: pit loss is absent from the
+32-dimensional observation, so the most important quantity in a pit-stop trade-off is not
+an input to the policy that makes it; and grid position *is* observed and still does not
+change the plan.
 
 **The synthetic layer's transform is wrong in a known direction.** Simulated 2026 laps run
 3.7–6.1 s fast because the straight-line gain outweighs the corner loss. Every downstream result

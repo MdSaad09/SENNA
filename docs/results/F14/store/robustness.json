@@ -1,14 +1,20 @@
 {
   "envelope": {
     "config_hash": "06cd32c38f3835d486ef41fff38a51c6892a7af9fb4f2f2c71b83e92ad2ab19a",
-    "git_commit": "053e10f073a516fa80237a9650c4210d3c1e8a4a",
+    "git_commit": "16e2f59ae816d5246f326c9850005e675c479bf8",
     "model_versions": {
       "headline": "senna-ppo-5e3ddb15d584-C-01769472"
     },
     "scope": {
       "arms": [
+        "energy_coefficients_down",
+        "energy_coefficients_up",
         "pit_loss_down",
         "pit_loss_up",
+        "rain_probability_down",
+        "rain_probability_up",
+        "safety_car_rate_down",
+        "safety_car_rate_up",
         "tyre_degradation_down",
         "tyre_degradation_up"
       ],
@@ -19,9 +25,884 @@
   },
   "payload": {
     "arms": {
+      "energy_coefficients_down": {
+        "direction": "down",
+        "direction_agreement": null,
+        "kind": "controlled",
+        "knob": "energy_coefficients",
+        "mean_shift_laps": 0.0,
+        "moved_earlier": 0,
+        "moved_later": 0,
+        "n": 60,
+        "per_race": [
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 966415,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 785133,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 113207,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 585208,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 469977,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 728323,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 140055,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 960011,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 436685,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 990239,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 732115,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 661881,
+            "shift": 0
+          },
+          {
+            "arm_lap": 23,
+            "baseline_lap": 23,
+            "circuit": "chinese_grand_prix",
+            "seed": 429987,
+            "shift": 0
+          },
+          {
+            "arm_lap": 15,
+            "baseline_lap": 15,
+            "circuit": "chinese_grand_prix",
+            "seed": 420440,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "chinese_grand_prix",
+            "seed": 392193,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 445182,
+            "shift": 0
+          },
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 843664,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 160919,
+            "shift": 0
+          },
+          {
+            "arm_lap": 10,
+            "baseline_lap": 10,
+            "circuit": "chinese_grand_prix",
+            "seed": 904983,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "chinese_grand_prix",
+            "seed": 718946,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 914705,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 934712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 386349,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 846378,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 159519,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 743031,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 583093,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 294140,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 628706,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 920736,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 842556,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 254432,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 697949,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 186934,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 144553,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 701485,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 344976,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 320875,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 171368,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 719540,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 198252,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 877739,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 356643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 984998,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 526345,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 732620,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 872052,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 199335,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 513714,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "monaco_grand_prix",
+            "seed": 208398,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 207273,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 815235,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 354289,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 853497,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 956643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 531764,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 143712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 627541,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 780782,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 208316,
+            "shift": 0
+          }
+        ],
+        "perturbation": 0.2,
+        "predicted": null,
+        "rationale": "no directional prediction — this asks whether pit timing couples to the energy model at all, and the expected answer is that it should not move much",
+        "unchanged": 60,
+        "unit": "relative"
+      },
+      "energy_coefficients_up": {
+        "direction": "up",
+        "direction_agreement": null,
+        "kind": "controlled",
+        "knob": "energy_coefficients",
+        "mean_shift_laps": 0.0,
+        "moved_earlier": 0,
+        "moved_later": 0,
+        "n": 60,
+        "per_race": [
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 966415,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 785133,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 113207,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 585208,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 469977,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 728323,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 140055,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 960011,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 436685,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 990239,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 732115,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 661881,
+            "shift": 0
+          },
+          {
+            "arm_lap": 23,
+            "baseline_lap": 23,
+            "circuit": "chinese_grand_prix",
+            "seed": 429987,
+            "shift": 0
+          },
+          {
+            "arm_lap": 15,
+            "baseline_lap": 15,
+            "circuit": "chinese_grand_prix",
+            "seed": 420440,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "chinese_grand_prix",
+            "seed": 392193,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 445182,
+            "shift": 0
+          },
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 843664,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 160919,
+            "shift": 0
+          },
+          {
+            "arm_lap": 10,
+            "baseline_lap": 10,
+            "circuit": "chinese_grand_prix",
+            "seed": 904983,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "chinese_grand_prix",
+            "seed": 718946,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 914705,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 934712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 386349,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 846378,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 159519,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 743031,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 583093,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 294140,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 628706,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 920736,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 842556,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 254432,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 697949,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 186934,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 144553,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 701485,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 344976,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 320875,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 171368,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 719540,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 198252,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 877739,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 356643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 984998,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 526345,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 732620,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 872052,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 199335,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 513714,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "monaco_grand_prix",
+            "seed": 208398,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 207273,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 815235,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 354289,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 853497,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 956643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 531764,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 143712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 627541,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 780782,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 208316,
+            "shift": 0
+          }
+        ],
+        "perturbation": 0.2,
+        "predicted": null,
+        "rationale": "no directional prediction — this asks whether pit timing couples to the energy model at all, and the expected answer is that it should not move much",
+        "unchanged": 60,
+        "unit": "relative"
+      },
       "pit_loss_down": {
         "direction": "down",
         "direction_agreement": null,
+        "kind": "controlled",
         "knob": "pit_loss",
         "mean_shift_laps": 0.0,
         "moved_earlier": 0,
@@ -451,12 +1332,14 @@
         ],
         "perturbation": 2.0,
         "predicted": "earlier",
+        "rationale": "an expensive stop should be delayed",
         "unchanged": 60,
         "unit": "seconds"
       },
       "pit_loss_up": {
         "direction": "up",
         "direction_agreement": null,
+        "kind": "controlled",
         "knob": "pit_loss",
         "mean_shift_laps": 0.0,
         "moved_earlier": 0,
@@ -886,12 +1769,1762 @@
         ],
         "perturbation": 2.0,
         "predicted": "later",
+        "rationale": "an expensive stop should be delayed",
         "unchanged": 60,
         "unit": "seconds"
+      },
+      "rain_probability_down": {
+        "direction": "down",
+        "direction_agreement": null,
+        "kind": "confounded",
+        "knob": "rain_probability",
+        "mean_shift_laps": -0.21666666666666667,
+        "moved_earlier": 2,
+        "moved_later": 0,
+        "n": 60,
+        "per_race": [
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 966415,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 785133,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 113207,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 585208,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 469977,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 728323,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 140055,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 960011,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 436685,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 990239,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 732115,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 661881,
+            "shift": 0
+          },
+          {
+            "arm_lap": 23,
+            "baseline_lap": 23,
+            "circuit": "chinese_grand_prix",
+            "seed": 429987,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 15,
+            "circuit": "chinese_grand_prix",
+            "seed": 420440,
+            "shift": -12
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "chinese_grand_prix",
+            "seed": 392193,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 445182,
+            "shift": 0
+          },
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 843664,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 160919,
+            "shift": 0
+          },
+          {
+            "arm_lap": 10,
+            "baseline_lap": 10,
+            "circuit": "chinese_grand_prix",
+            "seed": 904983,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "chinese_grand_prix",
+            "seed": 718946,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 914705,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 934712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 386349,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 846378,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 159519,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 743031,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 583093,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 294140,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 628706,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 920736,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 842556,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 254432,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 697949,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 186934,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 144553,
+            "shift": -1
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 701485,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 344976,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 320875,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 171368,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 719540,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 198252,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 877739,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 356643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 984998,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 526345,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 732620,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 872052,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 199335,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 513714,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "monaco_grand_prix",
+            "seed": 208398,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 207273,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 815235,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 354289,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 853497,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 956643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 531764,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 143712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 627541,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 780782,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 208316,
+            "shift": 0
+          }
+        ],
+        "perturbation": 0.5,
+        "predicted": null,
+        "rationale": "the agent observes the weather it is in, never a forecast, so it cannot anticipate this — only react once the track is wet",
+        "unchanged": 58,
+        "unit": "relative"
+      },
+      "rain_probability_up": {
+        "direction": "up",
+        "direction_agreement": null,
+        "kind": "confounded",
+        "knob": "rain_probability",
+        "mean_shift_laps": 0.0,
+        "moved_earlier": 0,
+        "moved_later": 0,
+        "n": 60,
+        "per_race": [
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 966415,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 785133,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 113207,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 585208,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 469977,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 728323,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 140055,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 960011,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 436685,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 990239,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 732115,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 661881,
+            "shift": 0
+          },
+          {
+            "arm_lap": 23,
+            "baseline_lap": 23,
+            "circuit": "chinese_grand_prix",
+            "seed": 429987,
+            "shift": 0
+          },
+          {
+            "arm_lap": 15,
+            "baseline_lap": 15,
+            "circuit": "chinese_grand_prix",
+            "seed": 420440,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "chinese_grand_prix",
+            "seed": 392193,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 445182,
+            "shift": 0
+          },
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 843664,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 160919,
+            "shift": 0
+          },
+          {
+            "arm_lap": 10,
+            "baseline_lap": 10,
+            "circuit": "chinese_grand_prix",
+            "seed": 904983,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "chinese_grand_prix",
+            "seed": 718946,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 914705,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 934712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 386349,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 846378,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 159519,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 743031,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 583093,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 294140,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 628706,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 920736,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 842556,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 254432,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 697949,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 186934,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 144553,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 701485,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 344976,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 320875,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 171368,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 719540,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 198252,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 877739,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 356643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 984998,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 526345,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 732620,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 872052,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 199335,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 513714,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "monaco_grand_prix",
+            "seed": 208398,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 207273,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 815235,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 354289,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 853497,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 956643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 531764,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 143712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 627541,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 780782,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 208316,
+            "shift": 0
+          }
+        ],
+        "perturbation": 0.5,
+        "predicted": null,
+        "rationale": "the agent observes the weather it is in, never a forecast, so it cannot anticipate this — only react once the track is wet",
+        "unchanged": 60,
+        "unit": "relative"
+      },
+      "safety_car_rate_down": {
+        "direction": "down",
+        "direction_agreement": null,
+        "kind": "confounded",
+        "knob": "safety_car_rate",
+        "mean_shift_laps": 0.016666666666666666,
+        "moved_earlier": 1,
+        "moved_later": 2,
+        "n": 60,
+        "per_race": [
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 966415,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 785133,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 113207,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 585208,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 469977,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 728323,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 140055,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 960011,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 436685,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 990239,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 732115,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 661881,
+            "shift": 0
+          },
+          {
+            "arm_lap": 23,
+            "baseline_lap": 23,
+            "circuit": "chinese_grand_prix",
+            "seed": 429987,
+            "shift": 0
+          },
+          {
+            "arm_lap": 15,
+            "baseline_lap": 15,
+            "circuit": "chinese_grand_prix",
+            "seed": 420440,
+            "shift": 0
+          },
+          {
+            "arm_lap": 5,
+            "baseline_lap": 4,
+            "circuit": "chinese_grand_prix",
+            "seed": 392193,
+            "shift": 1
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 445182,
+            "shift": 0
+          },
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 843664,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 160919,
+            "shift": 0
+          },
+          {
+            "arm_lap": 10,
+            "baseline_lap": 10,
+            "circuit": "chinese_grand_prix",
+            "seed": 904983,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "chinese_grand_prix",
+            "seed": 718946,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 914705,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 934712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 386349,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 846378,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 159519,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 743031,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 583093,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 294140,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 628706,
+            "shift": 1
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 920736,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 842556,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 254432,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 697949,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 186934,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 144553,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 701485,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 344976,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 320875,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 171368,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 719540,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 198252,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 877739,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 356643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 984998,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 526345,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 732620,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 872052,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 199335,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 513714,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 4,
+            "circuit": "monaco_grand_prix",
+            "seed": 208398,
+            "shift": -1
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 207273,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 815235,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 354289,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 853497,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 956643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 531764,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 143712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 627541,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 780782,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 208316,
+            "shift": 0
+          }
+        ],
+        "perturbation": 0.5,
+        "predicted": null,
+        "rationale": "more neutralisations means more cheap stops, but it also means a different race; movement here is not by itself a decision",
+        "unchanged": 57,
+        "unit": "relative"
+      },
+      "safety_car_rate_up": {
+        "direction": "up",
+        "direction_agreement": null,
+        "kind": "confounded",
+        "knob": "safety_car_rate",
+        "mean_shift_laps": -0.23333333333333334,
+        "moved_earlier": 4,
+        "moved_later": 0,
+        "n": 60,
+        "per_race": [
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 966415,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 785133,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 113207,
+            "shift": -5
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 585208,
+            "shift": 0
+          },
+          {
+            "arm_lap": 9,
+            "baseline_lap": 9,
+            "circuit": "chinese_grand_prix",
+            "seed": 469977,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 728323,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 140055,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 960011,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 436685,
+            "shift": 0
+          },
+          {
+            "arm_lap": 6,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 990239,
+            "shift": -5
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 732115,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "chinese_grand_prix",
+            "seed": 661881,
+            "shift": 0
+          },
+          {
+            "arm_lap": 23,
+            "baseline_lap": 23,
+            "circuit": "chinese_grand_prix",
+            "seed": 429987,
+            "shift": 0
+          },
+          {
+            "arm_lap": 15,
+            "baseline_lap": 15,
+            "circuit": "chinese_grand_prix",
+            "seed": 420440,
+            "shift": 0
+          },
+          {
+            "arm_lap": 4,
+            "baseline_lap": 4,
+            "circuit": "chinese_grand_prix",
+            "seed": 392193,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 7,
+            "circuit": "chinese_grand_prix",
+            "seed": 445182,
+            "shift": 0
+          },
+          {
+            "arm_lap": 8,
+            "baseline_lap": 8,
+            "circuit": "chinese_grand_prix",
+            "seed": 843664,
+            "shift": 0
+          },
+          {
+            "arm_lap": 11,
+            "baseline_lap": 11,
+            "circuit": "chinese_grand_prix",
+            "seed": 160919,
+            "shift": 0
+          },
+          {
+            "arm_lap": 7,
+            "baseline_lap": 10,
+            "circuit": "chinese_grand_prix",
+            "seed": 904983,
+            "shift": -3
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "chinese_grand_prix",
+            "seed": 718946,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 914705,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 934712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 386349,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 846378,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 159519,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 743031,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 583093,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 294140,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 628706,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 920736,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "australian_grand_prix",
+            "seed": 842556,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 254432,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 697949,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 186934,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 144553,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 701485,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 344976,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 320875,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 171368,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "australian_grand_prix",
+            "seed": 719540,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 198252,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 877739,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 356643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 984998,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 526345,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 732620,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 872052,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 199335,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 513714,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 4,
+            "circuit": "monaco_grand_prix",
+            "seed": 208398,
+            "shift": -1
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 207273,
+            "shift": 0
+          },
+          {
+            "arm_lap": 2,
+            "baseline_lap": 2,
+            "circuit": "monaco_grand_prix",
+            "seed": 815235,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 354289,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 853497,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 956643,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 531764,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 143712,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 627541,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 780782,
+            "shift": 0
+          },
+          {
+            "arm_lap": 3,
+            "baseline_lap": 3,
+            "circuit": "monaco_grand_prix",
+            "seed": 208316,
+            "shift": 0
+          }
+        ],
+        "perturbation": 0.5,
+        "predicted": null,
+        "rationale": "more neutralisations means more cheap stops, but it also means a different race; movement here is not by itself a decision",
+        "unchanged": 56,
+        "unit": "relative"
       },
       "tyre_degradation_down": {
         "direction": "down",
         "direction_agreement": 0.8,
+        "kind": "controlled",
         "knob": "tyre_degradation",
         "mean_shift_laps": 0.21666666666666667,
         "moved_earlier": 2,
@@ -1321,12 +3954,14 @@
         ],
         "perturbation": 0.1,
         "predicted": "later",
+        "rationale": "harder wear should pull the stop earlier",
         "unchanged": 50,
         "unit": "relative"
       },
       "tyre_degradation_up": {
         "direction": "up",
         "direction_agreement": 1.0,
+        "kind": "controlled",
         "knob": "tyre_degradation",
         "mean_shift_laps": -0.1,
         "moved_earlier": 6,
@@ -1756,6 +4391,7 @@
         ],
         "perturbation": 0.1,
         "predicted": "earlier",
+        "rationale": "harder wear should pull the stop earlier",
         "unchanged": 54,
         "unit": "relative"
       }
@@ -1765,6 +4401,20 @@
       "australian_grand_prix",
       "monaco_grand_prix"
     ],
+    "grid_sweep": {
+      "P16": {
+        "mean_first_stop_lap": 4.8,
+        "n": 60
+      },
+      "P2": {
+        "mean_first_stop_lap": 4.416666666666667,
+        "n": 60
+      },
+      "P8": {
+        "mean_first_stop_lap": 4.55,
+        "n": 60
+      }
+    },
     "model_version": "senna-ppo-5e3ddb15d584-C-01769472",
     "seeds": 20
   }
