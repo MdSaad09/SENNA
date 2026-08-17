@@ -12,6 +12,12 @@ ladder: bound-clip detection -> pooled per-compound refit -> cross-era prior, pl
 no-free-tyres backstop in build_scenario. Then retrain the headline and re-run the
 suite. Expect M1 to shrink; the pre-repair store archives for the comparison.
 
+**Next up: F25 — the Streamlit ceiling, reached on purpose. Planned and approved
+18 Aug 2026** (`docs/plans/F25-plan.md`): design system in theme.py, the s_track
+track map with autoplay motion, auto-composed race headline and moments strip.
+Builds on its own branch after F24 lands. app/ only — it cannot touch the frozen
+chain.
+
 F23 landed 15 Aug 2026. The dashboard is three tabs
 (Strategy / Circuit / Analysis) with a section rail; all six spec views survive as
 sections and every colour lives in `frontend/src/config/palette.ts`, sampled from the
