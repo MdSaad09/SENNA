@@ -4,7 +4,15 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none. F23 landed 15 Aug 2026. The dashboard is three tabs
+**Active feature: F24 — tyre-model repair and headline retrain. Planned 17 Aug 2026**
+(`docs/plans/F24-plan.md`). Root cause found live: 37 of 145 fitted deg curves are
+bound-clipped to a=0.0 (the 2026 SOFT nearly everywhere), so tyres are free and the
+policy learned pit-lap-2-then-never-stop — the mechanism behind the M9 miss. Repair
+ladder: bound-clip detection -> pooled per-compound refit -> cross-era prior, plus a
+no-free-tyres backstop in build_scenario. Then retrain the headline and re-run the
+suite. Expect M1 to shrink; the pre-repair store archives for the comparison.
+
+F23 landed 15 Aug 2026. The dashboard is three tabs
 (Strategy / Circuit / Analysis) with a section rail; all six spec views survive as
 sections and every colour lives in `frontend/src/config/palette.ts`, sampled from the
 reference screenshots Saad supplied on 11 Aug. Frontend only — no backend change, and no
