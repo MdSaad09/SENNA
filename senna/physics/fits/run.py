@@ -832,7 +832,9 @@ def _put_degradation(
                          fit_slug, era, compound)
                 continue
             row = {
-                "a": (round(fit.a, 6), DEG_NB),
+                # 10 dp, not the file's usual 6: a cliff-shaped curve (tiny a, b near
+                # 3) is real wear that 6 dp truncates back to the zero F24 repairs
+                "a": (round(fit.a, 10), DEG_NB),
                 "b": (round(fit.b, 4), DEG_NB),
                 "n_laps": (fit.n_laps, DEG_NB),
                 "max_age_seen": (fit.max_age_seen, DEG_NB),
@@ -854,7 +856,7 @@ def _put_degradation(
                 origin = DEG_NB + " — F24 pooled fallback (no identified donor)"
                 provenance = {"source": (row["source"], origin)}
             rows[compound] = {
-                "a": (round(row["a"], 6), origin),
+                "a": (round(row["a"], 10), origin),  # 10 dp — same truncation hazard as above
                 "b": (round(row["b"], 4), origin),
                 "low_confidence": (True, DEG_NB),
                 **provenance,

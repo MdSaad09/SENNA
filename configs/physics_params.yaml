@@ -7,39 +7,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000692  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0006923514  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9561  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 45  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 2659  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000641  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0006410481  # fitted: notebooks/fit_degradation.ipynb
           b: 1.1529  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 29  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1301  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.000149  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0001491706  # fitted: notebooks/fit_degradation.ipynb
           b: 1.7103  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 24  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 84  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000224  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001938579  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000696  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0007727867  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 10.9642  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -95,42 +98,52 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.001664  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0010267863  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.7444  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 56  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1280  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         MEDIUM:
-          a: 0.000255  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0002550202  # fitted: notebooks/fit_degradation.ipynb
           b: 1.3132  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 24  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 354  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 6  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 12  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.000739  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.000739106  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 46  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 499  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 8.87e-08  # fitted: notebooks/fit_degradation.ipynb
+          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 27  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 223  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 24  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 112  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
     energy:
       2024:
         braking_energy_mj_per_lap: 9.1601  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -208,39 +221,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.001454  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0014543652  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8139  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 41  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 931  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000169  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0001687023  # fitted: notebooks/fit_degradation.ipynb
           b: 1.4758  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 33  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1572  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 1.0e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 9.88e-07  # fitted: notebooks/fit_degradation.ipynb
           b: 3.0  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 25  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 133  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.00047  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0004072212  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000183  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0002033715  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 9.4031  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -296,39 +312,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000245  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0002451721  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9388  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 51  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 2378  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001206  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0012061262  # fitted: notebooks/fit_degradation.ipynb
           b: 0.5614  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 39  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 797  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.001571  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0015714066  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8473  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 15  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 12  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 7.9e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 6.8648e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.00131  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0014539912  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 14.7052  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -384,39 +403,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.001097  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0010968371  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0305  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 30  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1596  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.00145  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0014498721  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9598  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 31  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 753  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.001081  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.001080687  # fitted: notebooks/fit_degradation.ipynb
           b: 1.073  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 28  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1356  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000355  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0003071136  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001574  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.001747828  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 13.0382  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -472,39 +494,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.003254  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0032537537  # fitted: notebooks/fit_degradation.ipynb
           b: 0.5662  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 34  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 594  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.003263  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0032632393  # fitted: notebooks/fit_degradation.ipynb
           b: 0.6191  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 905  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.004423  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0044233075  # fitted: notebooks/fit_degradation.ipynb
           b: 0.5259  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 29  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 140  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.001052  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009110487  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.003544  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0039338514  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 11.2819  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -560,39 +585,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.00094  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009399436  # fitted: notebooks/fit_degradation.ipynb
           b: 0.5997  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 31  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 116  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 3.8e-05  # fitted: notebooks/fit_degradation.ipynb
+          a: 3.82862e-05  # fitted: notebooks/fit_degradation.ipynb
           b: 1.4884  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 438  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.000146  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0001464664  # fitted: notebooks/fit_degradation.ipynb
           b: 1.1193  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 30  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 248  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000304  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0002631835  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 4.2e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 4.61542e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 8.1486  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -648,42 +676,52 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000128  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0001280026  # fitted: notebooks/fit_degradation.ipynb
           b: 1.2498  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 63  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1479  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
+          a: 1.706e-07  # fitted: notebooks/fit_degradation.ipynb
           b: 3.0  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 38  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 558  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.001014  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.8046  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 9  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 7  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 5.56178e-05  # fitted: notebooks/fit_degradation.ipynb
+          b: 1.49  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 37  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 78  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         MEDIUM:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 8.87e-08  # fitted: notebooks/fit_degradation.ipynb
+          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 825  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 37  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 466  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
     energy:
       2024:
         braking_energy_mj_per_lap: 11.3042  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -761,42 +799,49 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.002062  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0020616381  # fitted: notebooks/fit_degradation.ipynb
           b: 0.6524  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 46  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1153  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001291  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0012909875  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0266  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 30  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1173  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.000665  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0006646825  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0992  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 19  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 74  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 4.0e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 3.6295e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.1335  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 47  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 624  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.002551  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.002550702  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7455  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 26  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 352  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 15  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 58  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
     energy:
       2024:
         braking_energy_mj_per_lap: 11.3091  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -874,39 +919,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000763  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0007627915  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8522  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 57  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1469  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000647  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0006474341  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9527  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1230  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.000462  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0004620198  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0946  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 28  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 709  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000247  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0002135811  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000703  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0007804851  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 8.3905  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -962,39 +1010,43 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000564  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0005644606  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0408  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 54  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1342  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
+          a: 8.7e-08  # fitted: notebooks/fit_degradation.ipynb
           b: 3.0  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1493  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 23  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 325  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.000183  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001580486  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 1.049e-07  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 10.9609  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1050,14 +1102,16 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000704  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0007043375  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9606  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 37  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 486  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001251  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0012511942  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8053  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 35  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 304  # fitted: notebooks/fit_degradation.ipynb
@@ -1110,39 +1164,43 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.001089  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0010891562  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8996  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 55  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 2243  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000261  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0002609871  # fitted: notebooks/fit_degradation.ipynb
           b: 1.2472  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 43  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1315  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 1.0e-06  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 16  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 104  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.000352  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.000304963  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000283  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0003146213  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 10.7532  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1198,39 +1256,43 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.001131  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.001131233  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7302  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 50  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1885  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000287  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0002873667  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0086  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 45  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1394  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 24  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 173  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.000366  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0003167444  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000312  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0003464221  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 10.3914  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1286,33 +1348,39 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.00156  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0015596692  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7089  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 38  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 939  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.00049  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0004896182  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0765  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 630  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 6.0e-06  # fitted: notebooks/fit_degradation.ipynb
-          b: 2.582  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 20  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 114  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 2.0e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 1.8574e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.4438  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 37  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 491  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 5.6e-05  # fitted: notebooks/fit_degradation.ipynb
+          a: 5.62643e-05  # fitted: notebooks/fit_degradation.ipynb
           b: 1.72  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 33  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 427  # fitted: notebooks/fit_degradation.ipynb
@@ -1392,39 +1460,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 2.9e-05  # fitted: notebooks/fit_degradation.ipynb
+          a: 2.88726e-05  # fitted: notebooks/fit_degradation.ipynb
           b: 1.7237  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1669  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001295  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0012949915  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7452  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 26  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 553  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.026084  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0260841414  # fitted: notebooks/fit_degradation.ipynb
           b: 0.3204  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 9  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 8  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 2.71e-08  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           b: 2.371  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 4.302e-07  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           b: 2.4195  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           source_circuit: "monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 12.5253  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1480,39 +1551,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000253  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0002527526  # fitted: notebooks/fit_degradation.ipynb
           b: 1.0633  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 49  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 937  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000811  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0008113197  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8316  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1496  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.000327  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0003272097  # fitted: notebooks/fit_degradation.ipynb
           b: 1.1867  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 37  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1012  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 8.2e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 7.07705e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000881  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009780499  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 10.0515  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1568,42 +1642,49 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 5.3e-05  # fitted: notebooks/fit_degradation.ipynb
+          a: 5.34901e-05  # fitted: notebooks/fit_degradation.ipynb
           b: 1.4513  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 54  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1200  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000537  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0005370677  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8398  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 36  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1024  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.000447  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0004467488  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9295  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 29  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 74  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.001023  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0010234537  # fitted: notebooks/fit_degradation.ipynb
           b: 1.1349  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 19  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 36  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000187  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0001870006  # fitted: notebooks/fit_degradation.ipynb
           b: 1.5747  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 25  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 286  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 19  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 36  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
     energy:
       2024:
         braking_energy_mj_per_lap: 9.8272  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1675,42 +1756,49 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.003487  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.003486602  # fitted: notebooks/fit_degradation.ipynb
           b: 0.5195  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 71  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 719  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.004751  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0047509939  # fitted: notebooks/fit_degradation.ipynb
           b: 0.4037  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 59  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 411  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.018314  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.01831395  # fitted: notebooks/fit_degradation.ipynb
           b: 0.3  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 47  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 3.0e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 3.2692e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.371  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 323  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 2.0e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 1.5781e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.4195  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 57  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 600  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 54  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 238  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
     energy:
       2024:
         braking_energy_mj_per_lap: 9.5428  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1788,39 +1876,43 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.001303  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0013027325  # fitted: notebooks/fit_degradation.ipynb
           b: 0.6896  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 30  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1015  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000214  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3715  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 35  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 2067  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         SOFT:
-          a: 0.00315  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0031500783  # fitted: notebooks/fit_degradation.ipynb
           b: 0.5735  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 25  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 173  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000421  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0003647642  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000233  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0011092273  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 8.6503  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1876,39 +1968,44 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0010267863  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.7444  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 49  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 2002  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         MEDIUM:
-          a: 9.7e-05  # fitted: notebooks/fit_degradation.ipynb
+          a: 9.68534e-05  # fitted: notebooks/fit_degradation.ipynb
           b: 1.212  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 40  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 952  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 19  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 80  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0002874994  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.000105  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001167573  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 10.8263  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -1964,39 +2061,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 7.0e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 7.0183e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.1199  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 49  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 990  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 4.0e-06  # fitted: notebooks/fit_degradation.ipynb
+          a: 4.272e-06  # fitted: notebooks/fit_degradation.ipynb
           b: 2.439  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 40  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 825  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 5.4e-05  # fitted: notebooks/fit_degradation.ipynb
+          a: 5.39142e-05  # fitted: notebooks/fit_degradation.ipynb
           b: 1.5795  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 31  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 132  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 2.0e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 1.9651e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 5.0e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 5.15e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 13.4813  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -2052,39 +2152,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.002474  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0024738213  # fitted: notebooks/fit_degradation.ipynb
           b: 0.6773  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 50  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 549  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001826  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0018263548  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7952  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 35  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1292  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.000841  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.000841301  # fitted: notebooks/fit_degradation.ipynb
           b: 1.092  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 27  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1415  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0008  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0006926682  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001983  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0022016799  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 9.4573  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -2140,39 +2243,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.002858  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0028576848  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7235  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 28  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 54  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001803  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0018030524  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7678  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 52  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1315  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.001084  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0010842431  # fitted: notebooks/fit_degradation.ipynb
           b: 0.8717  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 38  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 997  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000924  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0008001497  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001958  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0021735887  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 8.9842  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -2228,39 +2334,42 @@ circuits:
     degradation:
       2024:
         HARD:
-          a: 0.000561  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0005607808  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9308  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 40  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1419  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 8.4e-05  # fitted: notebooks/fit_degradation.ipynb
+          a: 8.4161e-05  # fitted: notebooks/fit_degradation.ipynb
           b: 1.5392  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 38  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 2518  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.001328  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0013282295  # fitted: notebooks/fit_degradation.ipynb
           b: 0.7996  # fitted: notebooks/fit_degradation.ipynb
+          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 30  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 440  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.000181  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3824  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001570182  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 9.1e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.9281  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001014565  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.0  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "australian_grand_prix,canadian_grand_prix,chinese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
     energy:
       2024:
         braking_energy_mj_per_lap: 11.4178  # fitted: notebooks/fit_energy_integrals.ipynb
@@ -2342,11 +2451,11 @@ clusters:
   k: 2  # fitted: notebooks/fit_tyre_clusters.ipynb — max silhouette
   seed: 20260715  # sourced configs/fits.yaml — determinism provenance for transfer donors
   silhouettes:
-    k2: 0.4432  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k3: 0.2695  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k4: 0.213  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k5: 0.2464  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k6: 0.2397  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k2: 0.4454  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k3: 0.2692  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k4: 0.2124  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k5: 0.2465  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k6: 0.2401  # fitted: notebooks/fit_tyre_clusters.ipynb
 globals:
   k_m_pooled_s_per_kg_2024: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — inverse-variance mean over identified circuits — cross-era fallback, no circuit of this era identified (grade C via AR-10 fuel)
   k_m_pooled_s_per_kg_2026: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — inverse-variance mean over identified circuits (grade C via AR-10 fuel)
