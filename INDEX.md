@@ -4,8 +4,11 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature: F24 — tyre-model repair and headline retrain. In review 18 Aug 2026**
-(branch `feature/F24-tyre-model-repair`, plan `docs/plans/F24-plan.md`). 37 of 145 deg
+**Active feature:** none.
+
+**F24 — tyre-model repair and headline retrain. Done 18 Aug 2026** (branch
+`feature/F24-tyre-model-repair`, plan `docs/plans/F24-plan.md`, lesson
+`docs/learn/F24-tyre-model-repair.md`). 37 of 145 deg
 curves were bound-clipped to a=0.0 and served as measurements — free tyres, and the
 policy's pit-lap-3-then-never-stop habit was the optimal answer. Shipped: identification
 honesty (signal floor + bound-pin detection), the repair ladder (pooled -> cross-era,
