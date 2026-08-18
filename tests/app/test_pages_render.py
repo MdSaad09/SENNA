@@ -10,6 +10,7 @@ The client is stubbed, so no database, API or model is needed.
 
 from pathlib import Path
 
+import pyarrow
 import pytest
 from streamlit.testing.v1 import AppTest
 
@@ -178,3 +179,81 @@ def test_every_page_carries_the_unofficial_project_footer(stub_client):
                         ("app/pages/1_Explainability.py", {"run_id": RUN_ID}),
                         ("app/pages/2_Playback.py", {"run_id": RUN_ID})):
         assert DISCLAIMER in _text(_page(path, **state)), f"{path} lost the R-07 footer"
+
+
+def _chart_rows(at: AppTest) -> list[dict]:
+    """The data behind every altair chart on the page, as plain column dicts.
+
+    AppTest has no accessor for charts, but the vega-lite proto carries the inlined
+    datasets, so this is still an assertion on what the reader's chart actually shows."""
+    tables = []
+    for chart in at.get("vega_lite_chart"):
+        for dataset in chart.proto.datasets:
+            table = pyarrow.ipc.open_stream(dataset.data.data).read_all()
+            tables.append(table.to_pydict())
+    return tables
+
+
+def test_the_race_page_leads_with_the_composed_headline(stub_client):
+    from app.story import race_headline
+
+    headline = race_headline([_frame(n) for n in range(1, LAPS + 1)],
+                             RUN["summary"], RUN["config"]["grid_position"])
+    at = _page("app/Home.py", run_id=RUN_ID)
+    assert headline in _text(at), "the page's headline is not the composed one"
+
+
+def test_the_race_page_marks_the_safety_car_on_the_moments_strip(stub_client):
+    at = _page("app/Home.py", run_id=RUN_ID)
+    # the stub race has exactly one event: an sc on lap 3
+    strips = [
+        table for table in _chart_rows(at)
+        if 3 in table.get("lap", [])
+        and any(str(value).lower() == "sc" or "safety" in str(value).lower()
+                for column in table.values() for value in column)
+    ]
+    assert strips, "no chart data marks the lap-3 safety car"
+
+
+def test_playback_draws_the_full_field_on_the_track_map(stub_client):
+    from app.theme import TEAMS
+
+    at = _page("app/pages/2_Playback.py", run_id=RUN_ID)
+    maps = []
+    for table in _chart_rows(at):
+        if "x" not in table or "y" not in table:
+            continue
+        if any(len(column) != 22 for column in table.values()):
+            continue
+        maps.append(table)
+    assert maps, "no chart with one x/y point per car"
+
+    track = maps[0]
+    values = {str(value) for column in track.values() for value in column}
+    assert {"C01", "C22"} <= values, "car labels missing from the track map data"
+    hexes = {value.lower() for value in values if value.startswith("#")}
+    assert TEAMS[0][1].lower() in hexes, "the ego's team colour is not on the map"
+
+
+def test_playback_states_the_track_map_is_illustrative(stub_client):
+    body = _text(_page("app/pages/2_Playback.py", run_id=RUN_ID))
+    assert "s_track" in body
+    assert "illustrative" in body or "display-only" in body, \
+        "the F11 display-only synthesis caveat left the screen"
+
+
+def test_playback_colours_the_battery_gauge_from_the_soc_ramp(stub_client):
+    from app.theme import SOC_RAMP
+
+    at = _page("app/pages/2_Playback.py", run_id=RUN_ID)
+    drawn = " ".join(chart.proto.spec for chart in at.get("vega_lite_chart"))
+    drawn += " ".join(str(value)
+                      for table in _chart_rows(at)
+                      for column in table.values() for value in column)
+    assert any(step.lower() in drawn.lower() for step in SOC_RAMP), \
+        "no chart uses the state-of-charge ramp"
+
+
+def test_explainability_keeps_the_decision_line_on_screen(stub_client):
+    at = _page("app/pages/1_Explainability.py", run_id=RUN_ID)
+    assert CARD["decision"] in _text(at)
