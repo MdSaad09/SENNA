@@ -1,9 +1,9 @@
 {
-  "model_version": "senna-ppo-405658360cd8-C-02211840",
-  "run_id": "headline-20260817-s331-405658360cd8",
+  "model_version": "senna-ppo-4b557848ff25-C-04177920",
+  "run_id": "headline-20260818-s331-4b557848ff25",
   "run_tag": "headline",
   "era": "2026",
-  "fingerprint": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
+  "fingerprint": "4b557848ff25fdf4ba414ff5ec1504ee485ecefaf8485d700a10813d4069bd57",
   "config_files": [
     "env",
     "circuits",
@@ -17,9 +17,9 @@
     "curriculum",
     "seeds"
   ],
-  "git_commit": "c564b18d3baaffbf30a20c155d7801a567627ea1",
+  "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
   "stage": "C",
-  "global_step": 2211840,
+  "global_step": 4177920,
   "stage_exit_reason": null,
   "seed": 331,
   "stage_seed": 2331,
@@ -73,8 +73,8 @@
       "united_states_grand_prix"
     ]
   },
-  "dominance_ratio": 1.8064074466178908,
-  "wandb_run_id": "mmcl63fy",
+  "dominance_ratio": 1.66982046989811,
+  "wandb_run_id": "ztxntusw",
   "versions": {
     "stable_baselines3": "2.9.0",
     "sb3_contrib": "2.9.0",
@@ -82,7 +82,7 @@
     "python": "3.11.9"
   },
   "resumed_from": null,
-  "saved_at": "2026-08-17T22:28:49.773429+00:00",
-  "model_zip_sha256": "c72939ea3b1202928c4bb65a7ab48be6d3d3904afd9c4dd92bba193645f1abdb",
-  "vecnormalize_sha256": "07013f5b496e4e4b84998bca5ac69adca9b39186684ea152fe6adde954700849"
+  "saved_at": "2026-08-18T15:53:02.932167+00:00",
+  "model_zip_sha256": "7b059cd002e0e03c825fa30082d5a9b77bac8f47436aac192969990913389dcd",
+  "vecnormalize_sha256": "643b665a6068500e56e271b0a56c68e6efb03fc07e66a2c396ffac10ce961d49"
 }

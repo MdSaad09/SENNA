@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
-    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
+    "config_hash": "4b557848ff25fdf4ba414ff5ec1504ee485ecefaf8485d700a10813d4069bd57",
+    "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
     "model_versions": {
-      "headline": "senna-ppo-405658360cd8-C-02211840"
+      "headline": "senna-ppo-4b557848ff25-C-04177920"
     },
     "scope": {
       "batteries": [
@@ -26,229 +26,229 @@
     "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
   },
   "payload": {
-    "ci_high": 0.6984217585682263,
-    "ci_low": 0.5644551164633702,
+    "ci_high": 0.7995376254473084,
+    "ci_low": 0.6811473394896747,
     "decision_reps": 25,
-    "mean_head_entropy_nats": 0.4097077291401165,
-    "mean_share": 0.630064825612607,
+    "mean_head_entropy_nats": 0.28005522539453787,
+    "mean_share": 0.7404174078372332,
     "n_circuits": 24,
     "n_entropy_episodes": 12000,
     "per_circuit": {
       "abu_dhabi_grand_prix": {
-        "between": 8.788610526315791,
+        "between": 18.008209122807017,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.8721792415578338,
-        "within": 1.288
+        "share": 0.8946455485717857,
+        "within": 2.1206666666666667
       },
       "australian_grand_prix": {
-        "between": 27.626950175438587,
+        "between": 12.035423508771933,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.8811407728354304,
-        "within": 3.7266666666666666
+        "share": 0.7648212424042883,
+        "within": 3.700833333333333
       },
       "austrian_grand_prix": {
-        "between": 10.568663157894736,
+        "between": 7.915945614035089,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.5383478247814487,
-        "within": 9.062999999999999
+        "share": 0.5596372798394151,
+        "within": 6.228833333333334
       },
       "azerbaijan_grand_prix": {
-        "between": 4.796430175438598,
+        "between": 8.517924912280703,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.418095335269014,
-        "within": 6.675666666666667
+        "share": 0.9383463486102813,
+        "within": 0.5596666666666665
       },
       "bahrain_grand_prix": {
-        "between": 0.7141431578947368,
+        "between": 1.3897049122807017,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.6307887416134837,
-        "within": 0.41800000000000004
+        "share": 0.5861578183402536,
+        "within": 0.9811666666666667
       },
       "belgian_grand_prix": {
-        "between": 0.10038982456140351,
+        "between": 0.30032947368421054,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.3948885907670564,
-        "within": 0.15383333333333335
+        "share": 0.7382195566227153,
+        "within": 0.10650000000000001
       },
       "british_grand_prix": {
-        "between": 1.327935789473684,
+        "between": 1.6604873684210526,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.5700675654913501,
-        "within": 1.0015
+        "share": 0.7084028654726,
+        "within": 0.6834999999999999
       },
       "canadian_grand_prix": {
-        "between": 33.45764105263157,
+        "between": 15.957426315789478,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.8570720127153402,
-        "within": 5.5794999999999995
+        "share": 0.7538849088299622,
+        "within": 5.209499999999999
       },
       "chinese_grand_prix": {
-        "between": 30.838818947368416,
+        "between": 15.626188771929826,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.7301579492467706,
-        "within": 11.397
+        "share": 0.6965242539427174,
+        "within": 6.808333333333333
       },
       "dutch_grand_prix": {
-        "between": 7.774771578947369,
+        "between": 3.0979975438596483,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.5365141034443384,
-        "within": 6.716499999999999
+        "share": 0.5675896554898479,
+        "within": 2.3601666666666663
       },
       "emilia_romagna_grand_prix": {
-        "between": 6.6688603508771935,
+        "between": 19.1270449122807,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.5023171934293574,
-        "within": 6.607333333333334
+        "share": 0.7716030279090816,
+        "within": 5.661666666666667
       },
       "hungarian_grand_prix": {
-        "between": 9.583191578947368,
+        "between": 9.470998947368424,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.5489537956668982,
-        "within": 7.874
+        "share": 0.6274886280771701,
+        "within": 5.6225000000000005
       },
       "italian_grand_prix": {
-        "between": 5.979267368421052,
+        "between": 3.073435438596491,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.3632766413341669,
-        "within": 10.48
+        "share": 0.3901981333477308,
+        "within": 4.803166666666668
       },
       "japanese_grand_prix": {
-        "between": 22.925108070175444,
+        "between": 17.69596771929825,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.8337380761773042,
-        "within": 4.571666666666667
+        "share": 0.8414910070006248,
+        "within": 3.3333333333333335
       },
       "las_vegas_grand_prix": {
-        "between": 4.32219052631579,
+        "between": 5.1693849122807,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.6487154865206975,
-        "within": 2.3404999999999996
+        "share": 0.9096943231333193,
+        "within": 0.5131666666666667
       },
       "mexico_city_grand_prix": {
-        "between": 7.628356842105266,
+        "between": 8.540244210526318,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.6093006444331296,
-        "within": 4.891500000000001
+        "share": 0.7732755675926264,
+        "within": 2.5040000000000004
       },
       "miami_grand_prix": {
-        "between": 23.941220701754386,
+        "between": 24.115547719298252,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.9280842452793336,
-        "within": 1.8551666666666669
+        "share": 0.97219017390341,
+        "within": 0.6898333333333334
       },
       "monaco_grand_prix": {
-        "between": 13.253855438596492,
+        "between": 14.662998947368418,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.749206572860464,
-        "within": 4.4366666666666665
+        "share": 0.8463247720548673,
+        "within": 2.662499999999999
       },
       "qatar_grand_prix": {
-        "between": 3.7384284210526313,
+        "between": 34.07123403508772,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.6220420875491642,
-        "within": 2.2715000000000005
+        "share": 0.8265289979412492,
+        "within": 7.150833333333334
       },
       "saudi_arabian_grand_prix": {
-        "between": 10.963960701754383,
+        "between": 18.66787438596491,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.6910076380551848,
-        "within": 4.902666666666667
+        "share": 0.8809116023983883,
+        "within": 2.5236666666666667
       },
       "singapore_grand_prix": {
-        "between": 13.59679228070176,
+        "between": 23.298371578947368,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.6830342009420622,
-        "within": 6.309666666666667
+        "share": 0.7958488055572575,
+        "within": 5.9765
       },
       "spanish_grand_prix": {
-        "between": 0.41540140350877197,
+        "between": 1.2419154385964912,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.5496656210941926,
-        "within": 0.3403333333333333
+        "share": 0.6138729789392041,
+        "within": 0.7811666666666667
       },
       "são_paulo_grand_prix": {
-        "between": 1.864690877192983,
+        "between": 1.5605277192982456,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.3038180890585976,
-        "within": 4.272833333333333
+        "share": 0.5123436993128668,
+        "within": 1.4853333333333334
       },
       "united_states_grand_prix": {
-        "between": 2.506185263157895,
+        "between": 1.9928733333333333,
         "clipped": false,
         "flag": null,
         "n_reps": 25,
         "n_seeds": 20,
-        "share": 0.659143384579948,
-        "within": 1.2959999999999998
+        "share": 0.8000165928019355,
+        "within": 0.49816666666666665
       }
     }
   }

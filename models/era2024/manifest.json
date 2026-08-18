@@ -1,9 +1,9 @@
 {
-  "model_version": "senna-ppo-c0d12cbc6f0f-C-03686400",
-  "run_id": "era2024-20260817-s331-c0d12cbc6f0f",
+  "model_version": "senna-ppo-d972ad8448dd-C-05849088",
+  "run_id": "era2024-20260818-s331-d972ad8448dd",
   "run_tag": "era2024",
   "era": "2024",
-  "fingerprint": "c0d12cbc6f0f130da61bfce104228897b135702f88cea093a5c9e69512205f0b",
+  "fingerprint": "d972ad8448dd5288b2bcdf43354c6fc57674959154d3ae4b1c40026954ddaaf9",
   "config_files": [
     "env",
     "circuits",
@@ -18,9 +18,9 @@
     "seeds",
     "eval"
   ],
-  "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
+  "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
   "stage": "C",
-  "global_step": 3686400,
+  "global_step": 5849088,
   "stage_exit_reason": null,
   "seed": 331,
   "stage_seed": 2331,
@@ -73,8 +73,8 @@
       "italian_grand_prix"
     ]
   },
-  "dominance_ratio": 1.4479177179601284,
-  "wandb_run_id": "y1j2advy",
+  "dominance_ratio": 1.4488222522092966,
+  "wandb_run_id": "j9tb10zg",
   "versions": {
     "stable_baselines3": "2.9.0",
     "sb3_contrib": "2.9.0",
@@ -82,7 +82,7 @@
     "python": "3.11.9"
   },
   "resumed_from": "/Users/saad/senna/models/headline",
-  "saved_at": "2026-08-17T23:06:32.213187+00:00",
-  "model_zip_sha256": "3a0723d9216cc62e3d038c35943b94230e264c8698e9e92cbe1d57cd02ae899f",
-  "vecnormalize_sha256": "2325abf3ca8c7f21934691da431fdd06e9568980f5715218c29894c1bfb5c3c3"
+  "saved_at": "2026-08-18T15:58:08.269875+00:00",
+  "model_zip_sha256": "7a1a59a3d2a065580c2b7d96559a1de9c79d16ef8c03467ca5d3cf1edabc3baf",
+  "vecnormalize_sha256": "5ab52ed49984e26579ff081ad53f74708f7573b97f5576019da6c3d74476972b"
 }

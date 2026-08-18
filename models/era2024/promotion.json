@@ -1,8 +1,8 @@
 {
-  "model_version": "senna-ppo-c0d12cbc6f0f-C-03686400",
-  "run_id": "era2024-20260817-s331-c0d12cbc6f0f",
+  "model_version": "senna-ppo-d972ad8448dd-C-05849088",
+  "run_id": "era2024-20260818-s331-d972ad8448dd",
   "seed": 331,
-  "step": 3686400,
-  "mean_points": 6.08,
-  "promoted_at": "2026-08-17T23:07:53.013091+00:00"
+  "step": 5849088,
+  "mean_points": 6.177391304347827,
+  "promoted_at": "2026-08-18T15:58:58.410479+00:00"
 }

@@ -9,8 +9,8 @@ file is the runbook; every step runs after `/land F15` merges to main.
 
 | Artifact | Value | Where it lives |
 |---|---|---|
-| Headline model | `senna-ppo-405658360cd8-C-02211840` | `models/headline/` (committed, baked) |
-| Era-matched 2024 model | `senna-ppo-c0d12cbc6f0f-C-03686400` | `models/era2024/` (committed, baked) |
+| Headline model | `senna-ppo-4b557848ff25-C-04177920` | `models/headline/` (committed, baked) |
+| Era-matched 2024 model | `senna-ppo-d972ad8448dd-C-05849088` | `models/era2024/` (committed, baked) |
 | Surrogates | one per model version | `models/explain/<version>/` (committed, baked) |
 | Env config hash | the headline manifest's fingerprint | every suite store envelope |
 | Seed manifest | `configs/seeds.yaml` (frozen 19 Jul 2026) | fingerprint in every envelope |
@@ -43,8 +43,8 @@ live seeds fingerprint matches, and no public page carries a rotten link.
 3. Tag, with the pins in the message:
 
         git tag -a v1.0.0 -m "SENNA v1.0.0 — the COMP702 freeze
-        headline senna-ppo-405658360cd8-C-02211840
-        era2024  senna-ppo-c0d12cbc6f0f-C-03686400
+        headline senna-ppo-4b557848ff25-C-04177920
+        era2024  senna-ppo-d972ad8448dd-C-05849088
         snapshot sha256 <from data/snapshot/MANIFEST.md>
         never-cut list intact: masking, cleaning contract, calibration/validation
         split, metric suite with gaming notes, decision cards (spec 6.3)"

@@ -34,7 +34,7 @@ recovery-limited, with a per-circuit harvest cap. An earlier version of this
 project's own spec had that wrong, and the audit trail of the corrections is
 part of the repository. When the FIA refined the cap from 8 to 7 MJ in April
 2026, the frozen agent was re-rolled under the tighter cap rather than silently
-retrained: it loses 0.25 places and its derate share doubles (`make sensitivity`).
+retrained: it loses 0.17 places and its derate share doubles (`make sensitivity`).
 
 **Compliance is structural, not learned.** Illegal actions never reach the
 policy — action masks plus physics clipping give 100% regulatory legality by
@@ -45,8 +45,8 @@ reward penalty pretends to teach the rulebook.
 comment naming its origin: sourced (with the document), fitted (with the
 notebook), stylised, or operational. Every pit decision gets a card — top SHAP
 drivers, the counterfactual flip line — and the card carries its own honesty
-figure: the explaining surrogate agrees with the real network on 98.6% of pit
-calls and 98.1% of energy calls, on held-out decisions.
+figure: the explaining surrogate agrees with the real network on 98.3% of pit
+calls and 97.7% of energy calls, on held-out decisions.
 
 **The results reproduce, and CI enforces it.** `make report` rebuilds the entire
 evaluation chapter byte-for-byte from the committed store; the freeze chain
@@ -66,14 +66,14 @@ zero, and the policy had learned to exploit the free tyres).
 
 | Result | Number | Reading |
 |---|---|---|
-| Position gain vs engineered baseline (M1) | +2.29 places, CI [1.95, 2.65] | met — and unchanged through the tyre-model repair: the capability was never the exploit |
+| Position gain vs engineered baseline (M1) | +1.79 places, CI [1.50, 2.08] | met — smaller than the pre-repair +2.28, and honestly so: part of that headline was riding on borrowed tyre curves the repair re-labelled |
 | Regulatory legality (M10) | 0 illegal, 0 snapped in 480 races | met — by construction, then measured anyway |
-| Tyre failures (M9) | 0.42 per 100 races (target < 2) | met — was 37.9 under the defective tyre model; the repair story is `docs/results/F14-pre-repair/` |
-| Counterfactual vs real strategies (M2) | 3W/3L/4T over 10 races, mean +0.40 | missed against the +1.0 bar, but now a wash where the pre-repair agent lost 8 of 10 significantly |
-| Energy utilisation (M4) | 0.648 deployed/E_dep against a 0.916 attainable ceiling | missed — though the derate share is now under its 5% cap, and the 0.90 bar stays unreachable by construction at several circuits |
-| Safety-car decisions (M5) | SC precision 0.900, recall 0.741; VSC recall 0.436 at precision 0.867 | still missed on the bars, but transformed: with real tyre wear a neutralisation is a real pit opportunity, and the agent takes most of them |
+| Tyre failures (M9) | 0 in 480 races (target < 2 per 100) | met — was 37.9 per 100 under the defective tyre model; the repair story is `docs/results/F14-pre-repair/` |
+| Counterfactual vs real strategies (M2) | 3W/2L/5T over 10 races, mean +0.50 | missed against the +1.0 bar, but now a wash where the pre-repair agent lost 8 of 10 significantly |
+| Energy utilisation (M4) | 0.675 deployed/E_dep against a 0.916 attainable ceiling | missed — though the derate share (3.8%) is under its 5% cap, and the 0.90 bar stays unreachable by construction at several circuits |
+| Safety-car decisions (M5) | SC precision 0.925, recall 0.749; VSC recall 0.684 at precision 0.892 | still missed on the bars, but transformed: with real tyre wear a neutralisation is a real pit opportunity, and the agent takes most of them |
 | Sim-to-real (M8) | 0/5 circuits within the KS bar | missed upstream: the synthetic-2026 transform still runs fast; the held-out validation split forbids refitting on the evidence |
-| Luck share (M11) | 63.0% of finishing-position variance | was 78.6% under free tyres — when tyres wear, strategy decides more of the race, which is the repair visible in the analytics |
+| Luck share (M11) | 74.0% of finishing-position variance | was 78.6% under free tyres — when tyres wear, strategy decides more of the race, which is the repair visible in the analytics |
 
 The counterfactuals are era-matched (a 2026-physics agent scored on 2024 races
 loses ~2.5 points to the car, not the strategy — measured, and the fine-tune

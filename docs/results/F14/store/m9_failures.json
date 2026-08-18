@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
-    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
+    "config_hash": "4b557848ff25fdf4ba414ff5ec1504ee485ecefaf8485d700a10813d4069bd57",
+    "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
     "model_versions": {
-      "headline": "senna-ppo-405658360cd8-C-02211840"
+      "headline": "senna-ppo-4b557848ff25-C-04177920"
     },
     "scope": {
       "batteries": [
@@ -26,12 +26,12 @@
     "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
   },
   "payload": {
-    "failures_per_100": 0.4166666666666667,
-    "n_failures": 2,
+    "failures_per_100": 0.0,
+    "n_failures": 0,
     "n_races": 480,
-    "n_races_with_failure": 2,
+    "n_races_with_failure": 0,
     "stint_laps": {
-      "max": 62,
+      "max": 59,
       "mean": 16.320541760722346,
       "n_stints": 1772
     }

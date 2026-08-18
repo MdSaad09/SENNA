@@ -42,7 +42,8 @@ good trade.
 
 ## Those eighteen seconds, step by step
 
-You press **Run race**. Here is the whole chain.
+You press **Run race**. Here i
+s the whole chain.
 
 1. **Streamlit posts the settings** to the API: circuit, grid slot, seed, era,
    weather, rival band.
@@ -259,8 +260,8 @@ policy network. So the project trains a stand-in — an XGBoost model, one per h
 
 Everything about how that's presented follows from the fact that it's a stand-in:
 
-- Agreement with the real agent is **measured**, not assumed: 99.7% on pit calls,
-  99.1% on energy calls, on decisions held out from the imitator's training.
+- Agreement with the real agent is **measured**, not assumed: 98.3% on pit calls,
+  97.7% on energy calls, on decisions held out from the imitator's training.
 - There's a **hard gate at 90%**. Below it the pipeline refuses to produce any
   cards at all — the code raises rather than shipping explanations it can't
   stand behind.
@@ -315,14 +316,14 @@ metric passes is a project whose bars were set afterwards.
 
 | Measure | Result | Reading |
 |---|---|---|
-| Position gain vs engineered baseline | **+2.28 places** (CI 1.91–2.66) | Met. The headline: it genuinely beats a competent rule-based strategist. |
+| Position gain vs engineered baseline | **+1.79 places** (CI 1.50–2.08) | Met. The headline: it genuinely beats a competent rule-based strategist. |
 | Regulatory legality | **0 illegal, 0 corrected** in 480 races | Met — and by construction, then measured anyway. |
-| Tyre failures | 37.9 per 100 races, target under 2 | Missed, and it explains the headline: the agent buys track position by over-running its tyres. |
-| Vs real 2024 strategies | 1 win, 8 losses, 1 tie (p = 0.039) | Missed, significantly. Against replayed real strategies it loses reliably. |
+| Tyre failures | **0 in 480 races**, target under 2 per 100 | Met — after the F24 repair. It was 37.9 when the tyre model gave the agent free tyres, and that story is part of the project. |
+| Vs real 2024 strategies | 3 wins, 2 losses, 5 ties (mean +0.50) | Missed against its bar, but a wash — the pre-repair agent lost 8 of 10. |
 | Energy utilisation | 0.704 of the deployable budget | Missed — though the 0.90 bar is unreachable at several circuits, which the write-up says out loud. |
 | Safety-car decisions | SC precision 0.82, recall 0.40 | Missed, but it now reacts to virtual safety cars at all — ten calls, none wrong. |
 | Sim-to-real agreement | 0 of 5 circuits within the bar | Missed. The validation split forbids refitting to fix it. |
-| Luck share | **78.6%** of finishing-position variance | The interesting finding: most of a race result is the draw, quantified. |
+| Luck share | **74.0%** of finishing-position variance | The interesting finding: most of a race result is the draw, quantified — and it fell from 78.6% when tyres started wearing, because strategy began to matter more. |
 
 The tyre-failure row is the one to dwell on, because it's the most intellectually
 honest moment in the project. The agent wins places, and it wins them partly by
@@ -367,7 +368,7 @@ tyres pays inside this simulator, which means the simulator makes it too cheap.
 A simulator races 22 cars under corrected 2026 rules. A reinforcement-learning
 agent drives one of them, deciding pit stops and energy use one lap at a time,
 with illegal options removed before it ever chooses. It beats an engineered
-baseline by 2.28 places, and it does so partly by abusing its tyres, which the
+baseline by 1.79 places, with zero tyre failures across 480 races — after an audit found the tyre model gave it free tyres, which the
 evaluation caught and reported. Every constant carries its source, every result
 regenerates from stored evidence, and every decision comes with an explanation
 that says how much it can be trusted.

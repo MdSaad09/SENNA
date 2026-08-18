@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
-    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
+    "config_hash": "4b557848ff25fdf4ba414ff5ec1504ee485ecefaf8485d700a10813d4069bd57",
+    "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
     "model_versions": {
-      "headline": "senna-ppo-405658360cd8-C-02211840"
+      "headline": "senna-ppo-4b557848ff25-C-04177920"
     },
     "scope": {
       "batteries": [
@@ -26,12 +26,12 @@
     "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
   },
   "payload": {
-    "ci_high": 2.6479166666666667,
-    "ci_low": 1.9458333333333333,
+    "ci_high": 2.08125,
+    "ci_low": 1.5,
     "dropped_pairs": [],
     "excludes_zero": true,
-    "finish_ahead_rate": 0.6770833333333334,
-    "mean_delta": 2.2875,
+    "finish_ahead_rate": 0.6833333333333333,
+    "mean_delta": 1.7875,
     "met": true,
     "n": 480,
     "per_pair": [
@@ -44,25 +44,25 @@
         "seed": 751426
       },
       {
-        "agent": 8,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 892016
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 320839
       },
       {
-        "agent": 3,
+        "agent": 14,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 20,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 922000
@@ -76,9 +76,9 @@
         "seed": 723780
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 616173
@@ -86,7 +86,7 @@
       {
         "agent": 6,
         "agent_dnf": false,
-        "baseline": 9,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 950837
@@ -100,49 +100,49 @@
         "seed": 533621
       },
       {
-        "agent": 4,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 957760
       },
       {
-        "agent": 6,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 638049
       },
       {
-        "agent": 6,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 9,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 852732
       },
       {
-        "agent": 22,
+        "agent": 17,
         "agent_dnf": false,
-        "baseline": 18,
+        "baseline": 19,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 215432
       },
       {
-        "agent": 3,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 743286
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 362117
@@ -150,55 +150,55 @@
       {
         "agent": 3,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 777911
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 14,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 309180
       },
       {
-        "agent": 6,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 876720
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 143921
       },
       {
-        "agent": 15,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 901153
       },
       {
-        "agent": 5,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "abu_dhabi_grand_prix",
         "seed": 223867
       },
       {
-        "agent": 19,
+        "agent": 16,
         "agent_dnf": false,
-        "baseline": 17,
+        "baseline": 19,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 914705
@@ -212,7 +212,7 @@
         "seed": 934712
       },
       {
-        "agent": 6,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -220,17 +220,17 @@
         "seed": 386349
       },
       {
-        "agent": 14,
+        "agent": 9,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 846378
       },
       {
-        "agent": 12,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 159519
@@ -252,17 +252,17 @@
         "seed": 583093
       },
       {
-        "agent": 21,
+        "agent": 20,
         "agent_dnf": false,
-        "baseline": 19,
+        "baseline": 17,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 294140
       },
       {
-        "agent": 21,
+        "agent": 17,
         "agent_dnf": false,
-        "baseline": 17,
+        "baseline": 18,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 628706
@@ -270,13 +270,13 @@
       {
         "agent": 7,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 920736
       },
       {
-        "agent": 10,
+        "agent": 8,
         "agent_dnf": false,
         "baseline": 8,
         "baseline_dnf": false,
@@ -292,7 +292,7 @@
         "seed": 254432
       },
       {
-        "agent": 12,
+        "agent": 11,
         "agent_dnf": false,
         "baseline": 12,
         "baseline_dnf": false,
@@ -300,7 +300,7 @@
         "seed": 697949
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 1,
         "baseline_dnf": false,
@@ -324,7 +324,7 @@
         "seed": 701485
       },
       {
-        "agent": 8,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 8,
         "baseline_dnf": false,
@@ -334,13 +334,13 @@
       {
         "agent": 10,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 320875
       },
       {
-        "agent": 8,
+        "agent": 11,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -348,31 +348,31 @@
         "seed": 171368
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "australian_grand_prix",
         "seed": 719540
       },
       {
-        "agent": 5,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 192642
       },
       {
-        "agent": 2,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 774967
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -388,15 +388,15 @@
         "seed": 886451
       },
       {
-        "agent": 2,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 266425
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -404,23 +404,23 @@
         "seed": 310158
       },
       {
-        "agent": 1,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 20,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 564100
       },
       {
-        "agent": 1,
+        "agent": 7,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 239426
       },
       {
-        "agent": 3,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -428,15 +428,15 @@
         "seed": 854444
       },
       {
-        "agent": 3,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 980248
       },
       {
-        "agent": 4,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -446,39 +446,39 @@
       {
         "agent": 5,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 248071
       },
       {
-        "agent": 14,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 134164
       },
       {
-        "agent": 1,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 772674
       },
       {
-        "agent": 3,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 123206
       },
       {
-        "agent": 3,
+        "agent": 7,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 363048
@@ -492,9 +492,9 @@
         "seed": 594846
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "austrian_grand_prix",
         "seed": 522798
@@ -508,7 +508,7 @@
         "seed": 984556
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -516,9 +516,9 @@
         "seed": 131726
       },
       {
-        "agent": 4,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 424278
@@ -526,7 +526,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 820853
@@ -534,7 +534,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 553122
@@ -542,13 +542,13 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 130047
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -556,15 +556,15 @@
         "seed": 186455
       },
       {
-        "agent": 3,
+        "agent": 8,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 13,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 117741
       },
       {
-        "agent": 4,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -572,9 +572,9 @@
         "seed": 585223
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 809538
@@ -596,25 +596,25 @@
         "seed": 282742
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 896630
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 323040
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 850169
@@ -630,13 +630,13 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 214941
       },
       {
-        "agent": 7,
+        "agent": 9,
         "agent_dnf": false,
         "baseline": 13,
         "baseline_dnf": false,
@@ -652,7 +652,7 @@
         "seed": 247961
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -660,15 +660,15 @@
         "seed": 339990
       },
       {
-        "agent": 8,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "azerbaijan_grand_prix",
         "seed": 412180
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -678,7 +678,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 354043
@@ -702,7 +702,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 9,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 456521
@@ -710,7 +710,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 387864
@@ -718,15 +718,15 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 721867
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 8,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 175154
@@ -742,7 +742,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 9,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 437525
@@ -750,23 +750,23 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 677076
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 22,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 195312
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 442452
@@ -774,7 +774,7 @@
       {
         "agent": 4,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 975243
@@ -782,7 +782,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 674718
@@ -790,23 +790,23 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 195035
       },
       {
-        "agent": 3,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 548691
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 307496
@@ -822,7 +822,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 780255
@@ -830,7 +830,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "bahrain_grand_prix",
         "seed": 348318
@@ -838,15 +838,15 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 484205
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 401322
@@ -854,7 +854,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 845275
@@ -862,15 +862,15 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 636458
       },
       {
-        "agent": 1,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 637597
@@ -878,7 +878,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 567346
@@ -886,7 +886,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 267795
@@ -894,7 +894,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 412202
@@ -902,7 +902,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 910747
@@ -910,7 +910,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 992536
@@ -934,7 +934,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 336394
@@ -942,7 +942,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 474799
@@ -966,7 +966,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "belgian_grand_prix",
         "seed": 517517
@@ -980,7 +980,7 @@
         "seed": 154497
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -988,7 +988,7 @@
         "seed": 776263
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -996,9 +996,9 @@
         "seed": 549422
       },
       {
-        "agent": 9,
+        "agent": 8,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 14,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 996415
@@ -1012,7 +1012,7 @@
         "seed": 509185
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -1020,23 +1020,23 @@
         "seed": 543985
       },
       {
-        "agent": 1,
+        "agent": 8,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 576719
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 493402
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -1052,9 +1052,9 @@
         "seed": 390081
       },
       {
-        "agent": 4,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 15,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 331142
@@ -1062,7 +1062,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 254294
@@ -1070,7 +1070,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 499669
@@ -1078,7 +1078,7 @@
       {
         "agent": 3,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 794191
@@ -1092,9 +1092,9 @@
         "seed": 476631
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 567850
@@ -1108,9 +1108,9 @@
         "seed": 703783
       },
       {
-        "agent": 3,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 632845
@@ -1118,21 +1118,21 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 329130
       },
       {
-        "agent": 3,
+        "agent": 22,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 19,
         "baseline_dnf": false,
         "circuit": "british_grand_prix",
         "seed": 972080
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -1148,7 +1148,7 @@
         "seed": 106029
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -1156,17 +1156,17 @@
         "seed": 250171
       },
       {
-        "agent": 10,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "canadian_grand_prix",
         "seed": 332748
       },
       {
-        "agent": 22,
+        "agent": 12,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "canadian_grand_prix",
         "seed": 828338
@@ -1174,13 +1174,13 @@
       {
         "agent": 4,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "canadian_grand_prix",
         "seed": 916376
       },
       {
-        "agent": 16,
+        "agent": 10,
         "agent_dnf": false,
         "baseline": 8,
         "baseline_dnf": false,
@@ -1196,7 +1196,7 @@
         "seed": 112994
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -1212,7 +1212,7 @@
         "seed": 938836
       },
       {
-        "agent": 6,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -1220,15 +1220,15 @@
         "seed": 594242
       },
       {
-        "agent": 8,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "canadian_grand_prix",
         "seed": 521030
       },
       {
-        "agent": 4,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -1236,9 +1236,9 @@
         "seed": 199214
       },
       {
-        "agent": 13,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 16,
+        "baseline": 13,
         "baseline_dnf": false,
         "circuit": "canadian_grand_prix",
         "seed": 271237
@@ -1252,7 +1252,7 @@
         "seed": 603127
       },
       {
-        "agent": 11,
+        "agent": 7,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -1260,7 +1260,7 @@
         "seed": 580588
       },
       {
-        "agent": 11,
+        "agent": 10,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -1270,13 +1270,13 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "canadian_grand_prix",
         "seed": 515875
       },
       {
-        "agent": 3,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -1284,7 +1284,7 @@
         "seed": 384651
       },
       {
-        "agent": 9,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -1292,7 +1292,7 @@
         "seed": 800764
       },
       {
-        "agent": 3,
+        "agent": 7,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -1308,15 +1308,15 @@
         "seed": 583925
       },
       {
-        "agent": 18,
+        "agent": 17,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "canadian_grand_prix",
         "seed": 571558
       },
       {
-        "agent": 3,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -1324,7 +1324,7 @@
         "seed": 966415
       },
       {
-        "agent": 16,
+        "agent": 19,
         "agent_dnf": false,
         "baseline": 15,
         "baseline_dnf": false,
@@ -1332,7 +1332,7 @@
         "seed": 785133
       },
       {
-        "agent": 19,
+        "agent": 18,
         "agent_dnf": false,
         "baseline": 18,
         "baseline_dnf": false,
@@ -1340,7 +1340,7 @@
         "seed": 113207
       },
       {
-        "agent": 13,
+        "agent": 16,
         "agent_dnf": false,
         "baseline": 14,
         "baseline_dnf": false,
@@ -1348,7 +1348,7 @@
         "seed": 585208
       },
       {
-        "agent": 4,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -1356,7 +1356,7 @@
         "seed": 469977
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 1,
         "baseline_dnf": false,
@@ -1380,7 +1380,7 @@
         "seed": 960011
       },
       {
-        "agent": 10,
+        "agent": 7,
         "agent_dnf": false,
         "baseline": 13,
         "baseline_dnf": false,
@@ -1388,7 +1388,7 @@
         "seed": 436685
       },
       {
-        "agent": 9,
+        "agent": 7,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -1396,7 +1396,7 @@
         "seed": 990239
       },
       {
-        "agent": 6,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -1404,7 +1404,7 @@
         "seed": 732115
       },
       {
-        "agent": 9,
+        "agent": 20,
         "agent_dnf": false,
         "baseline": 9,
         "baseline_dnf": false,
@@ -1428,7 +1428,7 @@
         "seed": 420440
       },
       {
-        "agent": 11,
+        "agent": 8,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -1436,7 +1436,7 @@
         "seed": 392193
       },
       {
-        "agent": 8,
+        "agent": 7,
         "agent_dnf": false,
         "baseline": 8,
         "baseline_dnf": false,
@@ -1460,7 +1460,7 @@
         "seed": 160919
       },
       {
-        "agent": 4,
+        "agent": 17,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -1476,17 +1476,17 @@
         "seed": 718946
       },
       {
-        "agent": 5,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 496793
       },
       {
-        "agent": 13,
+        "agent": 7,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 13,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 744670
@@ -1494,23 +1494,23 @@
       {
         "agent": 4,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 921607
       },
       {
-        "agent": 4,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 778899
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 8,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 873559
@@ -1532,9 +1532,9 @@
         "seed": 405127
       },
       {
-        "agent": 6,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 288510
@@ -1542,15 +1542,15 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 109390
       },
       {
-        "agent": 7,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 984221
@@ -1558,7 +1558,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 245816
@@ -1566,29 +1566,29 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 698599
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 951244
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 527133
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -1596,9 +1596,9 @@
         "seed": 234654
       },
       {
-        "agent": 5,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 281274
@@ -1606,7 +1606,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 378667
@@ -1622,7 +1622,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "dutch_grand_prix",
         "seed": 873902
@@ -1636,33 +1636,33 @@
         "seed": 247246
       },
       {
-        "agent": 4,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 881611
       },
       {
-        "agent": 12,
+        "agent": 14,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 16,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 106582
       },
       {
-        "agent": 4,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 183728
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 466226
@@ -1676,15 +1676,15 @@
         "seed": 103133
       },
       {
-        "agent": 9,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 13,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 295006
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -1694,31 +1694,31 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 379181
       },
       {
-        "agent": 13,
+        "agent": 16,
         "agent_dnf": false,
-        "baseline": 15,
+        "baseline": 16,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 547605
       },
       {
-        "agent": 7,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 828093
       },
       {
-        "agent": 2,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 274876
@@ -1734,7 +1734,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 450561
@@ -1742,7 +1742,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 943434
@@ -1750,15 +1750,15 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 817863
       },
       {
-        "agent": 16,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 842890
@@ -1766,13 +1766,13 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 197175
       },
       {
-        "agent": 3,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -1782,87 +1782,87 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 136069
       },
       {
-        "agent": 3,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "emilia_romagna_grand_prix",
         "seed": 134459
       },
       {
-        "agent": 1,
+        "agent": 14,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 823517
       },
       {
-        "agent": 3,
+        "agent": 13,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 295665
       },
       {
-        "agent": 10,
+        "agent": 14,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 941632
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 679315
       },
       {
-        "agent": 22,
+        "agent": 13,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 520026
       },
       {
-        "agent": 1,
+        "agent": 13,
         "agent_dnf": false,
-        "baseline": 22,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 166953
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 943816
       },
       {
-        "agent": 4,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 102351
       },
       {
-        "agent": 10,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 20,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 645082
@@ -1876,9 +1876,9 @@
         "seed": 705192
       },
       {
-        "agent": 22,
+        "agent": 20,
         "agent_dnf": false,
-        "baseline": 18,
+        "baseline": 17,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 820194
@@ -1892,9 +1892,9 @@
         "seed": 716211
       },
       {
-        "agent": 22,
+        "agent": 13,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 322514
@@ -1902,21 +1902,21 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 623688
       },
       {
-        "agent": 7,
+        "agent": 8,
         "agent_dnf": false,
-        "baseline": 19,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 910880
       },
       {
-        "agent": 4,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -1924,9 +1924,9 @@
         "seed": 649425
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 16,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 848436
@@ -1950,7 +1950,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "hungarian_grand_prix",
         "seed": 717181
@@ -1958,7 +1958,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 938481
@@ -1974,15 +1974,15 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 876595
       },
       {
-        "agent": 5,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 20,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 522412
@@ -1990,7 +1990,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 699168
@@ -1998,37 +1998,37 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 204465
       },
       {
-        "agent": 6,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 15,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 135756
       },
       {
-        "agent": 4,
+        "agent": 8,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 8,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 370004
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 364583
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -2036,25 +2036,25 @@
         "seed": 944935
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 566795
       },
       {
-        "agent": 4,
+        "agent": 9,
         "agent_dnf": false,
-        "baseline": 18,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 463201
       },
       {
-        "agent": 2,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 758432
@@ -2062,15 +2062,15 @@
       {
         "agent": 4,
         "agent_dnf": false,
-        "baseline": 18,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 786647
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 820544
@@ -2092,9 +2092,9 @@
         "seed": 954065
       },
       {
-        "agent": 8,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 19,
+        "baseline": 15,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 618935
@@ -2102,21 +2102,21 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 453578
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "italian_grand_prix",
         "seed": 393887
       },
       {
-        "agent": 12,
+        "agent": 13,
         "agent_dnf": false,
         "baseline": 16,
         "baseline_dnf": false,
@@ -2124,7 +2124,7 @@
         "seed": 890627
       },
       {
-        "agent": 16,
+        "agent": 14,
         "agent_dnf": false,
         "baseline": 15,
         "baseline_dnf": false,
@@ -2132,7 +2132,7 @@
         "seed": 415029
       },
       {
-        "agent": 5,
+        "agent": 6,
         "agent_dnf": false,
         "baseline": 8,
         "baseline_dnf": false,
@@ -2140,7 +2140,7 @@
         "seed": 616535
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -2156,7 +2156,7 @@
         "seed": 953876
       },
       {
-        "agent": 13,
+        "agent": 11,
         "agent_dnf": false,
         "baseline": 14,
         "baseline_dnf": false,
@@ -2164,7 +2164,7 @@
         "seed": 125910
       },
       {
-        "agent": 8,
+        "agent": 6,
         "agent_dnf": false,
         "baseline": 8,
         "baseline_dnf": false,
@@ -2188,7 +2188,7 @@
         "seed": 291741
       },
       {
-        "agent": 21,
+        "agent": 20,
         "agent_dnf": false,
         "baseline": 20,
         "baseline_dnf": false,
@@ -2220,7 +2220,7 @@
         "seed": 784921
       },
       {
-        "agent": 7,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -2228,7 +2228,7 @@
         "seed": 411488
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -2252,7 +2252,7 @@
         "seed": 499102
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -2260,7 +2260,7 @@
         "seed": 916220
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -2278,21 +2278,21 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 422444
       },
       {
-        "agent": 5,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 657348
       },
       {
-        "agent": 3,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -2300,33 +2300,33 @@
         "seed": 200173
       },
       {
-        "agent": 14,
-        "agent_dnf": false,
-        "baseline": 16,
-        "baseline_dnf": false,
-        "circuit": "las_vegas_grand_prix",
-        "seed": 967681
-      },
-      {
         "agent": 2,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
+        "seed": 967681
+      },
+      {
+        "agent": 1,
+        "agent_dnf": false,
+        "baseline": 8,
+        "baseline_dnf": false,
+        "circuit": "las_vegas_grand_prix",
         "seed": 643330
       },
       {
-        "agent": 16,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 675307
       },
       {
-        "agent": 4,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 254468
@@ -2340,7 +2340,7 @@
         "seed": 310088
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -2348,7 +2348,7 @@
         "seed": 626582
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -2356,7 +2356,7 @@
         "seed": 913755
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -2372,9 +2372,9 @@
         "seed": 723038
       },
       {
-        "agent": 3,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 460171
@@ -2388,9 +2388,9 @@
         "seed": 828619
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 8,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 523218
@@ -2404,9 +2404,9 @@
         "seed": 624175
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 861751
@@ -2420,15 +2420,15 @@
         "seed": 392741
       },
       {
-        "agent": 6,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "las_vegas_grand_prix",
         "seed": 898329
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -2436,17 +2436,17 @@
         "seed": 657574
       },
       {
-        "agent": 4,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 510437
       },
       {
-        "agent": 8,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 8,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 119718
@@ -2460,25 +2460,25 @@
         "seed": 604204
       },
       {
-        "agent": 4,
+        "agent": 10,
         "agent_dnf": false,
-        "baseline": 9,
+        "baseline": 13,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 152402
       },
       {
-        "agent": 3,
+        "agent": 7,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 984911
       },
       {
-        "agent": 2,
+        "agent": 14,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 210292
@@ -2486,7 +2486,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 270239
@@ -2494,26 +2494,10 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 160269
-      },
-      {
-        "agent": 2,
-        "agent_dnf": false,
-        "baseline": 4,
-        "baseline_dnf": false,
-        "circuit": "mexico_city_grand_prix",
-        "seed": 265265
-      },
-      {
-        "agent": 3,
-        "agent_dnf": false,
-        "baseline": 7,
-        "baseline_dnf": false,
-        "circuit": "mexico_city_grand_prix",
-        "seed": 150529
       },
       {
         "agent": 1,
@@ -2521,12 +2505,28 @@
         "baseline": 3,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
-        "seed": 756440
+        "seed": 265265
       },
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 1,
+        "baseline_dnf": false,
+        "circuit": "mexico_city_grand_prix",
+        "seed": 150529
+      },
+      {
+        "agent": 1,
+        "agent_dnf": false,
+        "baseline": 2,
+        "baseline_dnf": false,
+        "circuit": "mexico_city_grand_prix",
+        "seed": 756440
+      },
+      {
+        "agent": 6,
+        "agent_dnf": false,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 181290
@@ -2540,23 +2540,23 @@
         "seed": 401768
       },
       {
-        "agent": 14,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 21,
+        "baseline": 8,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 978116
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 113758
       },
       {
-        "agent": 5,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -2566,23 +2566,23 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 998327
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 977558
       },
       {
-        "agent": 2,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 427822
@@ -2590,7 +2590,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "mexico_city_grand_prix",
         "seed": 467787
@@ -2604,7 +2604,7 @@
         "seed": 521038
       },
       {
-        "agent": 8,
+        "agent": 7,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -2628,7 +2628,7 @@
         "seed": 158628
       },
       {
-        "agent": 13,
+        "agent": 11,
         "agent_dnf": false,
         "baseline": 14,
         "baseline_dnf": false,
@@ -2652,7 +2652,7 @@
         "seed": 830781
       },
       {
-        "agent": 5,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 5,
         "baseline_dnf": false,
@@ -2660,7 +2660,7 @@
         "seed": 217175
       },
       {
-        "agent": 6,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -2700,7 +2700,7 @@
         "seed": 752969
       },
       {
-        "agent": 22,
+        "agent": 21,
         "agent_dnf": false,
         "baseline": 22,
         "baseline_dnf": false,
@@ -2708,7 +2708,7 @@
         "seed": 778851
       },
       {
-        "agent": 16,
+        "agent": 18,
         "agent_dnf": false,
         "baseline": 16,
         "baseline_dnf": false,
@@ -2716,7 +2716,7 @@
         "seed": 838470
       },
       {
-        "agent": 13,
+        "agent": 10,
         "agent_dnf": false,
         "baseline": 11,
         "baseline_dnf": false,
@@ -2724,7 +2724,7 @@
         "seed": 580677
       },
       {
-        "agent": 10,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 16,
         "baseline_dnf": false,
@@ -2740,7 +2740,7 @@
         "seed": 539398
       },
       {
-        "agent": 16,
+        "agent": 8,
         "agent_dnf": false,
         "baseline": 14,
         "baseline_dnf": false,
@@ -2764,7 +2764,7 @@
         "seed": 198252
       },
       {
-        "agent": 5,
+        "agent": 6,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -2772,7 +2772,7 @@
         "seed": 877739
       },
       {
-        "agent": 5,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -2780,7 +2780,7 @@
         "seed": 356643
       },
       {
-        "agent": 17,
+        "agent": 15,
         "agent_dnf": false,
         "baseline": 10,
         "baseline_dnf": false,
@@ -2812,7 +2812,7 @@
         "seed": 872052
       },
       {
-        "agent": 20,
+        "agent": 21,
         "agent_dnf": false,
         "baseline": 16,
         "baseline_dnf": false,
@@ -2836,7 +2836,7 @@
         "seed": 208398
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -2844,7 +2844,7 @@
         "seed": 207273
       },
       {
-        "agent": 7,
+        "agent": 9,
         "agent_dnf": false,
         "baseline": 6,
         "baseline_dnf": false,
@@ -2860,7 +2860,7 @@
         "seed": 354289
       },
       {
-        "agent": 13,
+        "agent": 16,
         "agent_dnf": false,
         "baseline": 11,
         "baseline_dnf": false,
@@ -2868,7 +2868,7 @@
         "seed": 853497
       },
       {
-        "agent": 3,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -2892,7 +2892,7 @@
         "seed": 143712
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -2918,13 +2918,13 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 427790
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -2948,17 +2948,17 @@
         "seed": 532198
       },
       {
-        "agent": 3,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 216604
       },
       {
-        "agent": 3,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 900193
@@ -2966,39 +2966,39 @@
       {
         "agent": 3,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 389089
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 538270
       },
       {
-        "agent": 4,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 20,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 217629
       },
       {
-        "agent": 1,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 535277
       },
       {
-        "agent": 7,
+        "agent": 21,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 17,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 241586
@@ -3014,55 +3014,55 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 881199
       },
       {
-        "agent": 7,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 18,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 643397
       },
       {
-        "agent": 3,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 921833
       },
       {
-        "agent": 1,
+        "agent": 7,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 13,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 752742
       },
       {
-        "agent": 2,
+        "agent": 8,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 911914
       },
       {
-        "agent": 1,
+        "agent": 16,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 14,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 476249
       },
       {
-        "agent": 1,
+        "agent": 14,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 15,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 544583
@@ -3070,7 +3070,7 @@
       {
         "agent": 4,
         "agent_dnf": false,
-        "baseline": 9,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "qatar_grand_prix",
         "seed": 704628
@@ -3078,15 +3078,15 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 1,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 885787
       },
       {
-        "agent": 7,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 16,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 359052
@@ -3100,7 +3100,7 @@
         "seed": 406089
       },
       {
-        "agent": 9,
+        "agent": 13,
         "agent_dnf": false,
         "baseline": 14,
         "baseline_dnf": false,
@@ -3110,15 +3110,15 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 965190
       },
       {
-        "agent": 20,
+        "agent": 19,
         "agent_dnf": false,
-        "baseline": 20,
+        "baseline": 18,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 499246
@@ -3126,7 +3126,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 860629
@@ -3134,31 +3134,31 @@
       {
         "agent": 11,
         "agent_dnf": false,
-        "baseline": 15,
+        "baseline": 17,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 823107
       },
       {
-        "agent": 8,
+        "agent": 17,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 19,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 392729
       },
       {
-        "agent": 3,
+        "agent": 10,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 14,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 526111
       },
       {
-        "agent": 8,
+        "agent": 13,
         "agent_dnf": false,
-        "baseline": 19,
+        "baseline": 15,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 881790
@@ -3172,23 +3172,23 @@
         "seed": 786902
       },
       {
-        "agent": 3,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 739641
       },
       {
-        "agent": 3,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 116530
       },
       {
-        "agent": 3,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -3196,49 +3196,49 @@
         "seed": 392206
       },
       {
-        "agent": 7,
+        "agent": 8,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 671889
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 838033
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 181052
       },
       {
-        "agent": 2,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 20,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 571151
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "saudi_arabian_grand_prix",
         "seed": 497255
       },
       {
-        "agent": 6,
+        "agent": 7,
         "agent_dnf": false,
-        "baseline": 16,
+        "baseline": 15,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 377401
@@ -3246,7 +3246,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 793818
@@ -3260,9 +3260,9 @@
         "seed": 317964
       },
       {
-        "agent": 2,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 16,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 212847
@@ -3276,17 +3276,17 @@
         "seed": 380462
       },
       {
-        "agent": 9,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 8,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 608737
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 779660
@@ -3300,9 +3300,9 @@
         "seed": 213716
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 452855
@@ -3316,17 +3316,17 @@
         "seed": 194938
       },
       {
-        "agent": 9,
+        "agent": 11,
         "agent_dnf": false,
-        "baseline": 11,
+        "baseline": 20,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 933904
       },
       {
-        "agent": 11,
+        "agent": 12,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 21,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 434790
@@ -3334,47 +3334,47 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 114778
       },
       {
-        "agent": 4,
+        "agent": 13,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 20,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 505853
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 10,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 675458
       },
       {
-        "agent": 12,
+        "agent": 10,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 14,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 642281
       },
       {
-        "agent": 2,
+        "agent": 4,
         "agent_dnf": false,
-        "baseline": 2,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 179452
       },
       {
-        "agent": 4,
+        "agent": 1,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 455746
@@ -3382,7 +3382,7 @@
       {
         "agent": 3,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "singapore_grand_prix",
         "seed": 883935
@@ -3406,7 +3406,7 @@
       {
         "agent": 3,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "spanish_grand_prix",
         "seed": 435577
@@ -3414,7 +3414,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "spanish_grand_prix",
         "seed": 893033
@@ -3444,7 +3444,7 @@
         "seed": 284165
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -3452,9 +3452,9 @@
         "seed": 148085
       },
       {
-        "agent": 1,
+        "agent": 3,
         "agent_dnf": false,
-        "baseline": 17,
+        "baseline": 13,
         "baseline_dnf": false,
         "circuit": "spanish_grand_prix",
         "seed": 932575
@@ -3462,7 +3462,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "spanish_grand_prix",
         "seed": 762762
@@ -3484,7 +3484,7 @@
         "seed": 912063
       },
       {
-        "agent": 3,
+        "agent": 5,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -3502,13 +3502,13 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "spanish_grand_prix",
         "seed": 864231
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -3558,7 +3558,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 818044
@@ -3572,9 +3572,9 @@
         "seed": 900495
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 11,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 316074
@@ -3590,7 +3590,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 2,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 136051
@@ -3606,7 +3606,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 277285
@@ -3614,7 +3614,7 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 7,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 157927
@@ -3628,7 +3628,7 @@
         "seed": 950962
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 7,
         "baseline_dnf": false,
@@ -3644,9 +3644,9 @@
         "seed": 566896
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 365947
@@ -3662,7 +3662,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 3,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 648019
@@ -3678,13 +3678,13 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 5,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 796402
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 22,
         "baseline_dnf": false,
@@ -3692,7 +3692,7 @@
         "seed": 376007
       },
       {
-        "agent": 2,
+        "agent": 4,
         "agent_dnf": false,
         "baseline": 8,
         "baseline_dnf": false,
@@ -3702,29 +3702,29 @@
       {
         "agent": 4,
         "agent_dnf": false,
-        "baseline": 8,
+        "baseline": 9,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 553313
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 7,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "são_paulo_grand_prix",
         "seed": 848371
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 187676
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -3732,9 +3732,9 @@
         "seed": 762354
       },
       {
-        "agent": 3,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 6,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 152301
@@ -3742,7 +3742,7 @@
       {
         "agent": 1,
         "agent_dnf": false,
-        "baseline": 1,
+        "baseline": 3,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 291112
@@ -3756,9 +3756,9 @@
         "seed": 664166
       },
       {
-        "agent": 4,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 20,
+        "baseline": 4,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 634154
@@ -3774,21 +3774,21 @@
       {
         "agent": 2,
         "agent_dnf": false,
-        "baseline": 4,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 782734
       },
       {
-        "agent": 4,
+        "agent": 6,
         "agent_dnf": false,
-        "baseline": 15,
+        "baseline": 14,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 760834
       },
       {
-        "agent": 2,
+        "agent": 3,
         "agent_dnf": false,
         "baseline": 4,
         "baseline_dnf": false,
@@ -3796,9 +3796,9 @@
         "seed": 947511
       },
       {
-        "agent": 7,
+        "agent": 2,
         "agent_dnf": false,
-        "baseline": 12,
+        "baseline": 5,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 992398
@@ -3812,7 +3812,7 @@
         "seed": 946505
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,
@@ -3820,7 +3820,7 @@
         "seed": 718161
       },
       {
-        "agent": 1,
+        "agent": 2,
         "agent_dnf": false,
         "baseline": 2,
         "baseline_dnf": false,
@@ -3828,9 +3828,9 @@
         "seed": 225508
       },
       {
-        "agent": 9,
+        "agent": 10,
         "agent_dnf": false,
-        "baseline": 14,
+        "baseline": 15,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 234197
@@ -3844,17 +3844,17 @@
         "seed": 887814
       },
       {
-        "agent": 3,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 6,
+        "baseline": 12,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 698945
       },
       {
-        "agent": 4,
+        "agent": 5,
         "agent_dnf": false,
-        "baseline": 13,
+        "baseline": 10,
         "baseline_dnf": false,
         "circuit": "united_states_grand_prix",
         "seed": 747655
@@ -3868,7 +3868,7 @@
         "seed": 978608
       },
       {
-        "agent": 2,
+        "agent": 1,
         "agent_dnf": false,
         "baseline": 3,
         "baseline_dnf": false,

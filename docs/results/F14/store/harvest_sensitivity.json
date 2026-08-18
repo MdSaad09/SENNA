@@ -1,9 +1,9 @@
 {
   "envelope": {
     "config_hash": "26a436fece3dc4a094b60d82bfecc1e41ff3a8721f44167efe24f9e199183d1a",
-    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
+    "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
     "model_versions": {
-      "headline": "senna-ppo-405658360cd8-C-02211840"
+      "headline": "senna-ppo-4b557848ff25-C-04177920"
     },
     "scope": {
       "circuits": 24,
@@ -16,32 +16,32 @@
   "payload": {
     "arms": {
       "refined": {
-        "attainable_ceiling": 0.8268397763229048,
-        "derate_share": 0.10937038131835648,
+        "attainable_ceiling": 0.823729140796184,
+        "derate_share": 0.0874074074074074,
         "failures_per_100": 0.0,
         "h_max_mj": 7.0,
-        "mean_position": 4.233333333333333,
+        "mean_position": 4.191666666666666,
         "n_races": 120,
-        "utilisation": 0.6282184680775885
+        "utilisation": 0.6434465818222057
       },
       "trained": {
-        "attainable_ceiling": 0.9149796720434041,
-        "derate_share": 0.053994082840236685,
+        "attainable_ceiling": 0.9150805656627682,
+        "derate_share": 0.046449704142011834,
         "failures_per_100": 0.0,
         "h_max_mj": 8.5,
-        "mean_position": 3.9833333333333334,
+        "mean_position": 4.016666666666667,
         "n_races": 120,
-        "utilisation": 0.6505595195813805
+        "utilisation": 0.6748846125845755
       }
     },
     "delta": {
-      "derate_share": 0.0553762984781198,
+      "derate_share": 0.04095770326539557,
       "failures_per_100": 0.0,
-      "mean_position": 0.25,
-      "utilisation": -0.022341051503791953
+      "mean_position": 0.17499999999999982,
+      "utilisation": -0.03143803076236984
     },
     "excluded_races": [],
-    "model_version": "senna-ppo-405658360cd8-C-02211840",
+    "model_version": "senna-ppo-4b557848ff25-C-04177920",
     "n_circuits": 24,
     "reading": "the frozen agent's robustness under a 7.0 MJ cap, not what a model re-optimised for 7.0 MJ would do — the reported numbers stay on the 8.5 MJ cap it trained under",
     "refined_h_max_mj": 7.0,

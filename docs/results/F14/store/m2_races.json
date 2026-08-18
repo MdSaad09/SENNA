@@ -1,11 +1,11 @@
 {
   "envelope": {
-    "config_hash": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
-    "drivers_fingerprint": "722263f105522d8a0b7e5a4049a5d37004160c228eb13516e4f7bcfbc017386a",
-    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
+    "config_hash": "4b557848ff25fdf4ba414ff5ec1504ee485ecefaf8485d700a10813d4069bd57",
+    "drivers_fingerprint": "e869ffea24b848159e18ec53a20a384323894c15e7693c02cd9d17a97f75973f",
+    "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
     "model_versions": {
-      "era2024": "senna-ppo-c0d12cbc6f0f-C-03686400",
-      "headline": "senna-ppo-405658360cd8-C-02211840"
+      "era2024": "senna-ppo-d972ad8448dd-C-05849088",
+      "headline": "senna-ppo-4b557848ff25-C-04177920"
     },
     "scope": {
       "batteries": [
@@ -28,131 +28,151 @@
     "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
   },
   "payload": {
-    "ci_high": 1.9,
+    "ci_high": 2.0,
     "ci_low": -0.9,
     "ci_note": "descriptive only: a bootstrap over ten races is not a claim",
-    "era_matched_model": "senna-ppo-c0d12cbc6f0f-C-03686400",
-    "mean_delta": 0.4,
+    "era_matched_model": "senna-ppo-d972ad8448dd-C-05849088",
+    "mean_delta": 0.5,
     "met": false,
     "n_races": 10,
     "per_race": [
       {
         "circuit": "bahrain_grand_prix",
         "driver": "VER",
-        "mean_delta": -1.0,
+        "mean_delta": -2.0,
         "per_seed": [
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 4,
             "agent_stops": [
               [
-                14,
-                "HARD"
+                12,
+                "SOFT"
               ],
               [
                 18,
                 "HARD"
               ],
               [
+                37,
+                "SOFT"
+              ],
+              [
                 38,
-                "HARD"
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
             "baseline_position": 2,
-            "delta": -1,
+            "delta": -2,
             "seed": 354043,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 4,
             "agent_stops": [
               [
-                14,
-                "HARD"
+                12,
+                "SOFT"
               ],
               [
                 18,
                 "HARD"
               ],
               [
+                37,
+                "SOFT"
+              ],
+              [
                 38,
-                "HARD"
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
             "baseline_position": 2,
-            "delta": -1,
+            "delta": -2,
             "seed": 868844,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 4,
             "agent_stops": [
               [
-                14,
-                "HARD"
+                12,
+                "SOFT"
               ],
               [
                 18,
                 "HARD"
               ],
               [
+                37,
+                "SOFT"
+              ],
+              [
                 38,
-                "HARD"
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
             "baseline_position": 2,
-            "delta": -1,
+            "delta": -2,
             "seed": 910519,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 4,
             "agent_stops": [
               [
-                14,
-                "HARD"
+                12,
+                "SOFT"
               ],
               [
                 18,
                 "HARD"
               ],
               [
+                37,
+                "SOFT"
+              ],
+              [
                 38,
-                "HARD"
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
             "baseline_position": 2,
-            "delta": -1,
+            "delta": -2,
             "seed": 456521,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 4,
             "agent_stops": [
               [
-                14,
-                "HARD"
+                12,
+                "SOFT"
               ],
               [
                 18,
                 "HARD"
               ],
               [
+                37,
+                "SOFT"
+              ],
+              [
                 38,
-                "HARD"
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
             "baseline_position": 2,
-            "delta": -1,
+            "delta": -2,
             "seed": 387864,
             "snapped_stops": 0
           }
@@ -632,12 +652,16 @@
                 "HARD"
               ],
               [
-                23,
+                17,
                 "HARD"
               ],
               [
-                50,
-                "HARD"
+                37,
+                "SOFT"
+              ],
+              [
+                61,
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
@@ -655,12 +679,16 @@
                 "HARD"
               ],
               [
-                23,
+                17,
                 "HARD"
               ],
               [
-                50,
-                "HARD"
+                37,
+                "SOFT"
+              ],
+              [
+                61,
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
@@ -678,12 +706,16 @@
                 "HARD"
               ],
               [
-                23,
+                17,
                 "HARD"
               ],
               [
-                50,
-                "HARD"
+                37,
+                "SOFT"
+              ],
+              [
+                61,
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
@@ -701,12 +733,16 @@
                 "HARD"
               ],
               [
-                23,
+                17,
                 "HARD"
               ],
               [
-                50,
-                "HARD"
+                37,
+                "SOFT"
+              ],
+              [
+                61,
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
@@ -724,12 +760,16 @@
                 "HARD"
               ],
               [
-                23,
+                17,
                 "HARD"
               ],
               [
-                50,
-                "HARD"
+                37,
+                "SOFT"
+              ],
+              [
+                61,
+                "SOFT"
               ]
             ],
             "baseline_dnf": false,
@@ -774,12 +814,12 @@
                 "SOFT"
               ],
               [
-                30,
-                "SOFT"
+                31,
+                "INTERMEDIATE"
               ],
               [
                 48,
-                "HARD"
+                "SOFT"
               ],
               [
                 50,
@@ -817,12 +857,12 @@
                 "SOFT"
               ],
               [
-                30,
-                "SOFT"
+                31,
+                "INTERMEDIATE"
               ],
               [
                 48,
-                "HARD"
+                "SOFT"
               ],
               [
                 50,
@@ -860,12 +900,12 @@
                 "SOFT"
               ],
               [
-                30,
-                "SOFT"
+                31,
+                "INTERMEDIATE"
               ],
               [
                 48,
-                "HARD"
+                "SOFT"
               ],
               [
                 50,
@@ -903,12 +943,12 @@
                 "SOFT"
               ],
               [
-                30,
-                "SOFT"
+                31,
+                "INTERMEDIATE"
               ],
               [
                 48,
-                "HARD"
+                "SOFT"
               ],
               [
                 50,
@@ -946,12 +986,12 @@
                 "SOFT"
               ],
               [
-                30,
-                "SOFT"
+                31,
+                "INTERMEDIATE"
               ],
               [
                 48,
-                "HARD"
+                "SOFT"
               ],
               [
                 50,
@@ -1257,22 +1297,18 @@
       {
         "circuit": "spanish_grand_prix",
         "driver": "VER",
-        "mean_delta": -2.0,
+        "mean_delta": 0.0,
         "per_seed": [
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 1,
             "agent_stops": [
               [
-                17,
-                "HARD"
+                14,
+                "SOFT"
               ],
               [
                 27,
-                "HARD"
-              ],
-              [
-                52,
                 "HARD"
               ],
               [
@@ -1282,24 +1318,20 @@
             ],
             "baseline_dnf": false,
             "baseline_position": 1,
-            "delta": -2,
+            "delta": 0,
             "seed": 628841,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 1,
             "agent_stops": [
               [
-                17,
-                "HARD"
+                14,
+                "SOFT"
               ],
               [
                 27,
-                "HARD"
-              ],
-              [
-                52,
                 "HARD"
               ],
               [
@@ -1309,24 +1341,20 @@
             ],
             "baseline_dnf": false,
             "baseline_position": 1,
-            "delta": -2,
+            "delta": 0,
             "seed": 435577,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 1,
             "agent_stops": [
               [
-                17,
-                "HARD"
+                14,
+                "SOFT"
               ],
               [
                 27,
-                "HARD"
-              ],
-              [
-                52,
                 "HARD"
               ],
               [
@@ -1336,24 +1364,20 @@
             ],
             "baseline_dnf": false,
             "baseline_position": 1,
-            "delta": -2,
+            "delta": 0,
             "seed": 893033,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 1,
             "agent_stops": [
               [
-                17,
-                "HARD"
+                14,
+                "SOFT"
               ],
               [
                 27,
-                "HARD"
-              ],
-              [
-                52,
                 "HARD"
               ],
               [
@@ -1363,24 +1387,20 @@
             ],
             "baseline_dnf": false,
             "baseline_position": 1,
-            "delta": -2,
+            "delta": 0,
             "seed": 530644,
             "snapped_stops": 0
           },
           {
             "agent_dnf": false,
-            "agent_position": 3,
+            "agent_position": 1,
             "agent_stops": [
               [
-                17,
-                "HARD"
+                14,
+                "SOFT"
               ],
               [
                 27,
-                "HARD"
-              ],
-              [
-                52,
                 "HARD"
               ],
               [
@@ -1390,7 +1410,7 @@
             ],
             "baseline_dnf": false,
             "baseline_position": 1,
-            "delta": -2,
+            "delta": 0,
             "seed": 365433,
             "snapped_stops": 0
           }
@@ -1419,10 +1439,10 @@
     ],
     "sign_test": {
       "alpha": 0.05,
-      "losses": 3,
+      "losses": 2,
       "p_value": 1.0,
       "significant": false,
-      "ties": 4,
+      "ties": 5,
       "wins": 3
     },
     "stretch": 1.5,
