@@ -1,5 +1,13 @@
 # The demo — 90-second cut and the ten-minute tour
 
+> **Status (F24, 18 Aug 2026): this script is a record, not a runbook.** It
+> choreographs the React dashboard the scoped build removed (the :5173 links do
+> not resolve here) and narrates the pre-repair agent, whose Bahrain habit — the
+> lap-3-to-10 early stop — no longer exists: after the F24 tyre-model repair the
+> same seed-55 race from P8 is a wet three-stop (laps 7, 25, 42, 49) that the
+> retrained agent wins. The demo gets re-choreographed against the F25 interface
+> (docs/plans/F25-plan.md); until then the Streamlit pages at :8501 are the demo.
+
 Two scripts, one setup. The 90-second cut is the 5.13 storyboard made executable:
 the recruiter beat, engineered link by link. The ten-minute tour is the long-form
 script 5.13 asks for, written fresh (the v2 original never made it into this repo)

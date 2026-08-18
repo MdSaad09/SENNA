@@ -266,7 +266,7 @@ tree ensemble — to imitate the agent, runs SHAP on that, and shows you the res
 
 Which means the bars are explaining the imitator, not the agent. The project's
 response is to measure how often the imitator agrees with the real agent and
-print that number right there: **99.7% agreement on pit calls, 99.1% on energy
+print that number right there: **98.3% agreement on pit calls, 97.7% on energy
 calls.** If that agreement ever dropped below 90%, the pipeline refuses to
 produce cards at all.
 
@@ -275,7 +275,7 @@ are given readable names — "grip left", "gap to the car ahead", "battery charg
 — rather than raw variable names.
 
 The honesty line at the bottom spells the caveat out: attribution via a
-99.7%-faithful surrogate, and not a causal claim.
+98.3%-faithful surrogate, and not a causal claim.
 
 ### On camera
 
@@ -284,7 +284,7 @@ out. Then work down the three sections and say why they're in that order:
 "These first numbers are what actually happened. These second numbers are what
 the agent itself was thinking. This third section is a helpful approximation, and
 it's last, and it's closed, because it's the only part that isn't the agent
-itself." Then open it anyway and point at the 99.7%.
+itself." Then open it anyway and point at the 98.3%.
 
 If you say one sentence about the whole project on camera, say that one.
 

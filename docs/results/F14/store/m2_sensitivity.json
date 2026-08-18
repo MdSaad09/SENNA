@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "5eaf90c65f99df8fec877aa7d43bcda071c5b81b4d1b596a766bfe5963cd4487",
-    "git_commit": "895954ed714e51cad8adc719d7cea52cf75681e7",
+    "config_hash": "a19939eb713692361e7023c67c2e5a8a11178076e0966eff26c69d6c6475a294",
+    "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
     "model_versions": {
-      "era2024": "senna-ppo-39cabd466e03-C-03538944"
+      "era2024": "senna-ppo-d972ad8448dd-C-05849088"
     },
     "scope": {
       "arms": [
@@ -17,24 +17,24 @@
   "payload": {
     "arms": {
       "down": {
-        "ci_high": -0.9,
-        "ci_low": -8.16,
+        "ci_high": 2.0,
+        "ci_low": -0.9,
         "ci_note": "descriptive only: a bootstrap over ten races is not a claim",
-        "mean_delta": -4.279999999999999,
+        "mean_delta": 0.5,
         "met": false,
         "n_races": 10,
         "per_race": [
           {
             "circuit": "bahrain_grand_prix",
             "driver": "VER",
-            "mean_delta": -3.0,
+            "mean_delta": -2.0,
             "per_seed": [
               {
                 "agent_dnf": false,
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -42,7 +42,7 @@
                     "HARD"
                   ],
                   [
-                    21,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -51,8 +51,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 354043,
                 "snapped_stops": 0
               },
@@ -61,7 +61,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -69,7 +69,7 @@
                     "HARD"
                   ],
                   [
-                    21,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -78,8 +78,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 868844,
                 "snapped_stops": 0
               },
@@ -88,7 +88,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -96,7 +96,7 @@
                     "HARD"
                   ],
                   [
-                    21,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -105,8 +105,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 910519,
                 "snapped_stops": 0
               },
@@ -115,7 +115,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -123,7 +123,7 @@
                     "HARD"
                   ],
                   [
-                    21,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -132,8 +132,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 456521,
                 "snapped_stops": 0
               },
@@ -142,7 +142,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -150,7 +150,7 @@
                     "HARD"
                   ],
                   [
-                    21,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -159,8 +159,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 387864,
                 "snapped_stops": 0
               }
@@ -189,1219 +189,1115 @@
           {
             "circuit": "british_grand_prix",
             "driver": "HAM",
-            "mean_delta": -1.8,
+            "mean_delta": 5.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 7,
+                "agent_stops": [
+                  [
+                    28,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    39,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 12,
+                "delta": 5,
+                "seed": 996415,
+                "snapped_stops": 2
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 7,
+                "agent_stops": [
+                  [
+                    28,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    39,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 12,
+                "delta": 5,
+                "seed": 509185,
+                "snapped_stops": 2
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 7,
+                "agent_stops": [
+                  [
+                    28,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    39,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 12,
+                "delta": 5,
+                "seed": 543985,
+                "snapped_stops": 2
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 7,
+                "agent_stops": [
+                  [
+                    28,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    39,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 12,
+                "delta": 5,
+                "seed": 576719,
+                "snapped_stops": 2
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 7,
+                "agent_stops": [
+                  [
+                    28,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    39,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 12,
+                "delta": 5,
+                "seed": 493402,
+                "snapped_stops": 2
+              }
+            ],
+            "rationale": "the wet-crossover anchor (E-08): slick-inter-slick timing decided the win",
+            "real_finish": {
+              "position": 1,
+              "status": "Finished"
+            },
+            "real_stops": [
+              [
+                28,
+                "INTERMEDIATE"
+              ],
+              [
+                39,
+                "SOFT"
+              ]
+            ],
+            "red_flag": false,
+            "round": 12,
+            "season": 2024,
+            "snapped_stops": 10,
+            "wet": true
+          },
+          {
+            "circuit": "italian_grand_prix",
+            "driver": "LEC",
+            "mean_delta": 0.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    16,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 1,
+                "delta": 0,
+                "seed": 938481,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    16,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 1,
+                "delta": 0,
+                "seed": 957199,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    16,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 1,
+                "delta": 0,
+                "seed": 876595,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    16,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 1,
+                "delta": 0,
+                "seed": 522412,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    16,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 1,
+                "delta": 0,
+                "seed": 699168,
+                "snapped_stops": 0
+              }
+            ],
+            "rationale": "the one-stop gamble against a field on two stops",
+            "real_finish": {
+              "position": 1,
+              "status": "Finished"
+            },
+            "real_stops": [
+              [
+                16,
+                "HARD"
+              ]
+            ],
+            "red_flag": false,
+            "round": 16,
+            "season": 2024,
+            "snapped_stops": 0,
+            "wet": false
+          },
+          {
+            "circuit": "belgian_grand_prix",
+            "driver": "RUS",
+            "mean_delta": 0.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    11,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 5,
+                "delta": 0,
+                "seed": 484205,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    11,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 5,
+                "delta": 0,
+                "seed": 401322,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    11,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 5,
+                "delta": 0,
+                "seed": 845275,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    11,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 5,
+                "delta": 0,
+                "seed": 636458,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    11,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 5,
+                "delta": 0,
+                "seed": 637597,
+                "snapped_stops": 0
+              }
+            ],
+            "rationale": "one-stop track position won on the road; disqualified post-race for underweight, which does not touch the in-simulator strategy comparison",
+            "real_finish": {
+              "position": 20,
+              "status": "Disqualified"
+            },
+            "real_stops": [
+              [
+                11,
+                "HARD"
+              ]
+            ],
+            "red_flag": false,
+            "round": 14,
+            "season": 2024,
+            "snapped_stops": 0,
+            "wet": false
+          },
+          {
+            "circuit": "hungarian_grand_prix",
+            "driver": "PIA",
+            "mean_delta": 0.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    19,
+                    "HARD"
+                  ],
+                  [
+                    48,
+                    "MEDIUM"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 823517,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    19,
+                    "HARD"
+                  ],
+                  [
+                    48,
+                    "MEDIUM"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 295665,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    19,
+                    "HARD"
+                  ],
+                  [
+                    48,
+                    "MEDIUM"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 941632,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    19,
+                    "HARD"
+                  ],
+                  [
+                    48,
+                    "MEDIUM"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 679315,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    19,
+                    "HARD"
+                  ],
+                  [
+                    48,
+                    "MEDIUM"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 520026,
+                "snapped_stops": 0
+              }
+            ],
+            "rationale": "undercut into the lead at a track where track position is nearly decisive",
+            "real_finish": {
+              "position": 1,
+              "status": "Finished"
+            },
+            "real_stops": [
+              [
+                19,
+                "HARD"
+              ],
+              [
+                48,
+                "MEDIUM"
+              ]
+            ],
+            "red_flag": false,
+            "round": 13,
+            "season": 2024,
+            "snapped_stops": 0,
+            "wet": false
+          },
+          {
+            "circuit": "monaco_grand_prix",
+            "driver": "LEC",
+            "mean_delta": 1.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    2,
+                    "HARD"
+                  ],
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 1,
+                "seed": 198252,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    2,
+                    "HARD"
+                  ],
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 1,
+                "seed": 877739,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    2,
+                    "HARD"
+                  ],
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 1,
+                "seed": 356643,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    2,
+                    "HARD"
+                  ],
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 1,
+                "seed": 984998,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
+                "agent_stops": [
+                  [
+                    2,
+                    "HARD"
+                  ],
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
+                    "SOFT"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 1,
+                "seed": 526345,
+                "snapped_stops": 0
+              }
+            ],
+            "rationale": "the lap-1 red flag and its free tyre change (E-04) — the case that inverts strategy",
+            "real_finish": {
+              "position": 1,
+              "status": "Finished"
+            },
+            "real_stops": [
+              [
+                2,
+                "HARD"
+              ]
+            ],
+            "red_flag": true,
+            "round": 8,
+            "season": 2024,
+            "snapped_stops": 0,
+            "wet": false
+          },
+          {
+            "circuit": "dutch_grand_prix",
+            "driver": "VER",
+            "mean_delta": 4.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 4,
+                "agent_stops": [
+                  [
+                    3,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    12,
+                    "SOFT"
+                  ],
+                  [
+                    31,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
+                  ],
+                  [
+                    50,
+                    "SOFT"
+                  ],
+                  [
+                    62,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    64,
+                    "WET"
+                  ],
+                  [
+                    65,
+                    "INTERMEDIATE"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 8,
+                "delta": 4,
+                "seed": 496793,
+                "snapped_stops": 3
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 4,
+                "agent_stops": [
+                  [
+                    3,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    12,
+                    "SOFT"
+                  ],
+                  [
+                    31,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
+                  ],
+                  [
+                    50,
+                    "SOFT"
+                  ],
+                  [
+                    62,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    64,
+                    "WET"
+                  ],
+                  [
+                    65,
+                    "INTERMEDIATE"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 8,
+                "delta": 4,
+                "seed": 744670,
+                "snapped_stops": 3
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 4,
+                "agent_stops": [
+                  [
+                    3,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    12,
+                    "SOFT"
+                  ],
+                  [
+                    31,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
+                  ],
+                  [
+                    50,
+                    "SOFT"
+                  ],
+                  [
+                    62,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    64,
+                    "WET"
+                  ],
+                  [
+                    65,
+                    "INTERMEDIATE"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 8,
+                "delta": 4,
+                "seed": 921607,
+                "snapped_stops": 3
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 4,
+                "agent_stops": [
+                  [
+                    3,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    12,
+                    "SOFT"
+                  ],
+                  [
+                    31,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
+                  ],
+                  [
+                    50,
+                    "SOFT"
+                  ],
+                  [
+                    62,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    64,
+                    "WET"
+                  ],
+                  [
+                    65,
+                    "INTERMEDIATE"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 8,
+                "delta": 4,
+                "seed": 778899,
+                "snapped_stops": 3
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 4,
+                "agent_stops": [
+                  [
+                    3,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    12,
+                    "SOFT"
+                  ],
+                  [
+                    31,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
+                  ],
+                  [
+                    50,
+                    "SOFT"
+                  ],
+                  [
+                    62,
+                    "INTERMEDIATE"
+                  ],
+                  [
+                    64,
+                    "WET"
+                  ],
+                  [
+                    65,
+                    "INTERMEDIATE"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 8,
+                "delta": 4,
+                "seed": 873559,
+                "snapped_stops": 3
+              }
+            ],
+            "rationale": "double wet crossover plus a red flag: the hardest event mix in the set",
+            "real_finish": {
+              "position": 1,
+              "status": "Finished"
+            },
+            "real_stops": [
+              [
+                3,
+                "INTERMEDIATE"
+              ],
+              [
+                12,
+                "SOFT"
+              ],
+              [
+                50,
+                "SOFT"
+              ],
+              [
+                62,
+                "INTERMEDIATE"
+              ],
+              [
+                64,
+                "WET"
+              ],
+              [
+                65,
+                "INTERMEDIATE"
+              ]
+            ],
+            "red_flag": true,
+            "round": 13,
+            "season": 2023,
+            "snapped_stops": 15,
+            "wet": true
+          },
+          {
+            "circuit": "las_vegas_grand_prix",
+            "driver": "VER",
+            "mean_delta": 0.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    27,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 422444,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    27,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 657348,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    27,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 200173,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    27,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 967681,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 2,
+                "agent_stops": [
+                  [
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    27,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": 0,
+                "seed": 643330,
+                "snapped_stops": 0
+              }
+            ],
+            "rationale": "safety-car shaped: the neutralisation reordered the strategic problem mid-race",
+            "real_finish": {
+              "position": 1,
+              "status": "Finished"
+            },
+            "real_stops": [
+              [
+                17,
+                "HARD"
+              ],
+              [
+                27,
+                "HARD"
+              ]
+            ],
+            "red_flag": false,
+            "round": 21,
+            "season": 2023,
+            "snapped_stops": 0,
+            "wet": false
+          },
+          {
+            "circuit": "british_grand_prix",
+            "driver": "NOR",
+            "mean_delta": -3.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    33,
+                    "HARD"
+                  ],
+                  [
+                    34,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": -3,
+                "seed": 996415,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    33,
+                    "HARD"
+                  ],
+                  [
+                    34,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": -3,
+                "seed": 509185,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    33,
+                    "HARD"
+                  ],
+                  [
+                    34,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": -3,
+                "seed": 543985,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    33,
+                    "HARD"
+                  ],
+                  [
+                    34,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": -3,
+                "seed": 576719,
+                "snapped_stops": 0
+              },
+              {
+                "agent_dnf": false,
+                "agent_position": 5,
+                "agent_stops": [
+                  [
+                    33,
+                    "HARD"
+                  ],
+                  [
+                    34,
+                    "HARD"
+                  ]
+                ],
+                "baseline_dnf": false,
+                "baseline_position": 2,
+                "delta": -3,
+                "seed": 493402,
+                "snapped_stops": 0
+              }
+            ],
+            "rationale": "the late-safety-car pit-or-stay call, from the front",
+            "real_finish": {
+              "position": 2,
+              "status": "Finished"
+            },
+            "real_stops": [
+              [
+                34,
+                "HARD"
+              ]
+            ],
+            "red_flag": false,
+            "round": 10,
+            "season": 2023,
+            "snapped_stops": 0,
+            "wet": false
+          },
+          {
+            "circuit": "spanish_grand_prix",
+            "driver": "VER",
+            "mean_delta": 0.0,
+            "per_seed": [
+              {
+                "agent_dnf": false,
+                "agent_position": 1,
                 "agent_stops": [
                   [
                     14,
                     "SOFT"
                   ],
                   [
-                    28,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    39,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 13,
-                "delta": -1,
-                "seed": 996415,
-                "snapped_stops": 2
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 14,
-                "agent_stops": [
-                  [
-                    15,
-                    "SOFT"
-                  ],
-                  [
-                    28,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    39,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 12,
-                "delta": -2,
-                "seed": 509185,
-                "snapped_stops": 2
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 14,
-                "agent_stops": [
-                  [
-                    15,
-                    "SOFT"
-                  ],
-                  [
-                    28,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    39,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 12,
-                "delta": -2,
-                "seed": 543985,
-                "snapped_stops": 2
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 14,
-                "agent_stops": [
-                  [
-                    15,
-                    "SOFT"
-                  ],
-                  [
-                    28,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    39,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 12,
-                "delta": -2,
-                "seed": 576719,
-                "snapped_stops": 2
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 14,
-                "agent_stops": [
-                  [
-                    15,
-                    "SOFT"
-                  ],
-                  [
-                    28,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    39,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 12,
-                "delta": -2,
-                "seed": 493402,
-                "snapped_stops": 2
-              }
-            ],
-            "rationale": "the wet-crossover anchor (E-08): slick-inter-slick timing decided the win",
-            "real_finish": {
-              "position": 1,
-              "status": "Finished"
-            },
-            "real_stops": [
-              [
-                28,
-                "INTERMEDIATE"
-              ],
-              [
-                39,
-                "SOFT"
-              ]
-            ],
-            "red_flag": false,
-            "round": 12,
-            "season": 2024,
-            "snapped_stops": 10,
-            "wet": true
-          },
-          {
-            "circuit": "italian_grand_prix",
-            "driver": "LEC",
-            "mean_delta": -7.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 8,
-                "agent_stops": [
-                  [
-                    16,
-                    "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -7,
-                "seed": 938481,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 8,
-                "agent_stops": [
-                  [
-                    16,
-                    "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -7,
-                "seed": 957199,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 8,
-                "agent_stops": [
-                  [
-                    16,
-                    "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -7,
-                "seed": 876595,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 8,
-                "agent_stops": [
-                  [
-                    16,
-                    "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -7,
-                "seed": 522412,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 8,
-                "agent_stops": [
-                  [
-                    16,
-                    "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -7,
-                "seed": 699168,
-                "snapped_stops": 0
-              }
-            ],
-            "rationale": "the one-stop gamble against a field on two stops",
-            "real_finish": {
-              "position": 1,
-              "status": "Finished"
-            },
-            "real_stops": [
-              [
-                16,
-                "HARD"
-              ]
-            ],
-            "red_flag": false,
-            "round": 16,
-            "season": 2024,
-            "snapped_stops": 0,
-            "wet": false
-          },
-          {
-            "circuit": "belgian_grand_prix",
-            "driver": "RUS",
-            "mean_delta": 2.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    11,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 5,
-                "delta": 2,
-                "seed": 484205,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    11,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 5,
-                "delta": 2,
-                "seed": 401322,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    11,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 5,
-                "delta": 2,
-                "seed": 845275,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    11,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 5,
-                "delta": 2,
-                "seed": 636458,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    11,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 5,
-                "delta": 2,
-                "seed": 637597,
-                "snapped_stops": 0
-              }
-            ],
-            "rationale": "one-stop track position won on the road; disqualified post-race for underweight, which does not touch the in-simulator strategy comparison",
-            "real_finish": {
-              "position": 20,
-              "status": "Disqualified"
-            },
-            "real_stops": [
-              [
-                11,
-                "HARD"
-              ]
-            ],
-            "red_flag": false,
-            "round": 14,
-            "season": 2024,
-            "snapped_stops": 0,
-            "wet": false
-          },
-          {
-            "circuit": "hungarian_grand_prix",
-            "driver": "PIA",
-            "mean_delta": -8.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 10,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    19,
-                    "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
-                  ],
-                  [
-                    48,
-                    "MEDIUM"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -8,
-                "seed": 823517,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 10,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    19,
-                    "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
-                  ],
-                  [
-                    48,
-                    "MEDIUM"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -8,
-                "seed": 295665,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 10,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    19,
-                    "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
-                  ],
-                  [
-                    48,
-                    "MEDIUM"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -8,
-                "seed": 941632,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 10,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    19,
-                    "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
-                  ],
-                  [
-                    48,
-                    "MEDIUM"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -8,
-                "seed": 679315,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 10,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    19,
-                    "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
-                  ],
-                  [
-                    48,
-                    "MEDIUM"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -8,
-                "seed": 520026,
-                "snapped_stops": 0
-              }
-            ],
-            "rationale": "undercut into the lead at a track where track position is nearly decisive",
-            "real_finish": {
-              "position": 1,
-              "status": "Finished"
-            },
-            "real_stops": [
-              [
-                19,
-                "HARD"
-              ],
-              [
-                48,
-                "MEDIUM"
-              ]
-            ],
-            "red_flag": false,
-            "round": 13,
-            "season": 2024,
-            "snapped_stops": 0,
-            "wet": false
-          },
-          {
-            "circuit": "monaco_grand_prix",
-            "driver": "LEC",
-            "mean_delta": -1.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    2,
-                    "HARD"
-                  ],
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -1,
-                "seed": 198252,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    2,
-                    "HARD"
-                  ],
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -1,
-                "seed": 877739,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    2,
-                    "HARD"
-                  ],
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -1,
-                "seed": 356643,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    2,
-                    "HARD"
-                  ],
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -1,
-                "seed": 984998,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 3,
-                "agent_stops": [
-                  [
-                    2,
-                    "HARD"
-                  ],
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    73,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -1,
-                "seed": 526345,
-                "snapped_stops": 0
-              }
-            ],
-            "rationale": "the lap-1 red flag and its free tyre change (E-04) — the case that inverts strategy",
-            "real_finish": {
-              "position": 1,
-              "status": "Finished"
-            },
-            "real_stops": [
-              [
-                2,
-                "HARD"
-              ]
-            ],
-            "red_flag": true,
-            "round": 8,
-            "season": 2024,
-            "snapped_stops": 0,
-            "wet": false
-          },
-          {
-            "circuit": "dutch_grand_prix",
-            "driver": "VER",
-            "mean_delta": 4.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 4,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    12,
-                    "SOFT"
-                  ],
-                  [
-                    31,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    50,
-                    "SOFT"
-                  ],
-                  [
-                    62,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    64,
-                    "WET"
-                  ],
-                  [
-                    65,
-                    "INTERMEDIATE"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 8,
-                "delta": 4,
-                "seed": 496793,
-                "snapped_stops": 3
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 4,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    12,
-                    "SOFT"
-                  ],
-                  [
-                    31,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    50,
-                    "SOFT"
-                  ],
-                  [
-                    62,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    64,
-                    "WET"
-                  ],
-                  [
-                    65,
-                    "INTERMEDIATE"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 8,
-                "delta": 4,
-                "seed": 744670,
-                "snapped_stops": 3
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 4,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    12,
-                    "SOFT"
-                  ],
-                  [
-                    31,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    50,
-                    "SOFT"
-                  ],
-                  [
-                    62,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    64,
-                    "WET"
-                  ],
-                  [
-                    65,
-                    "INTERMEDIATE"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 8,
-                "delta": 4,
-                "seed": 921607,
-                "snapped_stops": 3
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 4,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    12,
-                    "SOFT"
-                  ],
-                  [
-                    31,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    50,
-                    "SOFT"
-                  ],
-                  [
-                    62,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    64,
-                    "WET"
-                  ],
-                  [
-                    65,
-                    "INTERMEDIATE"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 8,
-                "delta": 4,
-                "seed": 778899,
-                "snapped_stops": 3
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 4,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    12,
-                    "SOFT"
-                  ],
-                  [
-                    31,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    50,
-                    "SOFT"
-                  ],
-                  [
-                    62,
-                    "INTERMEDIATE"
-                  ],
-                  [
-                    64,
-                    "WET"
-                  ],
-                  [
-                    65,
-                    "INTERMEDIATE"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 8,
-                "delta": 4,
-                "seed": 873559,
-                "snapped_stops": 3
-              }
-            ],
-            "rationale": "double wet crossover plus a red flag: the hardest event mix in the set",
-            "real_finish": {
-              "position": 1,
-              "status": "Finished"
-            },
-            "real_stops": [
-              [
-                3,
-                "INTERMEDIATE"
-              ],
-              [
-                12,
-                "SOFT"
-              ],
-              [
-                50,
-                "SOFT"
-              ],
-              [
-                62,
-                "INTERMEDIATE"
-              ],
-              [
-                64,
-                "WET"
-              ],
-              [
-                65,
-                "INTERMEDIATE"
-              ]
-            ],
-            "red_flag": true,
-            "round": 13,
-            "season": 2023,
-            "snapped_stops": 15,
-            "wet": true
-          },
-          {
-            "circuit": "las_vegas_grand_prix",
-            "driver": "VER",
-            "mean_delta": -18.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 20,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    17,
-                    "HARD"
-                  ],
-                  [
-                    20,
-                    "SOFT"
-                  ],
-                  [
-                    27,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -18,
-                "seed": 422444,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 20,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    17,
-                    "HARD"
-                  ],
-                  [
-                    20,
-                    "SOFT"
-                  ],
-                  [
-                    27,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -18,
-                "seed": 657348,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 20,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    17,
-                    "HARD"
-                  ],
-                  [
-                    20,
-                    "SOFT"
-                  ],
-                  [
-                    27,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -18,
-                "seed": 200173,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 20,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    17,
-                    "HARD"
-                  ],
-                  [
-                    20,
-                    "SOFT"
-                  ],
-                  [
-                    27,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -18,
-                "seed": 967681,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 20,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
-                    17,
-                    "HARD"
-                  ],
-                  [
-                    20,
-                    "SOFT"
-                  ],
-                  [
-                    27,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -18,
-                "seed": 643330,
-                "snapped_stops": 0
-              }
-            ],
-            "rationale": "safety-car shaped: the neutralisation reordered the strategic problem mid-race",
-            "real_finish": {
-              "position": 1,
-              "status": "Finished"
-            },
-            "real_stops": [
-              [
-                17,
-                "HARD"
-              ],
-              [
-                27,
-                "HARD"
-              ]
-            ],
-            "red_flag": false,
-            "round": 21,
-            "season": 2023,
-            "snapped_stops": 0,
-            "wet": false
-          },
-          {
-            "circuit": "british_grand_prix",
-            "driver": "NOR",
-            "mean_delta": -7.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 9,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    34,
-                    "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -7,
-                "seed": 996415,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 9,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    34,
-                    "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -7,
-                "seed": 509185,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 9,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    34,
-                    "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -7,
-                "seed": 543985,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 9,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    34,
-                    "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -7,
-                "seed": 576719,
-                "snapped_stops": 0
-              },
-              {
-                "agent_dnf": false,
-                "agent_position": 9,
-                "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
-                  [
-                    34,
-                    "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
-                  ]
-                ],
-                "baseline_dnf": false,
-                "baseline_position": 2,
-                "delta": -7,
-                "seed": 493402,
-                "snapped_stops": 0
-              }
-            ],
-            "rationale": "the late-safety-car pit-or-stay call, from the front",
-            "real_finish": {
-              "position": 2,
-              "status": "Finished"
-            },
-            "real_stops": [
-              [
-                34,
-                "HARD"
-              ]
-            ],
-            "red_flag": false,
-            "round": 10,
-            "season": 2023,
-            "snapped_stops": 0,
-            "wet": false
-          },
-          {
-            "circuit": "spanish_grand_prix",
-            "driver": "VER",
-            "mean_delta": -3.0,
-            "per_seed": [
-              {
-                "agent_dnf": false,
-                "agent_position": 4,
-                "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
-                  [
                     27,
                     "HARD"
-                  ],
-                  [
-                    30,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -1410,25 +1306,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -3,
+                "delta": 0,
                 "seed": 628841,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    30,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -1437,25 +1329,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -3,
+                "delta": 0,
                 "seed": 435577,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    30,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -1464,25 +1352,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -3,
+                "delta": 0,
                 "seed": 893033,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    30,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -1491,25 +1375,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -3,
+                "delta": 0,
                 "seed": 530644,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    30,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -1518,7 +1398,7 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -3,
+                "delta": 0,
                 "seed": 365433,
                 "snapped_stops": 0
               }
@@ -1547,35 +1427,35 @@
         ],
         "sign_test": {
           "alpha": 0.05,
-          "losses": 8,
-          "p_value": 0.109375,
+          "losses": 2,
+          "p_value": 1.0,
           "significant": false,
-          "ties": 0,
-          "wins": 2
+          "ties": 5,
+          "wins": 3
         },
         "stretch": 1.5,
         "target": 1.0,
         "total_snapped_stops": 25
       },
       "up": {
-        "ci_high": -2.04,
-        "ci_low": -9.1,
+        "ci_high": 2.0,
+        "ci_low": -0.9,
         "ci_note": "descriptive only: a bootstrap over ten races is not a claim",
-        "mean_delta": -5.4399999999999995,
+        "mean_delta": 0.5,
         "met": false,
         "n_races": 10,
         "per_race": [
           {
             "circuit": "bahrain_grand_prix",
             "driver": "VER",
-            "mean_delta": -3.0,
+            "mean_delta": -2.0,
             "per_seed": [
               {
                 "agent_dnf": false,
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -1583,7 +1463,7 @@
                     "HARD"
                   ],
                   [
-                    20,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -1592,8 +1472,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 354043,
                 "snapped_stops": 0
               },
@@ -1602,7 +1482,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -1610,7 +1490,7 @@
                     "HARD"
                   ],
                   [
-                    20,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -1619,8 +1499,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 868844,
                 "snapped_stops": 0
               },
@@ -1629,7 +1509,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -1637,7 +1517,7 @@
                     "HARD"
                   ],
                   [
-                    20,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -1646,8 +1526,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 910519,
                 "snapped_stops": 0
               },
@@ -1656,7 +1536,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -1664,7 +1544,7 @@
                     "HARD"
                   ],
                   [
-                    20,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -1673,8 +1553,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 456521,
                 "snapped_stops": 0
               },
@@ -1683,7 +1563,7 @@
                 "agent_position": 4,
                 "agent_stops": [
                   [
-                    3,
+                    12,
                     "SOFT"
                   ],
                   [
@@ -1691,7 +1571,7 @@
                     "HARD"
                   ],
                   [
-                    20,
+                    37,
                     "SOFT"
                   ],
                   [
@@ -1700,8 +1580,8 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 1,
-                "delta": -3,
+                "baseline_position": 2,
+                "delta": -2,
                 "seed": 387864,
                 "snapped_stops": 0
               }
@@ -1730,16 +1610,12 @@
           {
             "circuit": "british_grand_prix",
             "driver": "HAM",
-            "mean_delta": -1.4,
+            "mean_delta": 5.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 12,
+                "agent_position": 7,
                 "agent_stops": [
-                  [
-                    9,
-                    "SOFT"
-                  ],
                   [
                     28,
                     "INTERMEDIATE"
@@ -1750,19 +1626,15 @@
                   ]
                 ],
                 "baseline_dnf": false,
-                "baseline_position": 13,
-                "delta": 1,
+                "baseline_position": 12,
+                "delta": 5,
                 "seed": 996415,
                 "snapped_stops": 2
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 7,
                 "agent_stops": [
-                  [
-                    7,
-                    "INTERMEDIATE"
-                  ],
                   [
                     28,
                     "INTERMEDIATE"
@@ -1774,18 +1646,14 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 12,
-                "delta": -2,
+                "delta": 5,
                 "seed": 509185,
                 "snapped_stops": 2
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 7,
                 "agent_stops": [
-                  [
-                    7,
-                    "INTERMEDIATE"
-                  ],
                   [
                     28,
                     "INTERMEDIATE"
@@ -1797,18 +1665,14 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 12,
-                "delta": -2,
+                "delta": 5,
                 "seed": 543985,
                 "snapped_stops": 2
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 7,
                 "agent_stops": [
-                  [
-                    7,
-                    "INTERMEDIATE"
-                  ],
                   [
                     28,
                     "INTERMEDIATE"
@@ -1820,18 +1684,14 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 12,
-                "delta": -2,
+                "delta": 5,
                 "seed": 576719,
                 "snapped_stops": 2
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 7,
                 "agent_stops": [
-                  [
-                    7,
-                    "INTERMEDIATE"
-                  ],
                   [
                     28,
                     "INTERMEDIATE"
@@ -1843,7 +1703,7 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 12,
-                "delta": -2,
+                "delta": 5,
                 "seed": 493402,
                 "snapped_stops": 2
               }
@@ -1872,120 +1732,80 @@
           {
             "circuit": "italian_grand_prix",
             "driver": "LEC",
-            "mean_delta": -8.0,
+            "mean_delta": 0.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 1,
                 "agent_stops": [
-                  [
-                    4,
-                    "SOFT"
-                  ],
                   [
                     16,
                     "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -8,
+                "delta": 0,
                 "seed": 938481,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 1,
                 "agent_stops": [
-                  [
-                    4,
-                    "SOFT"
-                  ],
                   [
                     16,
                     "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -8,
+                "delta": 0,
                 "seed": 957199,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 1,
                 "agent_stops": [
-                  [
-                    4,
-                    "SOFT"
-                  ],
                   [
                     16,
                     "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -8,
+                "delta": 0,
                 "seed": 876595,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 1,
                 "agent_stops": [
-                  [
-                    4,
-                    "SOFT"
-                  ],
                   [
                     16,
                     "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -8,
+                "delta": 0,
                 "seed": 522412,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 1,
                 "agent_stops": [
-                  [
-                    4,
-                    "SOFT"
-                  ],
                   [
                     16,
                     "HARD"
-                  ],
-                  [
-                    17,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -8,
+                "delta": 0,
                 "seed": 699168,
                 "snapped_stops": 0
               }
@@ -2010,120 +1830,80 @@
           {
             "circuit": "belgian_grand_prix",
             "driver": "RUS",
-            "mean_delta": -9.0,
+            "mean_delta": 0.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 5,
                 "agent_stops": [
-                  [
-                    8,
-                    "SOFT"
-                  ],
                   [
                     11,
                     "HARD"
-                  ],
-                  [
-                    12,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 5,
-                "delta": -9,
+                "delta": 0,
                 "seed": 484205,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 5,
                 "agent_stops": [
-                  [
-                    8,
-                    "SOFT"
-                  ],
                   [
                     11,
                     "HARD"
-                  ],
-                  [
-                    12,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 5,
-                "delta": -9,
+                "delta": 0,
                 "seed": 401322,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 5,
                 "agent_stops": [
-                  [
-                    8,
-                    "SOFT"
-                  ],
                   [
                     11,
                     "HARD"
-                  ],
-                  [
-                    12,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 5,
-                "delta": -9,
+                "delta": 0,
                 "seed": 845275,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 5,
                 "agent_stops": [
-                  [
-                    8,
-                    "SOFT"
-                  ],
                   [
                     11,
                     "HARD"
-                  ],
-                  [
-                    12,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 5,
-                "delta": -9,
+                "delta": 0,
                 "seed": 636458,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 14,
+                "agent_position": 5,
                 "agent_stops": [
-                  [
-                    8,
-                    "SOFT"
-                  ],
                   [
                     11,
                     "HARD"
-                  ],
-                  [
-                    12,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 5,
-                "delta": -9,
+                "delta": 0,
                 "seed": 637597,
                 "snapped_stops": 0
               }
@@ -2148,23 +1928,15 @@
           {
             "circuit": "hungarian_grand_prix",
             "driver": "PIA",
-            "mean_delta": -8.0,
+            "mean_delta": 0.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 10,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
                   [
                     19,
                     "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
                   ],
                   [
                     48,
@@ -2173,25 +1945,17 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -8,
+                "delta": 0,
                 "seed": 823517,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 10,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
                   [
                     19,
                     "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
                   ],
                   [
                     48,
@@ -2200,25 +1964,17 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -8,
+                "delta": 0,
                 "seed": 295665,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 10,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
                   [
                     19,
                     "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
                   ],
                   [
                     48,
@@ -2227,25 +1983,17 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -8,
+                "delta": 0,
                 "seed": 941632,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 10,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
                   [
                     19,
                     "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
                   ],
                   [
                     48,
@@ -2254,25 +2002,17 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -8,
+                "delta": 0,
                 "seed": 679315,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 10,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    6,
-                    "SOFT"
-                  ],
                   [
                     19,
                     "HARD"
-                  ],
-                  [
-                    22,
-                    "SOFT"
                   ],
                   [
                     48,
@@ -2281,7 +2021,7 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -8,
+                "delta": 0,
                 "seed": 520026,
                 "snapped_stops": 0
               }
@@ -2310,100 +2050,140 @@
           {
             "circuit": "monaco_grand_prix",
             "driver": "LEC",
-            "mean_delta": -2.0,
+            "mean_delta": 1.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
                     2,
                     "HARD"
                   ],
                   [
-                    3,
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
                     "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -2,
+                "delta": 1,
                 "seed": 198252,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
                     2,
                     "HARD"
                   ],
                   [
-                    3,
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
                     "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -2,
+                "delta": 1,
                 "seed": 877739,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
                     2,
                     "HARD"
                   ],
                   [
-                    3,
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
                     "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -2,
+                "delta": 1,
                 "seed": 356643,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
                     2,
                     "HARD"
                   ],
                   [
-                    3,
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
                     "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -2,
+                "delta": 1,
                 "seed": 984998,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 4,
+                "agent_position": 1,
                 "agent_stops": [
                   [
                     2,
                     "HARD"
                   ],
                   [
-                    3,
+                    17,
+                    "HARD"
+                  ],
+                  [
+                    37,
+                    "SOFT"
+                  ],
+                  [
+                    61,
                     "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -2,
+                "delta": 1,
                 "seed": 526345,
                 "snapped_stops": 0
               }
@@ -2436,7 +2216,7 @@
                 "agent_stops": [
                   [
                     3,
-                    "SOFT"
+                    "INTERMEDIATE"
                   ],
                   [
                     12,
@@ -2445,6 +2225,10 @@
                   [
                     31,
                     "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
                   ],
                   [
                     50,
@@ -2475,7 +2259,7 @@
                 "agent_stops": [
                   [
                     3,
-                    "SOFT"
+                    "INTERMEDIATE"
                   ],
                   [
                     12,
@@ -2484,6 +2268,10 @@
                   [
                     31,
                     "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
                   ],
                   [
                     50,
@@ -2514,7 +2302,7 @@
                 "agent_stops": [
                   [
                     3,
-                    "SOFT"
+                    "INTERMEDIATE"
                   ],
                   [
                     12,
@@ -2523,6 +2311,10 @@
                   [
                     31,
                     "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
                   ],
                   [
                     50,
@@ -2553,7 +2345,7 @@
                 "agent_stops": [
                   [
                     3,
-                    "SOFT"
+                    "INTERMEDIATE"
                   ],
                   [
                     12,
@@ -2562,6 +2354,10 @@
                   [
                     31,
                     "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
                   ],
                   [
                     50,
@@ -2592,7 +2388,7 @@
                 "agent_stops": [
                   [
                     3,
-                    "SOFT"
+                    "INTERMEDIATE"
                   ],
                   [
                     12,
@@ -2601,6 +2397,10 @@
                   [
                     31,
                     "INTERMEDIATE"
+                  ],
+                  [
+                    48,
+                    "SOFT"
                   ],
                   [
                     50,
@@ -2666,140 +2466,100 @@
           {
             "circuit": "las_vegas_grand_prix",
             "driver": "VER",
-            "mean_delta": -18.0,
+            "mean_delta": 0.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 20,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
                   [
                     17,
                     "HARD"
                   ],
                   [
-                    20,
-                    "SOFT"
-                  ],
-                  [
                     27,
-                    "SOFT"
+                    "HARD"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -18,
+                "delta": 0,
                 "seed": 422444,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 20,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
                   [
                     17,
                     "HARD"
                   ],
                   [
-                    20,
-                    "SOFT"
-                  ],
-                  [
                     27,
-                    "SOFT"
+                    "HARD"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -18,
+                "delta": 0,
                 "seed": 657348,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 20,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
                   [
                     17,
                     "HARD"
                   ],
                   [
-                    20,
-                    "SOFT"
-                  ],
-                  [
                     27,
-                    "SOFT"
+                    "HARD"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -18,
+                "delta": 0,
                 "seed": 200173,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 20,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
                   [
                     17,
                     "HARD"
                   ],
                   [
-                    20,
-                    "SOFT"
-                  ],
-                  [
                     27,
-                    "SOFT"
+                    "HARD"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -18,
+                "delta": 0,
                 "seed": 967681,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 20,
+                "agent_position": 2,
                 "agent_stops": [
-                  [
-                    3,
-                    "SOFT"
-                  ],
                   [
                     17,
                     "HARD"
                   ],
                   [
-                    20,
-                    "SOFT"
-                  ],
-                  [
                     27,
-                    "SOFT"
+                    "HARD"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -18,
+                "delta": 0,
                 "seed": 643330,
                 "snapped_stops": 0
               }
@@ -2828,120 +2588,100 @@
           {
             "circuit": "british_grand_prix",
             "driver": "NOR",
-            "mean_delta": -7.0,
+            "mean_delta": -3.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 5,
                 "agent_stops": [
                   [
-                    6,
-                    "SOFT"
+                    33,
+                    "HARD"
                   ],
                   [
                     34,
                     "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -7,
+                "delta": -3,
                 "seed": 996415,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 5,
                 "agent_stops": [
                   [
-                    6,
-                    "SOFT"
+                    33,
+                    "HARD"
                   ],
                   [
                     34,
                     "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -7,
+                "delta": -3,
                 "seed": 509185,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 5,
                 "agent_stops": [
                   [
-                    6,
-                    "SOFT"
+                    33,
+                    "HARD"
                   ],
                   [
                     34,
                     "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -7,
+                "delta": -3,
                 "seed": 543985,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 5,
                 "agent_stops": [
                   [
-                    6,
-                    "SOFT"
+                    33,
+                    "HARD"
                   ],
                   [
                     34,
                     "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -7,
+                "delta": -3,
                 "seed": 576719,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 9,
+                "agent_position": 5,
                 "agent_stops": [
                   [
-                    6,
-                    "SOFT"
+                    33,
+                    "HARD"
                   ],
                   [
                     34,
                     "HARD"
-                  ],
-                  [
-                    35,
-                    "SOFT"
                   ]
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 2,
-                "delta": -7,
+                "delta": -3,
                 "seed": 493402,
                 "snapped_stops": 0
               }
@@ -2966,23 +2706,19 @@
           {
             "circuit": "spanish_grand_prix",
             "driver": "VER",
-            "mean_delta": -2.0,
+            "mean_delta": 0.0,
             "per_seed": [
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    31,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -2991,25 +2727,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -2,
+                "delta": 0,
                 "seed": 628841,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    31,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -3018,25 +2750,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -2,
+                "delta": 0,
                 "seed": 435577,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    31,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -3045,25 +2773,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -2,
+                "delta": 0,
                 "seed": 893033,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    31,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -3072,25 +2796,21 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -2,
+                "delta": 0,
                 "seed": 530644,
                 "snapped_stops": 0
               },
               {
                 "agent_dnf": false,
-                "agent_position": 3,
+                "agent_position": 1,
                 "agent_stops": [
                   [
-                    3,
+                    14,
                     "SOFT"
                   ],
                   [
                     27,
                     "HARD"
-                  ],
-                  [
-                    31,
-                    "SOFT"
                   ],
                   [
                     53,
@@ -3099,7 +2819,7 @@
                 ],
                 "baseline_dnf": false,
                 "baseline_position": 1,
-                "delta": -2,
+                "delta": 0,
                 "seed": 365433,
                 "snapped_stops": 0
               }
@@ -3128,11 +2848,11 @@
         ],
         "sign_test": {
           "alpha": 0.05,
-          "losses": 9,
-          "p_value": 0.021484375,
-          "significant": true,
-          "ties": 0,
-          "wins": 1
+          "losses": 2,
+          "p_value": 1.0,
+          "significant": false,
+          "ties": 5,
+          "wins": 3
         },
         "stretch": 1.5,
         "target": 1.0,

@@ -33,21 +33,25 @@ def fits():
     return config.load("physics_params")["circuits"]
 
 
-def test_the_three_archetypes_are_the_calibrated_circuits(fits):
-    """Not a coincidence, and worth stating: the archetypes were chosen for having a
-    tyre model fitted at the circuit, and that is exactly what `calibrated` means."""
-    calibrated = {slug for slug in config.load("circuits")
-                  if fit_provenance(slug, fits) == "calibrated"}
-    assert calibrated == set(ARCHETYPES)
+def test_the_archetypes_are_repaired_and_nothing_is_calibrated(fits):
+    """The archetypes were chosen for having a tyre model fitted at the circuit. Since
+    F24 that means the `repaired` class — every slick carries the circuit's own data,
+    with the soft's shape from the repair ladder because its wear was unidentifiable
+    even pooled. And no 2026 circuit is `calibrated` any more: asserting the empty set
+    is the honest statement of the era's data, and this failing means either a richer
+    2026 season arrived (move the archetypes conversation on) or the classifier broke."""
+    by_class = {slug: fit_provenance(slug, fits) for slug in config.load("circuits")}
+    assert all(by_class[slug] == "repaired" for slug in ARCHETYPES)
+    assert "calibrated" not in by_class.values()
 
 
-def test_the_two_pathological_circuits_are_classed_unusable(fits):
-    """Miami's soft and hard fits are flagged low-confidence; Canada's three compounds
-    decay identically, so the model cannot tell them apart. Both are native fits and
-    neither can carry a strategy, which is why they are neither calibrated nor
-    synthesised — and why the calibrated group is a fair comparison."""
+def test_an_unrepaired_thin_fit_is_still_unusable(fits):
+    """Miami's own medium and hard are flagged low-confidence and no repair touched
+    them (the ladder only replaces unidentified fits), so the circuit still cannot
+    carry a strategy claim. Canada moved: its identical-decay compounds were exactly
+    the bound-clip F24 repairs, so it now classes `repaired` rather than unusable."""
     assert fit_provenance("miami_grand_prix", fits) == "unusable"
-    assert fit_provenance("canadian_grand_prix", fits) == "unusable"
+    assert fit_provenance("canadian_grand_prix", fits) == "repaired"
 
 
 def test_a_transferred_slick_makes_a_circuit_synthesised(fits):
@@ -82,15 +86,12 @@ def test_the_advantage_is_larger_where_the_tyre_model_is_synthesised(fits):
     m3 = json.loads((STORE / "m3_regret.json").read_text())["payload"]
     groups = conditional_advantage(m1, m3, fits)
 
-    assert groups["synthesised"]["mean_delta"] > groups["calibrated"]["mean_delta"] + 1.0
-    # and the mechanism: the agent under-stops relative to the optimum, everywhere,
-    # but by more where the tyre model is real
-    for group in ("calibrated", "synthesised"):
-        row = groups[group]
-        assert row["agent_stops"] < row["oracle_stops"], group
-    calibrated_gap = groups["calibrated"]["oracle_stops"] - groups["calibrated"]["agent_stops"]
-    synthesised_gap = groups["synthesised"]["oracle_stops"] - groups["synthesised"]["agent_stops"]
-    assert calibrated_gap > synthesised_gap
+    assert groups["synthesised"]["mean_delta"] > groups["repaired"]["mean_delta"] + 1.0
+    # the mechanism moved with F24 — the pre-repair agent under-stopped everywhere;
+    # the retrained one over-stops on the measured circuits instead. What must stay
+    # true is the split itself, plus the direction on each side of it.
+    assert groups["repaired"]["agent_stops"] > groups["repaired"]["oracle_stops"]
+    assert groups["synthesised"]["agent_stops"] > groups["synthesised"]["oracle_stops"]
 
 
 def test_the_build_names_what_it_could_not_slice():

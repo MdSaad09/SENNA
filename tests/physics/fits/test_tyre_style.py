@@ -32,9 +32,9 @@ T0_S = 92.0
 # amplitude near a thousandth of t0, exponent near linear
 CURVES = {
     "MEDIUM": DegradationFit(a=0.00145, b=0.96, n_laps=1596, max_age_seen=30,
-                             low_confidence=False),
+                             low_confidence=False, identified=True),
     "HARD": DegradationFit(a=0.0011, b=1.03, n_laps=1596, max_age_seen=30,
-                           low_confidence=False),
+                           low_confidence=False, identified=True),
 }
 
 LAP_NOISE_S = 0.25   # lap-to-lap scatter left in a partial residual after the joint fit
@@ -219,7 +219,7 @@ def test_a_lap_with_no_stint_number_still_reaches_the_error_bar():
     # its lower bound on flat-residual circuits), so a driver whose whole sample came from
     # those has no denominator at all — that must read as "unidentified", not as a NaN
     flat = {"MEDIUM": DegradationFit(a=0.0, b=1.0, n_laps=400, max_age_seen=30,
-                                     low_confidence=True)}
+                                     low_confidence=True, identified=False)}
     frame = _style_frame(STYLES)
     frame = frame.assign(compound="MEDIUM")
     frame["predicted_deg_s"] = deg_prediction_s(frame, flat, T0_S)

@@ -16,10 +16,10 @@ generated_at: "seasons 2022-2026, round 6"  # stylised — data watermark, not a
 drivers:
   ALB:
     2024:
-      deg_mult: 0.9867  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9568  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3157  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0379  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0533  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3157  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 179  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -54,7 +54,7 @@ drivers:
       deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
       deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 205  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.1325  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 4.5078  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 147  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 16  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -65,10 +65,10 @@ drivers:
         monaco_grand_prix: 0.7947  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2026
   ALO:
     2024:
-      deg_mult: 0.9764  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9697  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3206  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0366  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0493  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3180  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 177  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -102,7 +102,7 @@ drivers:
       deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
       deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 204  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.11  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.4885  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 141  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 13  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -113,10 +113,10 @@ drivers:
         monaco_grand_prix: 1.6065  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2026
   ANT:
     2024:
-      deg_mult: 0.9386  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0035  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 934  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0367  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0392  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 920  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 44  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -140,10 +140,10 @@ drivers:
         são_paulo_grand_prix: -0.4701  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
         united_states_grand_prix: -0.39  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
     2026:
-      deg_mult: 0.9222  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 314  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0408  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 4.7078  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 296  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 15  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -156,10 +156,10 @@ drivers:
         monaco_grand_prix: -2.2468  # fitted: notebooks/fit_driver_identity.ipynb — 63 clean laps, season(s) 2026
   BEA:
     2024:
-      deg_mult: 0.9575  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9585  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 1059  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0712  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0901  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 1045  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 51  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -184,10 +184,10 @@ drivers:
         são_paulo_grand_prix: -0.2509  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
         united_states_grand_prix: -0.0917  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
     2026:
-      deg_mult: 0.9992  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 242  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0525  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 2.2984  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 182  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 13  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -198,10 +198,10 @@ drivers:
         chinese_grand_prix: -0.3182  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2026
   BOR:
     2024:
-      deg_mult: 1.0009  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0407  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 903  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0392  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0597  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 889  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 44  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -227,7 +227,7 @@ drivers:
       deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
       deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 255  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.1235  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.9594  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 223  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 13  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -239,10 +239,10 @@ drivers:
         monaco_grand_prix: 0.7745  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2026
   BOT:
     2024:
-      deg_mult: 1.0307  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0135  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 2305  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0511  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0688  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 2304  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 126  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -275,7 +275,7 @@ drivers:
       deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
       deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 205  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.1159  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.6217  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 163  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 14  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -286,10 +286,10 @@ drivers:
         japanese_grand_prix: 2.3532  # fitted: notebooks/fit_driver_identity.ipynb — 42 clean laps, season(s) 2026
   COL:
     2024:
-      deg_mult: 1.0219  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0704  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 1141  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.049  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0529  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 1127  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 59  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -311,10 +311,10 @@ drivers:
         são_paulo_grand_prix: 0.2458  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
         united_states_grand_prix: 0.2623  # fitted: notebooks/fit_driver_identity.ipynb — 123 clean laps, season(s) 2024, 2025
     2026:
-      deg_mult: 1.0559  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 298  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0683  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.4106  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 280  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 16  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -327,10 +327,10 @@ drivers:
         monaco_grand_prix: 0.8587  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2026
   DEV:
     2024:
-      deg_mult: 0.9818  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 353  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0538  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.1427  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 345  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 19  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -345,10 +345,10 @@ drivers:
         spanish_grand_prix: 0.0011  # fitted: notebooks/fit_driver_identity.ipynb — 60 clean laps, season(s) 2023
   DOO:
     2024:
-      deg_mult: 0.9936  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0327  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 258  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0501  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0652  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 258  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 12  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -361,10 +361,10 @@ drivers:
         saudi_arabian_grand_prix: 0.8496  # fitted: notebooks/fit_driver_identity.ipynb — 44 clean laps, season(s) 2025
   GAS:
     2024:
-      deg_mult: 1.0006  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0133  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3197  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0313  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0414  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3194  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 174  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -395,10 +395,10 @@ drivers:
         são_paulo_grand_prix: 0.2891  # fitted: notebooks/fit_driver_identity.ipynb — 132 clean laps, season(s) 2022, 2025
         united_states_grand_prix: 0.1708  # fitted: notebooks/fit_driver_identity.ipynb — 233 clean laps, season(s) 2022, 2023, 2024, 2025
     2026:
-      deg_mult: 1.0062  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 305  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0595  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.3687  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 287  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 15  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -411,10 +411,10 @@ drivers:
         monaco_grand_prix: -0.4349  # fitted: notebooks/fit_driver_identity.ipynb — 62 clean laps, season(s) 2026
   HAD:
     2024:
-      deg_mult: 0.9941  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0496  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 1009  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0286  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0406  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 995  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 49  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -439,10 +439,10 @@ drivers:
         são_paulo_grand_prix: 0.1625  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
         united_states_grand_prix: 0.3497  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
     2026:
-      deg_mult: 1.0041  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 258  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.047  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 1.5743  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 231  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 17  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -454,10 +454,10 @@ drivers:
         monaco_grand_prix: -0.604  # fitted: notebooks/fit_driver_identity.ipynb — 62 clean laps, season(s) 2026
   HAM:
     2024:
-      deg_mult: 0.9981  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0035  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3304  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0387  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0459  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3304  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 175  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -489,10 +489,10 @@ drivers:
         são_paulo_grand_prix: -0.6215  # fitted: notebooks/fit_driver_identity.ipynb — 98 clean laps, season(s) 2022, 2025
         united_states_grand_prix: -1.0554  # fitted: notebooks/fit_driver_identity.ipynb — 187 clean laps, season(s) 2022, 2023, 2024, 2025
     2026:
-      deg_mult: 0.9902  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 312  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0767  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 109.6324  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 294  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 15  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -505,10 +505,10 @@ drivers:
         monaco_grand_prix: -1.731  # fitted: notebooks/fit_driver_identity.ipynb — 63 clean laps, season(s) 2026
   HUL:
     2024:
-      deg_mult: 1.0198  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0696  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 2609  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0299  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0483  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 2609  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 142  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -542,7 +542,7 @@ drivers:
       deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
       deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 228  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.053  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.9045  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 228  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 11  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -554,10 +554,10 @@ drivers:
         monaco_grand_prix: 0.5179  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2026
   LAT:
     2024:
-      deg_mult: 1.0886  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 742  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.058  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.1206  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 729  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 49  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -580,10 +580,10 @@ drivers:
         united_states_grand_prix: 1.2244  # fitted: notebooks/fit_driver_identity.ipynb — 44 clean laps, season(s) 2022
   LAW:
     2024:
-      deg_mult: 0.9828  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0024  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 1406  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0255  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0418  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 1392  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 72  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -609,10 +609,10 @@ drivers:
         são_paulo_grand_prix: 0.1884  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2025
         united_states_grand_prix: 0.0417  # fitted: notebooks/fit_driver_identity.ipynb — 124 clean laps, season(s) 2024, 2025
     2026:
-      deg_mult: 0.8071  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 303  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.076  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.8624  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 285  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 15  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -625,10 +625,10 @@ drivers:
         monaco_grand_prix: 0.0223  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2026
   LEC:
     2024:
-      deg_mult: 1.008  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9983  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3381  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0336  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.045  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3365  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 175  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -659,10 +659,10 @@ drivers:
         são_paulo_grand_prix: -0.5629  # fitted: notebooks/fit_driver_identity.ipynb — 72 clean laps, season(s) 2022
         united_states_grand_prix: -0.9674  # fitted: notebooks/fit_driver_identity.ipynb — 240 clean laps, season(s) 2022, 2023, 2024, 2025
     2026:
-      deg_mult: 0.9739  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 304  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.076  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 13.9804  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 286  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 14  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -678,7 +678,7 @@ drivers:
       deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
       deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 226  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0457  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.121  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 206  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 10  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -690,10 +690,10 @@ drivers:
         monaco_grand_prix: 0.4205  # fitted: notebooks/fit_driver_identity.ipynb — 63 clean laps, season(s) 2026
   MAG:
     2024:
-      deg_mult: 1.0583  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0109  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 2370  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0466  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0677  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 2348  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 131  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -724,10 +724,10 @@ drivers:
         united_states_grand_prix: 0.4613  # fitted: notebooks/fit_driver_identity.ipynb — 177 clean laps, season(s) 2022, 2023, 2024
   MSC:
     2024:
-      deg_mult: 1.0703  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0477  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 716  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0569  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0862  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 702  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 43  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -749,10 +749,10 @@ drivers:
         united_states_grand_prix: 0.7323  # fitted: notebooks/fit_driver_identity.ipynb — 45 clean laps, season(s) 2022
   NOR:
     2024:
-      deg_mult: 0.9724  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.975  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3451  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0522  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0581  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3451  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 181  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -784,10 +784,10 @@ drivers:
         são_paulo_grand_prix: -0.2005  # fitted: notebooks/fit_driver_identity.ipynb — 120 clean laps, season(s) 2022, 2025
         united_states_grand_prix: -0.8763  # fitted: notebooks/fit_driver_identity.ipynb — 225 clean laps, season(s) 2022, 2023, 2024, 2025
     2026:
-      deg_mult: 1.0323  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 213  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0487  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 1.0453  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 181  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 12  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -799,10 +799,10 @@ drivers:
         monaco_grand_prix: -0.3612  # fitted: notebooks/fit_driver_identity.ipynb — 42 clean laps, season(s) 2026
   OCO:
     2024:
-      deg_mult: 0.9993  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.988  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3220  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0353  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.046  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3213  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 161  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -833,10 +833,10 @@ drivers:
         são_paulo_grand_prix: 0.2198  # fitted: notebooks/fit_driver_identity.ipynb — 133 clean laps, season(s) 2022, 2025
         united_states_grand_prix: 0.5081  # fitted: notebooks/fit_driver_identity.ipynb — 187 clean laps, season(s) 2022, 2023, 2024, 2025
     2026:
-      deg_mult: 1.105  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 298  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0884  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.6501  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 280  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 16  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -849,10 +849,10 @@ drivers:
         monaco_grand_prix: 0.4609  # fitted: notebooks/fit_driver_identity.ipynb — 61 clean laps, season(s) 2026
   PER:
     2024:
-      deg_mult: 1.0302  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9678  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 2328  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0409  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0651  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 2321  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 132  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -882,10 +882,10 @@ drivers:
         são_paulo_grand_prix: -0.6065  # fitted: notebooks/fit_driver_identity.ipynb — 74 clean laps, season(s) 2022
         united_states_grand_prix: -0.7099  # fitted: notebooks/fit_driver_identity.ipynb — 177 clean laps, season(s) 2022, 2023, 2024
     2026:
-      deg_mult: 1.1781  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 273  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0893  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.5188  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 255  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 18  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -898,10 +898,10 @@ drivers:
         monaco_grand_prix: 0.8012  # fitted: notebooks/fit_driver_identity.ipynb — 58 clean laps, season(s) 2026
   PIA:
     2024:
-      deg_mult: 0.9679  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9785  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 2586  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.049  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0561  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 2586  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 133  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -932,10 +932,10 @@ drivers:
         são_paulo_grand_prix: -0.7264  # fitted: notebooks/fit_driver_identity.ipynb — 59 clean laps, season(s) 2025
         united_states_grand_prix: -0.6155  # fitted: notebooks/fit_driver_identity.ipynb — 139 clean laps, season(s) 2023, 2024, 2025
     2026:
-      deg_mult: 1.0677  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 211  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.012  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 3.6407  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 179  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 12  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -946,10 +946,10 @@ drivers:
         monaco_grand_prix: -0.7032  # fitted: notebooks/fit_driver_identity.ipynb — 62 clean laps, season(s) 2026
   RIC:
     2024:
-      deg_mult: 0.9838  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9896  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 1601  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0347  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0496  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 1579  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 87  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -977,10 +977,10 @@ drivers:
         united_states_grand_prix: 0.6576  # fitted: notebooks/fit_driver_identity.ipynb — 110 clean laps, season(s) 2022, 2023
   RUS:
     2024:
-      deg_mult: 0.9784  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9767  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3497  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0319  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0419  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3497  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 189  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1012,10 +1012,10 @@ drivers:
         são_paulo_grand_prix: -0.8063  # fitted: notebooks/fit_driver_identity.ipynb — 133 clean laps, season(s) 2022, 2025
         united_states_grand_prix: -0.758  # fitted: notebooks/fit_driver_identity.ipynb — 236 clean laps, season(s) 2022, 2023, 2024, 2025
     2026:
-      deg_mult: 0.8909  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 280  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.057  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 1.4774  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 262  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 14  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1028,10 +1028,10 @@ drivers:
         monaco_grand_prix: -0.691  # fitted: notebooks/fit_driver_identity.ipynb — 60 clean laps, season(s) 2026
   SAI:
     2024:
-      deg_mult: 1.0033  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0149  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3164  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0379  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0472  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3164  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 167  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1063,10 +1063,10 @@ drivers:
         são_paulo_grand_prix: -0.3249  # fitted: notebooks/fit_driver_identity.ipynb — 133 clean laps, season(s) 2022, 2025
         united_states_grand_prix: -1.0203  # fitted: notebooks/fit_driver_identity.ipynb — 149 clean laps, season(s) 2023, 2024, 2025
     2026:
-      deg_mult: 0.9685  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 294  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0553  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 1.4857  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 276  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 15  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1079,10 +1079,10 @@ drivers:
         monaco_grand_prix: 0.5103  # fitted: notebooks/fit_driver_identity.ipynb — 54 clean laps, season(s) 2026
   SAR:
     2024:
-      deg_mult: 1.0503  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0539  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 1084  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0607  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0808  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 1046  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 61  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2023, 2024]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1107,10 +1107,10 @@ drivers:
         united_states_grand_prix: 0.6024  # fitted: notebooks/fit_driver_identity.ipynb — 68 clean laps, season(s) 2023
   STR:
     2024:
-      deg_mult: 0.9824  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9884  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3165  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0346  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0401  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3165  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 176  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1145,7 +1145,7 @@ drivers:
       deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
       deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 210  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.1735  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.3605  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 120  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 17  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1155,10 +1155,10 @@ drivers:
         monaco_grand_prix: 1.7377  # fitted: notebooks/fit_driver_identity.ipynb — 53 clean laps, season(s) 2026
   TSU:
     2024:
-      deg_mult: 0.9779  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 0.9893  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3049  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0273  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0386  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3036  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 168  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1190,10 +1190,10 @@ drivers:
         united_states_grand_prix: 0.1063  # fitted: notebooks/fit_driver_identity.ipynb — 231 clean laps, season(s) 2022, 2023, 2024, 2025
   VER:
     2024:
-      deg_mult: 1.0243  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0182  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 3423  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0294  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0425  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 3395  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 180  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024, 2025]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1224,10 +1224,10 @@ drivers:
         são_paulo_grand_prix: -0.5481  # fitted: notebooks/fit_driver_identity.ipynb — 131 clean laps, season(s) 2022, 2025
         united_states_grand_prix: -1.2979  # fitted: notebooks/fit_driver_identity.ipynb — 236 clean laps, season(s) 2022, 2023, 2024, 2025
     2026:
-      deg_mult: 1.0558  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 236  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0986  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 2.5379  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 218  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 13  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2026]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1239,10 +1239,10 @@ drivers:
         japanese_grand_prix: -0.5789  # fitted: notebooks/fit_driver_identity.ipynb — 46 clean laps, season(s) 2026
   VET:
     2024:
-      deg_mult: 0.9784  # fitted: notebooks/fit_driver_identity.ipynb
-      deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0  # stylised — the design could not pin a style down at the configured precision, so the pooled curve stands
+      deg_mult_identified: false  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 667  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0427  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.1001  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 642  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 36  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell
@@ -1262,10 +1262,10 @@ drivers:
         united_states_grand_prix: -0.0859  # fitted: notebooks/fit_driver_identity.ipynb — 45 clean laps, season(s) 2022
   ZHO:
     2024:
-      deg_mult: 1.0144  # fitted: notebooks/fit_driver_identity.ipynb
+      deg_mult: 1.0125  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_identified: true  # fitted: notebooks/fit_driver_identity.ipynb
       deg_mult_n_laps: 2358  # fitted: notebooks/fit_driver_identity.ipynb — the tyre-style sample
-      deg_mult_rel_se: 0.0369  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
+      deg_mult_rel_se: 0.0532  # fitted: notebooks/fit_driver_identity.ipynb — clustered by stint; the gate is fits.yaml max_rel_se_for_deg_mult
       n_laps: 2358  # fitted: notebooks/fit_driver_identity.ipynb — the seat-pace sample
       n_stints: 138  # fitted: notebooks/fit_driver_identity.ipynb
       seasons: [2022, 2023, 2024]  # fitted: notebooks/fit_driver_identity.ipynb — every season behind this seat; per-circuit seasons are on each cell

@@ -1,0 +1,7 @@
+{
+  "model_version": "senna-ppo-4b557848ff25-C-04177920",
+  "pit_ubj_sha256": "060af7c4acf2680e058c4e72ed0f8383b78a7165d4a33bc56e4dcbeb0a20a508",
+  "mode_ubj_sha256": "f650fbaafaeb64d8bd398c602d9bf497e36bdbe876ad6a2a3efcc1fcbc98cd83",
+  "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
+  "saved_at": "2026-08-18T17:44:43.435126+00:00"
+}

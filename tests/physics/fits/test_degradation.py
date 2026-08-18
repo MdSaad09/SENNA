@@ -17,6 +17,7 @@ MINIMUMS = {
     "min_max_age": 12,  # fits.yaml deg_min_max_age
     "p0": [0.05, 1.2],  # fits.yaml degradation.curve_p0 (stylised solver seed)
     "maxfev": 10_000,  # fits.yaml degradation.curve_maxfev
+    "signal_floor_s": 0.15,  # fits.yaml degradation.signal_floor_frac_of_s_ref x a 0.3 s sigma
 }
 
 DEG_A_S = 0.05  # A in the injected residual A*age^1.3; grip-law a = A/t0

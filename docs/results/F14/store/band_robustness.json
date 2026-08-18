@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
-    "git_commit": "d1ff2fe420d1b9eeae81d28a7e690b3697763c94",
+    "config_hash": "4b557848ff25fdf4ba414ff5ec1504ee485ecefaf8485d700a10813d4069bd57",
+    "git_commit": "4effc4b5829dee3b9ed7d9dd9065413eea85e7c6",
     "model_versions": {
-      "headline": "senna-ppo-5e3ddb15d584-C-01769472"
+      "headline": "senna-ppo-4b557848ff25-C-04177920"
     },
     "scope": {
       "batteries": [
@@ -27,12 +27,12 @@
   },
   "payload": {
     "test": {
-      "mean_position": 6.5125,
+      "mean_position": 6.129166666666666,
       "n_races": 480
     },
-    "test_minus_train": -0.2791666666666668,
+    "test_minus_train": 0.19583333333333286,
     "train": {
-      "mean_position": 6.791666666666667,
+      "mean_position": 5.933333333333334,
       "n_races": 480
     }
   }

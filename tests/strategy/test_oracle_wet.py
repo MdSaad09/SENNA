@@ -80,8 +80,10 @@ def test_dry_enumeration_unchanged_by_the_wet_extension(scenario, green_trace):
     # wet extension leaves dry enumeration alone, and the tight tolerance catches a
     # silent change in the search. The number tracks configs/physics_params.yaml and is
     # expected to move on a refit — F18 moved it from 5555.697989252283 when the fits
-    # went from two seasons to four.
-    assert cost_s == pytest.approx(5585.666133009284, rel=1e-9)
+    # went from two seasons to four; F24 from 5585.666133009284 when the repair gave
+    # the soft real wear, then again from 5667.5262072564865 when the closed transfer
+    # gate re-derived the borrowed curves.
+    assert cost_s == pytest.approx(5654.253305510408, rel=1e-9)
 
 
 @pytest.mark.slow

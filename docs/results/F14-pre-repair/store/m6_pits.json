@@ -1,0 +1,5259 @@
+{
+  "envelope": {
+    "config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
+    "git_commit": "d1ff2fe420d1b9eeae81d28a7e690b3697763c94",
+    "model_versions": {
+      "headline": "senna-ppo-5e3ddb15d584-C-01769472"
+    },
+    "scope": {
+      "batteries": [
+        "bands",
+        "m1",
+        "m10",
+        "m11",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6",
+        "m7",
+        "m9"
+      ],
+      "circuits": 24,
+      "seeds_per_circuit": 20,
+      "smoke": false
+    },
+    "seeds_fingerprint": "b112935601b27b4885197a9ee7182c8d5b30ed65d5e612d21127c169c0ccaf0a"
+  },
+  "payload": {
+    "ci_high": 0.24758220502901354,
+    "ci_low": 0.17794970986460348,
+    "excluded": {
+      "no_corridor": 60,
+      "red_flag": 1
+    },
+    "met": false,
+    "n_stops": 517,
+    "per_stop": [
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 751426,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 892016,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 320839,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 922000,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          18
+        ],
+        "seed": 723780,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 616173,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 950837,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          35
+        ],
+        "seed": 533621,
+        "stop_lap": 35
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 957760,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 638049,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 852732,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 215432,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 743286,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 362117,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 777911,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 309180,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 876720,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 143921,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          19
+        ],
+        "seed": 901153,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "abu_dhabi_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 223867,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 914705,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 934712,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 386349,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 846378,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 159519,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 743031,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 583093,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "seed": 294140,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 294140,
+        "stop_lap": 28
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 628706,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 920736,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 842556,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 254432,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 697949,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 186934,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 144553,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 144553,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 701485,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 344976,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          21
+        ],
+        "seed": 320875,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 320875,
+        "stop_lap": 42
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 171368,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "australian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 719540,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 192642,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 774967,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 583773,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 886451,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          38
+        ],
+        "seed": 266425,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 310158,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 564100,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          42
+        ],
+        "seed": 239426,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 854444,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 980248,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 535775,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 248071,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 134164,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 772674,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 123206,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          37
+        ],
+        "seed": 363048,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          37
+        ],
+        "seed": 363048,
+        "stop_lap": 38
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 594846,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        "seed": 594846,
+        "stop_lap": 69
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 522798,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46
+        ],
+        "seed": 522798,
+        "stop_lap": 50
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          43
+        ],
+        "seed": 984556,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          43
+        ],
+        "seed": 131726,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "austrian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44,
+          45
+        ],
+        "seed": 131726,
+        "stop_lap": 44
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          11
+        ],
+        "seed": 424278,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 820853,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 553122,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45,
+          46,
+          47
+        ],
+        "seed": 553122,
+        "stop_lap": 46
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 130047,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 186455,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          4
+        ],
+        "seed": 117741,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 117741,
+        "stop_lap": 48
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 585223,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 809538,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 246016,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 282742,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 282742,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 896630,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 323040,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 850169,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 296490,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 214941,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 336289,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 247961,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 339990,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 412180,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "azerbaijan_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 100873,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 354043,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          38
+        ],
+        "seed": 868844,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 910519,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          51
+        ],
+        "seed": 910519,
+        "stop_lap": 52
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 456521,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45,
+          46,
+          47
+        ],
+        "seed": 456521,
+        "stop_lap": 46
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 387864,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 721867,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 175154,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 938632,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 437525,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 677076,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 195312,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 442452,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 975243,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 674718,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 195035,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 548691,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 307496,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 486793,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 780255,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "bahrain_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 348318,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 484205,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 401322,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 845275,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 636458,
+        "stop_lap": 16
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          5
+        ],
+        "seed": 637597,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 567346,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 567346,
+        "stop_lap": 20
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 267795,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 412202,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 910747,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 992536,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          41,
+          42,
+          43
+        ],
+        "seed": 992536,
+        "stop_lap": 42
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 554838,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 384237,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 336394,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 474799,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 861010,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 983983,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          22,
+          23,
+          24
+        ],
+        "seed": 983983,
+        "stop_lap": 23
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 517517,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 154497,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 776263,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "belgian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 549422,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 996415,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32
+        ],
+        "seed": 509185,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 543985,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          42,
+          43,
+          44
+        ],
+        "seed": 543985,
+        "stop_lap": 43
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 576719,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 493402,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          42
+        ],
+        "seed": 817396,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 390081,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 331142,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          25
+        ],
+        "seed": 254294,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 499669,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          42
+        ],
+        "seed": 794191,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 476631,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 567850,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 703783,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          17
+        ],
+        "seed": 632845,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32
+        ],
+        "seed": 329130,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 972080,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 125675,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 106029,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 250171,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "british_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45,
+          46,
+          47
+        ],
+        "seed": 250171,
+        "stop_lap": 46
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 332748,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          26
+        ],
+        "seed": 828338,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 828338,
+        "stop_lap": 44
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 916376,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          33
+        ],
+        "seed": 916376,
+        "stop_lap": 32
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 186148,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 112994,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 112994,
+        "stop_lap": 66
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32
+        ],
+        "seed": 224065,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          48
+        ],
+        "seed": 938836,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 594242,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32
+        ],
+        "seed": 594242,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32,
+          33,
+          34
+        ],
+        "seed": 594242,
+        "stop_lap": 33
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          53
+        ],
+        "seed": 521030,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          34
+        ],
+        "seed": 521030,
+        "stop_lap": 57
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          41
+        ],
+        "seed": 199214,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 271237,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40,
+          41
+        ],
+        "seed": 271237,
+        "stop_lap": 41
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 603127,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 603127,
+        "stop_lap": 17
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29,
+          30,
+          31,
+          46
+        ],
+        "seed": 603127,
+        "stop_lap": 30
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31,
+          46,
+          47,
+          48
+        ],
+        "seed": 603127,
+        "stop_lap": 47
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          41
+        ],
+        "seed": 580588,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          36,
+          37
+        ],
+        "seed": 580588,
+        "stop_lap": 42
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 773219,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 773219,
+        "stop_lap": 45
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 515875,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 384651,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 800764,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 873756,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 583925,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "canadian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44
+        ],
+        "seed": 571558,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 966415,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 785133,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 785133,
+        "stop_lap": 48
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 113207,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 585208,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 469977,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 469977,
+        "stop_lap": 30
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49
+        ],
+        "seed": 469977,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 728323,
+        "stop_lap": 12
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 140055,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 960011,
+        "stop_lap": 11
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 436685,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 990239,
+        "stop_lap": 11
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 732115,
+        "stop_lap": 11
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 661881,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 429987,
+        "stop_lap": 23
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 420440,
+        "stop_lap": 15
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 392193,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 392193,
+        "stop_lap": 33
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 445182,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 843664,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 160919,
+        "stop_lap": 12
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 904983,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "chinese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 718946,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 496793,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29,
+          30,
+          31
+        ],
+        "seed": 496793,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 744670,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 921607,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          34
+        ],
+        "seed": 778899,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 873559,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 621122,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 621122,
+        "stop_lap": 14
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 405127,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          33
+        ],
+        "seed": 288510,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 109390,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 984221,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          19
+        ],
+        "seed": 245816,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 245816,
+        "stop_lap": 51
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 698599,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          38,
+          39,
+          40
+        ],
+        "seed": 698599,
+        "stop_lap": 39
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 951244,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          37
+        ],
+        "seed": 527133,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 234654,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 234654,
+        "stop_lap": 12
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          36,
+          37
+        ],
+        "seed": 234654,
+        "stop_lap": 36
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 281274,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          42
+        ],
+        "seed": 378667,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          34
+        ],
+        "seed": 842577,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 873902,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "dutch_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 247246,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 881611,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 106582,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 183728,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 466226,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 103133,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 295006,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 368753,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          26
+        ],
+        "seed": 379181,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          39
+        ],
+        "seed": 547605,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 828093,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 274876,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 462821,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 450561,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 943434,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 817863,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 842890,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 197175,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 540376,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 136069,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "emilia_romagna_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 134459,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 823517,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 295665,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 941632,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 679315,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 520026,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 166953,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          38
+        ],
+        "seed": 943816,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 102351,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 645082,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 705192,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 705192,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 820194,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 716211,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 322514,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 623688,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 910880,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 649425,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 848436,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 231256,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 896527,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "hungarian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 717181,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 938481,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 957199,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 876595,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 522412,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 699168,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          11
+        ],
+        "seed": 204465,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          11
+        ],
+        "seed": 135756,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 370004,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 364583,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 944935,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 566795,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 463201,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 758432,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          11
+        ],
+        "seed": 786647,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          11
+        ],
+        "seed": 820544,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 649714,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 954065,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          18
+        ],
+        "seed": 618935,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          12
+        ],
+        "seed": 453578,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "italian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 393887,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 890627,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 415029,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 616535,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 616535,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 394305,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          21
+        ],
+        "seed": 394305,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 953876,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 953876,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 125910,
+        "stop_lap": 40
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 543704,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          25
+        ],
+        "seed": 415181,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 291741,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 291741,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          19
+        ],
+        "seed": 550147,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 141460,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          12
+        ],
+        "seed": 141460,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 141460,
+        "stop_lap": 25
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 496016,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 784921,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 411488,
+        "stop_lap": 27
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          35
+        ],
+        "seed": 411488,
+        "stop_lap": 35
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          4
+        ],
+        "seed": 959234,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 959234,
+        "stop_lap": 38
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 116600,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          25
+        ],
+        "seed": 116600,
+        "stop_lap": 6
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          26
+        ],
+        "seed": 499102,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 916220,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          21
+        ],
+        "seed": 391828,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 402090,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "japanese_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 402090,
+        "stop_lap": 40
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 422444,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 657348,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 200173,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 967681,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 643330,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 675307,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 254468,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 254468,
+        "stop_lap": 42
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 310088,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          39,
+          40
+        ],
+        "seed": 310088,
+        "stop_lap": 39
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 626582,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 913755,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 308350,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 723038,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 460171,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 828619,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29,
+          30,
+          31
+        ],
+        "seed": 828619,
+        "stop_lap": 30
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 523218,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 624175,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 861751,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 392741,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 898329,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "las_vegas_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 657574,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 510437,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 119718,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          18
+        ],
+        "seed": 604204,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32,
+          33
+        ],
+        "seed": 604204,
+        "stop_lap": 62
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 152402,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 984911,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 210292,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 270239,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          46,
+          47
+        ],
+        "seed": 270239,
+        "stop_lap": 47
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          48,
+          51,
+          52,
+          53
+        ],
+        "seed": 270239,
+        "stop_lap": 52
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 160269,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31,
+          32
+        ],
+        "seed": 160269,
+        "stop_lap": 43
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 265265,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 150529,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          17
+        ],
+        "seed": 756440,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          42,
+          43
+        ],
+        "seed": 756440,
+        "stop_lap": 51
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 181290,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 401768,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 978116,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 113758,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 827929,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          35
+        ],
+        "seed": 998327,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 977558,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 427822,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 467787,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "mexico_city_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 467787,
+        "stop_lap": 19
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 521038,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          4
+        ],
+        "seed": 521038,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          25,
+          26,
+          27
+        ],
+        "seed": 521038,
+        "stop_lap": 26
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          46,
+          47
+        ],
+        "seed": 521038,
+        "stop_lap": 47
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 803323,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 604423,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 158628,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 158628,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 428673,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 609282,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          4
+        ],
+        "seed": 830781,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14,
+          16,
+          17,
+          18,
+          24,
+          25,
+          26
+        ],
+        "seed": 830781,
+        "stop_lap": 27
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          36,
+          37,
+          38
+        ],
+        "seed": 830781,
+        "stop_lap": 37
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 217175,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 217175,
+        "stop_lap": 57
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 839619,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 750283,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          25
+        ],
+        "seed": 401758,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 401758,
+        "stop_lap": 48
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 596133,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 752969,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 778851,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 778851,
+        "stop_lap": 38
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 838470,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 838470,
+        "stop_lap": 23
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          43,
+          44,
+          45,
+          46
+        ],
+        "seed": 838470,
+        "stop_lap": 32
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 580677,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 580677,
+        "stop_lap": 37
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 522592,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 539398,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          11
+        ],
+        "seed": 300260,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 300260,
+        "stop_lap": 34
+      },
+      {
+        "circuit": "miami_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 578110,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          33
+        ],
+        "seed": 198252,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 877739,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 877739,
+        "stop_lap": 62
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24
+        ],
+        "seed": 356643,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 984998,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          62
+        ],
+        "seed": 526345,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          33
+        ],
+        "seed": 732620,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 872052,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 199335,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 199335,
+        "stop_lap": 65
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          53
+        ],
+        "seed": 513714,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          35
+        ],
+        "seed": 208398,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 207273,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          39,
+          40,
+          41
+        ],
+        "seed": 207273,
+        "stop_lap": 40
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 815235,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          33
+        ],
+        "seed": 354289,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 853497,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 956643,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          34,
+          35
+        ],
+        "seed": 956643,
+        "stop_lap": 34
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          22
+        ],
+        "seed": 531764,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          41
+        ],
+        "seed": 143712,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          50
+        ],
+        "seed": 627541,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 780782,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "monaco_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          35
+        ],
+        "seed": 208316,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 427790,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 893597,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          37
+        ],
+        "seed": 516378,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 532198,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 216604,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 900193,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 389089,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          46,
+          47
+        ],
+        "seed": 389089,
+        "stop_lap": 47
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32
+        ],
+        "seed": 538270,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 217629,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 535277,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 241586,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 369803,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          26
+        ],
+        "seed": 881199,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 643397,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 921833,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 752742,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 911914,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 476249,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 544583,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "qatar_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 704628,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          43
+        ],
+        "seed": 885787,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 885787,
+        "stop_lap": 44
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 359052,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 406089,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          38
+        ],
+        "seed": 730714,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 965190,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          34
+        ],
+        "seed": 499246,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          11
+        ],
+        "seed": 860629,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32
+        ],
+        "seed": 823107,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 392729,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 526111,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          36
+        ],
+        "seed": 881790,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          3
+        ],
+        "seed": 786902,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 786902,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          8
+        ],
+        "seed": 739641,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          10
+        ],
+        "seed": 116530,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 392206,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 671889,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          26
+        ],
+        "seed": 838033,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 181052,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          17
+        ],
+        "seed": 571151,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "saudi_arabian_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 497255,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 377401,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          35
+        ],
+        "seed": 793818,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 317964,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 212847,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 380462,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          34
+        ],
+        "seed": 608737,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45
+        ],
+        "seed": 779660,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          19
+        ],
+        "seed": 213716,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 452855,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 194938,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          43
+        ],
+        "seed": 194938,
+        "stop_lap": 43
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          34
+        ],
+        "seed": 933904,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          19
+        ],
+        "seed": 434790,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 114778,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          41,
+          42,
+          43
+        ],
+        "seed": 114778,
+        "stop_lap": 42
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 505853,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          27
+        ],
+        "seed": 675458,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          25
+        ],
+        "seed": 642281,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          4
+        ],
+        "seed": 179452,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          41,
+          42,
+          43
+        ],
+        "seed": 179452,
+        "stop_lap": 42
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          4
+        ],
+        "seed": 455746,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          47
+        ],
+        "seed": 455746,
+        "stop_lap": 48
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          19
+        ],
+        "seed": 883935,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "singapore_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          21
+        ],
+        "seed": 168616,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 628841,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 435577,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          7
+        ],
+        "seed": 893033,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        "seed": 893033,
+        "stop_lap": 51
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 530644,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 365433,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 284165,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 148085,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          46,
+          47
+        ],
+        "seed": 148085,
+        "stop_lap": 46
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 932575,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 762762,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40,
+          50,
+          51,
+          52
+        ],
+        "seed": 762762,
+        "stop_lap": 59
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 358613,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 912063,
+        "stop_lap": 2
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44,
+          45,
+          46
+        ],
+        "seed": 912063,
+        "stop_lap": 45
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 871378,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 268972,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 864231,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 379498,
+        "stop_lap": 7
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 630765,
+        "stop_lap": 13
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 662904,
+        "stop_lap": 22
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 285050,
+        "stop_lap": 15
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 998435,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "spanish_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          23
+        ],
+        "seed": 901191,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 818044,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 900495,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          31
+        ],
+        "seed": 900495,
+        "stop_lap": 57
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          21
+        ],
+        "seed": 316074,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "seed": 316074,
+        "stop_lap": 64
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 194335,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9
+        ],
+        "seed": 136051,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          9,
+          10
+        ],
+        "seed": 136051,
+        "stop_lap": 36
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          37,
+          39,
+          40,
+          41
+        ],
+        "seed": 136051,
+        "stop_lap": 40
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 135934,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 277285,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 157927,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [],
+        "seed": 950962,
+        "stop_lap": 5
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 450478,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 566896,
+        "stop_lap": 17
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          30
+        ],
+        "seed": 365947,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          12
+        ],
+        "seed": 656036,
+        "stop_lap": 4
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          21,
+          22,
+          23
+        ],
+        "seed": 656036,
+        "stop_lap": 22
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          61,
+          62,
+          63
+        ],
+        "seed": 656036,
+        "stop_lap": 62
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 648019,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          52
+        ],
+        "seed": 648019,
+        "stop_lap": 53
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          40
+        ],
+        "seed": 655516,
+        "stop_lap": 9
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          19
+        ],
+        "seed": 796402,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        "seed": 796402,
+        "stop_lap": 63
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": "red_flag",
+        "optimal_laps": [],
+        "seed": 376007,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          44,
+          45,
+          46
+        ],
+        "seed": 376007,
+        "stop_lap": 45
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 478783,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 553313,
+        "stop_lap": 10
+      },
+      {
+        "circuit": "são_paulo_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          28
+        ],
+        "seed": 848371,
+        "stop_lap": 8
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 187676,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 762354,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          15
+        ],
+        "seed": 152301,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 291112,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 664166,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          25
+        ],
+        "seed": 634154,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 602005,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 782734,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          29
+        ],
+        "seed": 760834,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 947511,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          2
+        ],
+        "seed": 992398,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          45,
+          46,
+          47
+        ],
+        "seed": 992398,
+        "stop_lap": 46
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          16
+        ],
+        "seed": 946505,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 718161,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          18
+        ],
+        "seed": 225508,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 234197,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          14
+        ],
+        "seed": 887814,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          32
+        ],
+        "seed": 887814,
+        "stop_lap": 32
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          20
+        ],
+        "seed": 698945,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 747655,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 978608,
+        "stop_lap": 3
+      },
+      {
+        "circuit": "united_states_grand_prix",
+        "excluded": null,
+        "optimal_laps": [
+          13
+        ],
+        "seed": 621716,
+        "stop_lap": 3
+      }
+    ],
+    "share": 0.2127659574468085,
+    "target": 0.72
+  }
+}
