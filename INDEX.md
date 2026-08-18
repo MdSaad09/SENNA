@@ -4,13 +4,20 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature: F24 — tyre-model repair and headline retrain. Planned 17 Aug 2026**
-(`docs/plans/F24-plan.md`). Root cause found live: 37 of 145 fitted deg curves are
-bound-clipped to a=0.0 (the 2026 SOFT nearly everywhere), so tyres are free and the
-policy learned pit-lap-2-then-never-stop — the mechanism behind the M9 miss. Repair
-ladder: bound-clip detection -> pooled per-compound refit -> cross-era prior, plus a
-no-free-tyres backstop in build_scenario. Then retrain the headline and re-run the
-suite. Expect M1 to shrink; the pre-repair store archives for the comparison.
+**Active feature: F24 — tyre-model repair and headline retrain. In review 18 Aug 2026**
+(branch `feature/F24-tyre-model-repair`, plan `docs/plans/F24-plan.md`). 37 of 145 deg
+curves were bound-clipped to a=0.0 and served as measurements — free tyres, and the
+policy's pit-lap-3-then-never-stop habit was the optimal answer. Shipped: identification
+honesty (signal floor + bound-pin detection), the repair ladder (pooled -> cross-era,
+sources recorded forever), the write gate (a clip never serialises as a curve), the
+no-free-tyres scenario backstop feeding the F-16 mask, and an identified-donors-AND-
+identified-target rule for T5 transfer after the code review caught ratio transfer
+laundering a repaired amplitude — which forced a second full retrain loop. Final
+record: M9 zero failures in 480 races (was 37.9/100), M1 +1.79 met (was +2.28, and
+the shrink is the laundering leaving), M2 a 3W/2L/5T wash (was losing 8 of 10),
+degradation robustness 25 of 25 moves in the predicted direction. The provenance
+split (synthesised +2.38 vs repaired −0.53) survives its second retrain; the chapter's
+sim-optimism caveat stands. Pre-repair record archived at docs/results/F14-pre-repair/.
 
 **Next up: F25 — the Streamlit ceiling, reached on purpose. Planned and approved
 18 Aug 2026** (`docs/plans/F25-plan.md`): design system in theme.py, the s_track
