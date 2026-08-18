@@ -182,10 +182,10 @@ def eyebrow(text: str) -> None:
     st.markdown(f'<div class="senna-eyebrow">{text}</div>', unsafe_allow_html=True)
 
 
-def headline(parts: list[str]) -> None:
-    """The race headline: template parts joined by the middot separator."""
-    joined = '<span class="sep">·</span>'.join(parts)
-    st.markdown(f'<div class="senna-headline">{joined}</div>', unsafe_allow_html=True)
+def headline(text: str) -> None:
+    """The race headline, rendered verbatim — the composed string IS the artifact,
+    and tests match it exactly, so no markup is injected into it."""
+    st.markdown(f'<div class="senna-headline">{text}</div>', unsafe_allow_html=True)
 
 
 def stats(rows: list[tuple[str, str]]) -> None:

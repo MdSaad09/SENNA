@@ -11,6 +11,7 @@ import pandas as pd
 import streamlit as st
 
 from app import client, theme
+from app.story import race_headline, race_moments
 from senna.serve.stints import pit_laps, stints_from_frames
 
 EGO = 0  # the agent's car id, the F10 CarState contract
@@ -128,14 +129,47 @@ def stint_bar(stints) -> None:
     st.altair_chart(chart, width='stretch')
 
 
+def moments_strip(frames: list[dict]) -> None:
+    """The race's plot on one line: every stored track event plus the agent's stops,
+    scannable before the story chart gives the detail."""
+    moments = race_moments(frames)
+    if not moments:
+        st.caption("a clean race — no safety cars, no weather, and every event says so")
+        return
+    rows = pd.DataFrame([
+        {"lap": m["lap"], "kind": m["kind"],
+         "label": m["kind"].upper() if m["kind"] != "pit" else "PIT",
+         "colour": theme.ACCENT if m["kind"] == "pit" else (
+             theme.DANGER if m["kind"] == "red" else theme.DEPLOY
+             if m["kind"] in ("sc", "vsc") else theme.COAST)}
+        for m in moments
+    ])
+    last_lap = frames[-1]["lap"]
+    base = alt.Chart(rows).encode(
+        x=alt.X("lap:Q", title=None, scale=alt.Scale(domain=[1, last_lap]),
+                axis=alt.Axis(grid=False, labelColor=theme.FAINT, domainColor=theme.LINE)),
+    )
+    strip = alt.layer(
+        base.mark_tick(thickness=2, size=18).encode(
+            color=alt.Color("colour:N", scale=None),
+            tooltip=["lap:Q", "kind:N"]),
+        base.mark_text(dy=-16, fontSize=9, font="monospace").encode(
+            text="label:N", color=alt.Color("colour:N", scale=None)),
+    ).properties(height=52).configure_view(strokeWidth=0)
+    st.altair_chart(strip, width='stretch')
+
+
 def race_story(frames: list[dict], stints) -> None:
     """Position against lap for the whole field: where the agent came from, where the
-    stops fell, and what the race did to both."""
-    rows = [
-        {"lap": f["lap"], "car": car["id"], "position": car["position"],
-         "agent": car["id"] == EGO}
-        for f in frames for car in f["cars"]
-    ]
+    stops fell, and what the race did to both. Rival lines take team colour — the
+    reference rule: team colour answers who, aqua answers the agent."""
+    rows = []
+    for f in frames:
+        for car in f["cars"]:
+            _, colour, _ = theme.team_of(car["id"])
+            rows.append({"lap": f["lap"], "car": theme.car_label(car["id"]),
+                         "position": car["position"], "agent": car["id"] == EGO,
+                         "colour": colour})
     data = pd.DataFrame(rows)
     field = data[~data["agent"]]
     agent = data[data["agent"]]
@@ -149,8 +183,10 @@ def race_story(frames: list[dict], stints) -> None:
                    axis=alt.Axis(grid=False, labelColor=theme.FAINT, titleColor=theme.FAINT))
 
     layers = [
-        alt.Chart(field).mark_line(strokeWidth=1, opacity=0.45, color=theme.CHART_FIELD)
-        .encode(x=axis_x, y=axis_y, detail="car:N"),
+        alt.Chart(field).mark_line(strokeWidth=1.1, opacity=0.55)
+        .encode(x=axis_x, y=axis_y, detail="car:N",
+                color=alt.Color("colour:N", scale=None),
+                tooltip=["car:N", "lap:Q", "position:Q"]),
         alt.Chart(agent).mark_line(strokeWidth=2.5, color=theme.ACCENT)
         .encode(x=axis_x, y=axis_y,
                 tooltip=[alt.Tooltip("lap:Q"), alt.Tooltip("position:Q", title="agent")]),
@@ -187,19 +223,22 @@ def result_panel(run_id: int) -> None:
 
     theme.eyebrow(f"Race strategy — as driven  ·  run {run_id}")
     st.markdown(f"### {run['circuit_id'].replace('_', ' ')}")
+    theme.headline(race_headline(frames, summary, grid))
 
-    cols = st.columns(6)
-    cols[0].metric("Grid", f"P{grid}" if grid else "—")
     # position only: summary.points is the FIA table divided by points_divisor 2.5
     # (configs/env.yaml), so a P2 finish serves 7.2 and printing it would read as wrong
-    cols[1].metric("Finish", "DNF" if summary.get("dnf") else f"P{summary.get('final_position')}")
-    cols[2].metric("Stints", len(stints))
-    cols[3].metric("Stops", max(len(stints) - 1, 0))
-    cols[4].metric("Race laps", summary.get("total_laps", "—"))
-    cols[5].metric("Race time",
-                   race_clock(summary["race_time_s"]) if summary.get("race_time_s") else "—")
+    theme.stats([
+        ("Grid", f"P{grid}" if grid else "—"),
+        ("Finish", "DNF" if summary.get("dnf") else f"P{summary.get('final_position')}"),
+        ("Stints", str(len(stints))),
+        ("Stops", str(max(len(stints) - 1, 0))),
+        ("Race laps", str(summary.get("total_laps", "—"))),
+        ("Race time",
+         race_clock(summary["race_time_s"]) if summary.get("race_time_s") else "—"),
+    ])
 
     stint_bar(stints)
+    moments_strip(frames)
     race_story(frames, stints)
 
     left, right = st.columns([3, 2])
