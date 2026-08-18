@@ -29,15 +29,15 @@ circuits:
           n_laps: 84  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0001938579  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 9.97922e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0007727867  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0002535243  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -129,13 +129,13 @@ circuits:
           max_age_seen: 46  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 499  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 8.87e-08  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb
           identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 27  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 223  # fitted: notebooks/fit_degradation.ipynb
-          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
@@ -235,23 +235,24 @@ circuits:
           max_age_seen: 33  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1572  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 9.88e-07  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
-          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 25  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 133  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.0004072212  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0002096252  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0002033715  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 6.67191e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -334,15 +335,15 @@ circuits:
           n_laps: 12  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 6.8648e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 3.53379e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0014539912  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0004770036  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -425,15 +426,15 @@ circuits:
           n_laps: 1356  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0003071136  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001580928  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.001747828  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0005734012  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -516,15 +517,15 @@ circuits:
           n_laps: 140  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0009110487  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0004689805  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0039338514  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.001290559  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -607,15 +608,15 @@ circuits:
           n_laps: 248  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0002631835  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.000135479  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 4.61542e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -683,12 +684,13 @@ circuits:
           max_age_seen: 63  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1479  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 1.706e-07  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
-          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 38  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 558  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
@@ -707,13 +709,13 @@ circuits:
           n_laps: 78  # fitted: notebooks/fit_degradation.ipynb
           source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         MEDIUM:
-          a: 8.87e-08  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb
           identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 825  # fitted: notebooks/fit_degradation.ipynb
-          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
@@ -941,15 +943,15 @@ circuits:
           n_laps: 709  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0002135811  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001099451  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0007804851  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0002560499  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -1017,12 +1019,13 @@ circuits:
           max_age_seen: 54  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1342  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 8.7e-08  # fitted: notebooks/fit_degradation.ipynb
-          b: 3.0  # fitted: notebooks/fit_degradation.ipynb
-          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 48  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 1493  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
@@ -1033,15 +1036,15 @@ circuits:
           source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.0001580486  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 8.13586e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 1.049e-07  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -1187,15 +1190,15 @@ circuits:
           source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.000304963  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001569858  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0003146213  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001032162  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -1279,15 +1282,15 @@ circuits:
           source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.0003167444  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001630505  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0003464221  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.000113649  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -1482,15 +1485,15 @@ circuits:
           n_laps: 8  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 2.71e-08  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 2.371  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 5.56178e-05  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 1.49  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         MEDIUM:
-          a: 4.302e-07  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 2.4195  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -1573,15 +1576,15 @@ circuits:
           n_laps: 1012  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 7.07705e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 3.64305e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0009780499  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.000320864  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -1770,12 +1773,13 @@ circuits:
           max_age_seen: 59  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 411  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
-          a: 0.01831395  # fitted: notebooks/fit_degradation.ipynb
-          b: 0.3  # fitted: notebooks/fit_degradation.ipynb
-          identified: true  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
-          low_confidence: false  # fitted: notebooks/fit_degradation.ipynb
+          a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb
+          b: 0.9073  # fitted: notebooks/fit_degradation.ipynb
+          identified: false  # fitted: notebooks/fit_degradation.ipynb — F24 signal floor
+          low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
           max_age_seen: 32  # fitted: notebooks/fit_degradation.ipynb
           n_laps: 47  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
           a: 3.2692e-06  # fitted: notebooks/fit_degradation.ipynb
@@ -1899,15 +1903,15 @@ circuits:
           n_laps: 173  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0003647642  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0001877696  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0011092273  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -1992,15 +1996,15 @@ circuits:
           source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 repair ladder
       2026:
         HARD:
-          a: 0.0002874994  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 5.56178e-05  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 1.49  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         MEDIUM:
-          a: 0.0001167573  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 3.8304e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -2083,15 +2087,15 @@ circuits:
           n_laps: 132  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 1.9651e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 5.56178e-05  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 1.49  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "pooled"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         MEDIUM:
-          a: 5.15e-06  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0009201349  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
+          b: 0.7953  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source: "prior_cross_era"  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -2174,15 +2178,15 @@ circuits:
           n_laps: 1415  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0006926682  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0003565647  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0022016799  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0007222942  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -2265,15 +2269,15 @@ circuits:
           n_laps: 997  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0008001497  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.000411893  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0021735887  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 0.0007130784  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -2356,15 +2360,15 @@ circuits:
           n_laps: 440  # fitted: notebooks/fit_degradation.ipynb
       2026:
         HARD:
-          a: 0.0001570182  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.9041  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 8.08283e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 2.0208  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         MEDIUM:
-          a: 0.0001014565  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
-          b: 1.3468  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          a: 3.32843e-05  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
+          b: 1.6149  # fitted: notebooks/fit_degradation.ipynb — cluster transfer (T5)
           low_confidence: true  # fitted: notebooks/fit_degradation.ipynb
-          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
+          source_circuit: "chinese_grand_prix,japanese_grand_prix,miami_grand_prix,monaco_grand_prix"  # fitted: notebooks/fit_degradation.ipynb
         SOFT:
           a: 0.0009437472  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
           b: 0.9073  # fitted: notebooks/fit_degradation.ipynb — F24 pooled fallback (no identified donor)
@@ -2440,7 +2444,7 @@ clusters:
     las_vegas_grand_prix: 1  # fitted: notebooks/fit_tyre_clusters.ipynb
     mexico_city_grand_prix: 0  # fitted: notebooks/fit_tyre_clusters.ipynb
     miami_grand_prix: 0  # fitted: notebooks/fit_tyre_clusters.ipynb
-    monaco_grand_prix: 1  # fitted: notebooks/fit_tyre_clusters.ipynb
+    monaco_grand_prix: 0  # fitted: notebooks/fit_tyre_clusters.ipynb
     qatar_grand_prix: 0  # fitted: notebooks/fit_tyre_clusters.ipynb
     saudi_arabian_grand_prix: 0  # fitted: notebooks/fit_tyre_clusters.ipynb
     singapore_grand_prix: 0  # fitted: notebooks/fit_tyre_clusters.ipynb
@@ -2451,11 +2455,11 @@ clusters:
   k: 2  # fitted: notebooks/fit_tyre_clusters.ipynb — max silhouette
   seed: 20260715  # sourced configs/fits.yaml — determinism provenance for transfer donors
   silhouettes:
-    k2: 0.4454  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k3: 0.2692  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k4: 0.2124  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k5: 0.2465  # fitted: notebooks/fit_tyre_clusters.ipynb
-    k6: 0.2401  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k2: 0.4932  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k3: 0.2516  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k4: 0.2278  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k5: 0.2455  # fitted: notebooks/fit_tyre_clusters.ipynb
+    k6: 0.1958  # fitted: notebooks/fit_tyre_clusters.ipynb
 globals:
   k_m_pooled_s_per_kg_2024: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — inverse-variance mean over identified circuits — cross-era fallback, no circuit of this era identified (grade C via AR-10 fuel)
   k_m_pooled_s_per_kg_2026: 0.011905  # fitted: notebooks/fit_joint_pace.ipynb — inverse-variance mean over identified circuits (grade C via AR-10 fuel)
