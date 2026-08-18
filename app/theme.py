@@ -132,7 +132,9 @@ def page(title: str, icon: str = "\N{CHEQUERED FLAG}") -> None:
             font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
             color: {FAINT};
           }}
-          .senna-stat .v {{ font-size: 1.35rem; font-weight: 650; color: {TEXT}; line-height: 1.3; }}
+          .senna-stat .v {{
+            font-size: 1.35rem; font-weight: 650; color: {TEXT}; line-height: 1.3;
+          }}
           .senna-stat .v small {{ font-size: 0.8rem; color: {MUTED}; font-weight: 500; }}
           .senna-card {{
             background: linear-gradient(180deg, #1A2830, #141F26);

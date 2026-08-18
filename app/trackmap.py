@@ -40,7 +40,8 @@ def loop_point(s: float) -> tuple[float, float]:
 
 
 def outline(points: int = 200) -> list[dict]:
-    return [dict(zip(("x", "y"), loop_point(i / points))) for i in range(points + 1)]
+    return [dict(zip(("x", "y"), loop_point(i / points), strict=True))
+            for i in range(points + 1)]
 
 
 def field_rows(frame: dict) -> list[dict]:
