@@ -86,3 +86,25 @@ its own session per the workflow. This plan rode the F24 branch as a docs-only
 commit because the F24 fine-tune was reading this working tree's configs when
 approval arrived — switching branches would have swapped the physics under a
 live training process.
+
+## Amendment — ship-time, Saad (19 Aug 2026)
+
+Saad rejected the sampled F23 palette outright ("do not like this") and supplied two
+reference sheets into docs/reference_images/: `SENNA_petrol_palette_reference.png`
+(core petrol tokens, the harvest/deploy accent axis, a five-step state-of-charge ramp,
+ten constructor pairs with a teammate-lift rule) and `SENNA_gradient_system.png`
+(ambient canvas glow keyed to energy state with stated limits, surface lift gradients,
+the team rule as a 3px top border, saturated gradients in data fills only). These
+replace the F23 palette wholesale and are the `sourced` provenance for every colour
+F25 ships.
+
+Decisions taken under the amendment:
+- The 11th team is SENNA itself: the ego carries the aqua harvest identity, the ten
+  reference constructors take teams 1-10. Team grouping (car pairs) is a display
+  convention over a simulator that models seats, not constructors — stated on screen.
+- Team colour answers who; aqua/ember answer what; never the same role in one view
+  (the reference's own rule). Ember stays out of navigation chrome.
+- Palettes validated with the dataviz validator: accent axis passes (coast reads
+  grey by design); the SOC ramp is luminance-monotonic; the 11 team colours carry
+  known near pairs (the two blues, silver/white) and are therefore never the sole
+  identity channel — car numbers ride every dot and row, teammates are hollow.
