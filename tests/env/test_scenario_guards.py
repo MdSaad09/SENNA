@@ -64,7 +64,7 @@ def test_no_free_tyres_property():
     # A loud refusal (ValueError here; KeyError is the loader's own refusal for
     # an unfitted block) is a legal outcome — serving a free tyre is not.
     params = config.load("physics_params")
-    served_free = []
+    served_free, served = [], 0
     for slug, circuit_params in params["circuits"].items():
         for era_int in (2024, 2026):
             if era_int not in circuit_params.get("joint_pace", {}):
@@ -73,6 +73,7 @@ def test_no_free_tyres_property():
                 scenario = build_scenario(slug, str(era_int))
             except (ValueError, KeyError):
                 continue
+            served += 1
             served_free += [
                 (slug, era_int, compound)
                 for compound in scenario.available_compounds
@@ -80,17 +81,20 @@ def test_no_free_tyres_property():
             ]
 
     assert served_free == []
+    # a guard that refuses every circuit would make the loop above prove nothing —
+    # the property is about what IS served, so something must be
+    assert served >= 20, f"only {served} circuit-eras built; the invariant went vacuous"
 
 
 def test_australia_2026_soft_wears_at_age_55():
     # run 491 by name: pit on lap 3, one set of softs 55 laps to P2. Either the
     # repair gave the Australian soft real wear or the guard pulled it from the
     # menu — a served zero is the bug.
-    try:
-        scenario = build_scenario("australian_grand_prix", "2026")
-    except ValueError:
-        return  # refused under min_dry_compounds: nothing free is served
+    scenario = build_scenario("australian_grand_prix", "2026")  # a refusal here is a fail:
+    # the repair is expected to leave Australia raceable, not merely not-free
 
-    if "SOFT" in scenario.available_compounds:
-        delta_s = scenario.deg_a["SOFT"] * scenario.t0_s * 55 ** scenario.deg_b["SOFT"]
-        assert delta_s > 0.0
+    assert "SOFT" in scenario.available_compounds, "the repair should serve a soft here"
+    delta_s = scenario.deg_a["SOFT"] * scenario.t0_s * 55 ** scenario.deg_b["SOFT"]
+    # half a second is the least a 55-lap-old soft can plausibly cost; a 1e-10
+    # amplitude satisfies `> 0` and satisfies nothing else (the repair gives ~3 s)
+    assert delta_s > 0.5, f"age-55 soft delta {delta_s:.3f}s is free-tyre territory"

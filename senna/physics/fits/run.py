@@ -313,15 +313,22 @@ class _Battery:
                 residuals.assign(frac_residual=residuals["pace_residual_s"] / joint.t0_s)
             )
             floors_by_era.setdefault(era, []).append(floor_frac * joint.s_ref_s / joint.t0_s)
+        self._pooled_floor_frac = {
+            # the median circuit's floor: one pooled curve cannot honour 25
+            # per-circuit sigmas, and the median is robust to the outlier circuits
+            era: float(np.median(floors)) for era, floors in floors_by_era.items()
+        }
+        # a transferred curve has no ages of its own; its cliff in the sim is the
+        # tyre_age_norm_laps fallback horizon (scenario.cliff_age_laps), so that is
+        # the age its signal-floor test probes
+        self._transfer_horizon = int(config.get(config.load("env"), "obs.tyre_age_norm_laps"))
         self.pooled_deg = {
             era: fit_pooled_degradation(
                 pd.concat(rows, ignore_index=True),
                 bounds=bounds,
                 p0=deg_cfg["curve_p0"],
                 maxfev=deg_cfg["curve_maxfev"],
-                # the median circuit's floor: one pooled curve cannot honour 25
-                # per-circuit sigmas, and the median is robust to the outlier laps
-                signal_floor_frac=float(np.median(floors_by_era[era])),
+                signal_floor_frac=self._pooled_floor_frac[era],
             )
             for era, rows in rows_by_era.items()
         }
@@ -501,16 +508,30 @@ class _Battery:
                     if _identified(self.deg[(mate, "2026")], compound)
                     and _identified(self.deg.get((mate, "2024"), {}), compound)
                 ]
+                # the target must be identified too, not merely a > 0: a repaired
+                # 2024 fit carries a borrowed pooled amplitude, and ratio transfer
+                # through it would launder that borrowing behind a source_circuit
+                # label (F24 review blocker — qatar MEDIUM and saudi HARD did
+                # exactly this in the first emission)
                 target_2024 = self.deg.get((slug, "2024"), {}).get(compound)
-                if donors and target_2024 is not None and target_2024.a > 0:
-                    transferred[compound] = transfer_degradation(
+                if donors and target_2024 is not None and target_2024.identified:
+                    row = transfer_degradation(
                         target_era2024_a=target_2024.a,
                         donor_era2024_a=self._donor_mean(donors, "2024", compound, "a"),
                         donor_2026_a=self._donor_mean(donors, "2026", compound, "a"),
                         donor_2026_b=self._donor_mean(donors, "2026", compound, "b"),
                         source_circuit=",".join(sorted(donors)),
                     )
-                    continue
+                    # a ratio can shrink a real donor curve below meaning — las
+                    # vegas HARD came out at 0.01 s over its whole cliff horizon,
+                    # a free tyre by another route — so the transferred curve
+                    # faces the same signal floor the fits do, over the fallback
+                    # horizon a transfer's cliff actually uses (scenario.py)
+                    if row["a"] * self._transfer_horizon ** row["b"] >= self._floor_frac("2026"):
+                        transferred[compound] = row
+                        continue
+                    log.info("clusters: %s 2026 %s — ratio transfer below the signal "
+                             "floor; falling to the pooled curve", slug, compound)
                 rung = pooled_curve_for("2026", compound, self.pooled_deg)
                 if rung is None:
                     log.info("clusters: %s 2026 %s — no identified donor and no pooled "
@@ -527,6 +548,9 @@ class _Battery:
 
     def _donor_mean(self, donors: list[str], era: str, compound: str, coefficient: str) -> float:
         return float(np.mean([getattr(self.deg[(d, era)][compound], coefficient) for d in donors]))
+
+    def _floor_frac(self, era: str) -> float:
+        return self._pooled_floor_frac[era]
 
     def params(self) -> dict:
         params: dict = {"globals": {}, "circuits": {}}
@@ -845,7 +869,11 @@ def _put_degradation(
             if source is not None:
                 row["source"] = (source, DEG_NB + " — F24 repair ladder")
             rows[compound] = row
-        circuit.setdefault("degradation", {})[era] = rows
+        if rows:
+            # never an empty era block: scenario.py's era fallback treats a falsy
+            # block as absent, and an empty 2026 dict would silently hand a 2026
+            # race the 2024 curves
+            circuit.setdefault("degradation", {})[era] = rows
     if (slug, "2026") in transferred:
         rows = {}
         for compound, row in transferred[(slug, "2026")].items():

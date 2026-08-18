@@ -83,10 +83,19 @@ def fit_degradation(
             max_age_seen=max_age,
             low_confidence=bool(thin),
             # a bound-clip lands at ~1e-10, not 0.0, so the test is the predicted
-            # delta over the ages the data covers, never a == 0
-            identified=float(amplitude_s) * max_age ** float(exponent) >= signal_floor_s,
+            # delta over the ages the data covers, never a == 0 — and a parameter
+            # pinned at either bound is the optimiser refused, not a measurement,
+            # whichever parameter it was (E-10)
+            identified=(
+                float(amplitude_s) * max_age ** float(exponent) >= signal_floor_s
+                and not _pinned(float(exponent), bounds[0][1], bounds[1][1])
+            ),
         )
     return fits
+
+
+def _pinned(value: float, lo: float, hi: float, *, tol: float = 1e-6) -> bool:
+    return abs(value - lo) <= tol or abs(value - hi) <= tol
 
 
 def fit_pooled_degradation(
@@ -119,7 +128,10 @@ def fit_pooled_degradation(
             n_laps=len(rows),
             max_age_seen=max_age,
             low_confidence=False,
-            identified=float(a) * max_age ** float(b) >= signal_floor_frac,
+            identified=(
+                float(a) * max_age ** float(b) >= signal_floor_frac
+                and not _pinned(float(b), bounds[0][1], bounds[1][1])
+            ),
         )
     return fits
 

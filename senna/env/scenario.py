@@ -121,6 +121,14 @@ def build_scenario(
             f"{circuit} ({era}): only {available} wearing dry compounds — the "
             "two-compound rule (F-20) is unsatisfiable below race.min_dry_compounds"
         )
+    if START_COMPOUND not in available:
+        # every car launches on the grid compound (5.5), and dynamics falls back to
+        # the hardest fitted curve for an unfitted one — the whole field would race
+        # lap 1 on physics the guard above just refused. Refuse the race instead.
+        raise ValueError(
+            f"{circuit} ({era}): the grid compound {START_COMPOUND} is not servable "
+            f"here (available: {available}) — a race cannot start on a refused tyre"
+        )
     deg_a = {c: float(deg[c]["a"]) for c in available}
     deg_b = {c: float(deg[c]["b"]) for c in available}
     deg_max_age = {c: int(deg[c].get("max_age_seen", age_fallback)) for c in available}

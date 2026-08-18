@@ -72,8 +72,13 @@ def fit_provenance(slug: str, fits: dict) -> str:
         return "synthesised"
     # repaired rows are low-confidence BY construction (the substitution says so),
     # so the repair check must come before the low-confidence one or F24's own
-    # marker would reclassify every repaired circuit as unusable
+    # marker would reclassify every repaired circuit as unusable. `repaired` also
+    # demands the circuit's own laps under every compound (n_laps rides own fits
+    # only): an all-pooled-fallback block has zero own data and is synthesised by
+    # any honest reading, whatever key it carries.
     if any(block[compound].get("source") for compound in SLICKS):
+        if not all(block[c].get("n_laps") for c in SLICKS):
+            return "synthesised"
         if any(block[c].get("low_confidence") and not block[c].get("source")
                for c in SLICKS):
             return "unusable"
@@ -167,12 +172,11 @@ def conditional_advantage(m1: dict, m3: dict, fits: dict) -> dict:
 
     This exists because slicing M1 to the three archetypes made the headline vanish, and
     the reason turned out to be worth more than the slice: the advantage is carried by
-    the circuits whose 2026 degradation the T5 transform invented. That held before the
-    F24 repair (+2.279, parity on measured circuits) and holds after it (+3.19
-    synthesised, slightly behind on the repaired class) — the retrain moved the
-    mechanism, not the split: pre-repair the agent under-stopped everywhere; now it
-    over-stops on the measured circuits instead. The sim-optimism caveat this feeds is
-    the chapter's, not a footnote.
+    the circuits whose 2026 degradation the T5 transform invented. The split held
+    through the F24 repair-and-retrain even as the stopping habit inverted, which
+    points it at the transform rather than any one policy; the current figures live
+    in docs/results/archetypes.md, regenerated from this function's output. The
+    sim-optimism caveat this feeds is the chapter's, not a footnote.
     """
     deltas: dict[str, list[float]] = defaultdict(list)
     for pair in m1["per_pair"]:
