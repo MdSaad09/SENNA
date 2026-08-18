@@ -76,11 +76,48 @@ if not cards:
     st.stop()
 
 laps = [card["lap"] for card in cards]
-chosen_lap = st.select_slider("Lap", options=laps, value=laps[0])
+
+# pick the lap ON the race itself: the ego's position trace with a dot per carded
+# lap, pit calls in aqua. A click selects; the slider stays as the accessible path
+# and the fallback when nothing is picked.
+ego_trace = pd.DataFrame([
+    {"lap": f["lap"], "position": next(c["position"] for c in f["cars"] if c["id"] == EGO)}
+    for f in frames
+])
+by_lap = {c["lap"]: c for c in cards}
+dots = pd.DataFrame([
+    {"lap": lap, "position": next((r["position"] for _, r in ego_trace.iterrows()
+                                   if r["lap"] == lap + 1), None),
+     "pit": by_lap[lap]["action"]["pit"] > 0}
+    for lap in laps
+]).dropna()
+picker = alt.selection_point(fields=["lap"], name="lap_pick")
+top = int(ego_trace["position"].max())
+pick_chart = alt.layer(
+    alt.Chart(ego_trace).mark_line(strokeWidth=1.5, color=theme.CHART_FIELD)
+    .encode(x=alt.X("lap:Q", title="lap",
+                    axis=alt.Axis(grid=False, labelColor=theme.FAINT, titleColor=theme.FAINT)),
+            y=alt.Y("position:Q", title=None, scale=alt.Scale(domain=[top, 1]),
+                    axis=alt.Axis(grid=True, gridColor=theme.CHART_GRID,
+                                  labelColor=theme.FAINT))),
+    alt.Chart(dots).mark_point(size=90, filled=True)
+    .encode(x="lap:Q", y="position:Q",
+            color=alt.condition(alt.datum.pit, alt.value(theme.ACCENT),
+                                alt.value(theme.COAST)),
+            tooltip=[alt.Tooltip("lap:Q", title="decision lap")])
+    .add_params(picker),
+).properties(height=140).configure_view(strokeWidth=0)
+picked = st.altair_chart(pick_chart, width='stretch', on_select="rerun",
+                         selection_mode="lap_pick", key="lap_pick_chart")
+picked_laps = [p["lap"] for p in picked.selection.get("lap_pick", []) if "lap" in p] \
+    if picked and picked.selection else []
+
+slider_lap = st.select_slider("Lap", options=laps, value=laps[0],
+                              label_visibility="collapsed")
+chosen_lap = picked_laps[0] if picked_laps else slider_lap
 card = next(c for c in cards if c["lap"] == chosen_lap)
 
-st.markdown(f"#### {card['decision']}")
-st.caption(card["plain_language"])
+theme.card(card["decision"], card["plain_language"])
 
 # ---- primary: the reward decomposition -------------------------------------------
 theme.eyebrow("Reward decomposition — primary")
