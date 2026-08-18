@@ -8,13 +8,11 @@ set -euo pipefail
 
 API="${API:-http://localhost:8000/api/v1}"
 FRONTEND="${FRONTEND:-http://localhost:5173}"
-# stylised — the 5.13 demo pick (F15 plan): Bahrain has a committed ribbon, native
-# 2024 fits and an ASCII slug. Seed 55 runs the full 57 laps and carries the LATEST
-# agent stop of the auditioned bank (lap 10 — the one-stop-early habit M9 documents),
-# so the seek lands two laps before the pit call and the card beat shows the actual
-# decision; VER's real lap-18 stop appears in the counterfactual leg instead. These
-# values must match frontend/e2e/demo.spec.ts, docs/demo/script.md and the README;
-# change all four together or the check measures a cold link.
+# stylised — the 5.13 demo pick (F15 plan): Bahrain has native 2024 fits and an
+# ASCII slug. The lap-10 audition note this comment used to carry described the
+# pre-F24 agent; the retrained one races seed 55 from P8 as a wet three-stop
+# (laps 7, 25, 42, 49) and wins it. The seek/lap choreography gets re-auditioned
+# with the F25 interface (docs/demo/script.md carries the status note).
 CIRCUIT="${CIRCUIT:-bahrain_grand_prix}"
 SEED="${SEED:-55}"
 LAP="${LAP:-8}"
