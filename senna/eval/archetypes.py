@@ -51,14 +51,18 @@ def fit_provenance(slug: str, fits: dict) -> str:
     """How much of a circuit's 2026 tyre model came from the circuit itself.
 
     calibrated  — all three slicks fitted here, none flagged low-confidence, and the
-                  three compounds are actually distinguishable. In practice these are
-                  the frozen calibration rounds (E-14, 2026 rounds 1-6): the only
-                  circuits with enough real 2026 tyre data to fit.
+                  three compounds are actually distinguishable. Since F24 no 2026
+                  circuit clears this: the soft's wear was unidentifiable everywhere,
+                  even pooled, and saying so is the class's job.
+    repaired    — every slick carries this circuit's own data, but at least one took
+                  its curve from the F24 ladder (pooled or cross-era) because the
+                  circuit's fit was bound-clipped. The calibration rounds (E-14) land
+                  here now — the most-measured circuits the era has.
     synthesised — at least one slick borrowed from a cluster donor (T5). No 2026 race
                   has happened there, or E-14 holds it out, so the transform supplies it.
     unusable    — fitted here but the fit cannot carry a strategy: a low-confidence
-                  slick, or a spread of zero, which means the model cannot tell the
-                  compounds apart at all.
+                  own slick, or a spread of zero, which means the model cannot tell
+                  the compounds apart at all.
     """
     deg = (fits.get(slug) or {}).get("degradation") or {}
     block = deg.get("2026") or deg.get(2026) or {}
@@ -66,6 +70,14 @@ def fit_provenance(slug: str, fits: dict) -> str:
         return "incomplete"
     if any(block[compound].get("source_circuit") for compound in SLICKS):
         return "synthesised"
+    # repaired rows are low-confidence BY construction (the substitution says so),
+    # so the repair check must come before the low-confidence one or F24's own
+    # marker would reclassify every repaired circuit as unusable
+    if any(block[compound].get("source") for compound in SLICKS):
+        if any(block[c].get("low_confidence") and not block[c].get("source")
+               for c in SLICKS):
+            return "unusable"
+        return "repaired"
     if any(block[compound].get("low_confidence") for compound in SLICKS):
         return "unusable"
     losses = [block[c]["a"] * DEG_PROBE_AGE ** block[c]["b"] for c in SLICKS]
@@ -154,11 +166,13 @@ def conditional_advantage(m1: dict, m3: dict, fits: dict) -> dict:
     """Whether the agent's advantage depends on the tyre model being synthesised.
 
     This exists because slicing M1 to the three archetypes made the headline vanish, and
-    the reason turned out to be worth more than the slice: +2.279 places over 24 circuits
-    is carried by the circuits whose 2026 degradation the T5 transform invented. Where
-    the model is fitted to real 2026 data the agent is at parity. The mechanism is the
-    under-stopping M9 measures — the oracle wants two stops on calibrated circuits and
-    the agent makes fewer.
+    the reason turned out to be worth more than the slice: the advantage is carried by
+    the circuits whose 2026 degradation the T5 transform invented. That held before the
+    F24 repair (+2.279, parity on measured circuits) and holds after it (+3.19
+    synthesised, slightly behind on the repaired class) — the retrain moved the
+    mechanism, not the split: pre-repair the agent under-stopped everywhere; now it
+    over-stops on the measured circuits instead. The sim-optimism caveat this feeds is
+    the chapter's, not a footnote.
     """
     deltas: dict[str, list[float]] = defaultdict(list)
     for pair in m1["per_pair"]:

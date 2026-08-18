@@ -18,7 +18,8 @@ GRID_SLOTS = 22  # sourced — SimulationCreate bounds, 5.9.2 (ge=1, le=22): 22 
 WEATHER = {"dry": "slick compounds", "mixed": "variable, reactive", "wet_risk": "wets likely"}
 
 # the three archetypes the evaluation reports on, chosen because their 2026 degradation
-# curves are fitted at the circuit rather than transferred from a cluster donor (T5)
+# curves carry the circuit's own data rather than a cluster donor's (T5) — since F24
+# the soft's shape comes from the repair ladder, which the archetype slice states
 ARCHETYPES = {
     "chinese_grand_prix": "balanced",
     "australian_grand_prix": "flowing",

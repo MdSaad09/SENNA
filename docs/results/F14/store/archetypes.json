@@ -1,7 +1,7 @@
 {
   "envelope": {
     "config_hash": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
-    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
+    "git_commit": "08f923d12d0c53861ab39fe9461ad38fb1c35515",
     "model_versions": {
       "headline": "senna-ppo-405658360cd8-C-02211840"
     },
@@ -50,6 +50,14 @@
         "n_pairs": 20,
         "oracle_stops": 1.1
       },
+      "repaired": {
+        "agent_stops": 2.825,
+        "mean_delta": -0.8125,
+        "mean_regret_s": 93.06679871923339,
+        "median_regret_s": 81.595505652047,
+        "n_pairs": 80,
+        "oracle_stops": 1.6875
+      },
       "synthesised": {
         "agent_stops": 2.4194444444444443,
         "mean_delta": 3.188888888888889,
@@ -59,24 +67,24 @@
         "oracle_stops": 1.9638888888888888
       },
       "unusable": {
-        "agent_stops": 3.49,
-        "mean_delta": -0.67,
-        "mean_regret_s": 196.37044023195386,
-        "median_regret_s": 93.23658344103933,
-        "n_pairs": 100,
-        "oracle_stops": 1.95
+        "agent_stops": 6.15,
+        "mean_delta": -0.1,
+        "mean_regret_s": 609.5850062828356,
+        "median_regret_s": 604.8504977565299,
+        "n_pairs": 20,
+        "oracle_stops": 3.0
       }
     },
     "fit_provenance": {
       "abu_dhabi_grand_prix": "synthesised",
-      "australian_grand_prix": "unusable",
+      "australian_grand_prix": "repaired",
       "austrian_grand_prix": "synthesised",
       "azerbaijan_grand_prix": "synthesised",
       "bahrain_grand_prix": "synthesised",
       "belgian_grand_prix": "synthesised",
       "british_grand_prix": "synthesised",
-      "canadian_grand_prix": "unusable",
-      "chinese_grand_prix": "unusable",
+      "canadian_grand_prix": "repaired",
+      "chinese_grand_prix": "repaired",
       "dutch_grand_prix": "synthesised",
       "emilia_romagna_grand_prix": "synthesised",
       "french_grand_prix": "incomplete",
@@ -86,7 +94,7 @@
       "las_vegas_grand_prix": "synthesised",
       "mexico_city_grand_prix": "synthesised",
       "miami_grand_prix": "unusable",
-      "monaco_grand_prix": "unusable",
+      "monaco_grand_prix": "repaired",
       "qatar_grand_prix": "synthesised",
       "saudi_arabian_grand_prix": "synthesised",
       "singapore_grand_prix": "synthesised",
