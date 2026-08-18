@@ -37,7 +37,9 @@ SOC_RAMP = ("#0F3B3F", "#14666A", "#1D9A93", "#46C9AE", "#8FE3C0")
 # car ids is a display convention (the simulator models seats, not constructors) and
 # every view that uses it says so.
 TEAMS = (
-    ("SENNA", ACCENT, "#8FE3C0"),
+    # the teammate lift is NOT the SOC ramp's full step: one hex may not answer
+    # "who" on the map and "what" on the gauge in the same view (the sheet's rule)
+    ("SENNA", ACCENT, "#7CE7D4"),
     ("Red Bull Racing", "#5A7FE8", "#93ABF0"),
     ("Ferrari", "#E4243C", "#ED7080"),
     ("Mercedes", "#A8B8C4", "#C6D0D8"),
@@ -72,8 +74,8 @@ COMPOUND_COLOURS = {
     "WET": "#2C9CDB",
 }
 
-# chart furniture on the petrol surfaces — the axis/grid recede, the field never
-# competes with the ego's aqua
+# stylised — chart furniture tuned to the petrol surfaces: the axis/grid recede,
+# the field never competes with the ego's aqua. Not on the sheets; ours to own.
 CHART_AXIS = FAINT
 CHART_GRID = "#152028"
 CHART_FIELD = "#3A4B57"

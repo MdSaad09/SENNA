@@ -105,11 +105,11 @@ def _text(at: AppTest) -> str:
 
 def test_the_race_page_reports_position_and_never_points(stub_client):
     # F25 retired the stock st.metric for the petrol stat tiles, so the claims are
-    # pinned through the rendered body instead of the metric accessor
+    # pinned through the tiles' own markup — value cells, not loose substrings
     body = _text(_page("app/Home.py", run_id=RUN_ID))
-    assert "P8" in body
-    assert "P3" in body
-    assert "Stops" in body
+    assert '>P8<' in body, "the grid tile lost its value"
+    assert '>P3<' in body, "the finish tile lost its value"
+    assert '>1<' in body, "the stop count is no longer asserted anywhere"
     # summary.points is the FIA table over points_divisor 2.5, so it would read as wrong
     assert "pts" not in body.lower()
     assert "points" not in body.lower()
@@ -248,12 +248,12 @@ def test_playback_colours_the_battery_gauge_from_the_soc_ramp(stub_client):
     from app.theme import SOC_RAMP
 
     at = _page("app/pages/2_Playback.py", run_id=RUN_ID)
-    drawn = " ".join(chart.proto.spec for chart in at.get("vega_lite_chart"))
-    drawn += " ".join(str(value)
-                      for table in _chart_rows(at)
-                      for column in table.values() for value in column)
-    assert any(step.lower() in drawn.lower() for step in SOC_RAMP), \
-        "no chart uses the state-of-charge ramp"
+    # spec only, never dataset values: a team hex in the track-map data must not be
+    # able to stand in for the gauge (the review found exactly that vacuity), and
+    # the gauge is the one chart whose spec carries the whole ramp as gradient stops
+    specs = [chart.proto.spec.lower() for chart in at.get("vega_lite_chart")]
+    assert any(all(step.lower() in spec for step in SOC_RAMP) for spec in specs), \
+        "no chart's spec carries the full state-of-charge ramp"
 
 
 def test_explainability_keeps_the_decision_line_on_screen(stub_client):

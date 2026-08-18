@@ -40,6 +40,8 @@ def loop_point(s: float) -> tuple[float, float]:
 
 
 def outline(points: int = 200) -> list[dict]:
+    # operational — sampling density: 200 segments render the arcs smooth at any
+    # plausible chart size without a payload worth thinking about
     return [dict(zip(("x", "y"), loop_point(i / points), strict=True))
             for i in range(points + 1)]
 

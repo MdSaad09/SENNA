@@ -136,12 +136,14 @@ def moments_strip(frames: list[dict]) -> None:
     if not moments:
         st.caption("a clean race — no safety cars, no weather, and every event says so")
         return
+    # token roles hold on the strip too: aqua is the agent's own action, alert is the
+    # red flag, everything the track did is coast — ember stays an energy word (sheet)
     rows = pd.DataFrame([
         {"lap": m["lap"], "kind": m["kind"], "level": i % 2,
          "label": m["kind"].upper() if m["kind"] != "pit" else "PIT",
+         "detail": m.get("detail") or "",
          "colour": theme.ACCENT if m["kind"] == "pit" else (
-             theme.DANGER if m["kind"] == "red" else theme.DEPLOY
-             if m["kind"] in ("sc", "vsc") else theme.COAST)}
+             theme.DANGER if m["kind"] == "red" else theme.COAST)}
         for i, m in enumerate(moments)
     ])
     last_lap = frames[-1]["lap"]
@@ -154,7 +156,7 @@ def moments_strip(frames: list[dict]) -> None:
     strip = alt.layer(
         base.mark_tick(thickness=2, size=18).encode(
             color=alt.Color("colour:N", scale=None),
-            tooltip=["lap:Q", "kind:N"]),
+            tooltip=["lap:Q", "kind:N", "detail:N"]),
         base.transform_filter(alt.datum.level == 0)
         .mark_text(dy=-16, fontSize=9, font="monospace").encode(
             text="label:N", color=alt.Color("colour:N", scale=None)),
@@ -280,7 +282,9 @@ def result_panel(run_id: int) -> None:
         f"Stints are read back from run {run_id}'s stored frames — the agent chose them lap "
         "by lap in the simulator, and there is no plan here that preceded the race. Pit "
         "service time is not shown because the simulator does not serve it. Rival cars are "
-        "scripted strategies fitted to historical data, not other learned agents."
+        "scripted strategies fitted to historical data, not other learned agents, and their "
+        "team colours are a display convention over car pairs — the simulator models seats, "
+        "not constructors."
     )
     theme.footer()
 

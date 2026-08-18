@@ -64,8 +64,16 @@ agent = next(c for c in frame["cars"] if c["id"] == EGO)
 stints = stints_from_frames([f for f in frames if f["lap"] <= lap], EGO)
 energy = frame["agent"]
 
-# the sheet's ambient rule: one glow, keyed to what this lap's energy actually did
-theme.ambient("harvesting" if energy["harvest_mj"] >= energy["deploy_mj"] else "deploying")
+# the sheet's ambient rule: one glow, keyed to what this lap's energy actually did —
+# and neutral stays reachable (idle, an SC crawl) rather than defined away
+NEUTRAL_FLOOR_MJ = 0.05  # operational — flows under this read as no energy event
+if energy["harvest_mj"] < NEUTRAL_FLOOR_MJ and energy["deploy_mj"] < NEUTRAL_FLOOR_MJ:
+    glow_state = "neutral"
+elif energy["harvest_mj"] >= energy["deploy_mj"]:
+    glow_state = "harvesting"
+else:
+    glow_state = "deploying"
+theme.ambient(glow_state)
 
 theme.stats([
     ("Lap", f"{lap} / {last_lap}"),
@@ -93,7 +101,7 @@ with left:
     track = alt.layer(
         alt.Chart(loop).mark_line(color=theme.CHART_FIELD, strokeWidth=7, opacity=0.5)
         .encode(x=x, y=y, order="i:Q"),
-        # the ego's aqua ring first, so the agent is findable before anything else
+        # the ego's aqua ring — its size, not its layer order, is what makes it read
         field.transform_filter(alt.datum.ego).mark_point(
             size=420, filled=False, strokeWidth=2, color=theme.ACCENT, opacity=0.9)
         .encode(x=x, y=y),
@@ -108,6 +116,11 @@ with left:
         field.transform_filter(alt.datum.in_pit).mark_point(
             size=320, filled=False, strokeWidth=1.4, color=theme.TEXT, opacity=0.85)
         .encode(x=x, y=y),
+        # the car number rides every dot (the palette's near pairs are never left
+        # to colour alone); the lap-one clump untangles within a few laps
+        field.mark_text(dx=13, fontSize=8, font="monospace", align="left",
+                        color=theme.MUTED)
+        .encode(x=x, y=y, text="car:N"),
     ).properties(height=330).configure_view(strokeWidth=0)
     st.altair_chart(track, width='stretch')
 
@@ -170,15 +183,16 @@ with energy_col:
     )
     gauge = alt.layer(
         alt.Chart(pd.DataFrame([{"full": SOC_CAPACITY_MJ, "y": "SOC"}]))
-        .mark_bar(height=26, color=theme.RAISED, cornerRadius=4)
+        .mark_bar(height=40, color=theme.RAISED, cornerRadius=4)
         .encode(x=alt.X("full:Q", scale=alt.Scale(domain=[0, SOC_CAPACITY_MJ]),
                         title=None, axis=alt.Axis(grid=False, labelColor=theme.FAINT,
                                                   domainColor=theme.LINE)),
                 y=alt.Y("y:N", title=None, axis=None)),
-        alt.Chart(gauge_rows).mark_bar(height=26, cornerRadius=4, color=gradient)
+        # 40px: the sheet's floor — below it a gradient reads as a rendering artefact
+        alt.Chart(gauge_rows).mark_bar(height=40, cornerRadius=4, color=gradient)
         .encode(x="soc:Q", y=alt.Y("y:N", title=None, axis=None),
                 tooltip=[alt.Tooltip("soc:Q", format=".2f", title="state of charge, MJ")]),
-    ).properties(height=64).configure_view(strokeWidth=0)
+    ).properties(height=78).configure_view(strokeWidth=0)
     st.altair_chart(gauge, width='stretch')
     harvested = f'<span style="color:{theme.ACCENT}">▲ {energy["harvest_mj"]:.2f} MJ in</span>'
     deployed = f'<span style="color:{theme.DEPLOY}">▼ {energy["deploy_mj"]:.2f} MJ out</span>'

@@ -19,10 +19,11 @@ _EVENT_PHRASE = {
 _COUNTS = {0: "no stops", 1: "one stop", 2: "two stops", 3: "three stops"}
 
 
-def race_headline(frames: list[dict], summary: dict, grid_position: int) -> str:
+def race_headline(frames: list[dict], summary: dict, grid_position: int | None) -> str:
+    start = f"P{grid_position}" if grid_position else "—"  # a run row can lack its grid
     finish = "DNF" if summary.get("dnf") else f"P{summary.get('final_position')}"
     stops = len(_ego_stops(frames))
-    parts = [f"P{grid_position} → {finish}", _COUNTS.get(stops, f"{stops} stops")]
+    parts = [f"{start} → {finish}", _COUNTS.get(stops, f"{stops} stops")]
     headliner = _headline_event(frames)
     if headliner is not None:
         kind, lap = headliner
