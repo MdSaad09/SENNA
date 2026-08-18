@@ -160,11 +160,12 @@ def test_explainability_reports_missing_explanations_rather_than_inventing_them(
 
 
 def test_playback_starts_at_lap_one_and_shows_the_field(stub_client):
+    # F25 retired the stock st.metric for the petrol stat tiles: pin through the body
     at = _page("app/pages/2_Playback.py", run_id=RUN_ID)
-    metrics = {m.label: m.value for m in at.metric}
-    assert metrics["Lap"] == f"1 / {LAPS}"
-    assert metrics["Position"].startswith("P")
-    assert "nothing is re-simulated" in _text(at)
+    body = _text(at)
+    assert f"1 / {LAPS}" in body
+    assert "Position" in body
+    assert "nothing is re-simulated" in body
 
 
 def test_a_page_without_a_run_asks_for_one_instead_of_failing(stub_client):
