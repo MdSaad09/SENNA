@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
-    "git_commit": "d6362914cc94a8a3a90be22e071499750875cabf",
+    "config_hash": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
+    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
     "model_versions": {
-      "headline": "senna-ppo-5e3ddb15d584-C-01769472"
+      "headline": "senna-ppo-405658360cd8-C-02211840"
     },
     "scope": {
       "circuits": 3,
@@ -42,49 +42,41 @@
       "m10_legality"
     ],
     "conditional_advantage": {
-      "calibrated": {
-        "agent_stops": 1.1833333333333333,
-        "mean_delta": 0.06666666666666667,
-        "mean_regret_s": 58.818443422536966,
-        "median_regret_s": 49.28789473186089,
-        "n_pairs": 60,
-        "oracle_stops": 1.6166666666666667
-      },
       "incomplete": {
-        "agent_stops": 1.5,
-        "mean_delta": -0.4,
-        "mean_regret_s": 56.64505667814815,
-        "median_regret_s": 59.54035108041717,
+        "agent_stops": 1.35,
+        "mean_delta": 0.85,
+        "mean_regret_s": 22.51957341792081,
+        "median_regret_s": 18.125150606663738,
         "n_pairs": 20,
-        "oracle_stops": 1.05
+        "oracle_stops": 1.1
       },
       "synthesised": {
-        "agent_stops": 1.1444444444444444,
-        "mean_delta": 3.3055555555555554,
-        "mean_regret_s": 30.07298743450337,
-        "median_regret_s": 25.92695618980224,
+        "agent_stops": 2.4194444444444443,
+        "mean_delta": 3.188888888888889,
+        "mean_regret_s": 37.40513366944803,
+        "median_regret_s": 27.318691733445576,
         "n_pairs": 360,
-        "oracle_stops": 1.3611111111111112
+        "oracle_stops": 1.9638888888888888
       },
       "unusable": {
-        "agent_stops": 1.625,
-        "mean_delta": -2.3,
-        "mean_regret_s": 474.1602770341712,
-        "median_regret_s": 512.4180765476276,
-        "n_pairs": 40,
-        "oracle_stops": 2.525
+        "agent_stops": 3.49,
+        "mean_delta": -0.67,
+        "mean_regret_s": 196.37044023195386,
+        "median_regret_s": 93.23658344103933,
+        "n_pairs": 100,
+        "oracle_stops": 1.95
       }
     },
     "fit_provenance": {
       "abu_dhabi_grand_prix": "synthesised",
-      "australian_grand_prix": "calibrated",
+      "australian_grand_prix": "unusable",
       "austrian_grand_prix": "synthesised",
       "azerbaijan_grand_prix": "synthesised",
       "bahrain_grand_prix": "synthesised",
       "belgian_grand_prix": "synthesised",
       "british_grand_prix": "synthesised",
       "canadian_grand_prix": "unusable",
-      "chinese_grand_prix": "calibrated",
+      "chinese_grand_prix": "unusable",
       "dutch_grand_prix": "synthesised",
       "emilia_romagna_grand_prix": "synthesised",
       "french_grand_prix": "incomplete",
@@ -94,7 +86,7 @@
       "las_vegas_grand_prix": "synthesised",
       "mexico_city_grand_prix": "synthesised",
       "miami_grand_prix": "unusable",
-      "monaco_grand_prix": "calibrated",
+      "monaco_grand_prix": "unusable",
       "qatar_grand_prix": "synthesised",
       "saudi_arabian_grand_prix": "synthesised",
       "singapore_grand_prix": "synthesised",
@@ -105,78 +97,78 @@
     "sliced": {
       "m11_luck_share": {
         "australian_grand_prix": {
-          "share": 0.9883185222434672
+          "share": 0.8811407728354304
         },
         "chinese_grand_prix": {
-          "share": 0.6412233651356328
+          "share": 0.7301579492467706
         },
         "monaco_grand_prix": {
-          "share": 0.9154992201071116
+          "share": 0.749206572860464
         }
       },
       "m1_paired_position_delta": {
         "australian_grand_prix": {
-          "ci_high": 1.15,
-          "ci_low": -0.4,
-          "finish_ahead_rate": 0.3,
-          "mean_delta": 0.3,
+          "ci_high": -0.2,
+          "ci_low": -1.35,
+          "finish_ahead_rate": 0.1,
+          "mean_delta": -0.75,
           "n": 20
         },
         "chinese_grand_prix": {
-          "ci_high": 0.5,
-          "ci_low": -1.5,
-          "finish_ahead_rate": 0.3,
-          "mean_delta": -0.45,
+          "ci_high": 0.7,
+          "ci_low": -1.0012499999999889,
+          "finish_ahead_rate": 0.35,
+          "mean_delta": -0.1,
           "n": 20
         },
         "monaco_grand_prix": {
-          "ci_high": 1.0,
-          "ci_low": -0.3,
-          "finish_ahead_rate": 0.5,
-          "mean_delta": 0.35,
+          "ci_high": 0.1,
+          "ci_low": -1.6,
+          "finish_ahead_rate": 0.25,
+          "mean_delta": -0.65,
           "n": 20
         }
       },
       "m3_oracle_regret": {
         "australian_grand_prix": {
-          "mean_regret_s": 41.05705299866954,
-          "median_regret_s": 39.84805674280915,
+          "mean_regret_s": 57.65229500585961,
+          "median_regret_s": 56.73507726218031,
           "n": 20
         },
         "chinese_grand_prix": {
-          "mean_regret_s": 82.76916111009459,
-          "median_regret_s": 70.4799236521967,
+          "mean_regret_s": 92.17352500482566,
+          "median_regret_s": 85.94633754722236,
           "n": 20
         },
         "monaco_grand_prix": {
-          "mean_regret_s": 52.62911615884677,
-          "median_regret_s": 48.83539419663657,
+          "mean_regret_s": 81.710923425375,
+          "median_regret_s": 80.25152897307999,
           "n": 20
         }
       },
       "m6_pit_window_accuracy": {
         "australian_grand_prix": {
-          "accuracy": 0.13043478260869565,
-          "n": 23
+          "accuracy": 0.5531914893617021,
+          "n": 47
         },
         "chinese_grand_prix": {
-          "accuracy": 0.0,
-          "n": 24
+          "accuracy": 0.4307692307692308,
+          "n": 65
         },
         "monaco_grand_prix": {
-          "accuracy": 0.08333333333333333,
-          "n": 24
+          "accuracy": 0.3333333333333333,
+          "n": 39
         }
       },
       "m7_strategy_diversity": {
         "australian_grand_prix": {
-          "entropy_nats": 0.6651895511017668
+          "entropy_nats": 2.0092440044731825
         },
         "chinese_grand_prix": {
-          "entropy_nats": 0.8582017053693161
+          "entropy_nats": 1.8767543830945035
         },
         "monaco_grand_prix": {
-          "entropy_nats": 0.8966725089051188
+          "entropy_nats": 2.290476510254242
         }
       }
     }

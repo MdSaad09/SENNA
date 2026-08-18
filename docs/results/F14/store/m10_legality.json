@@ -1,9 +1,9 @@
 {
   "envelope": {
-    "config_hash": "5e3ddb15d584fd1148c40375dbd793bf0eb2b25fdd23fa8f2b6ac4cc4a7345bb",
-    "git_commit": "d1ff2fe420d1b9eeae81d28a7e690b3697763c94",
+    "config_hash": "405658360cd84fd019be5b1b50b6b15e737fb7ea20905fbc5eb78fb46e7d5d39",
+    "git_commit": "5a103f63142386dc1b3e740a9cf0c7cc7cbe6c57",
     "model_versions": {
-      "headline": "senna-ppo-5e3ddb15d584-C-01769472"
+      "headline": "senna-ppo-405658360cd8-C-02211840"
     },
     "scope": {
       "batteries": [
