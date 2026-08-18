@@ -22,11 +22,18 @@ degradation robustness 25 of 25 moves in the predicted direction. The provenance
 split (synthesised +2.38 vs repaired −0.53) survives its second retrain; the chapter's
 sim-optimism caveat stands. Pre-repair record archived at docs/results/F14-pre-repair/.
 
-**Next up: F25 — the Streamlit ceiling, reached on purpose. Planned and approved
-18 Aug 2026** (`docs/plans/F25-plan.md`): design system in theme.py, the s_track
-track map with autoplay motion, auto-composed race headline and moments strip.
-Builds on its own branch after F24 lands. app/ only — it cannot touch the frozen
-chain.
+**F25 — the Streamlit ceiling, reached on purpose. In review 19 Aug 2026** (branch
+`feature/F25-streamlit-ceiling`, plan + ship-time amendment `docs/plans/F25-plan.md`).
+Saad rejected the sampled palette and supplied his own two reference sheets (petrol
+tokens, the harvest/deploy accent axis, ten constructor pairs, a gradient system with
+stated limits) — F25 is those sheets built: theme.py as a design system with SENNA as
+the eleventh team, the deterministic race headline and moments strip (story.py), the
+s_track track map on a stylised loop with car numbers riding every dot, the SOC-ramp
+battery gauge, the energy-keyed ambient glow, and lap-picking on the race chart. The
+screenshot pass (the F23 lesson as a step) caught what no test could: Streamlit's
+red widget theme below CSS reach, `make app` missing the PYTHONPATH the F24 docker
+fix patched, and the soft compound wearing the reserved alert hex. app/ + .streamlit/
+only — the frozen chain untouched, confirmed by audit.
 
 F23 landed 15 Aug 2026. The dashboard is three tabs
 (Strategy / Circuit / Analysis) with a section rail; all six spec views survive as
