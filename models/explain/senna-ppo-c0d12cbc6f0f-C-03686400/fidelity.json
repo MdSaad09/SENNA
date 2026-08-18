@@ -1,0 +1,35 @@
+{
+  "model_version": "senna-ppo-c0d12cbc6f0f-C-03686400",
+  "env_config_hash": "c0d12cbc6f0f130da61bfce104228897b135702f88cea093a5c9e69512205f0b",
+  "threshold": 0.9,
+  "heads": {
+    "pit": {
+      "top1": 0.991998799819973,
+      "mean_kl": 0.008512415918450339,
+      "rung": {
+        "max_depth": 6,
+        "n_estimators": 300,
+        "learning_rate": 0.1
+      }
+    },
+    "mode": {
+      "top1": 0.9740461069160374,
+      "mean_kl": 0.008813966076049349,
+      "rung": {
+        "max_depth": 6,
+        "n_estimators": 300,
+        "learning_rate": 0.1
+      }
+    }
+  },
+  "pairs": 200039,
+  "episodes": 3344,
+  "holdout_pairs": 39994,
+  "crosscheck": {
+    "mean_spearman_rho": 0.7827080131098622,
+    "sample": 500
+  },
+  "cards": 13760,
+  "card_races": 230,
+  "generated_at": "2026-08-18T05:46:13.499596+00:00"
+}
