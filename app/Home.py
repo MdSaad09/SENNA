@@ -137,25 +137,31 @@ def moments_strip(frames: list[dict]) -> None:
         st.caption("a clean race — no safety cars, no weather, and every event says so")
         return
     rows = pd.DataFrame([
-        {"lap": m["lap"], "kind": m["kind"],
+        {"lap": m["lap"], "kind": m["kind"], "level": i % 2,
          "label": m["kind"].upper() if m["kind"] != "pit" else "PIT",
          "colour": theme.ACCENT if m["kind"] == "pit" else (
              theme.DANGER if m["kind"] == "red" else theme.DEPLOY
              if m["kind"] in ("sc", "vsc") else theme.COAST)}
-        for m in moments
+        for i, m in enumerate(moments)
     ])
     last_lap = frames[-1]["lap"]
     base = alt.Chart(rows).encode(
         x=alt.X("lap:Q", title=None, scale=alt.Scale(domain=[1, last_lap]),
                 axis=alt.Axis(grid=False, labelColor=theme.FAINT, domainColor=theme.LINE)),
     )
+    # labels alternate two heights so clustered events (a pit under its own
+    # safety car) stay legible instead of stacking into one word
     strip = alt.layer(
         base.mark_tick(thickness=2, size=18).encode(
             color=alt.Color("colour:N", scale=None),
             tooltip=["lap:Q", "kind:N"]),
-        base.mark_text(dy=-16, fontSize=9, font="monospace").encode(
+        base.transform_filter(alt.datum.level == 0)
+        .mark_text(dy=-16, fontSize=9, font="monospace").encode(
             text="label:N", color=alt.Color("colour:N", scale=None)),
-    ).properties(height=52).configure_view(strokeWidth=0)
+        base.transform_filter(alt.datum.level == 1)
+        .mark_text(dy=-28, fontSize=9, font="monospace").encode(
+            text="label:N", color=alt.Color("colour:N", scale=None)),
+    ).properties(height=64).configure_view(strokeWidth=0)
     st.altair_chart(strip, width='stretch')
 
 

@@ -95,18 +95,18 @@ with left:
         .encode(x=x, y=y, order="i:Q"),
         # the ego's aqua ring first, so the agent is findable before anything else
         field.transform_filter(alt.datum.ego).mark_point(
-            size=560, filled=False, strokeWidth=2, color=theme.ACCENT, opacity=0.9)
+            size=420, filled=False, strokeWidth=2, color=theme.ACCENT, opacity=0.9)
         .encode(x=x, y=y),
         # primary seats filled, teammates hollow — shape carries what near colours can't
         field.transform_filter(alt.datum.seat == "primary").mark_point(
-            size=180, filled=True, strokeWidth=0)
+            size=130, filled=True, strokeWidth=0)
         .encode(x=x, y=y, color=alt.Color("colour:N", scale=None), tooltip=hover),
         field.transform_filter(alt.datum.seat == "teammate").mark_point(
-            size=180, filled=False, strokeWidth=2.2)
+            size=130, filled=False, strokeWidth=2)
         .encode(x=x, y=y, color=alt.Color("colour:N", scale=None), tooltip=hover),
         # a stopped car flags itself in text ink, never a hue that means physics
         field.transform_filter(alt.datum.in_pit).mark_point(
-            size=420, filled=False, strokeWidth=1.4, color=theme.TEXT, opacity=0.85)
+            size=320, filled=False, strokeWidth=1.4, color=theme.TEXT, opacity=0.85)
         .encode(x=x, y=y),
     ).properties(height=330).configure_view(strokeWidth=0)
     st.altair_chart(track, width='stretch')

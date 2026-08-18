@@ -65,8 +65,8 @@ def car_label(car_id: int) -> str:
 # stylised — the conventional soft-to-hard ranking, invented hues, no supplier named
 # anywhere in this codebase (F-29). Keys are the served compound strings.
 COMPOUND_COLOURS = {
-    "SOFT": "#FF3B5C",
-    "MEDIUM": "#FF9E1B",
+    "SOFT": "#E05066",       # rose, deliberately NOT the alert token — status stays reserved
+    "MEDIUM": "#F2B33D",
     "HARD": "#E4EDF2",
     "INTERMEDIATE": "#2FA96B",
     "WET": "#2C9CDB",
