@@ -65,7 +65,7 @@ def setup_panel() -> None:
         runnable = [c for c in library if c["coverage"]["deg_fit"]]
         labels = {
             c["id"]: (f"{FLAGS.get(c['id'], '')} "
-                      f"{c['id'].replace('_grand_prix', '').replace('_', ' ')}"
+                      f"{c['id'].replace('_grand_prix', '').replace('_', ' ').title()}"
                       f"{'  ·  ' + ARCHETYPES[c['id']] if c['id'] in ARCHETYPES else ''}").strip()
             for c in runnable
         }
@@ -192,15 +192,14 @@ def moments_strip(frames: list[dict]) -> None:
 
 def race_story(frames: list[dict], stints) -> None:
     """Position against lap for the whole field: where the agent came from, where the
-    stops fell, and what the race did to both. Rival lines take team colour — the
-    reference rule: team colour answers who, aqua answers the agent."""
-    rows = []
-    for f in frames:
-        for car in f["cars"]:
-            _, colour, _ = theme.team_of(car["id"])
-            rows.append({"lap": f["lap"], "car": theme.car_label(car["id"]),
-                         "position": car["position"], "agent": car["id"] == EGO,
-                         "colour": colour})
+    stops fell, and what the race did to both. Rival lines stay recessive grey —
+    twenty-one team hues in one chart read as confusion, not identity (Saad's call,
+    19 Aug); who-is-who lives on the track map and the tables, where it works."""
+    rows = [
+        {"lap": f["lap"], "car": theme.car_label(car["id"]),
+         "position": car["position"], "agent": car["id"] == EGO}
+        for f in frames for car in f["cars"]
+    ]
     data = pd.DataFrame(rows)
     field = data[~data["agent"]]
     agent = data[data["agent"]]
@@ -214,9 +213,8 @@ def race_story(frames: list[dict], stints) -> None:
                    axis=alt.Axis(grid=False, labelColor=theme.FAINT, titleColor=theme.FAINT))
 
     layers = [
-        alt.Chart(field).mark_line(strokeWidth=1.1, opacity=0.55)
+        alt.Chart(field).mark_line(strokeWidth=1, opacity=0.45, color=theme.CHART_FIELD)
         .encode(x=axis_x, y=axis_y, detail="car:N",
-                color=alt.Color("colour:N", scale=None),
                 tooltip=["car:N", "lap:Q", "position:Q"]),
         alt.Chart(agent).mark_line(strokeWidth=2.5, color=theme.ACCENT)
         .encode(x=axis_x, y=axis_y,
@@ -253,7 +251,8 @@ def result_panel(run_id: int) -> None:
     grid = (run.get("config") or {}).get("grid_position")
 
     theme.eyebrow(f"Race strategy — as driven  ·  run {run_id}")
-    st.markdown(f"### {run['circuit_id'].replace('_', ' ')}")
+    st.markdown(f"### {FLAGS.get(run['circuit_id'], '')} "
+                f"{run['circuit_id'].replace('_', ' ').title()}")
     theme.headline(race_headline(frames, summary, grid))
 
     # position only: summary.points is the FIA table divided by points_divisor 2.5
@@ -305,9 +304,7 @@ def result_panel(run_id: int) -> None:
         f"Stints are read back from run {run_id}'s stored frames — the agent chose them lap "
         "by lap in the simulator, and there is no plan here that preceded the race. Pit "
         "service time is not shown because the simulator does not serve it. Rival cars are "
-        "scripted strategies fitted to historical data, not other learned agents, and their "
-        "team colours are a display convention over car pairs — the simulator models seats, "
-        "not constructors."
+        "scripted strategies fitted to historical data, not other learned agents."
     )
     theme.footer()
 

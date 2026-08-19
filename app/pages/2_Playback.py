@@ -145,15 +145,13 @@ story_col, energy_col = st.columns([3, 2])
 
 with story_col:
     theme.eyebrow("The story so far")
-    so_far = []
-    for f in frames:
-        if f["lap"] > lap:
-            break  # never the future
-        for car in f["cars"]:
-            _, colour, _ = theme.team_of(car["id"])
-            so_far.append({"lap": f["lap"], "car": theme.car_label(car["id"]),
-                           "position": car["position"], "agent": car["id"] == EGO,
-                           "colour": colour})
+    # rival lines stay recessive grey here too (Saad's call, 19 Aug) — the track map
+    # above is where team identity lives; this chart is the shape of the race
+    so_far = [
+        {"lap": f["lap"], "car": theme.car_label(car["id"]),
+         "position": car["position"], "agent": car["id"] == EGO}
+        for f in frames if f["lap"] <= lap for car in f["cars"]
+    ]
     data = pd.DataFrame(so_far)
     top = int(max(c["position"] for c in frames[0]["cars"]))
     axis_y = alt.Y("position:Q", title="position", scale=alt.Scale(domain=[top, 1]),
@@ -163,9 +161,9 @@ with story_col:
                    axis=alt.Axis(grid=False, labelColor=theme.FAINT, titleColor=theme.FAINT))
     st.altair_chart(
         alt.layer(
-            alt.Chart(data[~data["agent"]]).mark_line(strokeWidth=1, opacity=0.5)
-            .encode(x=axis_x, y=axis_y, detail="car:N",
-                    color=alt.Color("colour:N", scale=None)),
+            alt.Chart(data[~data["agent"]]).mark_line(
+                strokeWidth=1, opacity=0.45, color=theme.CHART_FIELD)
+            .encode(x=axis_x, y=axis_y, detail="car:N"),
             alt.Chart(data[data["agent"]]).mark_line(strokeWidth=2.5, color=theme.ACCENT)
             .encode(x=axis_x, y=axis_y),
         ).properties(height=240).configure_view(strokeWidth=0),
