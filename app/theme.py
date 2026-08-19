@@ -98,12 +98,24 @@ _GLOWS = {
 _BASE = "linear-gradient(160deg, #0D161C, #070C0F)"
 
 
+# the display face: Chakra Petch (SIL OFL, bundled under app/static/fonts — no CDN),
+# the squared technical face; body text stays on the system stack for reading comfort
+DISPLAY_FONT = "'Chakra Petch', ui-sans-serif, -apple-system, 'Segoe UI', sans-serif"
+_FONT_FACES = "".join(
+    f"@font-face {{ font-family: 'Chakra Petch'; font-style: normal; "
+    f"font-weight: {weight}; font-display: swap; "
+    f"src: url('/app/static/fonts/ChakraPetch-{name}.woff2') format('woff2'); }}"
+    for weight, name in ((400, "Regular"), (600, "SemiBold"), (700, "Bold"))
+)
+
+
 def page(title: str, icon: str = "\N{CHEQUERED FLAG}") -> None:
     """Page config plus the styling Streamlit will not do for us. Call first, once."""
     st.set_page_config(page_title=f"SENNA — {title}", page_icon=icon, layout="wide")
     st.markdown(
         f"""
         <style>
+          {_FONT_FACES}
           .stApp {{ background: {_GLOWS["neutral"]}, {_BASE}; background-attachment: fixed; }}
           header[data-testid="stHeader"] {{ background: transparent; }}
           #MainMenu, footer {{ visibility: hidden; }}
@@ -111,8 +123,32 @@ def page(title: str, icon: str = "\N{CHEQUERED FLAG}") -> None:
             background: linear-gradient(180deg, #142027, #0F181E);
             border-right: 1px solid {LINE};
           }}
-          h1, h2, h3 {{ color: {TEXT}; letter-spacing: -0.01em; }}
+          h1, h2, h3 {{
+            color: {TEXT}; letter-spacing: -0.01em; font-family: {DISPLAY_FONT};
+          }}
           h1 {{ font-size: 1.9rem; }}
+          .senna-wordmark {{
+            font-family: {DISPLAY_FONT}; font-weight: 700; color: {ACCENT};
+            letter-spacing: 0.14em;
+          }}
+          .senna-wordmark.hero {{ font-size: 3.4rem; line-height: 1.05; }}
+          .senna-wordmark.side {{ font-size: 1.5rem; }}
+          .senna-wordmark small {{
+            display: block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.66rem; font-weight: 400; letter-spacing: 0.22em;
+            text-transform: uppercase; color: {FAINT}; margin-top: 0.3rem;
+          }}
+          .senna-teamstrip {{ display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.8rem 0; }}
+          .senna-teamchip {{
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            padding: 0.3rem 0.7rem; border: 1px solid {LINE}; border-radius: 8px;
+            background: linear-gradient(180deg, {RAISED}, #141F26);
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.7rem; letter-spacing: 0.06em; color: {MUTED};
+          }}
+          .senna-teamchip .dot {{
+            width: 10px; height: 10px; border-radius: 99px; display: inline-block;
+          }}
           .senna-eyebrow {{
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
@@ -160,12 +196,37 @@ def page(title: str, icon: str = "\N{CHEQUERED FLAG}") -> None:
             font-size: 0.68rem; letter-spacing: 0.06em;
             border: 1px solid {LINE}; color: {MUTED}; margin-right: 0.3rem;
           }}
+          .senna-stat .v, .senna-card .call, .senna-headline {{ font-family: {DISPLAY_FONT}; }}
           div[data-testid="stMetricValue"] {{ color: {TEXT}; }}
           div[data-testid="stMetricLabel"] {{ color: {FAINT}; }}
         </style>
         """,
         unsafe_allow_html=True,
     )
+    # the brand rides every page's sidebar — the one place all three share
+    st.sidebar.markdown(
+        '<div class="senna-wordmark side">SENNA'
+        "<small>race strategy · 2026</small></div>",
+        unsafe_allow_html=True,
+    )
+
+
+def wordmark_hero(descriptor: str) -> None:
+    """The landing identity: the name first, at size, the way the sheets open."""
+    st.markdown(
+        f'<div class="senna-wordmark hero">SENNA<small>{descriptor}</small></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def team_strip() -> None:
+    """The grid as a legend: eleven chips, primary dot per team, ego first."""
+    chips = "".join(
+        f'<span class="senna-teamchip">'
+        f'<span class="dot" style="background:{primary}"></span>{name}</span>'
+        for name, primary, _ in TEAMS
+    )
+    st.markdown(f'<div class="senna-teamstrip">{chips}</div>', unsafe_allow_html=True)
 
 
 def ambient(state: str) -> None:

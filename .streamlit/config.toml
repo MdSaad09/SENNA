@@ -12,5 +12,10 @@ textColor = "#E4EDF2"
 [client]
 toolbarMode = "minimal"   # operational — no Deploy button in a research interface
 
+[server]
+enableStaticServing = true  # operational — serves app/static/ (the bundled OFL font
+                            # files) so the display face loads from this process, not
+                            # a CDN; the browser fetches /app/static/fonts/*.woff2
+
 [browser]
 gatherUsageStats = false  # operational — a dissertation artifact phones nobody home
