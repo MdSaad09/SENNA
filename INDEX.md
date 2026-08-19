@@ -4,7 +4,8 @@ Claude: read this file at the start of every session. Update it exactly when the
 workflow commands say to: plan approved -> Planned; end of /ship -> In review;
 /land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
 
-**Active feature:** none.
+**Active feature:** none. Next up: Saad's call — the demo re-choreography against
+the F25 interface is the queued follow-up the F24 demo-script note points at.
 
 **F24 — tyre-model repair and headline retrain. Done 18 Aug 2026** (branch
 `feature/F24-tyre-model-repair`, plan `docs/plans/F24-plan.md`, lesson
@@ -22,8 +23,9 @@ degradation robustness 25 of 25 moves in the predicted direction. The provenance
 split (synthesised +2.38 vs repaired −0.53) survives its second retrain; the chapter's
 sim-optimism caveat stands. Pre-repair record archived at docs/results/F14-pre-repair/.
 
-**F25 — the Streamlit ceiling, reached on purpose. In review 19 Aug 2026** (branch
-`feature/F25-streamlit-ceiling`, plan + ship-time amendment `docs/plans/F25-plan.md`).
+**F25 — the Streamlit ceiling, reached on purpose. Done 19 Aug 2026** (branch
+`feature/F25-streamlit-ceiling`, plan + ship-time amendment `docs/plans/F25-plan.md`,
+lesson `docs/learn/F25-streamlit-ceiling.md`).
 Saad rejected the sampled palette and supplied his own two reference sheets (petrol
 tokens, the harvest/deploy accent axis, ten constructor pairs, a gradient system with
 stated limits) — F25 is those sheets built: theme.py as a design system with SENNA as
