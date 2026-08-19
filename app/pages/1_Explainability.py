@@ -76,13 +76,58 @@ if not cards:
     st.stop()
 
 laps = [card["lap"] for card in cards]
-chosen_lap = st.select_slider("Lap", options=laps, value=laps[0])
+
+# pick the lap ON the race itself: the ego's position trace with a dot per carded
+# lap, pit calls in aqua. A click selects; the slider stays as the accessible path
+# and the fallback when nothing is picked.
+position_at = {
+    f["lap"]: next(c["position"] for c in f["cars"] if c["id"] == EGO) for f in frames
+}
+ego_trace = pd.DataFrame([{"lap": lap, "position": pos}
+                          for lap, pos in position_at.items()])
+by_lap = {c["lap"]: c for c in cards}
+last_position = position_at[max(position_at)]
+dots = pd.DataFrame([
+    # cards count laps from 0 and frames from 1 (the F23 join), so the dot draws at
+    # frame_lap while the selection keeps the card's own lap; a card past the final
+    # frame parks at the last known position rather than vanishing off the chart
+    {"lap": lap, "frame_lap": lap + 1,
+     "position": position_at.get(lap + 1, last_position),
+     "pit": by_lap[lap]["action"]["pit"] > 0}
+    for lap in laps
+])
+picker = alt.selection_point(fields=["lap"], name="lap_pick")
+top = int(ego_trace["position"].max())
+pick_chart = alt.layer(
+    alt.Chart(ego_trace).mark_line(strokeWidth=1.5, color=theme.CHART_FIELD)
+    .encode(x=alt.X("lap:Q", title="lap",
+                    axis=alt.Axis(grid=False, labelColor=theme.FAINT, titleColor=theme.FAINT)),
+            y=alt.Y("position:Q", title=None, scale=alt.Scale(domain=[top, 1]),
+                    axis=alt.Axis(grid=True, gridColor=theme.CHART_GRID,
+                                  labelColor=theme.FAINT))),
+    alt.Chart(dots).mark_point(size=90, filled=True)
+    .encode(x="frame_lap:Q", y="position:Q",
+            color=alt.condition(alt.datum.pit, alt.value(theme.ACCENT),
+                                alt.value(theme.COAST)),
+            tooltip=[alt.Tooltip("lap:Q", title="decision lap")])
+    .add_params(picker),
+).properties(height=140).configure_view(strokeWidth=0)
+picked = st.altair_chart(pick_chart, width='stretch', on_select="rerun",
+                         selection_mode="lap_pick", key="lap_pick_chart")
+picked_laps = [p["lap"] for p in picked.selection.get("lap_pick", []) if "lap" in p] \
+    if picked and picked.selection else []
+
+slider_lap = st.select_slider("Lap", options=laps, value=laps[0],
+                              label_visibility="collapsed")
+chosen_lap = picked_laps[0] if picked_laps else slider_lap
+if picked_laps:
+    st.caption(f"lap {chosen_lap} picked on the chart — clear the selection "
+               "to drive with the slider")
 card = next(c for c in cards if c["lap"] == chosen_lap)
 
-st.markdown(f"#### {card['decision']}")
-st.caption(card["plain_language"])
+theme.card(card["decision"], card["plain_language"])
 
-# ---- primary: the reward decomposition -------------------------------------------
+# primary: the reward decomposition
 theme.eyebrow("Reward decomposition — primary")
 # cards number laps from 0 (the observation's lap index at decision time) and frames
 # from 1, so the frame for a decision is the next one along
@@ -115,7 +160,7 @@ theme.note(
     "penalty the agent could learn to trade against."
 )
 
-# ---- secondary: what else was available ------------------------------------------
+# secondary: what else was available
 st.divider()
 theme.eyebrow("Alternatives the policy weighed — secondary")
 
@@ -152,7 +197,7 @@ theme.note(
     "forbidden by the action mask before the policy chose."
 )
 
-# ---- exploratory: SHAP ------------------------------------------------------------
+# exploratory: SHAP
 st.divider()
 with st.expander("Feature attribution (SHAP) — exploratory", expanded=False):
     honesty = card.get("honesty", {})

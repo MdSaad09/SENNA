@@ -1,0 +1,6 @@
+Chakra Petch — Copyright 2020 The Chakra Petch Project Authors
+(https://github.com/cadsondemak/chakra-petch)
+Licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
+Bundled here (F25) so the interface loads no CDN resource: the woff2 files are
+committed and served by Streamlit's static file serving, per the no-external-
+requests rule the pages already follow for data.

@@ -11,10 +11,12 @@ import pandas as pd
 import streamlit as st
 
 from app import client, theme
+from app.story import race_headline, race_moments
 from senna.serve.stints import pit_laps, stints_from_frames
 
 EGO = 0  # the agent's car id, the F10 CarState contract
 GRID_SLOTS = 22  # sourced — SimulationCreate bounds, 5.9.2 (ge=1, le=22): 22 cars, 11 teams
+SOC_WINDOW_MJ = 4  # sourced — physics_2026.yaml energy_store.usable_capacity_mj (AR-04)
 WEATHER = {"dry": "slick compounds", "mixed": "variable, reactive", "wet_risk": "wets likely"}
 
 # the three archetypes the evaluation reports on, chosen because their 2026 degradation
@@ -24,6 +26,24 @@ ARCHETYPES = {
     "chinese_grand_prix": "balanced",
     "australian_grand_prix": "flowing",
     "monaco_grand_prix": "street",
+}
+
+# stylised — host-country flags for the circuit picker, keyed by slug; a circuit
+# missing here simply shows no flag, never a wrong one
+FLAGS = {
+    "abu_dhabi_grand_prix": "🇦🇪", "australian_grand_prix": "🇦🇺",
+    "austrian_grand_prix": "🇦🇹", "azerbaijan_grand_prix": "🇦🇿",
+    "bahrain_grand_prix": "🇧🇭", "belgian_grand_prix": "🇧🇪",
+    "british_grand_prix": "🇬🇧", "canadian_grand_prix": "🇨🇦",
+    "chinese_grand_prix": "🇨🇳", "dutch_grand_prix": "🇳🇱",
+    "emilia_romagna_grand_prix": "🇮🇹", "french_grand_prix": "🇫🇷",
+    "hungarian_grand_prix": "🇭🇺", "italian_grand_prix": "🇮🇹",
+    "japanese_grand_prix": "🇯🇵", "las_vegas_grand_prix": "🇺🇸",
+    "mexico_city_grand_prix": "🇲🇽", "miami_grand_prix": "🇺🇸",
+    "monaco_grand_prix": "🇲🇨", "qatar_grand_prix": "🇶🇦",
+    "saudi_arabian_grand_prix": "🇸🇦", "singapore_grand_prix": "🇸🇬",
+    "spanish_grand_prix": "🇪🇸", "são_paulo_grand_prix": "🇧🇷",
+    "united_states_grand_prix": "🇺🇸",
 }
 
 theme.page("Race")
@@ -44,8 +64,9 @@ def setup_panel() -> None:
 
         runnable = [c for c in library if c["coverage"]["deg_fit"]]
         labels = {
-            c["id"]: (f"{c['id'].replace('_grand_prix', '').replace('_', ' ')}"
-                      f"{'  ·  ' + ARCHETYPES[c['id']] if c['id'] in ARCHETYPES else ''}")
+            c["id"]: (f"{FLAGS.get(c['id'], '')} "
+                      f"{c['id'].replace('_grand_prix', '').replace('_', ' ').title()}"
+                      f"{'  ·  ' + ARCHETYPES[c['id']] if c['id'] in ARCHETYPES else ''}").strip()
             for c in runnable
         }
         default = next((i for i, c in enumerate(runnable) if c["id"] in ARCHETYPES), 0)
@@ -69,12 +90,15 @@ def setup_panel() -> None:
             )
 
         st.divider()
-        weather = st.radio("Conditions", list(WEATHER), horizontal=True,
-                           format_func=lambda w: w.replace("_", " "))
+        # boxed pickers: a chosen setting reads as a pressed key, not a form field
+        weather = st.segmented_control(
+            "Conditions", list(WEATHER), default="dry",
+            format_func=lambda w: w.replace("_", " ")) or "dry"
         st.caption(WEATHER[weather])
 
-        era = st.radio("Era", ["2026", "2024"], horizontal=True)
-        band = st.radio("Rival band", ["test", "train"], horizontal=True)
+        era = st.segmented_control("Era", ["2026", "2024"], default="2026") or "2026"
+        band = st.segmented_control("Rival band", ["test", "train"],
+                                    default="test") or "test"
         st.caption("test is the held-out band — the honest setting")
 
         grid = st.slider("Starting position", 1, GRID_SLOTS, 8)
@@ -128,12 +152,52 @@ def stint_bar(stints) -> None:
     st.altair_chart(chart, width='stretch')
 
 
+def moments_strip(frames: list[dict]) -> None:
+    """The race's plot on one line: every stored track event plus the agent's stops,
+    scannable before the story chart gives the detail."""
+    moments = race_moments(frames)
+    if not moments:
+        st.caption("a clean race — no safety cars, no weather, and every event says so")
+        return
+    # token roles hold on the strip too: aqua is the agent's own action, alert is the
+    # red flag, everything the track did is coast — ember stays an energy word (sheet)
+    rows = pd.DataFrame([
+        {"lap": m["lap"], "kind": m["kind"], "level": i % 2,
+         "label": m["kind"].upper() if m["kind"] != "pit" else "PIT",
+         "detail": m.get("detail") or "",
+         "colour": theme.ACCENT if m["kind"] == "pit" else (
+             theme.DANGER if m["kind"] == "red" else theme.COAST)}
+        for i, m in enumerate(moments)
+    ])
+    last_lap = frames[-1]["lap"]
+    base = alt.Chart(rows).encode(
+        x=alt.X("lap:Q", title=None, scale=alt.Scale(domain=[1, last_lap]),
+                axis=alt.Axis(grid=False, labelColor=theme.FAINT, domainColor=theme.LINE)),
+    )
+    # labels alternate two heights so clustered events (a pit under its own
+    # safety car) stay legible instead of stacking into one word
+    strip = alt.layer(
+        base.mark_tick(thickness=2, size=18).encode(
+            color=alt.Color("colour:N", scale=None),
+            tooltip=["lap:Q", "kind:N", "detail:N"]),
+        base.transform_filter(alt.datum.level == 0)
+        .mark_text(dy=-16, fontSize=9, font="monospace").encode(
+            text="label:N", color=alt.Color("colour:N", scale=None)),
+        base.transform_filter(alt.datum.level == 1)
+        .mark_text(dy=-28, fontSize=9, font="monospace").encode(
+            text="label:N", color=alt.Color("colour:N", scale=None)),
+    ).properties(height=64).configure_view(strokeWidth=0)
+    st.altair_chart(strip, width='stretch')
+
+
 def race_story(frames: list[dict], stints) -> None:
     """Position against lap for the whole field: where the agent came from, where the
-    stops fell, and what the race did to both."""
+    stops fell, and what the race did to both. Rival lines stay recessive grey —
+    twenty-one team hues in one chart read as confusion, not identity (Saad's call,
+    19 Aug); who-is-who lives on the track map and the tables, where it works."""
     rows = [
-        {"lap": f["lap"], "car": car["id"], "position": car["position"],
-         "agent": car["id"] == EGO}
+        {"lap": f["lap"], "car": theme.car_label(car["id"]),
+         "position": car["position"], "agent": car["id"] == EGO}
         for f in frames for car in f["cars"]
     ]
     data = pd.DataFrame(rows)
@@ -150,7 +214,8 @@ def race_story(frames: list[dict], stints) -> None:
 
     layers = [
         alt.Chart(field).mark_line(strokeWidth=1, opacity=0.45, color=theme.CHART_FIELD)
-        .encode(x=axis_x, y=axis_y, detail="car:N"),
+        .encode(x=axis_x, y=axis_y, detail="car:N",
+                tooltip=["car:N", "lap:Q", "position:Q"]),
         alt.Chart(agent).mark_line(strokeWidth=2.5, color=theme.ACCENT)
         .encode(x=axis_x, y=axis_y,
                 tooltip=[alt.Tooltip("lap:Q"), alt.Tooltip("position:Q", title="agent")]),
@@ -186,20 +251,24 @@ def result_panel(run_id: int) -> None:
     grid = (run.get("config") or {}).get("grid_position")
 
     theme.eyebrow(f"Race strategy — as driven  ·  run {run_id}")
-    st.markdown(f"### {run['circuit_id'].replace('_', ' ')}")
+    st.markdown(f"### {FLAGS.get(run['circuit_id'], '')} "
+                f"{run['circuit_id'].replace('_', ' ').title()}")
+    theme.headline(race_headline(frames, summary, grid))
 
-    cols = st.columns(6)
-    cols[0].metric("Grid", f"P{grid}" if grid else "—")
     # position only: summary.points is the FIA table divided by points_divisor 2.5
     # (configs/env.yaml), so a P2 finish serves 7.2 and printing it would read as wrong
-    cols[1].metric("Finish", "DNF" if summary.get("dnf") else f"P{summary.get('final_position')}")
-    cols[2].metric("Stints", len(stints))
-    cols[3].metric("Stops", max(len(stints) - 1, 0))
-    cols[4].metric("Race laps", summary.get("total_laps", "—"))
-    cols[5].metric("Race time",
-                   race_clock(summary["race_time_s"]) if summary.get("race_time_s") else "—")
+    theme.stats([
+        ("Grid", f"P{grid}" if grid else "—"),
+        ("Finish", "DNF" if summary.get("dnf") else f"P{summary.get('final_position')}"),
+        ("Stints", str(len(stints))),
+        ("Stops", str(max(len(stints) - 1, 0))),
+        ("Race laps", str(summary.get("total_laps", "—"))),
+        ("Race time",
+         race_clock(summary["race_time_s"]) if summary.get("race_time_s") else "—"),
+    ])
 
     stint_bar(stints)
+    moments_strip(frames)
     race_story(frames, stints)
 
     left, right = st.columns([3, 2])
@@ -243,8 +312,7 @@ def result_panel(run_id: int) -> None:
 setup_panel()
 run_id = st.session_state.get("run_id")
 if run_id is None:
-    theme.eyebrow("SENNA")
-    st.title("Formula 1 race strategy under the 2026 regulations")
+    theme.wordmark_hero("Formula 1 race strategy under the 2026 regulations")
     st.markdown(
         "A reinforcement-learning agent decides when to pit, which compound to fit and "
         "how to spend electrical energy — every lap, against 21 rival cars, under the "
@@ -252,6 +320,16 @@ if run_id is None:
         "**Configure a race in the sidebar and run it.** The agent races it in the "
         "simulator, then this page reports what it actually did."
     )
+    theme.stats([
+        ("The field", f"{GRID_SLOTS} <small>cars</small>"),
+        ("Decisions", "2 <small>per lap</small>"),  # the two heads: pit, energy mode
+        ("Energy window", f"{SOC_WINDOW_MJ} <small>MJ</small>"),
+        ("Compliance", "masked <small>by construction</small>"),
+    ])
+    theme.eyebrow("The grid")
+    theme.team_strip()
+    st.caption("team identities are a display convention over car pairs — the "
+               "simulator models seats, not constructors")
     theme.note(
         "Nothing here is a prediction about a real grand prix. The simulator is calibrated "
         "from 2022-25 telemetry and transformed to 2026 regulations; its sim-to-real "

@@ -1,0 +1,21 @@
+# SENNA — Streamlit's own theme layer, petrol tokens (F25). CSS in app/theme.py cannot
+# reach the widget primitives (buttons, radios, sliders arrive red otherwise), so the
+# same sourced hexes from docs/reference_images/SENNA_petrol_palette_reference.png are
+# stated here too. Aqua is the resting accent per the sheet; ember never sits in chrome.
+[theme]
+base = "dark"
+primaryColor = "#2ED9C3"
+backgroundColor = "#0A1014"
+secondaryBackgroundColor = "#101A20"
+textColor = "#E4EDF2"
+
+[client]
+toolbarMode = "minimal"   # operational — no Deploy button in a research interface
+
+[server]
+enableStaticServing = true  # operational — serves app/static/ (the bundled OFL font
+                            # files) so the display face loads from this process, not
+                            # a CDN; the browser fetches /app/static/fonts/*.woff2
+
+[browser]
+gatherUsageStats = false  # operational — a dissertation artifact phones nobody home

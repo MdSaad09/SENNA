@@ -115,8 +115,12 @@ api:
 	python -m alembic upgrade head
 	python -m uvicorn api.main:app --reload --port 8000
 
+# PYTHONPATH=.: streamlit puts the SCRIPT'S directory on sys.path, not the working
+# directory, so `from app import client` dies without it — the same hole F24 patched
+# in Dockerfile.api with ENV PYTHONPATH=/app. AppTest never sees it (pytest injects
+# the root), which is why only running the real thing finds it.
 app:
-	streamlit run app/Home.py --server.port 8501
+	PYTHONPATH=. streamlit run app/Home.py --server.port 8501
 
 # everything at once: postgres, api, streamlit
 up:
