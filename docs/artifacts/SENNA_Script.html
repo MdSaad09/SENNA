@@ -1,0 +1,233 @@
+<!--
+  SENNA narration script, COMP702 video.
+  9:50 against a 10:00 ceiling. Slides carry 0:00 to 3:35, screen recording 3:35 to 9:15, close last.
+  Print to PDF: Ctrl/Cmd + P, portrait, background graphics on.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SENNA narration script</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0A1014;
+    --surface:#141F26;
+    --surface-2:#18262E;
+    --line:rgba(255,255,255,0.09);
+    --aqua:#2ED9C3;
+    --ember:#FF7A3D;
+    --coast:#7E9199;
+    --text:#E4EDF0;
+    --muted:#9BAEB6;
+    --display:'Chakra Petch',"Segoe UI Semibold",system-ui,sans-serif;
+    --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:820px;margin:0 auto;padding:64px 32px 96px;}
+
+  .eyebrow{font-family:var(--display);font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--aqua);}
+  h1{font-family:var(--display);font-size:54px;font-weight:700;letter-spacing:0.03em;line-height:1;margin:14px 0 6px;}
+  .sub{color:var(--muted);font-size:16px;line-height:1.6;margin:14px 0 0;}
+
+  .meta{
+    display:flex;flex-wrap:wrap;gap:26px;margin:26px 0 0;
+    padding:16px 20px;background:var(--surface);border:1px solid var(--line);
+    font-family:var(--display);font-size:14px;letter-spacing:0.04em;
+  }
+  .meta span{color:var(--coast);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;display:block;margin-bottom:5px;}
+
+  hr{border:none;border-top:1px solid var(--line);margin:40px 0;}
+
+  .beat{margin:0 0 32px;}
+  .head{
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    font-family:var(--display);font-size:13px;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--coast);padding-bottom:10px;border-bottom:1px solid var(--line);
+  }
+  .head .t{color:var(--aqua);font-weight:600;}
+  .head .n{color:var(--text);font-weight:600;letter-spacing:0.1em;}
+  .head .w{margin-left:auto;color:#5E7078;}
+
+  .say{
+    background:var(--surface);border:1px solid var(--line);
+    padding:20px 24px;margin:14px 0 0;font-size:17.5px;line-height:1.68;
+  }
+  .say p{margin:0 0 14px;}
+  .say p:last-child{margin-bottom:0;}
+  .say b{color:#fff;font-weight:600;}
+  .screen{background:var(--surface-2);}
+
+  .dir{display:flex;gap:12px;margin:12px 0 0;font-size:15px;line-height:1.6;color:var(--coast);}
+  .dir::before{content:"▸";color:var(--ember);flex:none;}
+
+  .box{background:var(--surface);border:1px solid var(--line);padding:20px 24px;margin:22px 0 0;}
+  .box h3{font-family:var(--display);font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:var(--aqua);margin:0 0 12px;font-weight:600;}
+  .box p{margin:0 0 10px;font-size:15px;line-height:1.6;color:var(--muted);}
+  .box p:last-child{margin-bottom:0;}
+  .box b{color:var(--text);font-weight:600;}
+
+  .aqua{color:var(--aqua);}
+  .ember{color:var(--ember);}
+
+  @media print{
+    body{background:#fff;}
+    .wrap{max-width:none;padding:0 18mm;}
+    .beat{break-inside:avoid;}
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow">COMP702 · Demo narration</div>
+  <h1>The nine minute script</h1>
+  <p class="sub">Six slides, then the screen recording, then the close. Spoken text sits in the boxes. Anything outside a box is direction and does not get read out.</p>
+
+  <div class="meta">
+    <div><span>Student</span>Mohammed Saad</div>
+    <div><span>Student ID</span>201959151</div>
+    <div><span>Supervisor</span>Dr Frank Wolter</div>
+    <div><span>Runtime</span>9:50 of a 10:00 ceiling</div>
+    <div><span>Pace</span>140 words per minute</div>
+    <div><span>Spoken words</span>about 1,360</div>
+  </div>
+
+  <div class="box">
+    <h3>Delivery notes</h3>
+    <p>140 words a minute is deliberate and slower than normal conversation. If a beat runs hot, cut the middle sentence and keep the number.</p>
+    <p>Slides run 0:00 to 3:35. The screen recording runs 3:35 to 9:15 and is the part the marking scheme weights, so protect it. The close is the last slide.</p>
+    <p>Have the browser on the run page and the editor open in a second window before you start. Verify every on screen string against a live run first, and verify again after any retrain, because the choreography is model specific.</p>
+    <p>Every figure below comes from the post repair results of 18 August 2026 in <b>docs/results/F14-evaluation.md</b>. Do not improvise better ones and do not quote the pre repair numbers as current.</p>
+    <p>Narrate in your own voice. Text to speech is not allowed and your delivery is part of the mark.</p>
+  </div>
+
+  <hr>
+
+  <div class="beat">
+    <div class="head"><span class="t">0:00</span><span class="n">Slide 1 · Title and ethics</span><span class="w">70 words · 30 s</span></div>
+    <div class="say">
+      <p>I am Mohammed Saad, student ID 201959151, supervised by Doctor Frank Wolter. This is SENNA, a Formula 1 race strategy engine built for the 2026 regulations.</p>
+      <p>Ethics first. Participant category A0 and data category C0. There are no human participants in this project. Nobody was recruited or surveyed and no data was collected from people. Everything comes from public Formula 1 timing archives, and I worked to the University's ethical guidance throughout.</p>
+    </div>
+    <div class="dir">Read the two category codes clearly. The marker is listening for them.</div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">0:30</span><span class="n">Slide 2 · The problem and the objectives</span><span class="w">85 words · 35 s</span></div>
+    <div class="say">
+      <p>A race is about sixty decisions with one reward at the flag. Once a lap you choose whether to pit, which tyre to fit, and how to spend the battery. Then the result arrives at the finish and you find out.</p>
+      <p>I set out to build four things. A simulator with physics fitted from a hundred and twenty three thousand real laps. An agent that decides inside it. An explanation for every call it makes. And an evaluation suite hard enough to tell me I was wrong, which it did.</p>
+    </div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">1:05</span><span class="n">Slide 3 · Why 2026</span><span class="w">88 words · 35 s</span></div>
+    <div class="say">
+      <p>2026 is what makes this worth doing now, and the rules are widely reported wrong. Three facts. The electric motor gives 350 kilowatts, and the 400 you have read about is the combustion engine. The battery is a four megajoule window on state of charge, not an eight megajoule pack. And the per lap deployment cap is gone.</p>
+      <p>That last one changes the job. Energy is now a stock. You spend it down, you have to earn it back, and lifting to harvest costs you lap time now to buy lap time later.</p>
+    </div>
+    <div class="dir">Slow down on the three numbers. These are the facts a viva will test.</div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">1:40</span><span class="n">Slide 4 · The system</span><span class="w">96 words · 40 s</span></div>
+    <div class="say">
+      <p>The system is one pipeline. Real laps go into Postgres, physics is fitted per circuit, eight named transformations age it to 2026, and a Gymnasium environment races 22 cars a lap at a time. MaskablePPO trains in it, a surrogate explains it, FastAPI serves it, and eleven metrics judge it.</p>
+      <p>Two rules hold it together. Illegal actions are masked out of the policy's distribution, so compliance is architecture and not a hope about training. Measured, that is zero violations in 480 races. And every constant lives in config with a comment naming where it came from. All 1,951 of them.</p>
+    </div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">2:20</span><span class="n">Slide 5 · What went wrong</span><span class="w">140 words · 60 s</span></div>
+    <div class="say">
+      <p>The best part of this project started as the worst. I was watching a race in the live view and the agent pitted on lap 3, took softs, and ran that same set 55 laps to second place. It was 99 percent sure of the call. That is not strategy. That is an exploit report.</p>
+      <p>Thirty seven of my 145 tyre wear curves had been saved with amplitude zero. Free tyres. Where the data could not see wear, the optimiser slid into its own bound and I wrote the boundary value down as a measurement. Four million steps of training found it.</p>
+      <p>The repair is on the right, and then I retrained from scratch, because a patched policy still has the broken world in its weights. Tyre failures went from 38 per hundred races to zero. The advantage over the scripted baseline came down from plus 2.3 places to plus 1.8, and that shrink is the honest part, because half a place was being bought on tyres that never wore. Against real teams' strategies, ten races, three wins, two losses, five ties. That is a wash and I call it a wash.</p>
+    </div>
+    <div class="dir">The centre of the talk. Land <span class="ember">free tyres</span> and leave a beat of silence before the repair.</div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">3:20</span><span class="n">Slide 6 · Handover</span><span class="w">34 words · 15 s</span></div>
+    <div class="say">
+      <p>That is the background. The rest is the software. One race at Bahrain from P8, followed end to end, and then the code and the environment that produced it.</p>
+    </div>
+    <div class="dir">Cut to the screen recording here. If you are recording in two takes, this is the join.</div>
+  </div>
+
+  <hr>
+
+  <div class="eyebrow">Screen recording · 3:35 to 9:15</div>
+  <p class="sub">Five beats. Four in the running system, one in the editor and the terminal. Keep the mouse slow and let each screen settle before you talk over it.</p>
+
+  <div class="beat" style="margin-top:34px">
+    <div class="head"><span class="t">3:35</span><span class="n">Demo 1 · Run a race</span><span class="w">125 words · 55 s</span></div>
+    <div class="say screen">
+      <p>This is the run page. I pick Bahrain, grid slot P8, dry weather, seed 55, and start it.</p>
+      <p>Nothing here is cached. The API validates the request, writes the run row, and races the whole grand prix on a worker thread inside the request, which takes about eighteen seconds. Health stays responsive while that happens, and there is a test that holds it to a 250 millisecond p95 with a full race running in the same process.</p>
+      <p>While it runs, one thing about this page. It computes nothing. Every number you are about to see arrived over HTTP with a database row behind it. The pit table has four columns and not the five in my proposal mockup, because the fifth was a service time the system does not actually serve.</p>
+    </div>
+    <div class="dir">Bahrain, P8, seed 55, dry. Verified 19 August. Full choreography is in docs/demo/script.md.</div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">4:30</span><span class="n">Demo 2 · Read the result</span><span class="w">115 words · 50 s</span></div>
+    <div class="say screen">
+      <p>Here is the race. P8 to P3, three stops, through a lap 16 safety car.</p>
+      <p>That headline is assembled from stored frames and never generated. A clean race gets no event clause, because there is no slot for an event that did not happen.</p>
+      <p>The moments strip puts neutralisations, weather and my own stops on one timeline. Rival stops are deliberately left off and a test pins that. You can see the agent boxing under a virtual safety car twice, which is the reactive skill the pre repair policy did not have at all. It made zero virtual safety car calls across 300 windows. This one runs at recall 0.684.</p>
+    </div>
+    <div class="dir">Hover the two VSC markers as you say the last sentence.</div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">5:20</span><span class="n">Demo 3 · Ask why</span><span class="w">195 words · 85 s</span></div>
+    <div class="say screen">
+      <p>This is the explanation page, and the layout is an argument. Reward decomposition comes first, because it is a recording of what happened. The alternatives panel is second, the policy's own probabilities with the masked rows still visible, so you can see what was never on the table and the reason code for why.</p>
+      <p>SHAP is last, collapsed, wearing a badge. It is last because it is the only panel here that is an approximation. Exact SHAP on the network priced out at roughly a billion forward passes, so I distil the policy into gradient boosted trees and run exact TreeSHAP on those. The badge says how good that stand in is: 98.3 percent agreement with the policy on pit calls, 97.7 on energy modes, measured on held out races. If a surrogate cannot clear 90, the pipeline raises and no explanation ships at all.</p>
+      <p>Every card carries a flip line as well, the nearest single change that would reverse the call. This one flips if tyre age crossed 0.32, about 13 laps old. The sweep runs against the real network and rebuilds the mask at every point, so it can never report a flip onto an action that would be illegal there.</p>
+    </div>
+    <div class="dir">Open the lap 22 card. If the 52 percent pit call is on screen, follow it with laps 53 and 54, where the decision boundary flips one lap apart.</div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">6:45</span><span class="n">Demo 4 · Watch it back</span><span class="w">105 words · 45 s</span></div>
+    <div class="say screen">
+      <p>Playback advances a lap at a time. Twenty two numbered dots, teammates hollow, SENNA ringed in aqua because it races as the eleventh team on the grid.</p>
+      <p>The colour is the physics. Aqua is harvest, ember is deployment, and the page glow re keys to the car's energy state every lap. Team colour answers who, the accent answers what, and the two never take the same job on one screen. The battery gauge drains and refills inside the four megajoule window.</p>
+      <p>The loop is not the circuit geometry and the page says so on screen, because that position channel is display only. Everything else here is a stored row, so seeking is a list index.</p>
+    </div>
+  </div>
+
+  <div class="beat">
+    <div class="head"><span class="t">7:30</span><span class="n">Demo 5 · The code and the environment</span><span class="w">245 words · 105 s</span></div>
+    <div class="say screen">
+      <p>Now the repository. Python package, FastAPI service, Streamlit app, about sixteen thousand lines in the package and fifteen thousand in tests, all in one repo with the environment pinned in a lockfile and the stack brought up by Docker compose.</p>
+      <p>This is the mask. Every rule carries a reason code that goes back out in the step info on each lap, which is how a decision card can say why an option was off the table instead of only saying that it was. This is also where the tyre repair is backstopped from the environment side. Any slick with no positive wear amplitude is dropped from the compound set the mask reads, and a circuit left with fewer than two dry compounds refuses to race.</p>
+      <p>This is the generated physics file. 1,951 values, every line naming the notebook that produced it, and since the repair the borrowed curves also name the rung of the ladder they came from. A null in here raises rather than flowing into a simulation.</p>
+      <p>This is the test I am most pleased with. It computes the naive method inside the test and asserts that it fails before asserting mine does not, so the reason for the design lives in the test and not in a comment.</p>
+      <p>And this is make verify. It regenerates the results chapter from the committed store and compares it byte for byte, checks the provenance chain, and runs in CI on every push. A clean clone can prove the numbers I just showed you.</p>
+    </div>
+    <div class="dir">Four or five files at most and do not tour the tree. Open the tabs before recording. If make verify takes more than about fifteen seconds, run it just before you record and show the finished terminal.</div>
+  </div>
+
+  <hr>
+
+  <div class="beat">
+    <div class="head"><span class="t">9:15</span><span class="n">Slide 7 · Close</span><span class="w">88 words · 35 s</span></div>
+    <div class="say">
+      <p>So that is SENNA. Zero illegal actions in 480 races, because legality is built into the architecture. An explanation for every call with its own fidelity printed next to it. And a measured answer to the question strategy analytics usually avoids, which is that 74 percent of where you finish is the event draw.</p>
+      <p>The advantage is real inside my simulator and it depends on a tyre model I cannot yet validate against a full 2026 season, and the write up says exactly that. The next feature is putting pit loss into the observation, because right now the agent has never been told what a stop costs. Thank you.</p>
+    </div>
+    <div class="dir">The disclaimer stays on screen at the end. SENNA is unofficial and not associated with the Formula 1 companies, the FIA or any team.</div>
+  </div>
+
+  <div class="box">
+    <h3>Figures used in this script</h3>
+    <p>M1 +1.788 from +2.279 · M2 3W / 2L / 5T · M5 virtual safety car recall 0.684 · M9 37.9 per 100 races down to 0 of 480 · M10 0 coerced and 0 snapped · M11 0.740 · fidelity badges 98.32 and 97.72 · 37 of 145 curves · 123,708 laps · 1,951 constants · 18 second race inside the request · 250 millisecond health p95.</p>
+    <p>All post repair, 18 August 2026, regenerated from the committed store.</p>
+  </div>
+
+</div>

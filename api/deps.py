@@ -1,7 +1,4 @@
-"""Request-scoped access to what the lifespan owns. Routes reach the engine through
-request.app.state, so tests and deploys swap it by construction — there is no
-module-level connection anywhere in the API process.
-"""
+
 
 from functools import cache
 

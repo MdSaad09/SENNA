@@ -1,14 +1,4 @@
-"""The race, lap by lap.
 
-One stored frame per lap, 22 cars — and since F25 they are ON a track: s_track is
-the serve layer's display-only synthesis of lap fraction (F11 labels it
-illustrative), drawn on a stylised loop with team colours carrying identity. The
-canvas glow reads the car's energy state per the gradient sheet: aqua while the
-lap banked more than it spent, ember when deployment won.
-
-Scrubbing and playing are reads of stored frames, never re-simulations (E-16). The
-whole race already finished before this page opened.
-"""
 
 import time
 

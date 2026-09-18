@@ -1,7 +1,4 @@
-"""GET /races/{year}/{round}: the ingested real race for replays, read from the
-flagged-superset tables (5.3.4) — the replay wants every lap row, imputation flags
-and all, and filters client-side by view.
-"""
+
 
 from fastapi import APIRouter, HTTPException, Request
 from sqlalchemy import select

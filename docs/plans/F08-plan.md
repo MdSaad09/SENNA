@@ -183,7 +183,7 @@ the default path), threaded through `stage_venv`'s existing `**env` passthrough:
   (every row: seed, config hash, budget, W&B id) plus a one-paragraph readout per
   ablation, opening with the DQN exclusion in F-18/F-22/R-06 terms.
 - A note for the reviewers: the penalty and v2-reward code paths are deliberate,
-  spec-sanctioned deviations from the CLAUDE.md never-write table (5.6.3 rows 2–3
+  spec-sanctioned deviations from the never-write table (5.6.3 rows 2–3
   are their charter); the variant modules carry that citation in comments so the
   spec-auditor flags nothing it shouldn't.
 

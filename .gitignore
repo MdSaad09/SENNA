@@ -48,3 +48,6 @@ fastf1_cache/
 
 # uv creates this on `uv run`; this project locks via requirements.txt (make lock)
 uv.lock
+
+# staged for manual deletion
+_to_delete/

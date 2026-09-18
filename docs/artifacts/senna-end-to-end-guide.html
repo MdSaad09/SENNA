@@ -1,0 +1,512 @@
+<title>SENNA, End to End</title>
+<style>
+  @font-face {
+    font-family: "Chakra Petch";
+    src: url(data:font/woff2;base64,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) format("woff2");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Chakra Petch";
+    src: url(data:font/woff2;base64,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) format("woff2");
+    font-weight: 600; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Chakra Petch";
+    src: url(data:font/woff2;base64,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) format("woff2");
+    font-weight: 700; font-style: normal; font-display: swap;
+  }
+
+  /* SENNA petrol system, dark-first (app/theme.py is the source of these hexes) */
+  :root {
+    --ground: #0A1014;
+    --surface: #101A20;
+    --raised: #17242C;
+    --line: #22333D;
+    --line-soft: #152028;
+    --text: #E4EDF2;
+    --muted: #93A8B4;
+    --faint: #5E7583;
+    --accent: #2ED9C3;      /* aqua — harvest; here: mechanism, explanation */
+    --ember: #FF7A3D;       /* ember — deploy; here: a decision spent, an alternative rejected */
+    --accent-dim: rgba(46, 217, 195, 0.12);
+    --ember-dim: rgba(255, 122, 61, 0.10);
+    --display: "Chakra Petch", "Avenir Next Condensed", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --measure: 70ch;
+    --rail: 16.5rem;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --ground: #F2F6F7;
+      --surface: #FFFFFF;
+      --raised: #FFFFFF;
+      --line: #D5E0E3;
+      --line-soft: #E6EDEF;
+      --text: #14202A;
+      --muted: #4E626D;
+      --faint: #7D8B93;
+      --accent: #0E8A7A;
+      --ember: #C25417;
+      --accent-dim: rgba(14, 138, 122, 0.10);
+      --ember-dim: rgba(194, 84, 23, 0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #F2F6F7;
+    --surface: #FFFFFF;
+    --raised: #FFFFFF;
+    --line: #D5E0E3;
+    --line-soft: #E6EDEF;
+    --text: #14202A;
+    --muted: #4E626D;
+    --faint: #7D8B93;
+    --accent: #0E8A7A;
+    --ember: #C25417;
+    --accent-dim: rgba(14, 138, 122, 0.10);
+    --ember-dim: rgba(194, 84, 23, 0.08);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0A1014;
+    --surface: #101A20;
+    --raised: #17242C;
+    --line: #22333D;
+    --line-soft: #152028;
+    --text: #E4EDF2;
+    --muted: #93A8B4;
+    --faint: #5E7583;
+    --accent: #2ED9C3;
+    --ember: #FF7A3D;
+    --accent-dim: rgba(46, 217, 195, 0.12);
+    --ember-dim: rgba(255, 122, 61, 0.10);
+  }
+
+  body {
+    margin: 0; background: var(--ground); color: var(--text);
+    font-family: var(--body); font-size: 16.5px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { display: flex; align-items: flex-start; gap: 3rem; max-width: 86rem; margin: 0 auto; padding: 0 2rem; }
+
+  #rail {
+    position: sticky; top: 0; flex: 0 0 var(--rail); width: var(--rail);
+    max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 3rem;
+    font-family: var(--mono);
+  }
+  #rail .eyebrow {
+    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); padding-bottom: 0.7rem; border-bottom: 1px solid var(--line);
+    margin-bottom: 0.7rem;
+  }
+  #rail a {
+    display: flex; gap: 0.6rem; padding: 0.22rem 0; text-decoration: none;
+    color: var(--muted); font-size: 0.7rem; line-height: 1.45;
+  }
+  #rail a:hover { color: var(--text); }
+  #rail a .n { flex: 0 0 1.6rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+  #rail a:focus-visible, main a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  main { flex: 1 1 auto; min-width: 0; max-width: var(--measure); padding: 2.5rem 0 6rem; }
+
+  .masthead { border-bottom: 1px solid var(--line); padding-bottom: 2rem; margin-bottom: 2.6rem; }
+  .wordmark {
+    font-family: var(--display); font-weight: 700; letter-spacing: 0.14em;
+    color: var(--accent); font-size: 1.05rem;
+  }
+  .masthead .kicker {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--faint); margin-top: 0.3rem;
+  }
+  .masthead h1 {
+    font-family: var(--display); font-weight: 700; letter-spacing: -0.01em;
+    font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1.08; margin: 0.9rem 0 0;
+    text-wrap: balance;
+  }
+  .masthead .sub { color: var(--muted); font-size: 1.02rem; margin-top: 0.9rem; max-width: 58ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 1.6rem; margin-top: 1.4rem; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+  .legend span::before { content: ""; display: inline-block; width: 0.65em; height: 0.65em; border-radius: 99px; margin-right: 0.5em; vertical-align: baseline; }
+  .legend .lg-aqua::before { background: var(--accent); }
+  .legend .lg-ember::before { background: var(--ember); }
+
+  h2 {
+    font-family: var(--display); font-weight: 600; letter-spacing: 0.01em;
+    font-size: 1.5rem; line-height: 1.2; margin: 3.4rem 0 1.1rem;
+    padding-top: 1.5rem; border-top: 1px solid var(--line);
+    display: flex; gap: 0.8rem; align-items: baseline; text-wrap: balance;
+  }
+  h2 .num { font-family: var(--mono); font-size: 0.85rem; color: var(--faint); font-weight: 400; }
+  h3 {
+    font-family: var(--display); font-weight: 600; font-size: 1.08rem;
+    margin: 2.2rem 0 0.6rem; text-wrap: balance;
+  }
+  p { margin: 0 0 1.05rem; }
+  strong { font-weight: 650; color: var(--text); }
+  em { font-style: italic; }
+  ul, ol { margin: 0 0 1.05rem; padding-left: 1.3rem; }
+  li { margin-bottom: 0.4rem; }
+  li::marker { color: var(--faint); }
+  hr { border: 0; border-top: 1px solid var(--line-soft); margin: 2.4rem 0; }
+
+  code {
+    font-family: var(--mono); font-size: 0.82em;
+    background: var(--line-soft); padding: 0.1em 0.35em; border-radius: 3px;
+    overflow-wrap: anywhere;
+  }
+  pre {
+    margin: 0 0 1.2rem; padding: 1rem 1.1rem; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px;
+    font-size: 0.78rem; line-height: 1.55; overflow-x: auto;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  /* aqua card: a mechanism, explained — the harvest side of the axis */
+  .concept {
+    background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent);
+    border-radius: 10px; padding: 1.1rem 1.3rem; margin: 0 0 1.3rem;
+  }
+  .concept .tag {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.5rem;
+  }
+  .concept p:last-child { margin-bottom: 0; }
+
+  /* ember aside: a decision spent — what was rejected, and why */
+  .why {
+    border-left: 3px solid var(--ember); background: var(--ember-dim);
+    border-radius: 0 8px 8px 0; padding: 0.9rem 1.2rem; margin: 0 0 1.3rem;
+  }
+  .why .tag {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ember); display: block; margin-bottom: 0.4rem;
+  }
+  .why p:last-child { margin-bottom: 0; }
+
+  .scroll { overflow-x: auto; margin: 0 0 1.4rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.8rem; font-family: var(--mono); }
+  th, td { text-align: left; vertical-align: top; padding: 0.5rem 0.9rem 0.5rem 0; border-bottom: 1px solid var(--line-soft); }
+  th {
+    font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--faint); font-weight: 400; border-bottom: 1px solid var(--line); white-space: nowrap;
+  }
+  td { color: var(--muted); font-variant-numeric: tabular-nums; }
+  td:first-child { color: var(--text); }
+
+  figure { margin: 0 0 1.4rem; }
+  figcaption { font-family: var(--mono); font-size: 0.68rem; color: var(--faint); margin-top: 0.5rem; }
+  svg { max-width: 100%; height: auto; }
+
+  @media (max-width: 1000px) {
+    .wrap { display: block; padding: 0 1.25rem; }
+    #rail { position: static; width: auto; max-height: none; padding: 1.5rem 0 0; border-bottom: 1px solid var(--line); }
+    #rail .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0 1.5rem; }
+    main { max-width: none; padding-top: 1.5rem; }
+  }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  h2, h3 { scroll-margin-top: 1.5rem; }
+</style>
+
+<div class="wrap">
+<nav id="rail" aria-label="Contents">
+  <div class="eyebrow">SENNA · end to end</div>
+  <div class="list">
+    <a href="#s1"><span class="n">1</span><span>The problem</span></a>
+    <a href="#s2"><span class="n">2</span><span>The 2026 rulebook</span></a>
+    <a href="#s3"><span class="n">3</span><span>Data</span></a>
+    <a href="#s4"><span class="n">4</span><span>Physics fits</span></a>
+    <a href="#s5"><span class="n">5</span><span>The tyre repair</span></a>
+    <a href="#s6"><span class="n">6</span><span>Synthetic 2026</span></a>
+    <a href="#s7"><span class="n">7</span><span>The environment</span></a>
+    <a href="#s8"><span class="n">8</span><span>Reward</span></a>
+    <a href="#s9"><span class="n">9</span><span>Opponents and the oracle</span></a>
+    <a href="#s10"><span class="n">10</span><span>Training</span></a>
+    <a href="#s11"><span class="n">11</span><span>Explainability</span></a>
+    <a href="#s12"><span class="n">12</span><span>Serving and the interface</span></a>
+    <a href="#s13"><span class="n">13</span><span>Evaluation</span></a>
+    <a href="#s14"><span class="n">14</span><span>Results, honestly</span></a>
+    <a href="#s15"><span class="n">15</span><span>Engineering doctrine</span></a>
+    <a href="#s16"><span class="n">16</span><span>The decision ledger</span></a>
+  </div>
+</nav>
+
+<main>
+<header class="masthead">
+  <div class="wordmark">SENNA</div>
+  <div class="kicker">race strategy · 2026 · MSc dissertation, COMP702</div>
+  <h1>SENNA, End to End</h1>
+  <p class="sub">Every implemented concept in the system, the theory underneath each one, and why it was chosen over its alternatives. Written to be read straight through, or dipped into per section.</p>
+  <div class="legend">
+    <span class="lg-aqua">aqua boxes explain a mechanism</span>
+    <span class="lg-ember">ember boxes record a rejected alternative</span>
+  </div>
+</header>
+
+<h2 id="s1"><span class="num">01</span>The problem</h2>
+
+<p>A Formula 1 race is a sequence of about sixty decisions. Once per lap, a strategist chooses whether to pit and onto which tyre, and how to spend the car's electrical energy. The reward arrives once, at the flag. The state that matters — tyre wear, fuel load, charge in the store, the gaps to the cars around — evolves under events nobody controls: safety cars, rain, failures, other teams' stops.</p>
+
+<p>SENNA frames that as a reinforcement-learning problem and then does the three things a template project would skip. It builds the simulator from fitted physics with every constant's origin recorded. It makes the agent's compliance with the sporting rules a property of the architecture rather than a hope about training. And it measures its own claims hard enough that the headline result had to be corrected mid-project — which turned out to be the best chapter in the story (§5).</p>
+
+<div class="concept"><span class="tag">underlying concept · Markov decision process</span>
+<p>An MDP is the formal shape of "decide, see what happens, decide again": states, actions, a transition function, a reward. Reinforcement learning is the family of methods that learn a policy — a mapping from state to action — by acting in the MDP and improving from the reward signal. SENNA's MDP puts one decision on each lap: the episode is the race (44–70 steps), the state is a 32-number summary of the car and its context, and the reward is dominated by championship points at the flag. The agent has no plan. It makes one decision, on one lap, with the information available on that lap, and then does it again 56 more times.</p></div>
+
+<div class="why"><span class="tag">why one decision per lap, not corner-by-corner</span>
+<p>Strategy lives at lap resolution: pit calls and energy modes are lap-scale choices, and every quantity a strategist reasons about (degradation, fuel effect, pit loss) is fitted per lap. A corner-level or continuous-time simulator would cost hours per race instead of seconds, would demand physics nobody can fit from public data, and would add no strategic information. A 22-car, 57-lap race simulates in seconds; training throughput was measured at 18,477 environment steps per second on a 10-core laptop, which prices an 8-million-step training run at about seven minutes.</p></div>
+
+<h2 id="s2"><span class="num">02</span>The 2026 rulebook, corrected</h2>
+
+<p>The 2026 technical regulations change the strategy problem more than any ruleset since 2014, and they are widely misreported. An earlier version of this project's own specification had them wrong; the v3 specification is the audited correction, and three facts from it drive everything downstream:</p>
+
+<ul>
+<li><strong>The MGU-K delivers 350&nbsp;kW</strong> — roughly triple the old era's 120&nbsp;kW — held flat to 290&nbsp;km/h and tapering to zero at 355&nbsp;km/h. The 400&nbsp;kW figure that circulates is the combustion engine.</li>
+<li><strong>The energy store is a 4&nbsp;MJ state-of-charge window</strong>, not an 8&nbsp;MJ battery. FIA Art&nbsp;5.4.9 constrains the difference between maximum and minimum state of charge — a window, verified against the regulation text, and modelled exactly as SOC&nbsp;∈&nbsp;[0,&nbsp;4].</li>
+<li><strong>There is no per-lap deployment cap.</strong> The 2014–2025 rule capping store-to-motor energy at 4&nbsp;MJ per lap is absent from the 2026 text. The era is <em>recovery</em>-limited instead, through a per-circuit harvest ceiling.</li>
+</ul>
+
+<p>The last point is the one that reshapes strategy. When deployment is capped, energy is a scheduling problem inside a fixed budget. When recovery is capped and deployment is not, energy is a stock: the driver can spend it down and must earn it back, and lifting to harvest costs lap time now to buy lap time later. An agent that can price that trade is doing something no previous-era agent had to. These facts are regression-tested — the physics table lives in the project's root instructions, and a wrong value there fails the viva regardless of the engineering.</p>
+
+<h2 id="s3"><span class="num">03</span>Data: two sources, one contract</h2>
+
+<p>Every later stage reads a local Postgres store, never the internet. Ingestion fetched every Race and Sprint session from 2022–2026 once — 123,708 laps across 231 checkpointed session loads in the frozen snapshot — from two public sources: FastF1 (pinned at ≥3.7, the line backed by the Jolpica API) for laps and telemetry, and OpenF1's historical tier for pit and stint data.</p>
+
+<div class="concept"><span class="tag">implemented concept · the cleaning contract</span>
+<p>Nothing is deleted; everything is flagged. In-laps and out-laps poison a pace fit but are exactly what a pit-timing fit needs; non-green laps poison both but are what an event-rate fit is made of. So ingest stores the flagged superset and every fit filters at query time. Cleaning at write time would make every cleaning decision irreversible. For 2024, the representative season: 3,259 of 29,023 laps flagged inaccurate (11.2%), 1,721 in/out laps separated, 2,143 flagged non-green.</p></div>
+
+<div class="concept"><span class="tag">implemented concept · resumability as a transaction property</span>
+<p>The per-session checkpoint flips to <code>loaded</code> as the last statement <em>inside the same transaction</em> that writes the rows. A crash therefore leaves either a completed session or no trace — there is no half-loaded state to repair, and an interrupted bulk run resumes exactly where it stopped. This mattered on day one: FastF1's 500-calls-per-hour budget killed the first bulk run mid-flight, and nothing was lost.</p></div>
+
+<div class="why"><span class="tag">why FastF1 + OpenF1, not Ergast</span>
+<p>The Ergast API shut down in early 2025. The rejection is enforced, not asserted: a test greps every tracked source file for the dead service's name, assembling the search string at runtime so the guard survives scanning its own file — the first version failed CI on its own filename. OpenF1's real-time tier is paid and out of scope by design; its client raises before any network call for a year it does not cover.</p></div>
+
+<h2 id="s4"><span class="num">04</span>Physics fits: honest coefficients</h2>
+
+<p>The fitting battery turns the store into every constant the simulator claims — 1,951 leaf values in <code>configs/physics_params.yaml</code>, each with a comment naming the notebook that produced it. Three fits carry the interesting statistics.</p>
+
+<h3>Pace, fuel and track evolution — one regression, because two would lie</h3>
+
+<div class="concept"><span class="tag">underlying concept · identifiability and the VIF</span>
+<p>Fuel burn and track evolution both make laps faster as a race runs. Fit either alone and it books the other's share of the shared downward trend, so they are estimated jointly, with session, driver and compound fixed effects. But constructed fuel inside a single race is exactly affine in lap number — a straight line in the very variable evolution also follows — so within one race the two effects have <em>no unique solution</em>. Collinearity is policed by the variance inflation factor, VIF = 1/(1−R²) of one regressor on the rest: when it exceeds threshold, the code refits without the fuel column, reports the combined trend the data does pin down, and marks the circuit <code>identified: false</code> rather than publishing an arbitrary split.</p></div>
+
+<p>The result is uncomfortable and reported anyway: of 29 circuit-era joint fits, exactly one is identified — Canada 2026, whose sprint weekend gives the pooled fit two race lengths and enough departure from a straight fuel line to separate the effects. Every other circuit borrows the pooled mass sensitivity, inverse-variance weighted over identified fits only, and every borrowed value is flagged where it lands.</p>
+
+<div class="why"><span class="tag">why pool identified fits only</span>
+<p>Pooling every weak estimate across 23 circuits gave a mass sensitivity of −0.0055&nbsp;s/kg — a heavier car lapping <em>faster</em>. That is a bias signature, not noise: identification comes from post-interruption laps, which also carry cold tyres and a bunched field, and the fit books those effects to fuel. A later refit added a second guard after Austria's fuel effect became separable with a <em>negative</em> sign — identification now requires a positive estimate as well as a separable design, because one unphysical circuit would otherwise have stamped its sign onto two thirds of the 2026 transform.</p></div>
+
+<h3>Degradation — a power law that must not double-count</h3>
+
+<p>Tyre wear is <code>grip(age) = 1 − a·age^b</code>, fitted per circuit and compound by bounded least squares — not on raw lap times but on the joint fit's <em>partial residuals</em>, the residual with the age terms added back, so the wear curve cannot re-explain fuel or evolution. The fitter raises rather than filters when handed in/out or flagged laps: an in-lap's +20&nbsp;s sits at stint end, where it reads as a tyre cliff — corrupting exactly the coefficient the fitter exists to produce.</p>
+
+<h3>Hazards — statistics chosen for where data is thinnest</h3>
+
+<div class="concept"><span class="tag">underlying concept · Wilson intervals and boundary shrink</span>
+<p>Safety-car rates are estimated from four or five races per circuit, often with zero events. The normal-approximation interval collapses to zero width at zero-of-n — certainty from absence — so hazard bands use the Wilson score interval, which stays honest at the boundary. The per-lap conversion λ&nbsp;=&nbsp;−ln(1−p)/laps carries a boundary shrink too, because the first version produced log(0) for a circuit with one race and one safety car, which simulated as a safety car on every lap of every race.</p></div>
+
+<h2 id="s5"><span class="num">05</span>The tyre repair: a fitted curve is not a measurement</h2>
+
+<p>This is the project's most instructive failure, so it gets its own section. Thirty-seven of 145 degradation curves shipped with amplitude <code>a&nbsp;=&nbsp;0.0</code> — tyres that never wear. Not because anyone typed a zero: where the age signal was flat, the bounded optimiser slid into its <code>a&nbsp;≥&nbsp;0</code> constraint, and the boundary value was serialised as if it were a measurement. "This tyre does not wear" and "this data cannot see wear" are different claims, and a point estimate cannot tell them apart.</p>
+
+<p>Nobody's test caught it. The agent did. Four million steps of gradient ascent found the free tyres the way a fuzzer finds a buffer overflow: the trained policy pitted on lap 3, took softs, and ran the same set 55 laps to a podium — and the evaluation suite's tyre-failure metric (M9) read 37.9 failures per hundred races against a target of two. Watching one such race in the live view (run 491) was the audit report. The policy's habit was not a bug in the policy; it was the optimal answer to a broken world.</p>
+
+<div class="concept"><span class="tag">implemented concept · signal floors and the repair ladder</span>
+<p>The repair borrows the detection-limit principle from measurement science: below the limit you say "not detected", never "zero". A fit now counts as identified only if its predicted lap-time effect at its own maximum observed age clears half the circuit's clean-lap sigma, and its exponent sits off the fit bounds. An unidentified fit enters a ladder with named rungs — a pooled per-compound refit over fractional residuals, then the other era's identified pooled curve, then refusal — and every substitution records its source in the artifact forever, borrows shape only, and keeps the circuit's own observed-age horizon so the failure cliff stays locally evidenced. A write gate in the serialiser makes the original defect unrepresentable: a bound-clip can never again be stored as a curve. And the scenario builder backstops the physics from the environment side, dropping any never-wearing slick from the compound set the action mask reads.</p></div>
+
+<div class="why"><span class="tag">why retrain from scratch, not patch the policy</span>
+<p>The frozen weights encoded "tyres are free" in every layer. Fine-tuning preserves exactly those priors, leaving open forever whether a surviving behaviour is strategy or fossilised exploit. So the world was fixed and the agent re-learned it from scratch, with the curriculum, gates and budgets byte-unchanged — which makes the before/after comparison clean: what survived (+1.79 places) was earned in the honest world; what vanished (half a place of the old +2.28, and the lap-3 habit) is thereby shown to be the exploit.</p></div>
+
+<p>One more honesty mechanism was paid for in wall clock. The synthetic transform that scales 2024 tyre curves to 2026 works by ratio — and run through a <em>repaired</em> target, the ratio re-emits a borrowed amplitude under a label naming a donor circuit, laundering the borrowing out of the provenance chain. The review caught two curves doing exactly this, the transfer now requires identified curves at both ends, and enforcing that meant a second full retrain-and-evaluation loop. The metric that found the defect now certifies the repair: M9 is 0 failures in 480 races.</p>
+
+<h2 id="s6"><span class="num">06</span>Synthetic 2026: eight named transformations</h2>
+
+<p>No 2026 season existed when the project started, and only part of one exists now. The simulator's 2026 physics is the fitted 2024 physics aged forward through eight named transformations — T1 powertrain reprofile, T2 aero scaling, T3 mass shift, T4 energy accounting, T5 tyre compounds, T6 fuel budget, T7 overtaking refit, T8 residual recalibration — then graded out of sample against real 2026 rounds under a split frozen before any fit existed.</p>
+
+<div class="concept"><span class="tag">underlying concept · the grey-box effective car</span>
+<p>Rather than feeding published aero constants of uncertain grade into every lap, a least-squares fit against 2024 telemetry recovers an effective power and drag from <code>m·a&nbsp;=&nbsp;P/v&nbsp;−&nbsp;βv²</code> — density, frontal area, torque and rolling resistance absorbed into two measured numbers, with only the sourced 2026 deltas applied on top. The straight-line profile integrates this by fourth-order Runge–Kutta over distance, with the 350&nbsp;kW taper implemented as regulated, and a closed-form check pins the integrator exactly where drag is zero. The overtaking model (T7) is a logistic regression fitted by hand-rolled Newton–Raphson over 21,159 mined passing opportunities.</p></div>
+
+<div class="why"><span class="tag">why physics scaling, never a learned generator</span>
+<p>A GAN or learned simulator could imitate 2024 racing, but every transformation here is a formula that can be defended line by line — and attributed. When the held-out validation failed (below), the failure could be traced to a specific mechanism, which is exactly what a black-box generator cannot offer. The specification writes this as a rule: synthetic data by physics scaling only.</p></div>
+
+<p><strong>And the validation did fail.</strong> Against held-out 2026 rounds, the lap-time distributions miss the Kolmogorov–Smirnov target on every circuit tested — simulated laps run 3.7–6.1&nbsp;s fast, because the drag-reduction straight-line gain outweighs the downforce-reduction corner loss and the pooled residual only partly corrects it. That is metric M8, reported with its mechanism. The fix is named as future work rather than applied, because tuning on the held-out rounds is precisely the contamination the frozen split exists to prevent. Relative comparisons — agent versus baseline inside the same simulator — survive; absolute pace claims do not, and the write-up says which of its claims is which.</p>
+
+<h2 id="s7"><span class="num">07</span>The environment: masks before physics</h2>
+
+<p><code>F1RaceEnv</code> is a 22-car, one-decision-per-lap Gymnasium environment. Each step advances all 22 cars one lap through one fitted model: base pace plus fuel effect plus degradation plus energy-mode delta plus traffic, status multipliers, wet penalty, and driver noise; energy is harvested under the per-circuit cap, deployed against the request, and the state of charge hard-clipped to [0,&nbsp;4]. Events — safety cars, rain, failures, red flags — arrive from fitted hazards. Ordering falls out of cumulative time; the pit lane is a FIFO with drawn service times.</p>
+
+<div class="concept"><span class="tag">implemented concept · the observation and action spaces</span>
+<p>The observation is 32 named dimensions, every one justified in the specification: lap progress, position, grid delta, compound one-hot, tyre age and grip estimate, pit count, the two-compound flag, fuel fraction, state of charge over 4&nbsp;MJ, last-lap harvest and deploy fractions, gaps ahead and behind, rivals' tyre-age deltas, the override window, track status, weather, wetness, track temperature — all pre-scaled to roughly [−1,&nbsp;1] at encoding, so a served model degrades gracefully rather than silently if normalisation statistics drift. The action is <code>MultiDiscrete([6,&nbsp;4])</code>: a pit head (stay out, or pit onto one of five compounds) and an energy head (conserve, balanced, attack, defend). Two heads, not 24 flat combinations, because pitting and energy are genuinely independent decisions — you can attack without pitting — and flattening hides that structure from both the policy and the explainer.</p></div>
+
+<div class="concept"><span class="tag">implemented concept · action masking with reason codes</span>
+<p>Discrete legality lives in a boolean mask per head: pit lane closed, slicks above the wetness threshold, intermediates outside their band, the two-compound rule forcing a stop on the last feasible dry lap, attack mode below the state-of-charge floor, and any compound the circuit has no honest fit for. Continuous legality lives in physics clipping — deployment limited to what the store allows, harvest capped, SOC bounded. Every masked rule carries a reason code republished in the step info, because a decision card must be able to say <em>why</em> an option was off the table. No head may ever be left entirely false (a policy cannot sample from a fully forbidden head), and the invariant survives even the forced last-lap pit because scenario construction refuses a circuit with fewer than two fitted slicks.</p></div>
+
+<div class="why"><span class="tag">why masks, not reward penalties</span>
+<p>A penalty only discourages an illegal action in expectation, after training converges: early in training and on rare states, penalised agents still break rules — and a punished agent has learned a trade-off it will re-price whenever the payoff exceeds the fine. A masked agent cannot express the illegal action at all; it did not consider a slick in the wet and reject it, it was never offered it. Compliance becomes an architectural property: zero illegal or coerced actions across 480 evaluation races and a 100,000-transition property test, with the penalty architecture kept alive as an ablation arm so the choice is defended with a measurement (§10).</p></div>
+
+<div class="concept"><span class="tag">implemented concept · the event trace and the deterministic twin</span>
+<p>Same seed is not same race. The environment consumes randomness at a policy-dependent rate — a tyre only rolls for failure past its cliff, a stop only draws a service time when it happens — so two policies handed the same seed diverge in their <em>events</em> after their first different decision, and naive same-seed pairing compares different races. Paired evaluation therefore runs on an EventTrace: one leg records every random event the environment actually applied (status, weather, failures, rival stops, grid, driver offsets), and both legs replay that frozen trace with noise off. Recording what was applied, rather than how rivals decided it, means a later rewrite of the rival model leaves old twins replaying identically. On a twin, the ego's own tyre failure is recomputed as a hard deterministic cap rather than a hazard roll, so an oracle plan cannot win by banking on a lucky non-failure.</p></div>
+
+<p>One structural rule keeps all of this fast: nothing pandas-shaped is reachable from <code>step()</code>. State is a struct of numpy arrays, every constant is distilled at construction into a frozen scenario object, and a test spawns a clean subprocess, imports the environment, and asserts no pandas module was pulled in.</p>
+
+<h2 id="s8"><span class="num">08</span>Reward: three terms, and the twelve that were removed</h2>
+
+<p>The reward is exactly three terms. Pace shaping — a small per-lap term scaled by each circuit's clean-lap sigma so it means the same thing at Monaco and Monza. A position term in potential-based form. And terminal championship points (the 2026 table scaled down by 2.5), with a DNF paying zero rather than negative — retirement already forfeits everything, and a penalty would double-count the risk.</p>
+
+<div class="concept"><span class="tag">underlying concept · potential-based shaping</span>
+<p>The earlier design paid a bonus for gaining places, and agents farmed it: weave into dirty air, drop a place, retake it, collect again — an oscillation pump that turns pathology into income. Potential-based shaping (Ng, Harada and Russell, 1999) fixes the class of exploit, not the instance: define a potential Φ over states — here −0.1&nbsp;×&nbsp;position — and reward only the <em>change</em> γ·Φ(s′)&nbsp;−&nbsp;Φ(s). Over any closed loop the telescoping sum is exactly zero: work P5&nbsp;→&nbsp;P4&nbsp;→&nbsp;P5 as often as you like, the shaping nets nothing, and the only way to accumulate it is to finish higher than you started. The theorem's condition is that the shaping γ matches the training γ; SENNA trains at 0.997 against shaping at 1.0, a mismatch quantified at roughly 0.0003 per lap per position and stated rather than hidden.</p></div>
+
+<div class="why"><span class="tag">why the twelve-term reward survives as an ablation</span>
+<p>The rejected reward is not deleted — <code>reward_v2.py</code> reconstructs all twelve terms from the old specification's own text, pathologies included, because reproducing the flaws faithfully is what makes the comparison honest. Trained as an ablation arm it costs about a point against the matched control, and its dominance ratio — shaping magnitude against terminal objective — is 0.029 against the headline's 2.221: the twelve terms bury the objective they were meant to support. That is reward hacking expressed as a single number.</p></div>
+
+<h2 id="s9"><span class="num">09</span>Opponents, baselines and the oracle</h2>
+
+<p>The other 21 cars are scripted archetypes, not learned agents — the single most common misunderstanding about the project. Three archetypes (undercutter, tyre-saver, opportunist) differ in pit-trigger tyre age, safety-car response probability, noise scale and compound preference, with each race drawing thresholds from a band. The training band and the held-out test band are disjoint by construction — rejected at parse time if they overlap — and the test band pushes <em>further</em> toward each archetype's character, so held-out results measure robustness to harder unseen opponents rather than memorisation. The scripted baseline is run under both bands so opponent difficulty is separable from the agent's own gap.</p>
+
+<p>Three baselines calibrate every claim: an engineer heuristic mirroring a real pit wall's ladder; a replayed-real baseline that runs the recorded stops of an actual race (counting every stop the mask forces it to move); and random-legal as the floor. Above them sits a full-information oracle — a two-stage dynamic-programming strategist re-solved on the frozen event trace — whose seven assumptions are published verbatim in its docstring, because an easy oracle flatters the agent.</p>
+
+<div class="why"><span class="tag">why an oracle ceiling, not a Monte Carlo competitor</span>
+<p>The proposal named a Monte Carlo search baseline. A search is a competitor the agent might beat; an oracle is a bound it cannot. The concern behind the proposal's version — that a starved search flatters the agent — is answered more strongly by full information than by a bigger rollout budget, because an oracle cannot be starved. The cost is a weaker-sounding sentence: the honest phrasing is "outperforms scripted baselines, measured against a full-information upper bound", and the regret metric reports the gap to that bound rather than a win over it.</p></div>
+
+<h2 id="s10"><span class="num">10</span>Training: MaskablePPO through gates</h2>
+
+<div class="concept"><span class="tag">underlying concept · PPO, and what masking adds</span>
+<p>PPO — proximal policy optimisation — is a policy-gradient method with a stability contract: collect a batch of experience, estimate each action's advantage (how much better it did than expected, via generalised advantage estimation), then update the policy while <em>clipping</em> how far any action's probability may move in one step. That clip is why PPO tolerates long horizons and noisy rewards. MaskablePPO adds one mechanical change with architectural consequences: before sampling and before the update, forbidden actions' logits are set to −∞, so illegal actions carry probability zero in both rollout and gradient. The policy is a small MLP — two 256-unit layers per head — because a 32-dimensional observation needs no more, and a small policy keeps the explainability surrogate faithful.</p></div>
+
+<div class="why"><span class="tag">why not DQN</span>
+<p>The exclusion is architectural, not compute. The action space is two independent heads, and the available DQN implementations need one flat discrete space; flattening back to twelve entangled actions would undo the exact correction that separated the heads. The audit finding is worded that way — "a flat 12-action space entangles two independent decisions" — and PPO's clipped objective is also simply the safer choice on a 60-step horizon with a terminal-heavy reward.</p></div>
+
+<div class="concept"><span class="tag">implemented concept · a competence-gated curriculum</span>
+<p>Training runs three stages: A, solo car at Monza, dry, no incidents — learn to drive the energy system and take a sane stop; B, six circuits with 21 rivals and safety cars — learn traffic; C, all 24 circuits with weather and red flags — the full problem. The gates are competence tests, not step counts: Stage A requires a plateau plus race time within 1.5% of a scripted reference; Stage B requires beating the rule-based baseline on at least 55% of 200 paired races. Budgets exist only as ceilings, and the design makes the alternative unrepresentable — no gate function's signature accepts a step budget, so "advance on schedule" cannot be written. A stage that passes logs <code>transition</code>; a stage that runs out logs <code>budget_stop</code>, and the two are different events in the record. A step count measures effort, not competence.</p></div>
+
+<div class="concept"><span class="tag">implemented concept · the checkpoint triplet</span>
+<p>Observations are normalised by running statistics (VecNormalize) — which makes those statistics learned state. Weights loaded without them receive raw values where z-scores are expected, and nothing throws; the model just plays confidently wrong. So a checkpoint is an atomic triplet — weights, normalisation statistics, manifest — with both artifacts' SHA-256 stamped in the manifest before the directory swaps in. The failure mode is not discouraged; it is made impossible to hit silently.</p></div>
+
+<p>Two details are easy to miss and carry real weight. Learning-rate and entropy decay follow the <em>global</em> step across all stages, because per-stage decay would jump the learning rate back up exactly when the observation distribution shifts. And the whole training stack is deterministic enough that an unplanned experiment became the project's best reproducibility evidence: the full slate was retrained under two different config fingerprints and every one of eleven runs — three seeds, eight ablation arms — returned scores identical to the last float digit, with byte-identical weights.</p>
+
+<p>The frozen slate is the post-repair one: seeds 101, 211, 331 scoring 5.485, 5.415 and 6.232 mean validation points, seed 331 promoted. Notably, two of the three seeds ran Stage C to its ceiling on the repaired physics where the free-tyres slate had exited every stage by gate — an honest world is harder to stop improving in.</p>
+
+<h2 id="s11"><span class="num">11</span>Explainability: a surrogate with a published badge</h2>
+
+<div class="concept"><span class="tag">underlying concept · SHAP values</span>
+<p>A SHAP value is a feature's average marginal contribution to a prediction, computed under the Shapley axioms from cooperative game theory — the one attribution scheme where contributions provably sum to the prediction's difference from a baseline. Two things matter in practice. First, every SHAP value is <em>relative to a background</em>: "gap behind contributed 0.22" means nothing without saying compared to what. SENNA's background is 1,024 states stratified by circuit, race phase and track status with an even share per stratum — deliberately not proportional, because safety-car laps are a few percent of all laps and a proportional draw would nearly erase exactly the states the interesting pit calls live in. Second, exact SHAP is cheap only for trees. TreeSHAP computes exact values in milliseconds; the model-agnostic kernel explainer on this project's evaluation set priced out at roughly a billion forward passes. Not slow — infeasible.</p></div>
+
+<p>So SENNA does not explain the neural policy directly. It distils the policy into one gradient-boosted tree model per action head — XGBoost, trained on 200,000 recorded (state, action-distribution) pairs, soft targets fitted by weighted row expansion so the stock objective learns full distributions — and runs exact TreeSHAP on the surrogate for every decision. The honesty of that move rests on three mechanisms:</p>
+
+<ul>
+<li><strong>A fidelity badge, measured and printed.</strong> Top-1 agreement between surrogate and policy on <em>held-out episodes</em> — an episode-level split, because consecutive laps are near-duplicates and a state-level split would leak — currently 98.3% on pit decisions and 97.7% on energy modes. The badge sits on every SHAP panel.</li>
+<li><strong>Distil or refuse.</strong> A ladder of deeper surrogates is walked shallow-to-deep and the first rung clearing 0.90 agreement ships; if none clears, the pipeline raises and no explanation ships at all.</li>
+<li><strong>A gradient cross-check on the true network.</strong> For 500 sampled decisions, a gradient explainer runs on the real policy and the two attributions are compared by Spearman rank correlation (mean 0.611) — ranks, not magnitudes, because tree margins and network logits share no scale and feature <em>ordering</em> is what the card actually claims.</li>
+</ul>
+
+<div class="concept"><span class="tag">implemented concept · flip probes that cannot lie</span>
+<p>Each decision card carries a flip line — the single feature change that would reverse the call — computed by sweeping a feature across its physical range against the <em>true network</em>, not the surrogate. Two traps were found and engineered out. The mask must be rebuilt at every sweep point, because sweeping wetness or charge crosses mask thresholds, and reporting a flip onto an action that is illegal there would be a lie. And the sweep must walk outward from the recorded value rather than scanning from the range floor, so the reported flip is the <em>nearest</em> one — the first implementation returned the range floor for any decision sitting high in its range, a true sentence about the sweep and a false statement about the decision.</p></div>
+
+<p>Finally, the ghost rule: the surrogate's version is read back off disk from the manifest it just wrote — never passed along in a variable, which would compare a value to itself — and a retrain invalidates every card by construction. Explanations can never outlive the policy they explain.</p>
+
+<h2 id="s12"><span class="num">12</span>Serving and the interface</h2>
+
+<p>The dissertation build serves the simulator through one FastAPI process and reads it through three Streamlit pages. <code>POST /simulations</code> validates, writes the run row, and races the whole grand prix on a worker thread inside the request — about eighteen seconds, with a test holding <code>/health</code> to its 250&nbsp;ms p95 while a race runs. The race persists in one transaction before the response returns, so playback is an ordinary read of stored rows: a seek is a list index, and there is no stream to drop. The interface computes nothing — every number on screen arrived in an HTTP response with a database row behind it.</p>
+
+<div class="why"><span class="tag">why Streamlit here, when a React dashboard exists</span>
+<p>Both were built. The fuller build on <code>main</code> has a React and React-Three-Fiber dashboard, a WebSocket playback clock, an RQ worker and a 3D circuit-ribbon pipeline. The dissertation branch ships the proposal's own must-have — Streamlit — because the dissertation should claim what it can defend at depth, and because removing the queue, the cache and two services removes two failure modes from the reproduction story a marker has to re-run. The ceiling of the chosen stack was then reached on purpose and documented: Streamlit's widget theme sits below CSS reach (so the theme is restated at its config layer), reruns kill CSS transitions (so animation states are painted directly), and its test harness stops at the widget tree (so tests decode the charts' vega-lite payloads to assert what is actually drawn).</p></div>
+
+<div class="concept"><span class="tag">implemented concept · a design system with provenance</span>
+<p>The interface's petrol design system is the interpretability contract applied to pixels. Every token in <code>app/theme.py</code> carries an origin — sourced from the author's two reference sheets, or stylised with the choice stated. The one saturated accent pair <em>is</em> the physics: aqua for harvest, ember for deployment; team colour answers <em>who</em>, the accent axis answers <em>what</em>, and the two never take the same visual role in one view. SENNA races as the eleventh team in the harvest aqua. One reserved red means limit breach and nothing else — and when the soft compound briefly wore it, the compound was evicted to its own rose. Gradients follow written law: saturated only inside a data fill, nothing under 40 pixels, one ambient glow at a time, never behind a chart. The palette's claims are tested computationally — the battery gauge's five-step ramp is pinned luminance-monotone with the WCAG formula inside the test.</p></div>
+
+<p>The pages themselves stay post-hoc by design. No plan and no score is offered before a race, because the agent has neither — it decides lap by lap. The race headline ("P8 → P2 · one stop · through the lap-30 safety car") is template assembly over stored frames, never generated text. And the explanation page enforces its own epistemology in layout: the reward decomposition (a recording) comes first, the alternatives panel (the network's own probabilities, masked rows visible) second, and SHAP — the only panel that is an approximation — last, collapsed, wearing its fidelity badge.</p>
+
+<h2 id="s13"><span class="num">13</span>Evaluation: eleven metrics that can say no</h2>
+
+<p>The battery rolls the frozen agent over held-out ground — 24 circuits × 20 reserved test seeds against the held-out rival band — and writes one provenance-stamped row per metric. The design choices are where the rigour lives:</p>
+
+<ul>
+<li><strong>Every target ships with its gaming note</strong>, printed verbatim beside the number: how this metric could be made to look good without the behaviour improving. M1's names weak opponents (hence the held-out band); M2's names simulator optimism (hence M8 alongside).</li>
+<li><strong>Statistics are declared before the roll.</strong> M1's claim is a percentile bootstrap over 480 paired races — resample, read the interval from percentiles, point estimate stays the real mean. M2's claim is an exact paired sign test at n&nbsp;=&nbsp;10, needing nine of ten to clear α&nbsp;=&nbsp;0.05, pre-registered in config — a test picked after seeing the numbers is a test picked to pass, and pre-registration is what made reporting a wash legitimate.</li>
+<li><strong>Two rolls per race, for two questions.</strong> The live roll (noise on, hazards live) answers "what does the agent actually do"; the deterministic twin answers "what else could it have done in the same race", and counterfactual metrics branch from the twin because pricing an alternative against a noisy baseline prices the noise.</li>
+<li><strong>Denominators are published.</strong> The safety-car metric only scores windows with at least one informed lap — the action for lap L is chosen on lap L−1's mask, so an onset-lap stop was decided blind and grading it as a call would credit foresight the agent did not have. Virtual and full safety cars never pool: pooled they read as one mediocre skill, separated they read as distinct skills with distinct verdicts.</li>
+<li><strong>The era confound is measured, not waved at.</strong> Scoring a 2026-physics agent on 2024 races confounds car with strategy, so the counterfactual runs on a fine-tune warm-started onto the 2024 constants — a confound once measured at roughly two and a half points.</li>
+</ul>
+
+<div class="concept"><span class="tag">underlying concept · the luck decomposition</span>
+<p>M11 asks the question strategy analytics usually dodges: how much of a race result is the strategy at all? Fix the policy and vary the event draws; fix the draws and vary decision noise; decompose finishing-position variance between them, charging the entangled part to the decision side so the answer is a conservative lower bound. The answer: <strong>74% of finishing-position variance is the event draw.</strong> And the number moved the right way under the tyre repair — down from 78.6% — because when tyres wear, strategy explains more of the outcome. The metric noticing that the world became more strategic is a small, unplanned validation of the metric.</p></div>
+
+<h2 id="s14"><span class="num">14</span>Results, honestly</h2>
+
+<p>Post-repair, on the retrained agent (18 August 2026): three metrics met, five missed, three report-only — and a suite where every metric passes is a suite whose bars were set after the run.</p>
+
+<div class="scroll"><table>
+<thead><tr><th>Metric</th><th>Result</th><th>Pre-repair</th><th>Target</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td>M1 paired position delta</td><td>+1.788, CI [1.500, 2.081]</td><td>+2.279</td><td>≥ +1.0, CI excl. 0</td><td><strong>met</strong></td></tr>
+<tr><td>M2 vs real strategies</td><td>3W/2L/5T, p = 1.000, mean +0.50</td><td>1W/8L/1T, p = 0.039</td><td>sign test p &lt; 0.05</td><td>miss — a wash</td></tr>
+<tr><td>M3 oracle regret</td><td>median 36.0 s, mean 63.3 s</td><td>30.5 / 71.8 s</td><td>report</td><td>reported</td></tr>
+<tr><td>M4 energy utilisation</td><td>0.675; derates 0.038</td><td>0.704; derates 0.097</td><td>≥ 0.90; ≤ 0.05</td><td>miss; derate cap met</td></tr>
+<tr><td>M5 safety car</td><td>prec 0.925, recall 0.749</td><td>0.820 / 0.401</td><td>both ≥ 0.75</td><td>miss by 0.001</td></tr>
+<tr><td>M5 virtual SC</td><td>prec 0.892, recall 0.684</td><td>1.000 / 0.085</td><td>both ≥ 0.75</td><td>miss</td></tr>
+<tr><td>M6 pit-window accuracy</td><td>0.592 of 1,256 stops</td><td>0.213 of 517</td><td>≥ 0.72</td><td>miss</td></tr>
+<tr><td>M7 strategy diversity</td><td>1.853 nats</td><td>0.653</td><td>report</td><td>reported</td></tr>
+<tr><td>M8 sim-to-real</td><td>0 of 5 circuits, worst KS 0.931</td><td>unchanged</td><td>KS &lt; 0.15</td><td>miss</td></tr>
+<tr><td>M9 tyre failures</td><td>0 in 480 races</td><td>37.92 per 100</td><td>&lt; 2.0</td><td><strong>met</strong></td></tr>
+<tr><td>M10 legality</td><td>0 coerced, 0 snapped</td><td>0, 0</td><td>0 by construction</td><td><strong>met</strong></td></tr>
+<tr><td>M11 luck share</td><td>0.740, CI [0.681, 0.800]</td><td>0.786</td><td>report</td><td>reported</td></tr>
+</tbody></table></div>
+
+<p>Three findings deserve their sentences.</p>
+
+<p><strong>The advantage is conditional on the tyre model, and that conditionality survived a retrain.</strong> Grouped by where each circuit's 2026 degradation came from, the margin is +2.38 places where the transform synthesised the curve and −0.53 where the circuit leans hardest on its own repaired data. The split held across two completely different policies, which makes it a property of the evidence rather than of one agent — and the mechanism inverted: the free-tyres agent under-stopped (1.18 stops against an oracle's 1.62); the retrained agent over-stops (2.80 against 1.76). It learned that worn tyres bite; its remaining error is calibration of a real trade-off, not exploitation of a fictional one. The defensible claim: SENNA beats scripted strategies inside its own simulator by a margin that depends on the tyre model, whose fidelity to a real 2026 season has not been established.</p>
+
+<p><strong>The robustness verdict reversed.</strong> Pre-repair, the policy was close to open-loop — an opening move executed regardless of the world. Post-repair, perturbing degradation ±10% moves the first stop in the predicted direction in 25 of 25 races where it moves at all; safety-car rate now shifts a fifth of races; energy perturbations move nothing (the intended decoupling); and the grid sweep leaves the stop unchanged, which now matches the oracle. One gap survives: pit loss at ±2&nbsp;s moves stops like a coin flip, because pit loss is not among the 32 observed dimensions — the agent has never been told what a stop costs, and observing it is the named next feature.</p>
+
+<p><strong>The ablations price the architecture.</strong> Penalty-based compliance costs about half a point against the matched control and 1.8 against the best arm, while producing ~22.6 violations per race under random play where the masked environment cannot produce one. The twelve-term reward costs a point and buries its own objective. And terminal-only reward matches the headline within noise — so the three-term reward's defensible role is per-lap credit legibility, proven not assumed. (The grid last ran on the pre-repair physics; its conclusions held across two worlds but are design evidence, not current-margin claims.)</p>
+
+<h2 id="s15"><span class="num">15</span>Engineering doctrine</h2>
+
+<p>Seven habits recur across every subsystem; most were learned the hard way.</p>
+
+<ul>
+<li><strong>An inline constant is a defect.</strong> Every number lives in config with one of four origins — sourced, fitted, stylised, operational — and the generated fits file alone carries 1,951 per-line origin comments. A null means "fit me" and raises rather than flowing into a simulation.</li>
+<li><strong>Structural guarantees over learned ones.</strong> Masks over penalties; a test-seed loader that refuses every caller but evaluation; a database wipe guard that resolves names the way the driver does, because a query parameter once bypassed a path check.</li>
+<li><strong>Store the flagged superset; filter at the point of use.</strong> And when a validation fails, publish the miss with its mechanism instead of tuning it away on held-out data.</li>
+<li><strong>Deterministic is not pure.</strong> Byte-determinism is bought deliberately — total ORDER BY on every fitting query, sorted keys everywhere, watermarks that describe data rather than reading clocks — and the report's determinism test renders in three subprocesses under different hash seeds, because in-process checks cannot see set-iteration drift.</li>
+<li><strong>Design the guard so it can actually fire.</strong> Version checks read back off disk rather than comparing a variable to itself; destructive-test guards discover their modules rather than listing them; and the evaluation review found four tests that passed against deliberately broken code, which became a rule — every test must be able to fail for the reason it exists — rather than four fixes.</li>
+<li><strong>Contamination gets defence in depth.</strong> The calibration/validation split was frozen before any fit existed and is enforced at three layers: SQL filters, a runtime guard that raises, and an AST walk asserting only sanctioned modules import the held-out loader.</li>
+<li><strong>Reproduce or it did not happen.</strong> <code>make verify</code> proves from a clean clone that the committed results chapter regenerates byte-for-byte from the committed store; every result row carries model version, config hash, seed fingerprint and commit; and the whole training slate has reproduced itself to the last float digit.</li>
+</ul>
+
+<h2 id="s16"><span class="num">16</span>The decision ledger</h2>
+
+<p>Every load-bearing "chose X over Y" in one place. Each is defended at length in the design record; this is the index.</p>
+
+<div class="scroll"><table>
+<thead><tr><th>Chose</th><th>Over</th><th>Because</th></tr></thead>
+<tbody>
+<tr><td>Lap-level simulator</td><td>Corner-level / continuous time</td><td>Strategy's natural resolution; seconds per race; fittable from public data</td></tr>
+<tr><td>Action masks + physics clipping</td><td>Reward penalties</td><td>Compliance by architecture, not convergence; ablation prices the alternative</td></tr>
+<tr><td>MultiDiscrete([6, 4]) heads</td><td>Flat 24-action space</td><td>Pit and energy are independent decisions; flattening entangles them</td></tr>
+<tr><td>MaskablePPO (sb3-contrib)</td><td>DQN</td><td>DQN needs a flat space — re-entangling the heads; PPO's clip suits long horizons</td></tr>
+<tr><td>Potential-based position shaping</td><td>Direct position bonus</td><td>Telescopes to zero over cycles; provably policy-invariant; kills the oscillation pump</td></tr>
+<tr><td>Three reward terms</td><td>Twelve (v2)</td><td>The twelve bury the objective (dominance 0.029 vs 2.221); measured as an ablation</td></tr>
+<tr><td>DNF pays zero</td><td>Negative DNF penalty</td><td>Retirement already forfeits everything; a penalty double-counts risk</td></tr>
+<tr><td>Competence gates</td><td>Step schedules</td><td>A step count measures effort, not competence; budgets stay ceilings by construction</td></tr>
+<tr><td>Global-step LR decay</td><td>Per-stage decay</td><td>Per-stage re-anchoring jumps the LR exactly at each distribution shift</td></tr>
+<tr><td>VecNormalize on observations only</td><td>Normalising reward too</td><td>A running normaliser would shrink the sparse terminal signal</td></tr>
+<tr><td>Scripted rival archetypes</td><td>Multi-agent learners</td><td>One learner vs a realistic, fitted field; held-out band makes it a robustness claim</td></tr>
+<tr><td>EventTrace pairing</td><td>Same-seed pairing</td><td>Event draws are consumed policy-dependently; same seed is not same race</td></tr>
+<tr><td>Full-information oracle</td><td>Monte Carlo search baseline</td><td>A bound cannot be starved into flattering the agent; regret replaces a hollow win</td></tr>
+<tr><td>XGBoost surrogate + TreeSHAP</td><td>Kernel/gradient SHAP as primary</td><td>Exact and fast on trees; kernel priced at ~10⁹ forward passes; network kept as cross-check</td></tr>
+<tr><td>Weighted row expansion</td><td>Custom XGBoost objective</td><td>Weighted CE equals soft-target CE; stock objective, no hand-rolled gradients</td></tr>
+<tr><td>Episode-level fidelity split</td><td>State-level split</td><td>Consecutive laps are near-duplicates; leakage inflates the badge</td></tr>
+<tr><td>Spearman ranks for the cross-check</td><td>Comparing magnitudes</td><td>Tree margins and logits share no scale; the card's claim is feature ordering</td></tr>
+<tr><td>Flip probe walks outward, mask rebuilt</td><td>Scan from range floor</td><td>Report the nearest legal flip, never an illegal or far one</td></tr>
+<tr><td>Physics-scaling synthetic layer (T1–T8)</td><td>Learned generator (GAN)</td><td>Line-by-line defensibility; failures attributable to mechanisms</td></tr>
+<tr><td>Fitted effective power/drag</td><td>Sourced aero constants</td><td>Two measured numbers absorb four ungraded ones</td></tr>
+<tr><td>Signal floor + repair ladder + write gate</td><td>Serialising fit output as-is</td><td>An optimiser pinned at a bound has refused the question, not answered it</td></tr>
+<tr><td>Refit world + retrain from scratch</td><td>Patching the policy</td><td>A patched policy still encodes the broken world in its weights</td></tr>
+<tr><td>Pre-registered sign test for M2</td><td>Post-hoc test choice</td><td>A test picked after the numbers is picked to pass</td></tr>
+<tr><td>Era-matched fine-tune for counterfactuals</td><td>Scoring 2026 agent on 2024 directly</td><td>The car/strategy confound is worth points, and was measured</td></tr>
+<tr><td>Streamlit dissertation build</td><td>Presenting the React/R3F build</td><td>Claim what can be defended at depth; fewer services in the marker's reproduction path</td></tr>
+<tr><td>FastF1 ≥ 3.7 + OpenF1</td><td>Ergast</td><td>Ergast is dead; the rejection is enforced by a test</td></tr>
+<tr><td>Race inside the request</td><td>Queue + worker + cache</td><td>18 s is acceptable for a research tool; two failure modes leave the repro story</td></tr>
+</tbody></table></div>
+
+<hr />
+<p style="font-family: var(--mono); font-size: 0.7rem; color: var(--faint);">SENNA is an unofficial project and is not associated in any way with the Formula 1 companies, the FIA or any team. Evidence for every number here lives in the repository: <code>docs/results/</code>, <code>configs/</code>, <code>docs/design-and-implementation.md</code>.</p>
+</main>
+</div>

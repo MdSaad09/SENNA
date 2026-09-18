@@ -1,9 +1,3 @@
-"""Per-head action masks (spec 5.5.2). Legality that is discrete lives here; legality
-that is continuous (SOC, energy) lives in the dynamics clip. Together they make the
-policy 100% compliant by construction (F-16) — every masked rule carries a reason code
-so the decision cards can say why an option was off the table, and no head is ever left
-all-False, which MaskablePPO forbids.
-"""
 
 from dataclasses import dataclass
 

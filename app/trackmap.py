@@ -1,10 +1,3 @@
-"""The stylised track loop and the field's place on it.
-
-The environment is lap-quantised and holds no geometry; s_track is the serve
-layer's display-only synthesis of each car's lap fraction (frames.py), and this
-module gives it somewhere to be drawn: a stadium loop whose proportions are a
-visual choice, not a circuit's. Every view that draws it says so on screen (F11).
-"""
 
 import math
 

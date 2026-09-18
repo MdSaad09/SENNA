@@ -1,156 +1,138 @@
-# The demo — 90-second cut and the ten-minute tour
+# The demo — 90-second cut and the nine-minute tour
 
-> **Status (F24, 18 Aug 2026): this script is a record, not a runbook.** It
-> choreographs the React dashboard the scoped build removed (the :5173 links do
-> not resolve here) and narrates the pre-repair agent, whose Bahrain habit — the
-> lap-3-to-10 early stop — no longer exists: after the F24 tyre-model repair the
-> same seed-55 race from P8 is a wet three-stop (laps 7, 25, 42, 49) that the
-> retrained agent wins. The demo gets re-choreographed against the F25 interface
-> (docs/plans/F25-plan.md); until then the Streamlit pages at :8501 are the demo.
-
-Two scripts, one setup. The 90-second cut is the 5.13 storyboard made executable:
-the recruiter beat, engineered link by link. The ten-minute tour is the long-form
-script 5.13 asks for, written fresh (the v2 original never made it into this repo)
-with its four required edits applied: the ERS Landscape beats are now Energy view
-beats, drivers are three-letter data codes, the training beat carries the
-masking-vs-penalty ablation, and the closing beat is the reproducibility Makefile.
+Choreographed against the F25 Streamlit interface and the retrained (post-F24)
+agent, and verified against a live run on 19 Aug 2026: every on-screen string
+quoted below was read off the running system, not predicted. The previous version
+of this file choreographed the React dashboard the scoped build removed; git
+history holds it (`docs: close out F25` and earlier). The nine-minute narration
+that pairs with these beats is the published script artifact ("SENNA Nine-Minute
+Script"); the deck is its sibling. This file is the *hands* — what to click and
+what will appear.
 
 Setup, once, before any recording:
 
-    make up          # postgres, redis, api, worker, frontend
-    make demo-warm   # pre-runs the demo simulations (a cold link blocks, E-15/E-16)
-    make demo-check  # a cold Chrome reaches mid-race inside the 15 s beat — green
-                     # before you press record, every time
+    make up            # postgres, api, streamlit — or: make api & make app with .env sourced
+    open http://localhost:8501
 
-The demo pick is Bahrain (stylised, F15 plan): committed ribbon, native 2024 fits,
-ASCII slug. The seek lands on lap 8, two laps before the agent's stop — the audition
-across ten seeds showed the agent one-stops early at Bahrain (laps 3–10; the tyre
-habit M9 documents), and seed 55 carries the latest stop, so the card beat shows the
-actual pit call. 5.13's "lap ~18" is where the REAL winner stopped; that contrast is
-the counterfactual beat's line. The canonical URL (also printed by demo-warm; keep in
-sync with frontend/e2e/demo.spec.ts, scripts/warm_demo.sh and the README):
+There is no cache and no warm step on this branch: every race runs inside its
+request, measured at ~19 s. That is a feature on camera — the spinner line
+("Racing — the agent decides every lap, so this takes a moment") is true, and the
+wait is the simulation actually happening. Run the demo race once before
+recording anyway, to confirm the stack is healthy and the model version in
+`/health` is `senna-ppo-4b557848ff25-C-04177920` — cards are per-model (E-15),
+and a stale API serves a warning instead of explanations.
 
-    http://localhost:5173/strategy/live?circuit=bahrain_grand_prix&seed=55&lap=8&speed=30&year=2024&round=1&driver=VER
+## The demo pick
 
-The query string carries the union of every section's params on purpose: nav clicks
-preserve it, so "one click to the Counterfactual view" lands configured. Since F23 the
-dashboard is three tabs with a section rail, and the two storyboard jumps are inline
-links rather than nav clicks — "compare with the real race" under the decision card, and
-"where the energy went" under the delta chart. Both carry the query, so 5.13's one-click
-requirement holds; the click just moved next to the thing that prompts it.
+**Bahrain · start P8 · seed 55 · conditions dry · era 2026 · test band** (the
+sidebar's defaults except circuit and seed). Verified result, deterministic for
+this seed:
 
-## The 90-second cut (5.13, beat for beat)
+- Headline: **"P8 → P3 · three stops · through a lap-16 safety car"**
+- Stints: MEDIUM 1–6, then SOFT at laps 7, 23 and 55
+- Moments strip, in order: VSC 6 · PIT 7 · SC 16 · VSC 22 · PIT 23 · VSC 26 · VSC 39 · PIT 55
+- Position arc: P8 falls as far as P21 right after the first stop, is P2 by lap
+  20 out of the safety-car restart, finishes P3
+
+This race was picked because it performs the two headline post-repair skills on
+its own. Both early stops are decided on virtual-safety-car laps — the VSC tick
+and the PIT tick sit side by side on the moments strip, twice — which is the M5
+skill that was zero calls across 300 windows two evaluations ago. And the lap-55
+stop is the M9 story: the second soft set is 32 laps old, cliff age, and the
+agent banks a precautionary stop (and switches to defend) instead of running the
+cliff. The pre-repair agent would have run it to the flag; 37 times in a hundred
+races the tyre went first.
+
+**The alternate race, same seed:** switch Conditions to *mixed* and rerun.
+Headline: **"P8 → P2 · two stops · through lap-42 weather"** — a damp spell from
+lap 42 to 51 survived on slicks, briefly P1 at lap 51. Use it if a weather beat
+is wanted; note that *mixed* and *wet risk* produce the identical race by
+design (two weather modes, not three — the limitation is documented, and this
+demonstrates it honestly if anyone asks).
+
+## The 90-second cut
 
 | Time | Do | Say (one line) | It proves |
 |---|---|---|---|
-| 0:00 | Open the URL above in a cold tab | "This is a race strategy agent mid-race at Bahrain — live simulator, not a video." | Deployed, fast; 22 cars moving, SOC bar draining and refilling |
-| 0:15 | Let the decision card slide in as the playhead crosses the lap-10 pit call; point at the badge | "Every call is explained — top SHAP drivers, the flip condition, and the badge is the surrogate's measured agreement, not marketing." | Explainability with stated honesty |
-| 0:45 | One click: "compare with the real race", under the decision card | "Same simulator, same events: the agent against VER's actual 2024 strategy — it stopped on lap 18, my agent eight laps earlier. Era-matched, assumptions on screen." | Quantified against reality, honestly framed |
-| 1:15 | One click: "where the energy went", under the delta chart; hover a banked-energy lap | "2026 physics is recovery-limited — the harvest cap is the constraint, the 4 MJ store is a window, and the agent banks before it attacks." | The exact place a motorsport engineer probes first |
+| 0:00 | Race page, config already set; press **Run race** | "This is a live simulator, not a video — twenty-two cars, the agent deciding every lap. It takes eighteen seconds because the race is actually running." | Real work, honestly waited for |
+| 0:20 | The result lands: point at the headline, then the moments strip | "P8 to P3, three stops, through a safety car — and read the strip: VSC, pit. VSC, pit. The agent that once never reacted to a virtual safety car now boxes on the VSC lap, twice." | The repaired agent's reactive skill |
+| 0:50 | Explainability page; click the **lap-22 aqua dot** on the trace | "A 52-percent pit call — genuinely marginal — and the card says why: tyre age pushed it over, and it flips if the set were about 13 laps younger. That flip line is computed on the real network, not the surrogate." | Explainability with stated honesty |
+| 1:15 | Open the SHAP expander; point at the badge | "The SHAP panel is last and collapsed on purpose — it explains a surrogate that agrees with the policy 98.3 percent of the time, and that number is printed right here, not in an appendix." | The measured approximation |
 
-## The ten-minute tour
+## The nine-minute tour
 
-Numbers in brackets are wall-clock targets. Every number spoken on screen comes
-from the committed results (docs/results/F14-evaluation.md); do not improvise
-better ones.
+Beats keyed to the published nine-minute script (140 wpm; say-lines live there).
+Wall-clock targets in brackets. Slides 1–8 of the deck run before the interface
+appears; the live segment replaces slides 9–10's static content if you demo
+rather than present.
 
-**[0:00] Cold open — the live view, mid-race.** Same URL as the cut.
-"SENNA is my MSc dissertation: a Formula 1 strategy engine for the 2026
-regulations. What you're watching is a 22-car lap-level simulator, and the
-highlighted car is driven by a reinforcement-learning agent deciding, every lap,
-whether to pit, what tyre to take, and how to spend its electrical energy. It's
-mid-race because the link carries a seek — everything here is a real run you can
-replay from its URL."
+**[0:00–4:45] Slides 1–8.** Problem, rulebook, pipeline, compliance, reward,
+training, explainability — no interface yet. During slide 7, optionally start
+the demo race in a background tab so it is finished when you arrive (the run
+lands in that tab's session; do the switch by tab, not by re-navigating).
 
-**[1:00] Circuit view.** Click 02 CIRCUIT in the tab row.
-"The track ribbons are built from real telemetry — one GLB per circuit, twenty
-committed, generated by one make target. Nothing hand-modelled; if the pipeline
-can't build a ribbon from data, the circuit doesn't ship."
+**[4:45] Race page — the result panel.** Config: Bahrain, P8, seed 55, dry.
+If racing live, press Run during the previous sentence; the spinner covers the
+transition. When it lands: headline first ("P8 → P3 · three stops · through a
+lap-16 safety car" — composed by template assembly over stored frames, never
+generated), then the moments strip (VSC-then-PIT twice), then the race story
+chart — the aqua line falling to P21 and cutting through the grey field to P2 by
+lap 20. The pit table has four columns and no service time, because the
+simulator never serves one; say so if asked, it is a pinned test.
 
-**[1:45] Replay view.** Click Replay on the Strategy tab's section rail.
-"All 22 cars are one instanced mesh — the view holds a 45 fps floor on mid-range
-hardware with at most four DOM labels. Cars carry team colours and three-letter
-codes only: no liveries, no sponsor marks. That's deliberate — this is an
-unofficial project and it must not look like an official product."
+**[5:20] Explainability page.** The run follows in the session — no id to type.
+Three beats on one screen, in the page's own order:
 
-**[2:30] Energy view — the 2026 story.** Click Energy.
-"This is where 2026 differs from every headline you've read. The MGU-K gives
-350 kilowatts, but the binding constraint isn't deployment — it's recovery: a
-per-lap harvest cap, per circuit in config. The energy store is a 4-megajoule
-state-of-charge window, and there is no per-lap deployment cap in the 2026
-rulebook — my v2 spec had one, and removing it changed the whole strategy
-problem. Hover here: the agent runs conserve for three laps, banks charge, then
-attacks. When the FIA refined the cap from 8 to 7 megajoules this April, I
-re-rolled the frozen agent under the tighter cap: it gives up 0.13 places and
-derates more than twice as often — that sensitivity is one make target."
+1. Click the **lap-22 dot** (aqua = a pit call). The card reads *"Lap 22 — pit
+   for Soft, run balanced (probability 0.52)"*. Marginal on purpose — stay-out
+   still held 20%. Top driver: tyre age. The reward decomposition above it is a
+   recording; the alternatives table beside it is the network's own output, with
+   Intermediate and Wet marked **masked** — it did not reject them, it was never
+   offered them.
+2. Read the flip lines aloud — *"flips if tyre age crossed 0.32 (about 13 laps
+   old)"* and *"flips if last-lap harvest crossed 0.60 (about 5.1 MJ)"* —
+   computed on the true network under a rebuilt mask, walking outward from the
+   recorded value.
+3. Then the boundary moving in real time: pick **lap 53** (*stay out, 0.57 — "the
+   call held despite tyre age pushing against it"*), then **lap 54** (*pit for
+   Soft, defend, 0.71* — tyre age +3.4, grip fading, a car closing behind).
+   One lap apart, opposite calls, same physics reading. Open the SHAP expander
+   last: the 98.32 / 97.72 badge is on the caption line.
 
-**[3:45] Tyre view.** Click Tyres.
-"Degradation curves are fitted per circuit and compound from real stint data,
-with a failure cliff the simulator enforces. And here's the first honest number:
-my agent beats the engineered baseline by two positions — and part of how it buys
-them is running tyres past the cliff, 37 failures per hundred races against a
-target of two. The evaluation chapter reads those two numbers together; an agent
-that games one metric shows up in another."
+**[6:15–7:45] Slides 11–13.** Results, the conditional, robustness — the numbers
+the race just illustrated.
 
-**[4:45] Live view, the decision card.** Back to Live (the query string kept your
-run).
-"Every pit decision gets a card: the policy's probability, the top SHAP drivers
-behind it, and a flip line — the single feature change that would reverse the
-call. The explanations come from a gradient-boosted surrogate, so the badge
-matters: it agrees with the real network on 99.7 percent of pit calls and 99.1
-percent of energy calls on held-out decisions. When a card can't meet its bar,
-the system says so instead of showing you something pretty. The known weakness
-is on the card too: the agent never pits under a virtual safety car — three
-hundred counted windows, zero calls. I know why that likely happens; the
-write-up marks it as a hypothesis because I haven't proven it."
+**[7:45] Playback page.** Press **Play**: 57 laps at 0.35 s per lap is about
+twenty seconds of the whole race circulating — 22 numbered dots on the loop, the
+ego ringed in aqua, the battery gauge draining and refilling inside its 4 MJ
+window. Then scrub deliberately: **lap 2** (harvesting — the page glows aqua,
+8.5 MJ in) against **lap 6** (deploying under the VSC — ember glow, battery down
+at 1.70 MJ). **Lap 16** shows the SC banner and the field bunched. The on-screen
+note says the loop is not circuit geometry and playback never re-simulates;
+point at it — the honesty is part of the demo.
 
-**[6:15] Counterfactual view.** Click Counterfactual.
-"The recruiter question: is it better than the real teams? Split screen, same
-simulator, same event trace — the agent against VER's actual Bahrain 2024
-strategy. Divergence flashes at the pit lap; the delta chart ticks as positions
-change. Two kinds of honesty here. First, era: scoring a 2026-physics agent on a
-2024 race confounds the car with the strategy, so this leg runs a model
-fine-tuned on 2024 constants — the confound is worth two and a half points, and I
-measured it. Second, the result: over the ten frozen races it's a statistical
-wash — four wins, five losses, a pre-registered sign test that doesn't clear. The
-claim is 'beats a scripted baseline in simulation; competitive with elite human
-strategists on ten real races' — and the assumptions are printed on screen."
-
-**[8:00] Training and compliance.** W&B curves or the ablation table
-(docs/results/F08-ablations.md).
-"Training is MaskablePPO through a three-stage curriculum. Regulatory compliance
-isn't a reward penalty — illegal actions are masked out, so legality is 100
-percent by construction: zero coerced actions in 480 evaluation races. The
-masking-versus-penalty ablation backs that architecturally: the penalty arm has
-to learn the rules and still breaks them early in training; the masked arm never
-can. The reward is three terms, and the terminal-only ablation matched it — so I
-keep the shaping for interpretability, per-lap credit you can read, and I say
-exactly that in the write-up rather than claiming it drives performance."
-
-**[9:00] The closing beat — the repository.** Open the README, then the Makefile.
-"Everything you just watched reproduces from a clean clone. The Makefile is the
-pack: ingest, fit, train, eval, report — `make report` rebuilds the entire
-results chapter byte-for-byte from the committed store, and CI fails if it
-doesn't. Seeds are a frozen manifest, every result row carries the config hash
-and model version that produced it, and the tagged release ships the data
-snapshot with its digest in the repo. The parts that are wrong are documented as
-wrong, with causes. That's the engineering standard I'd bring."
-
-**[9:50] End card.** The disclaimer, verbatim: "SENNA is an unofficial project
-and is not associated in any way with the Formula 1 companies, the FIA or any
-team."
+**[8:05–9:00] Slides 14–15.** Reproducibility, close, disclaimer.
 
 ## Recording checklist
 
-- Real Chrome, not the dev preview. `make demo-check` green immediately before
-  recording (it is also the regression harness for the once-empty live canvas).
-- Quality toggle ON if the recording machine reports an Intel/masked GPU — bloom
-  defaults off there (gpuHeuristic.ts) and the scene reads flat without it.
-- Stay off `são_paulo_grand_prix` links — the non-ASCII slug is a URL-encoding
-  hazard; the demo never needs it.
-- If the canvas ever goes blank mid-take: that's the E-18 context-loss overlay —
-  reload and re-take, don't debug on camera.
-- 1080p window, dev overlay closed, no bookmarks bar. The demo URL lives in this
-  file and in `make demo-warm`'s output — paste, don't type.
-- After any retrain or `make explain`, re-run `make demo-warm` (E-15: a new model
-  version cold-starts its own cache namespace; old warmed runs stop matching).
+- `make up` green, `/health` returns the post-repair model version, and one
+  throwaway race completed before recording.
+- **Do not hard-refresh the browser mid-take** — `run_id` lives in Streamlit's
+  session state; a refresh returns every page to "No race yet". Navigate by the
+  sidebar page links only.
+- The lap picker: a click on a dot selects it and shows *"lap N picked on the
+  chart"*; the slider underneath is the fallback. To move between laps 53 and 54
+  cleanly, use the slider — clearing a chart selection on camera is fiddly.
+- Playback autoplay pauses itself if you touch the slider; that is by design
+  (scrubbing wins). Press Play again to resume.
+- 1080p window, sidebar open on the Race page, collapsed elsewhere if space is
+  tight. Dark browser chrome sits better against the petrol ground.
+- Every number spoken on camera comes from the committed post-repair results
+  (`docs/results/F14-evaluation.md`) or from this file's verified run; do not
+  improvise better ones.
+- The seed-55 race is deterministic for this model and physics. After any
+  retrain or refit, **re-verify every quoted string in this file** — headline,
+  moments, card probabilities, flip thresholds — before pressing record; the
+  choreography is model-specific by construction (E-15).
+- End card, verbatim: "SENNA is an unofficial project and is not associated in
+  any way with the Formula 1 companies, the FIA or any team."

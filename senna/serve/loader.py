@@ -1,13 +1,3 @@
-"""The frozen serving artifacts, loaded once per worker process (F-26): the F-23
-triplet (weights + VecNormalize statistics, training=False by construction) and the
-F09 surrogate set TreeSHAP needs (boosters + interventional background + fidelity).
-The E-15 pairing is enforced here the same way cards.py enforces it — the surrogate
-manifest's version is read back off disk and must name the served checkpoint.
-
-read_manifest is the API-process path: /health and /agents answer from the manifest
-alone, so the API never imports torch.
-"""
-
 import json
 import os
 from dataclasses import dataclass

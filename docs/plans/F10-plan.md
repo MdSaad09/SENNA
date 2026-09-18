@@ -64,7 +64,7 @@ Recorded here as the paper trail; added to INDEX's decisions log at /land.
 
 ### Config and contract
 - `configs/serving.yaml` — every serving constant with provenance (table below).
-- `configs/README.md`, root `CLAUDE.md`, `.claude/agents/spec-auditor.md` — a fourth
+- `configs/README.md` — a fourth
   provenance origin, **operational**: an explicit engineering default (timeout, page
   size, poll cadence), stated and reviewable, distinct from stylised visual choices.
   Saad's call, 22 Jul 2026, in preference to widening stylised.
@@ -290,4 +290,4 @@ CI, not pytest: the F-27 build check (patterns above).
 3. Counterfactuals: real plumbing with a loud pending-F14 caveat.
 4. Railway handled by Saad, guided at the end of /ship; compose is the demo fallback.
 5. Fourth provenance origin **operational** added to the interpretability contract
-   (configs/README.md, CLAUDE.md, spec-auditor) rather than widening stylised.
+   (configs/README.md) rather than widening stylised.

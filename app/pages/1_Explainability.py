@@ -1,14 +1,3 @@
-"""Why the agent made a call.
-
-The proposal's hierarchy, kept: reward decomposition is the primary explanation,
-counterfactual comparison is the secondary one, and SHAP is exploratory and collapsed.
-
-That order is not modesty. SHAP here explains a *surrogate* fitted to the agent's policy
-outputs, not the policy itself, because SHAP does not transfer cleanly to a policy
-network. The surrogate's agreement with the policy is measured rather than assumed, and
-that measurement is what bounds how far the bottom section can be trusted — which is
-exactly why it sits at the bottom.
-"""
 
 import altair as alt
 import pandas as pd

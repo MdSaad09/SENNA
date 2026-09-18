@@ -492,7 +492,7 @@ test sets the bar at 10,000 to pin the estimator, while the production threshold
 30 governs pooled multi-session fits. That comment is the difference between a test
 that documents reality and one that quietly lies.
 
-The five notebooks are thin by construction (senna/CLAUDE.md: logic in the package,
+The five notebooks are thin by construction (logic in the package,
 narrative in the notebook) — every computation is an import, and their outputs are
 the residual PNGs under `docs/fits/`. `fit_joint_pace.ipynb` carries the negative-
 pool diagnostic and the `sc_burn_factor` sensitivity check; `fit_hazards_pit_loss.ipynb`

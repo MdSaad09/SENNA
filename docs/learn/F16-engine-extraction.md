@@ -67,7 +67,7 @@ nothing is broken, the races are just different races.
 
 SENNA's tick consumes six draws per lap, in this order: track status, weather, rival pit
 choices, tyre failure (per car), pace noise, pit service. That order is now written down
-in `senna/env/CLAUDE.md` as a rule, and pinned by
+as a rule of the engine seam, and pinned by
 `test_rng_draw_order_preserved` (`tests/env/test_engine_identity.py:155`).
 
 The sharp edge here is the tyre-failure loop, `events_io.py:105`. It is a Python
@@ -273,8 +273,8 @@ none of it. Hand `advance_lap` a slick in the wet and it will run that race fait
 two-sentence answer: **the engine is a physics kernel and legality is a policy question, so
 compliance is asserted where decisions are made — the learner goes through `_coerce` and
 `_snap_pit`, the rivals through `rivals.pit_choices`, and both shop only compounds the
-wetness allows. The seam cannot enforce that for a caller, so `senna/env/CLAUDE.md` writes
-it down as a contract every new caller of the engine owes, along with a test that says so.**
+wetness allows. The seam cannot enforce that for a caller, so it is written
+down as a contract every new caller of the engine owes, along with a test that says so.**
 
 `_field_decisions` (`:297`) is where twenty-one seats plus one become twenty-two:
 
@@ -504,7 +504,7 @@ These rows were appended to `docs/learn/00-curriculum.md`:
 | Concept | First taught in | One-line definition |
 |---|---|---|
 | Behaviour-identity refactor (golden fixture) | F16 | Prove a refactor changed nothing by recording the output at the pre-change commit, committing the fixture with its generator beside it, and having the test import the generator's seed and strategy so the two cannot drift — exact equality, not `allclose`. |
-| RNG draw order is part of the seed (5.5.5) | F16 | A seeded generator hands out variate 1, 2, 3 in call order, so moving one draw site silently changes every seeded race; SENNA's six sites are documented in `senna/env/CLAUDE.md` and the per-car tyre-failure loop must stay a loop because its draw count is data-dependent. |
+| RNG draw order is part of the seed (5.5.5) | F16 | A seeded generator hands out variate 1, 2, 3 in call order, so moving one draw site silently changes every seeded race; SENNA's six sites are documented at the engine seam and the per-car tyre-failure loop must stay a loop because its draw count is data-dependent. |
 | Two-phase tick (observe, commit, run) | F16 | `begin_lap` resolves the track, every seat then commits, `advance_lap` runs the lap — forced by E-06 (rivals need the neutralisation onset before they can decide), and the seam the deferred mask-lag fix will need. |
 | Race-centric vs policy-centric (dependency inversion) | F16 | The race is a module the agent calls, not a method inside the agent's env; the evidence the old shape had failed was `serve/frames.py:34` reaching through `env._state` because there was no other door. |
 | Event source/sink seam | F16 | Seven scattered `if self._twin is not None` branches replaced by one injected object — `LiveSource` rolls events, `TraceSource` replays them, `TraceSink` records them — so the physics stops knowing replay exists (A-05). |

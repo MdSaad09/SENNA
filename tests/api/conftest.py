@@ -1,12 +1,9 @@
 """Shared fixtures for the F10 serving-API suite. Suite seed 1105 keeps it apart from
 fits (99), synth (271), env (512), strategy (704), train (846) and explain (933), so a
-cross-suite coincidence cannot mask a bug (5.5.5). The app lifespan owns Postgres and
-so `client` skips unless DATABASE_URL is set (CI provides
-service containers). Jobs drain in-process through rq's SimpleWorker, which imports
-torch and xgboost — hence the OpenMP guard before anything heavy loads.
-
-Running these with the compose stack UP needs an isolated queue: the live worker
-consumes the same rq queue name and would steal test jobs into the wrong database.
+cross-suite coincidence cannot mask a bug (5.5.5). The app lifespan owns Postgres, so
+`client` skips unless DATABASE_URL is set (CI provides the service container). A race
+runs inside the request that asks for it — there is no worker and no queue — and the
+request imports torch and xgboost, hence the OpenMP guard before anything heavy loads.
 """
 
 import asyncio
@@ -32,10 +29,6 @@ RACE_NAME = "Bahrain Grand Prix"
 # bahrain scenario, so the extracted plan is an identity rescale of these out-laps
 HAM_STINTS = ((17, "SOFT"), (20, "HARD"), (20, "HARD"))
 HAM_REAL_STOPS = [[18, "HARD"], [38, "HARD"]]  # the out-lap and compound of stints 2 and 3
-
-# the serving namespaces (configs/serving.yaml prefixes) plus rq's bookkeeping —
-# never a blanket FLUSHDB on what may be a shared redis
-_SERVING_KEY_PATTERNS = ("sim:*", "events:*", "rq:*")
 
 
 def db_url() -> str:

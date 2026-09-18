@@ -1,5 +1,5 @@
 """The race state as a struct of arrays — one numpy row per car, never a list of
-car objects. The hot loop touches these arrays directly (senna/CLAUDE.md), so the
+car objects. The hot loop touches these arrays directly, so the
 whole 22-car field advances in vectorised numpy with no per-car Python overhead and
 nothing pandas-shaped in sight.
 """

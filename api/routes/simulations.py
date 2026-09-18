@@ -1,12 +1,4 @@
-"""POST /simulations and the reads over its stored results (5.9.2).
 
-The POST draws a missing seed, writes the run row, and races it to completion on a
-worker thread before answering — about eighteen seconds for a full grand prix. The
-dissertation build has no queue and no cache, so there is no E-15 stale-key hazard to
-guard: every request runs its own race. Serving reads filter on status IS NOT NULL so
-F09's eval-card rows, which share these tables under their own purpose, 404 here
-instead of 500ing.
-"""
 
 import os
 import secrets

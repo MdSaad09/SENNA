@@ -31,5 +31,5 @@ Views 3–6 (F12, F13); demo polish (F15).
 - Every stylised element is labelled in the UI
 
 ## Notes for the plan session
-Read frontend/CLAUDE.md before planning — the React 18 / R3F 8 pairing and the
+Note before planning — the React 18 / R3F 8 pairing and the
 one-canvas rule are the two traps that cost weeks when missed.

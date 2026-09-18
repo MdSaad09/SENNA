@@ -936,7 +936,7 @@ response id.
 (`senna/env/reward.py:41-47`) divides the FIA table by `points_divisor: 2.5`
 (`configs/env.yaml:22-23`), so a P2 finish serves as 7.2 rather than 18. Quoting it verbatim
 reads as wrong to anyone who knows the sport, and multiplying it back by 2.5 in the browser
-would put a client-computed number on screen, which `frontend/CLAUDE.md` forbids outright.
+would put a client-computed number on screen, which the frontend rules forbid outright.
 Position sidesteps both and is what a strategy page is about. `StrategyView.test.tsx` has a
 test named *no points appear anywhere, because the served figure is RL-scaled*.
 

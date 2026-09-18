@@ -4,7 +4,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 # docs/ stays out of scope: the spec itself names the dead service (R-04)
-CODE_DIRS = ("senna/", "api/", "worker/", "scripts/", "configs/", "tests/", "notebooks/")
+CODE_DIRS = ("senna/", "api/", "scripts/", "configs/", "tests/", "notebooks/")
 
 
 def test_no_code_path_can_reach_the_dead_results_service():

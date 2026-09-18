@@ -35,7 +35,7 @@ it (the OpenF1 story below).
 **pandas DataFrames, and NaT vs NaN.** A DataFrame is a table in memory: named
 columns, one type per column, fast whole-column operations. FastF1 hands us
 DataFrames, so ingest and cleaning live in pandas (and only there — the env hot loop
-never touches it, per senna/CLAUDE.md). Missing values come in flavours: `NaN` for a
+never touches it). Missing values come in flavours: `NaN` for a
 missing number, `NaT` ("not a time") for a missing timestamp or duration. Both are
 contagious (arithmetic with them yields more of them) and both answer `False` to
 ordinary comparisons, which is why the code reaches for `pd.isna()` instead of

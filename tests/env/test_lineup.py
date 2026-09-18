@@ -62,8 +62,8 @@ def named_scenario(driver_configs):
 def _race_to_the_flag(env, *, seed):
     """Every seat to the flag on the identical decision every lap: stay out, hold balanced.
 
-    The engine enforces no sporting rule — legality is the adapter's job (senna/env/
-    CLAUDE.md) — and what this needs is a field with no strategy in it at all, so that a
+    The engine enforces no sporting rule — legality is the adapter's job — and what
+    this needs is a field with no strategy in it at all, so that a
     finishing order can only be about pace. Events are deterministic and the pace noise is
     switched off for the same reason: at one race, per-lap scatter would swamp the effect
     under test rather than average out of it.

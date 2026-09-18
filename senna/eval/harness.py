@@ -1,10 +1,11 @@
 """M2 — the ten era-matched counterfactuals: the agent's strategy against the team's own,
 replayed through the events of the race the team actually ran (F-24).
 
-The pair loop is deliberately re-implemented here rather than imported from the worker.
-worker/jobs.py answers the same question for the dashboard, but it is wired to Postgres
-job rows, Redis and frame persistence; the twelve lines that matter are the two legs and
-the trace they share, and copying those keeps the offline battery runnable without a queue.
+The pair loop is deliberately re-implemented here rather than shared with the serving
+path. senna/serve/runner.py answers the same question for the interface, but it is wired
+to Postgres run rows and frame persistence; the twelve lines that matter are the two legs
+and the trace they share, and copying those keeps the offline battery runnable with no
+database and no API.
 
 Statistics at n=10 are stated before the result, not chosen after it. The primary claim is
 the exact paired sign test — it assumes nothing about the distribution of position deltas

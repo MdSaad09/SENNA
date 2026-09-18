@@ -171,8 +171,8 @@ Two conflicts, both resolved by Saad (see Decisions):
    it would orphan pre-warmed demo runs.
 5. **SOC bar on `/live`.** Renders the served `soc_mj` per frame. The 0–4 MJ
    scale comes from the API (no client-side physics); if no served field
-   carries it, that is a 5.9.2 shape addition flagged as a spec divergence per
-   api/CLAUDE.md, not smuggled in.
+   carries it, that is a 5.9.2 shape addition flagged as a spec divergence,
+   not smuggled in.
 6. **Fidelity badge.** The served agreement figures move from monospace footer
    text to a visually distinct badge on the decision card. Same data, no new
    numbers.

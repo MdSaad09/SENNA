@@ -1,21 +1,3 @@
-"""Per-driver tyre style: a multiplier on the pooled degradation amplitude (F17, T5).
-
-The estimator is the least-squares slope of a driver's partial residual on the
-degradation the pooled curve predicts for that lap, so it pools correctly across circuits
-and compounds whose `a` and `b` differ. Three things about it are easy to get quietly
-wrong, and each has a test here whose only job is to catch that:
-
-- the multipliers are normalised to a lap-weighted mean of 1.0, or naming a lineup would
-  shift tyre life for the whole field;
-- the standard error is clustered by stint, because a set that runs hot is slow for its
-  whole life and a lap-level error bar understates that by 2.3x at the era-2024 median;
-- a driver the design cannot pin down is published as 1.0 and unidentified, never as a
-  noisy fitted value wearing a `fitted` tag (E-10, one layer down).
-
-Frames are hand-built here rather than run through the joint fit: what is under test is
-the estimator, and a synthetic residual cloud with a known style injected into it says
-more about the estimator than a chain of three fits does.
-"""
 
 import numpy as np
 import pandas as pd
@@ -58,10 +40,7 @@ MIN_STINTS = 6
 
 def _style_frame(styles, *, stints_per_session=None, stint_laps=None, stint_noise_s=STINT_NOISE_S,
                  lap_noise_s=LAP_NOISE_S) -> pd.DataFrame:
-    """Partial residuals for a field of drivers, each wearing its tyres at a known
-    multiple of the pooled curve. Stint numbers restart in every session, which is the
-    trap: clustering or counting on `stint` alone silently merges a driver's Bahrain
-    second stint with their Monaco second stint."""
+   
     rng = np.random.default_rng(SEED)
     stints_per_session = stints_per_session or dict.fromkeys(styles, STINTS_PER_SESSION)
     stint_laps = stint_laps or dict.fromkeys(styles, STINT_LAPS)
@@ -163,10 +142,7 @@ def test_deg_multiplier_falls_back_when_unidentified():
 
 
 def test_the_deg_multiplier_se_is_clustered_by_stint():
-    """Degradation residuals are correlated within a stint, so a lap-level standard error
-    counts eighteen laps of one hot set as eighteen independent observations. It understates
-    by 2.3x at the median on the real era-2024 fit, which is enough to walk a
-    driver through a precision gate that should have refused them."""
+   
     frame = _style_frame({"D00": 1.00}, stint_noise_s=0.5, lap_noise_s=0.05)
 
     fits = fit_deg_multipliers(frame, min_stints=1, max_rel_se=1.0)
@@ -182,11 +158,7 @@ def test_the_deg_multiplier_se_is_clustered_by_stint():
 
 
 def test_a_lap_with_no_stint_number_still_reaches_the_error_bar():
-    """`Lap.stint` is nullable and the clean mask does not require it, so patchy stint data
-    reaches this fitter. Grouping drops NaN keys by default, which would leave those laps in
-    the signal and out of the clustered sum — the error bar would get *tighter* the patchier
-    the input, and a driver the design cannot pin down would walk through the gate on the
-    strength of the laps it failed to count."""
+   
     frame = _style_frame({"D00": 1.00}, stint_noise_s=0.5, lap_noise_s=0.05)
     # a session-sized hole, which is how FastF1 loses a channel — the same shape
     # joint_pace._clean_mask documents for tyre_life (E-09)

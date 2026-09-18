@@ -18,10 +18,11 @@ heuristic:                          # A-07 — the engineer-heuristic baseline
   sc_pit_min_age_laps: 6            # stylised — a safety car halves relative pit loss (env.yaml
                                     # pit_loss_mult.sc), so any set at least this old takes the stop (E-03)
   vsc_pit_min_age_laps: 10          # stylised — the VSC discount (0.65) is smaller, so demand more age
-  compound_by_laps_left:            # the pit-wall wheel: pick the set for the run home
-    hard_min_laps: 22               # stylised — HARD for a long final stint,
-    medium_min_laps: 10             # MEDIUM in the middle, SOFT for a sprint; near fitted Bahrain
-                                    # stint lengths (F08 could fit them per circuit)
+                                    # the pit-wall wheel needs no constants: the compound for the run
+                                    # home is priced from the fitted curves (offset + accrued deg +
+                                    # the stop amortised over the stint the set can legally run).
+                                    # It replaced hard_min_laps/medium_min_laps, which assumed HARD
+                                    # was the durable set — false at 19 of the 23 fitted 2026 events.
   modes:                            # SOC-aware energy mode (5.5.2 heads)
     conserve_soc_mj: 0.8            # stylised — rebuild the store below this (attack is masked at the
                                     # 0.5 MJ floor anyway, physics_2026.yaml attack_soc_floor_mj)

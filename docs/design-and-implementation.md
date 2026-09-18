@@ -11,11 +11,13 @@ an RQ worker and a telemetry-derived circuit-ribbon pipeline — and §10.3 says
 removed here and why. Nothing in the research core differs: the same ingest, the same
 fits, the same environment, the same frozen model triplet, the same metrics.
 
-Current at commit `8a1abe3`, 17 August 2026. The engine, its results and the frozen model
-triplet have been unchanged since 29 July (`79c4434`); everything since is the engine
-extraction, the full-era refit, driver identity and the dashboard restructure. The
-`v1.0.0` tag and its release are the one remaining freeze step (`docs/freeze.md`). MSc
-dissertation, COMP702, University of Liverpool.
+Current at commit `737e617`, 19 August 2026. The frozen triplet and every result in §6
+date from 18 August, when the F24 tyre-model repair replaced 37 defective degradation
+curves and retrained the agent from scratch — the pre-repair evidence is archived at
+`docs/results/F14-pre-repair/`, because the difference between the two worlds is itself
+a result (§6.5). The interface was rebuilt under its petrol design system the day after
+(F25). The `v1.0.0` tag and its release are the one remaining freeze step
+(`docs/freeze.md`). MSc dissertation, COMP702, University of Liverpool.
 
 ---
 
@@ -41,9 +43,10 @@ the previous design, `A-xx` additions, `T1`–`T8` synthetic-data transformation
 glosses the ones that recur. A reader can grep any of them and land on the code that
 honours it.
 
-**The failures are in here too.** Six of the eleven evaluation metrics missed their
-targets, one physics validation failed outright, and several designs were replaced
-after they shipped. Those outcomes are reported in the same voice as the successes,
+**The failures are in here too.** Five of the eleven evaluation metrics miss their
+targets, one physics validation failed outright, a fitted-physics defect survived
+three reviews before the agent's own behaviour exposed it, and several designs were
+replaced after they shipped. Those outcomes are reported in the same voice as the successes,
 with their causes, because a system that only documents its wins has documented
 nothing an examiner can check.
 
@@ -93,7 +96,7 @@ subsystems look the way they do (§2.2).
 
 ### 1.3 What was built
 
-Ten subsystems, sixteen delivered features, one frozen codebase:
+Ten subsystems, eighteen delivered features, one frozen codebase:
 
 | Layer | What it does |
 |---|---|
@@ -108,13 +111,13 @@ Ten subsystems, sixteen delivered features, one frozen codebase:
 | Serving + UI | FastAPI racing inline, and a three-page Streamlit interface over it |
 | Evaluation | Eleven metrics on held-out ground, era-matched counterfactuals, and a reproducible report |
 
-Roughly 16,200 lines of Python across the package, API and worker; 7,900 lines of
-TypeScript in the frontend; 12,400 lines of tests; 4,400 lines of annotated
-configuration; 17,000 lines of documentation.
+Roughly 16,200 lines of Python in the package, 780 in the API and 1,350 in the
+Streamlit interface; 15,000 lines of tests; 6,000 lines of annotated configuration;
+18,000 lines of documentation.
 
 ### 1.4 The claims
 
-Four things this system does that a template project would not:
+Five things this system does that a template project would not:
 
 1. **Corrected 2026 physics, from primary sources**, with the corrections traceable to
    the audit that found them.
@@ -126,8 +129,14 @@ Four things this system does that a template project would not:
    under a split frozen before any fit existed — which is how the synthetic layer's
    failure became a measurable result rather than an unexamined assumption.
 4. **A variance decomposition** separating what the event draw explains from what the
-   decisions explain: 78.6% of finishing-position variance is the draw, a conservative
-   lower bound.
+   decisions explain: 74.0% of finishing-position variance is the draw, a conservative
+   lower bound. It was 78.6% before the tyre repair; the share fell when tyres started
+   wearing, because strategy began to matter more.
+5. **A physics defect found by the agent and repaired in public.** The policy's
+   pit-early-then-never-stop habit turned out to be the optimal answer to 37 degradation
+   curves that had been serialised at an optimiser bound — free tyres. The fits were
+   repaired with recorded provenance, the agent retrained from scratch, every result
+   re-rolled, and the pre-repair chapter archived beside the new one (§6.5).
 
 ---
 
@@ -141,7 +150,7 @@ session loads only what it needs; Parts 1, 3 and 4 stay in the source PDF and ar
 by identifier. Where a feature specification and the master specification disagree, the
 master wins and the disagreement is recorded in the feature's plan rather than
 silently resolved. Around thirty such divergences and interpretation flags are recorded
-across the sixteen plans; Appendix D lists the ones that shaped the architecture.
+across the twenty-two plans; Appendix D lists the ones that shaped the architecture.
 
 The specification also carries an audit of the project's earlier design — thirty
 findings (`F-01`–`F-30`), twelve removals (`R-01`–`R-12`) and twelve additions
@@ -153,8 +162,8 @@ by a function signature that only accepts a tree booster. The audit is executabl
 
 ### 2.2 The interpretability contract
 
-The project's one non-negotiable requirement, stated in the specification's Part 0.4 and
-in the repository's root `CLAUDE.md`: **an inline constant in code is a defect.** Every
+The project's one non-negotiable requirement, stated in the specification's Part 0.4:
+**an inline constant in code is a defect.** Every
 number lives in `configs/*.yaml` with a comment naming its origin, and there are exactly
 four legal origins:
 
@@ -167,10 +176,12 @@ four legal origins:
   the comment states its sizing rationale. This fourth origin was added during the
   serving feature rather than stretching "stylised" to cover a 600-second job timeout.
 
-Twenty-one configuration files carry 4,400 lines under this rule. The generated fits
-artifact alone (`configs/physics_params.yaml`) is 2,267 lines holding 1,765 leaf values,
-each with a per-line origin comment; 1,763 of them name the notebook that produced the
-value, and the other two are the artifact's own data watermark and random seed. A null means
+Twenty-two configuration files carry about 6,000 lines under this rule. The generated
+fits artifact alone (`configs/physics_params.yaml`) is 2,471 lines holding 1,951 leaf
+values, each with a per-line origin comment; 1,949 of them name the notebook that
+produced the value, and the other two are the artifact's own data watermark and random
+seed. Since the tyre repair, borrowed degradation curves also carry a per-row `source`
+naming the ladder rung that supplied them (§5.2). A null means
 "fit me": `senna/config.py` raises `NullConstantError` rather than letting a placeholder
 flow into a simulation.
 
@@ -195,8 +206,8 @@ screen rather than in a comment nobody reads.
 ### 2.4 The 2026 physics table
 
 These are the regression tests of the whole project. A wrong value here fails the viva
-regardless of how good the engineering is, so the root `CLAUDE.md` carries the full
-table and every subsystem is checked against it. The load-bearing rows:
+regardless of how good the engineering is, so every subsystem is checked against the
+full table. The load-bearing rows:
 
 | Fact | Correct | Never |
 |---|---|---|
@@ -519,7 +530,7 @@ cost for 2024 as the representative season: 3,259 of 29,023 laps dropped as inac
 
 **Role.** Turn the cleaned store plus the telemetry cache into every physics constant the
 simulator claims: tyre degradation, joint fuel/evolution pace, event hazards, pit loss,
-energy integrals — 1,765 leaf values, each carrying the notebook that produced it.
+energy integrals — 1,951 leaf values, each carrying the notebook that produced it.
 
 **The identifiability problem, and reporting it honestly.** Fuel burn and track
 evolution both make laps faster as a race progresses. Fitting either alone books the
@@ -553,6 +564,34 @@ cannot re-explain fuel or evolution. The fitter raises rather than filters when 
 in/out or inaccurate laps: silently dropping them would hide an upstream contract break,
 and an in-lap's +20 s sits at stint end where it reads as a tyre cliff, corrupting
 exactly the coefficient the fitter exists to produce.
+
+**A fitted curve is not automatically a measurement — the project's most expensive
+lesson (F24).** The degradation model is `grip(age) = 1 − a·age^b`, fitted by bounded
+least squares with `a ≥ 0`. Where the age residuals are flat — six rounds of 2026 data,
+track evolution swamping the wear signal in short soft stints — the optimiser slides
+into the bound, and the boundary value was serialised as if it were a measurement. An
+amplitude of zero is a tyre that never wears. Thirty-seven of 145 curves shipped that
+way: the 2026 soft at essentially every circuit, all three compounds at Canada, and —
+through the T5 donor transfer — circuits that never saw a 2026 race at all. An optimiser
+pinned at a constraint has not answered the question; it has refused to. "This tyre does
+not wear" and "this data cannot see wear" are different claims, and a point estimate
+cannot tell them apart.
+
+The repair is four mechanisms, not one patch. A fit is now `identified` only if its
+predicted lap-time effect at its own maximum observed age clears half the circuit's
+clean-lap sigma *and* the exponent sits off its bounds — a signal floor, on the
+detection-limit principle that below the limit the honest answer is "not detected",
+never "zero". (Deliberately not an `a == 0` test: scipy lands at 1e-10, not zero, and
+equality asks the wrong question anyway.) An unidentified fit enters a repair ladder
+with named rungs — a pooled per-compound refit over fractional residuals, then the
+other era's identified pooled curve, then refusal — and a substitution borrows shape
+only, keeps the circuit's own observed-age horizon so the failure cliff stays locally
+evidenced, sets `low_confidence`, and records its source in the artifact forever. A
+write gate in the serialiser refuses to emit any curve that is neither identified nor
+repaired, so a bound-clip can never again be stored as a measurement. And the scenario
+builder drops any slick with non-positive amplitude from the compound set the mask
+reads, refusing the race outright if fewer than two dry compounds survive — because if
+the fits ever regress, the defence should not depend on the fitter alone (§5.5).
 
 **Small-sample statistics, chosen for where the data is thinnest.** Hazard bands use the
 Wilson score interval rather than the normal approximation, which collapses to zero width
@@ -636,6 +675,18 @@ T3 mass shift through the fitted mass sensitivity and nowhere else; T4 energy ac
 transfer; T6 fuel budget; T7 overtaking model refit by hand-rolled Newton-Raphson over
 21,159 mined opportunities; T8 residual recalibration against real 2026 calibration rounds.
 
+**T5 transfers between identified curves only, and the rule was bought with a full
+retrain.** The transfer computes a 2026 amplitude as the 2024 target's amplitude scaled
+by a donor circuit's 2026/2024 ratio. Run through a *repaired* target, that arithmetic
+re-emits the pooled curve's borrowed amplitude under a `source_circuit` label naming the
+donor — the borrowing disappears from provenance. Laundering, in the money sense: a
+value of one origin re-emerging labelled as another. The subagent review caught two
+curves doing exactly this after the first post-repair retrain, and requiring the target
+to be identified as well as the donors forced a second full retrain-and-evaluation loop.
+Transferred curves also face the signal floor over their own horizon, because a
+legitimate ratio can still produce a curve worth a hundredth of a second over its whole
+life — a free tyre by another route.
+
 **The result, and it is a failure.** Against held-out 2026 rounds 7+, the lap-time
 Kolmogorov–Smirnov distance is 0.704 (Barcelona), 0.872 (Britain), 0.918 (Austria), 0.946
 (Belgium) — 0 of 4 within the 0.15 target. The cause is in the same artifact:
@@ -677,6 +728,14 @@ degrades" from a fiction. The fix is a mask, not a penalty, even in the penalty 
 because this is a data limit rather than a sporting rule, and there is no correct price
 for a tyre that was never fitted. It was recorded as blocking the headline training runs
 rather than shipped as a hotfix, since it touches the mask contract.
+
+That guard had a blind spot the tyre repair exposed: it checks fit *presence*, not
+signal, so a present fit with a zero amplitude produced the identical never-wearing tyre
+and sailed through (§5.2). Since F24 the scenario builder closes it from the physics
+side — any slick whose amplitude is not positive is dropped from the compound set the
+mask reads, and a circuit left with fewer than two dry compounds refuses to race rather
+than degrade quietly. The one escape hatch exists for the pinned golden-fixture
+directory, and it names itself in config.
 
 **Three reward terms, and the twelve that were removed.** Pace shaping scaled per circuit,
 a potential-based position term, and terminal championship points. The position term is
@@ -779,9 +838,11 @@ are pure functions of an evaluation history alone; Stage C's stagnation rule doe
 current step, because "no improvement for a million steps" is defined in steps — but it
 still cannot see the ceiling. The budget appears exactly once, as the value passed to the
 learning call, and a stage that passes its gate logs `transition` while a stage that runs
-out logs `budget_stop`. All three headline runs exited by gate; none by ceiling. The
-promoted seed passed Stage A at 294,912 steps of a 1.5-million ceiling, the other two at
-196,608.
+out logs `budget_stop`. On the pre-repair physics all three headline seeds exited every
+stage by gate, the promoted one passing Stage A at 294,912 steps of a 1.5-million
+ceiling. On the repaired physics two of the three ran Stage C to its ceiling — a world
+where tyres wear is harder to stop improving in — and the distinction is legible in the
+logs precisely because the two exit reasons are recorded as different events.
 
 **Gates that survived their own review.** Stage A's plateau test compares best-of-window
 against best-before rather than consecutive evaluations, because the naive reading passed a
@@ -803,9 +864,16 @@ approximately with a residual of about (1 − 0.997) × 0.1 × position per lap.
 specification wins; the sensitivity runs are wired and were not run, which is stated
 rather than implied.
 
-**Outcome.** Three headline seeds scoring 6.355, 6.295 and 6.542 mean validation points;
-seed 331 promoted as `senna-ppo-5e3ddb15d584-C-01769472`. Full three-stage wall clock: six
-to twelve minutes per seed, 25 minutes for the slate.
+**Outcome.** The frozen slate is the post-repair one, trained 18 August 2026 with the
+curriculum, gates and budgets byte-unchanged from the original: seeds 101, 211 and 331
+scoring 5.485, 5.415 and 6.232 mean validation points, seed 331 promoted as
+`senna-ppo-4b557848ff25-C-04177920` at global step 4,177,920. Retraining from scratch
+rather than fine-tuning was deliberate: the old weights encode "tyres are free" in every
+layer, and fine-tuning would have left open whether any surviving behaviour was strategy
+or fossilised exploit. Full three-stage wall clock: twelve to nineteen minutes per seed
+on the repaired physics, about three quarters of an hour for the slate. The superseded
+pre-repair slate (6.355 / 6.295 / 6.542, promoted `senna-ppo-5e3ddb15d584-C-01769472`)
+keeps its run directories and its archived chapter.
 
 The slate was trained twice during F18, on the same physics but under two different
 recorded fingerprints, and every seed returned an identical score at an identical step.
@@ -827,7 +895,12 @@ including the penalty arm, is *scored* in the default masked environment, so the
 are comparable — the penalty arm's violations live in its training curves, never in its
 selection score.
 
-**Findings.**
+**Findings.** One currency note first: the grid below was last re-run on the F18
+full-era physics (11–12 August 2026) and has not been re-rolled on the repaired tyre
+model. Its conclusions are about the training design — masking versus penalties,
+curriculum, reward shape — and each held across two different physics, which is some
+evidence they are not artifacts of one world; but they are design evidence, not claims
+about the current headline's margin.
 
 | Arm | Mean points (2 seeds) | Reading |
 |---|---|---|
@@ -906,18 +979,17 @@ green baseline.
 and the card builder reads the version back off disk from the manifest it just wrote. A
 retrain invalidates every card by construction.
 
-**Outcome.** Headline model: 99.76% top-1 agreement on held-out pit decisions, 98.19% on
-energy-mode decisions, mean rank correlation 0.548 across 500 cross-checked decisions with
-all 500 positive and a minimum of 0.222. 14,460 cards across 240 validation races. The
-era-matched model scores 99.15% and 98.24% with 13,760 cards.
-
-Both surrogates were refitted after F18 and the two moved differently. The era-matched
-one improved everywhere. The headline one halved both KL divergences while giving up
-about nine tenths of a point on the mode head's top-1 and falling from 0.687 to 0.548 on
-the gradient cross-check — a surrogate closer to the policy's distribution that crosses
-the argmax boundary more often on near-ties, and a cross-check comparing against a
-different network's gradients. The claim that survives unchanged is that no sampled
-decision had the two views disagreeing about direction.
+**Outcome.** A retrain invalidates every card by construction, so both surrogates have
+now been refitted twice — after the F18 physics refit and again after the F24 retrain.
+The current badges: the headline surrogate agrees with the policy on 98.32% of held-out
+pit decisions and 97.72% of energy-mode decisions (mean KL 0.019 and 0.011), with a mean
+Spearman rank correlation of 0.611 against the true network's gradients over 500
+sampled decisions — 14,460 cards across 240 validation races. The era-matched surrogate
+scores 98.82% and 98.34% with 13,760 cards across 230 races. Both cleared the 0.90 gate
+on the ladder's first rung. The pre-repair badges were higher (99.76% and 98.19%), and
+the drop has a plausible reading recorded as a reading rather than a finding: a policy
+trained on tyres that wear pits far more often and lives nearer genuine decision
+boundaries, and a less imitable policy is the expected price of an honest one.
 
 ### 5.10 Serving
 
@@ -988,7 +1060,7 @@ introduce by accident.
 first, counterfactual comparison secondary, SHAP exploratory and behind a collapsed panel —
 the proposal's own order (§7.3), made structural rather than stated. The demotion is what
 makes SHAP defensible: it explains a surrogate fitted to the agent's decisions, whose
-agreement with the policy is measured at 99.76% and 98.19%, and the layout says which of
+agreement with the policy is measured at 98.32% and 97.72%, and the layout says which of
 those two things is being explained.
 
 **Plain English for the observation.** SHAP hands back the names in
@@ -1010,11 +1082,55 @@ and holds no simulation state. The one derivation it does is reading stints back
 stored frames, and that lives in the package (`senna/serve/stints.py`) with a property test,
 not in a page.
 
-**Outcome.** Three pages, about 700 lines of Python, and ten tests that drive them headlessly
-through Streamlit's own `AppTest` and assert the 5.10.2 honesty statements are still on
-them. Those tests run as a separate invocation: `AppTest` leaves the script runtime installed
-in the process, and a `SubprocVecEnv` spawned afterwards re-executes a page in the child —
-which surfaced as the throughput benchmark dying on an `EOFError`.
+**The design system is the author's, built to the letter (F25).** A palette sampled from
+reference screenshots was rejected; what replaced it is two sheets Saad supplied — a
+petrol palette and a gradient system with stated limits — built exactly. `app/theme.py`
+holds every token under the same provenance rule as the physics configs: petrol grounds
+(`#0A1014` page, `#101A20` surface), one saturated accent pair that *is* the physics —
+aqua `#2ED9C3` for harvest, ember `#FF7A3D` for deployment — a coast grey whose greyness
+is its job, and a reserved alert red that means limit breach and nothing else. Team
+colour answers *who*, the accent axis answers *what*, and the two never take the same
+visual role in one view; SENNA races as the eleventh team in the harvest aqua, so the
+agent is findable on any screen without a special-case marker. The gradient rules read
+like regulation text on purpose: a gradient may be saturated only inside a data fill,
+nothing under 40 pixels wears one at all, one ambient glow at a time and never behind a
+chart. Chakra Petch — bundled locally, not fetched — carries the wordmark, headings and
+stat values; body text stays on the system stack for reading comfort.
+
+**Race prose is template assembly, never generation.** The result page's headline —
+"P8 → P2 · one stop · through the lap-30 safety car" — is slot-filling over stored
+frames and events, the same 5.8.3 rule that governs decision cards extended to prose. A
+clean race gets no event clause because there is no slot for an event that did not
+happen. A moments strip puts neutralisations, weather and the ego car's stops on one
+timeline; rival stops are excluded, and a test pins the exclusion.
+
+**Playback got a track map that admits what it is.** A stylised stadium loop places all
+22 cars by lap fraction, car numbers riding every dot, teammates hollow, the ego ringed
+in aqua — and a note on screen says the loop is not the circuit's geometry, because the
+position channel it draws from is display-only synthesis. Beside it a battery gauge
+drains and refills through a five-step state-of-charge ramp pinned luminance-monotone by
+test, and the page's ambient glow re-keys to the car's energy state each lap: aqua while
+harvesting, ember while deploying, cold neutral otherwise. The sheet's 800 ms cross-fade
+cannot survive Streamlit's rerender model, so each tick paints the destination state
+directly — a stated ceiling of the chosen stack, not a workaround pretending otherwise.
+
+**Four defects no test saw.** The screenshot pass — an acceptance step since the
+dashboard restructure's lesson, not advice — caught Streamlit's stock red widget theme
+surviving below CSS reach (the fix is `.streamlit/config.toml` restating the petrol
+hexes at the theme layer), `make app` missing the repo root on `sys.path`, and the soft
+compound wearing the reserved alert hex, evicted to its own rose. The subagent review
+caught the fourth: chart click targets joining cards to frames across an off-by-one,
+because cards number laps from zero and frames from one — the exact seam the React
+build's reward panel once fell into. Four defects, four different reasons a green suite
+said nothing.
+
+**Outcome.** Three pages, about 1,350 lines of Python, and 38 tests that drive them
+headlessly through Streamlit's own `AppTest` — including decoding the charts' vega-lite
+payloads to assert what they actually draw — and assert the 5.10.2 honesty statements
+are still on the pages. Those tests run as a separate invocation: `AppTest` leaves the
+script runtime installed in the process, and a `SubprocVecEnv` spawned afterwards
+re-executes a page in the child — which surfaced as the throughput benchmark dying on an
+`EOFError`.
 
 ### 5.12 Evaluation
 
@@ -1055,16 +1171,28 @@ and one entirely missing one (virtual: zero calls across 300 windows, 134 of the
 taking). The separation is what turns a mediocre number into a specific, actionable finding.
 
 **The era confound, measured.** Scoring a 2026-physics agent on 2024 races confounds the car
-with the strategy. A 2-million-step warm-started fine-tune on the 2024 constants scores 6.336
-mean points against the frozen 2026 model's 3.802 on identical 2024 banks — so roughly two
-and a half points of a 2026 agent's apparent 2024 performance is the car (`F-24`). The
-counterfactual metric runs on the era-matched model.
+with the strategy, so the counterfactual metric runs on a warm-started fine-tune trained
+onto the 2024 constants (`F-24`). On the pre-repair models the confound was worth
+roughly two and a half points — 6.336 for the era-matched model against 3.802 for the
+frozen 2026 one on identical 2024 banks. The repaired era-matched model
+(`senna-ppo-d972ad8448dd-C-05849088`) scores 6.177 on those banks and is the model every
+M2 number below comes from.
 
 **Outcome.** Thirteen store rows, three figures, a generated chapter, and the results in §6.
 
 ### 5.13 Demo, reproducibility and the freeze
 
 **Role.** Make the system presentable, provable and frozen.
+
+One currency note: the deep-link choreography below was engineered against the fuller
+build's dashboard and stays as its record. The scoped build's demo was re-choreographed
+against the three Streamlit pages on 19 August 2026 (`docs/demo/script.md`): the
+verified pick is Bahrain from P8 on seed 55, whose headline reads "P8 → P3 · three
+stops · through a lap-16 safety car" — a race that performs the two post-repair skills
+on its own, boxing on virtual-safety-car laps twice and banking a precautionary stop at
+cliff age. Every on-screen string in that runbook was read off the running system, and
+the runbook says it must be re-verified after any retrain, because the choreography is
+model-specific by construction.
 
 **The demo is engineered, not recorded.** The first ninety seconds are specified as tightly
 as an API: a deep link opens mid-race, a decision card slides in with its fidelity badge,
@@ -1118,116 +1246,113 @@ found it.
 ### 6.1 The metric table
 
 Eleven metrics, twelve verdict rows (the safety-car metric splits into full and virtual).
-Two met, six missed across seven rows, three reported without a bar. Full numbers,
+Three met, five metrics missed across six rows, three reported without a bar. Every row
+is the post-repair measurement of 18 August 2026 — the retrained agent on the repaired
+tyre model — with the pre-repair figure beside it, because the difference between the
+two columns is the tyre repair's effect measured across the whole battery. Full numbers,
 intervals and gaming notes are in `docs/results/F14-evaluation.md`, regenerated from the
-committed store.
+committed store; the pre-repair chapter is archived whole at `docs/results/F14-pre-repair/`.
 
-| Metric | Result | Previous (two-season physics) | Target | Verdict |
+| Metric | Result (post-repair) | Pre-repair | Target | Verdict |
 |---|---|---|---|---|
-| M1 paired position delta | **+2.279 places** over 480 pairs, CI [1.913, 2.663] | +2.083, CI [1.710, 2.475] | ≥ +1.0, CI excluding 0 | **met** |
-| M2 counterfactual vs actual | 1W/8L/1T, p = 0.039, mean −4.58 over 10 races | 1W/8L/1T, p = 0.039, mean −3.66 (drawn driver pace) | ≥ +1.0, sign test p < 0.05 | miss |
-| M3 oracle regret | median 30.48 s, mean 71.78 s over 480 races | median 33.09 s, mean 86.98 s | report only | reported |
-| M4 energy utilisation | 0.704 of deployable, ceiling 0.912; derates 0.097 | 0.649, ceiling 0.914; derates 0.080 | ≥ 0.90, derates ≤ 0.05 | miss |
-| M5 safety-car quality | precision 0.820, recall 0.401 over 377 windows | precision 0.942, recall 0.308 | both ≥ 0.75 | miss |
-| M5 virtual safety car | precision 1.000, recall 0.085 over 304 windows | precision undefined, recall 0.000 | both ≥ 0.75 | miss |
-| M6 pit-window accuracy | 0.213 of 517 stops within 3 laps of optimum | 0.228 of 457 stops | ≥ 0.72 | miss |
-| M7 strategy diversity | 0.653 nats over 24 circuits | 0.226 nats | report only | reported |
-| M8 sim-to-real | 0 of 5 circuits within KS 0.15, worst 0.931 | 0 of 4, worst 0.946 | KS < 0.15 | miss |
-| M9 tyre failures | **37.92 per 100 races** (182 of 480) | 37.29 (179 of 480) | < 2.0 | miss |
+| M1 paired position delta | **+1.788 places** over 480 pairs, CI [1.500, 2.081] | +2.279, CI [1.913, 2.663] | ≥ +1.0, CI excluding 0 | **met** |
+| M2 counterfactual vs actual | 3W/2L/5T, p = 1.000, mean +0.50, CI [−0.90, 2.00] | 1W/8L/1T, p = 0.039, mean −4.58 | ≥ +1.0, sign test p < 0.05 | miss |
+| M3 oracle regret | median 36.04 s, mean 63.33 s over 480 races | median 30.48 s, mean 71.78 s | report only | reported |
+| M4 energy utilisation | 0.675 of deployable (ceiling 0.916, 0.737 of attainable); derates 0.038 | 0.704; derates 0.097 | ≥ 0.90, derates ≤ 0.05 | miss; derate cap now met |
+| M5 safety-car quality | precision 0.925, recall 0.749 over 362 windows | precision 0.820, recall 0.401 | both ≥ 0.75 | miss, by 0.001 of recall |
+| M5 virtual safety car | precision 0.892, recall 0.684 over 298 windows | precision 1.000, recall 0.085 | both ≥ 0.75 | miss |
+| M6 pit-window accuracy | 0.592 of 1,256 stops within 3 laps, CI [0.564, 0.619] | 0.213 of 517 stops | ≥ 0.72 | miss |
+| M7 strategy diversity | 1.853 nats over 24 circuits | 0.653 nats | report only | reported |
+| M8 sim-to-real | 0 of 5 circuits within KS 0.15, worst 0.931 | 0 of 5, worst 0.931 | KS < 0.15 | miss |
+| M9 tyre failures | **0.00 per 100 races** (0 of 480) | 37.92 (182 of 480) | < 2.0 | **met** |
 | M10 regulatory legality | **0 coerced, 0 snapped** over 480 races | 0, 0 | 0 by construction | **met** |
-| M11 luck share | **0.786** of finishing variance, CI [0.704, 0.861] | 0.758, CI [0.679, 0.820] | report only | reported |
+| M11 luck share | **0.740** of finishing variance, CI [0.681, 0.800] | 0.786, CI [0.704, 0.861] | report only | reported |
 
 A suite where every metric passes is a suite whose bars were set after the run. These
-were set before.
+were set before, and the table has now been re-rolled from scratch twice without the
+bars moving.
 
-**What the refit did to this table (F18, 11 August 2026).** Every row above was
-re-measured on constants fitted over the full 2022–2025 era rather than two seasons of
-it. The headline improved: M1 rose about 0.2 places with a tighter interval, oracle
-regret fell at both the median and the mean, and the agent finally pits under a virtual
-safety car — M5's VSC recall moved off 0.000 to 0.085 at perfect precision, ten calls
-and no false positives, against a previous chapter that had to report the agent never
-once doing it across 311 windows.
+**How this table got here matters as much as what it says.** It has three ancestors.
+The F18 full-era refit (11 August) replaced constants fitted on two seasons with
+constants fitted on four, and turned M2 from an inconclusive wash into a significant
+loss — 1W/8L/1T at p = 0.039. F17 (13 August) replaced the counterfactual's drawn
+driver pace with fitted seat effects, which moved M2's mean from −3.66 to −4.58 without
+touching the sign test. Then F24 (18 August) repaired the tyre model and retrained the
+agent, and every row above re-rolled.
 
-One row got worse in a way that matters more than the improvements. M2 was a null
-result at 4W/5L/1T and p = 1.000; it became 1W/8L/1T at p = 0.039, mean −3.66 places.
-The sign test has become significant in the wrong direction: against replayed real
-strategies on the era-matched model, this agent now loses reliably rather than
-inconclusively. Better physics turned an absence of evidence into evidence of a gap,
-which is the more useful result and the one to lead with when discussing limitations.
+**What the repair moved.** M9 went from 37.92 failures per hundred races to zero — the
+metric that exposed the defect now certifies its repair. M1 gave back half a place
+(+2.279 to +1.788, still over the bar with the interval clear of zero), and the shrink
+is the honest part: that half place was being bought with tyres that never wore. M2
+swung back to a wash — 3W/2L/5T, p = 1.000, mean +0.50 — so the agent no longer loses
+reliably to replayed real strategies; it draws with them, on ten races, in its own
+simulator. The reactive skills sharpened across the board: safety-car recall nearly
+doubled to 0.749 (one thousandth under its bar), the virtual-safety-car blindness that
+was once zero calls across 300 windows is now recall 0.684 at precision 0.892, pit-window
+accuracy nearly tripled to 0.592, and strategy diversity rose again to 1.853 nats. The
+derate share fell under its cap for the first time. An agent that has to manage real
+tyre wear turns out to need the rest of its craft, and the whole battery moved together.
 
-**M2 again, re-measured with named drivers (F17, 13 August 2026).** Until F17 the
-counterfactual filled each seat's pace offset from `rng.normal` while holding a list keyed
-by real driver codes — it knew which seat was Verstappen's and gave it a coin flip. Each
-seat now carries the effect the joint regression measured for that driver at that
-circuit-era, so the comparison is era-matched in pace as well as in events. The plan
-committed to reporting whatever came back and to saying that the direction was not knowable
-beforehand; it is worth being precise about why. The seat offset very largely cancels
-inside each pair, because both legs share the same lineup and the counterfactualled driver
-is car 0 in both. What moves is field context: giving the real grid its real pace changes
-where that car sits among the rivals, and therefore changes the strategic problem.
-
-| Reading | Mean delta | 95% CI (descriptive) | Sign test |
-|---|---|---|---|
-| Drawn driver pace (F18 chapter) | −3.66 | [−5.82, −1.16] | 1W/8L/1T, p = 0.039 |
-| Fitted seat pace (F17, current) | **−4.58** | [−8.38, −1.20] | 1W/8L/1T, p = 0.039 |
-
-The pre-registered sign test is unchanged — the same nine races fall the same way — so the
-conclusion does not move: this agent loses reliably to replayed real strategies on the
-era-matched model. The mean and the interval both worsen, driven mostly by Las Vegas, where
-a fitted Verstappen seat puts the replay baseline on the front row and hands the agent that
-much more to lose. Six races got worse, three better, one unchanged.
-
-One methodological note belongs with this table rather than in a footnote. A twin replay is
-close to deterministic by construction: the trace supplies the events, and `TraceSource`
-returns zero lap noise and the fitted pit-service mean with no draw, so that M3's oracle
-regret stays a clean ceiling. The five seeds per race were therefore never varying pit
-service, whatever the config comment used to say — they were varying the random driver-pace
-draw. With that draw replaced by a measurement, nine of the ten races are now identical
-across all five seeds, and each per-race delta should be read as very nearly a single
-number rather than as a mean over five independent rolls. The `seeds_per_race` constant is
-left at 5 because changing the shape of a published metric is a separate decision from
-this one.
-It should be read with the 25 snapped stops the replay baseline needed and with M8:
-the counterfactual is priced inside a simulator whose sim-to-real error is still far
-outside target.
+One methodological note belongs with this table rather than in a footnote. A twin replay
+is close to deterministic by construction: the trace supplies the events, and the twin's
+source returns zero lap noise and the fitted pit-service mean with no draw, so that M3's
+oracle regret stays a clean ceiling. Since F17 replaced the random driver-pace draw with
+a fitted measurement, most M2 races are identical across their five seeds, and each
+per-race delta should be read as very nearly a single number rather than a mean over five
+independent rolls. `seeds_per_race` stays at 5 because changing the shape of a published
+metric is a separate decision. M2 should also be read with the snapped stops the replay
+baseline needed and with M8: the counterfactual is priced inside a simulator whose
+sim-to-real error is still far outside target.
 
 ### 6.2 What the misses mean
 
-The misses are not independent, and read together they tell one coherent story.
+The misses are not independent, and read together they tell one coherent story — a
+different story than they told before the repair.
 
-**M1 with M9 is the headline finding.** The agent beats the engineered baseline by two
-positions, and part of how it buys them is running tyres past the cliff: 37 failures per
-hundred races, mean stint 29.4 laps, longest 76. That behaviour is coherent inside the
-simulator, where a failure is a probabilistic cost the agent has implicitly priced against
-the track position a longer stint buys — and it is unacceptable on a real pit wall. The
-evaluation suite exists to surface exactly this, and it did.
+**M1 with M9 was the headline finding; it is now the headline repair.** Before F24 the
+agent beat the engineered baseline by two places and bought part of the margin by running
+tyres past the cliff, 37 failures per hundred races against a target of two. That
+behaviour was coherent inside a simulator where 37 of 145 degradation curves said tyres
+were free — the policy had found the defect, four million steps of gradient ascent
+finding it the way a fuzzer finds a buffer overflow. The repaired table reads M1 +1.788
+with M9 at zero: a smaller margin, every place of it won on tyres that wear.
+
+**M2 is an honest wash again.** Three wins, two losses, five ties against replayed real
+strategies over ten races, mean +0.50 with the interval spanning zero. The claim the
+dissertation can make is precise: SENNA beats a scripted baseline in simulation (M1) and
+draws with elite human strategies on ten real races replayed in its simulator (M2) — not
+"the agent beats humans". The arc matters: better physics first turned this metric from
+a wash into a significant loss, then repairing the tyre model turned it back. A metric
+that moves twice under physics changes is measuring the simulator as much as the agent,
+which is why it is read with M8.
 
 **M4's bar is unreachable at several circuits by construction.** The deployable-energy
 figure exceeds what the store can physically deliver there, so the metric publishes an
-attainable ceiling (0.914) beside the raw utilisation (0.649). Against what the battery
-could actually deliver the agent uses 0.710. Reporting the raw number alone would read as
-the agent declining to deploy.
+attainable ceiling (0.916) beside the raw utilisation (0.675); against what the battery
+could actually deliver the agent uses 0.737. The derate share is under its cap for the
+first time (0.038 against 0.05) — the retrained agent runs out of energy less, not more.
 
-**M5's virtual safety car result is the most actionable.** Zero pit calls across 300 scored
-windows, of which the afterstate search says 134 were worth taking. The suspected mechanism
-— a virtual safety car's smaller pit-loss discount never clearing the threshold the policy
-learned under full safety cars, plus an observation that may not separate the two states
-sharply enough — is labelled a hypothesis in the write-up, not a finding, because it was
-not tested.
+**M5 is one thousandth of recall from its bar on full safety cars** (0.749 against 0.75,
+precision 0.925), and the virtual-safety-car blindness has lifted: recall 0.684 at
+precision 0.892, where the pre-repair agent made ten calls and the one before that made
+none across 300 windows. What changed is the world, not the metric: under free tyres a
+neutralisation changed almost nothing worth reacting to. The remaining VSC gap keeps its
+hypothesised mechanism — the smaller pit-loss discount, an observation that may not
+separate the two states sharply — and the hypothesis label, because it is still untested.
 
 **M6 compares against a ceiling, not a grade.** The post-hoc optimum is found by rolling
-every candidate lap on the frozen trace with full knowledge of what happened; the agent had
-none of that. It is an information-set asymmetry, and the note says so.
+every candidate lap on the frozen trace with full knowledge of what happened; the agent
+had none of that. It nearly tripled to 0.592 and still reads as a miss against 0.72; the
+information-set asymmetry note stands.
 
-**M8's cause is upstream** in the synthetic transform (§5.4), and the split forbids fixing
-it on the evidence.
-
-**M2 is an honest wash.** Four wins, five losses, one tie against elite human strategists
-over ten real races. The claim the dissertation can make is precise: SENNA beats a scripted
-baseline in simulation (M1), and is competitive-but-not-significantly-better against real
-strategies on ten real races (M2). Not "the agent beats humans".
+**M8's cause is upstream** in the synthetic transform (§5.4), unchanged by the repair —
+the repair fixed degradation amplitudes, not the corner-versus-straight recomposition —
+and the split forbids fixing it on the evidence.
 
 ### 6.3 What the ablations proved
+
+These arms last ran on the F18 physics, before the tyre repair (§5.8); they are design
+evidence that held across two worlds, not measurements of the current headline.
 
 The penalty arm lands 1.8 points below the best arm and half a point below the matched
 control, with its two seeds straddling that control — the honest reading is that the
@@ -1240,53 +1365,70 @@ reward's defensible role to interpretability rather than performance.
 ### 6.4 The novel result
 
 The luck decomposition: fixing the policy and varying event draws against varying decision
-noise attributes **78.6%** of finishing-position variance to the event draw, with a
-confidence interval of [0.704, 0.861] across 24 circuits at a mean policy entropy of 0.539
-nats. Entangled variance — re-sampled decisions meeting different downstream events — is
-charged to the decision side, which makes the published figure a conservative lower bound.
+noise attributes **74.0%** of finishing-position variance to the event draw, with a
+confidence interval of [0.681, 0.800] across 24 circuits. Entangled variance — re-sampled
+decisions meeting different downstream events — is charged to the decision side, which
+makes the published figure a conservative lower bound.
 
 This is the answer to a question strategy analytics usually dodges: how much of a result is
-the strategy at all. Most of it is not.
+the strategy at all. Most of it is not. And the number itself moved the right way under
+the tyre repair — 78.6% before, 74.0% after — because when tyres wear, strategy explains
+more of the outcome. The metric noticing that the world got more strategic is a small,
+unplanned validation of the metric.
 
 ### 6.5 The advantage is conditional on the tyre model
 
-Reporting the three archetypes the proposal promised produced the chapter's sharpest
-result, and it was not the one being looked for. Sliced to Shanghai, Melbourne and Monaco,
-the headline **+2.279 places disappears**: those three average **+0.07** with every
-confidence interval spanning zero.
+This section used to report the pre-repair version of the finding: sliced to the circuits
+whose 2026 degradation was calibrated from real running, the headline advantage
+disappeared to +0.07 while the synthesised circuits carried +3.31. Between that chapter
+and this one the finding got both a cause and a second, stronger test.
 
-Grouping all 24 circuits by where their 2026 degradation curve came from explains it.
+**The cause was found by watching the agent, not by a test.** Run 491 — Australia, in
+the live view — showed the agent pitting on lap 3, taking softs, and running the same
+set 55 laps to P2, with the decision card putting 99.2% on the stop while staying out
+was fully legal. That is not a strategy; it is an exploit report. The investigation it
+triggered found the 37 bound-clipped degradation curves of §5.2: the "calibrated"
+circuits were largely running free tyres, and the pre-repair policy's
+pit-early-then-never-stop habit was the optimal answer to a broken world. The fits were
+repaired, the agent retrained from scratch, and the entire battery re-rolled — twice,
+because the review then caught the T5 transfer laundering a repaired amplitude (§5.4).
+
+**The split survived the retrain, which makes it evidence about the transform rather
+than about one policy.** Since the repair no 2026 circuit qualifies as calibrated — the
+soft's wear was unidentifiable everywhere, even pooled — so the honest categories are
+*repaired* (the circuit's own data plus the ladder) and *synthesised* (T5). Grouping the
+480 pairs:
 
 | Circuits | Pairs | M1 delta | Median regret | Agent stops | Oracle stops |
 |---|---|---|---|---|---|
-| Calibrated from real 2026 running | 60 | **+0.07** | 49.3 s | 1.18 | 1.62 |
-| Synthesised by the T5 transform | 360 | **+3.31** | 25.9 s | 1.14 | 1.36 |
-| Unusable — one low-confidence, one degenerate | 40 | −2.30 | 512.4 s | 1.63 | 2.53 |
+| Repaired — own data, soft from the ladder | 80 | **−0.53** | 75.0 s | 2.80 | 1.76 |
+| Synthesised by the T5 transform | 360 | **+2.38** | 29.3 s | 2.52 | 1.88 |
+| Unusable — Miami | 20 | +1.05 | 477.3 s | 4.90 | 3.00 |
+| Incomplete — no 2026 soft fit | 20 | +1.15 | 12.1 s | 1.50 | 1.10 |
 
-The published figure is carried by the circuits whose tyre model was invented. Where the
-model is anchored to real running, the agent is at parity with a scripted heuristic.
+The headline is still carried by the circuits whose tyre model the transform supplied;
+where the model leans hardest on the circuit's own data the agent now gives places away.
+The three archetype circuits the proposal promised (Shanghai, Melbourne, Monaco) average
+**−0.60** against the scripted baseline, where the pre-repair chapter reported parity.
 
-The mechanism is already in the metric table, seen from a second angle. **The agent
-under-stops.** The oracle wants 1.62 stops where the model is real and the agent makes
-1.18; where it is synthesised the optimum is 1.36 and the agent makes 1.14 — much closer.
-That is M9: 37.92 tyre failures per 100 races, an agent buying track position by
-over-running its tyres. The T5 transform smooths degradation, which makes over-running
-cheap; a curve fitted from real running does not, and the habit gives back everything it
-gained. No race in the bank ends in a retirement, so the cost is pure time.
+**And the mechanism inverted, which is the diagnostic detail.** The pre-repair agent
+under-stopped everywhere — 1.18 stops against an oracle's 1.62, buying track position
+with tyres that could not hurt it. The retrained agent **over-stops** on the repaired
+circuits: 2.80 stops against the oracle's 1.76, paying pit-loss premium beyond the
+optimum. It learned that worn tyres bite; its remaining error is calibration of a real
+trade-off, not exploitation of a fictional one. Three explanations for the split remain
+live and unseparated, as before: the transform may leave exploitable regularity the
+heuristic does not chase, the rival pace models are fitted from the same data so the
+field may be tighter where data exists, and four repaired circuits is too few to exclude
+character effects.
 
-Degradation magnitude alone does not explain it — it correlates with the advantage at
-r = +0.53 across the 24, but Shanghai and Bahrain have near-identical degradation and
-differ by eight places. Three explanations remain live and this evaluation does not
-separate them: the transform may leave exploitable regularity the heuristic does not
-chase, the rival pace models are fitted from the same data so the field may be tighter
-where that data exists, or five circuits is too few to exclude character effects.
+The claim the evidence supports is unchanged in shape and now better tested: **SENNA
+beats scripted strategies inside its own simulator by a margin that depends on the tyre
+model, and that model's fidelity to a real 2026 season has not been established.** Read
+with M8, which failed on all five circuits tested. Full tables in
+`docs/results/archetypes.md`; the pre-repair tables in `docs/results/F14-pre-repair/`.
 
-The claim the evidence supports is therefore narrower than the headline: **SENNA beats
-scripted strategies inside its own simulator by a margin that depends on the tyre model,
-and that model's fidelity to a real 2026 season has not been established.** Read with M8,
-which failed on all five circuits tested. Full tables in `docs/results/archetypes.md`.
-
-### 6.6 Strategy robustness, and a policy closer to open-loop than expected
+### 6.6 Strategy robustness — a verdict this chapter had to reverse
 
 Six perturbations on the three archetypes, raced on the published bank's own seeds,
 reading the *decision* rather than the outcome: which way the first stop moved against
@@ -1295,41 +1437,36 @@ changes what movement means — a *controlled* arm moves the physics and leaves 
 intact, a *confounded* arm moves the event distribution so the race itself differs, and
 the grid sweep changes neither and simply starts the agent elsewhere.
 
-| Arm | Kind | Predicted | Moved | Agreed |
-|---|---|---|---|---|
-| Degradation ±10% | controlled | earlier / later | 6 and 10 of 60 | **14 of 16** |
-| Pit loss ±2 s | controlled | later / earlier | **0 of 60** | — |
-| Energy coefficients ±20% | controlled | none | **0 of 60** | — |
-| Safety-car rate ±50% | confounded | none | 4 and 3 of 60 | — |
-| Rain probability ±50% | confounded | none | 0 and 2 of 60 | — |
-| Grid P2 → P16 | scenario | — | first stop 4.42 → 4.80 laps | — |
+The pre-repair chapter's verdict was blunt: the policy was close to open-loop, boxing on
+a median lap 3 against the oracle's 17, running a mean 52.9 laps on the final set, and
+moving its stop under almost no perturbation — because under free tyres there was
+nothing worth responding to. Re-rolled against the retrained agent, the same six arms
+return the opposite reading.
 
-Three of these are informative on their own. Degradation moves the stop the right way
-whenever it moves it at all, which is evidence the agent reads tyre state rather than
-replaying a plan — but it does not move in roughly 85% of races. Energy is cleanly
-decoupled from pit timing, which is what the design intends. And **pit loss is not in the
-observation**: the 32 dimensions carry `pit_count_norm` and `pit_lane_open` and nothing
-about what a stop costs, so an agent asked when a stop is worth taking was never told the
-price. Grid position is the opposite case — `position_frac` and `places_gained_frac` are
-both observed, so the agent can see where it started and does not act on it.
+**Degradation now moves the stop in the predicted direction every time it moves it.**
+Plus 10% wear: eleven races move, all eleven earlier. Minus 10%: fourteen move, all
+fourteen later. Twenty-five of twenty-five movements agree with what a strategist would
+predict; roughly one race in five responds at all, and most of the rest already sit
+mid-window where a 10% nudge does not cross a lap boundary. **Safety-car rate now moves
+about a fifth of races in each direction** where before it moved nothing — the same
+lift M5's recall doubling shows from another angle. **Energy coefficients at ±20% move
+no stop at all**, which is the clean pit/energy decoupling the two-head design intends.
+**The grid sweep** (P2 / P8 / P16) leaves the first stop at 16.45 / 16.33 / 16.27 laps —
+grid-independent, which now matches the oracle's behaviour rather than contradicting it.
 
-The arms keep returning "unchanged" because there is very little to change. The agent has
-close to one strategy: **median first stop on lap 3 against the oracle's 17, 1.18 stops per
-race, and a mean of 52.9 laps run on the final set** — up to 75 — on circuits whose tyre
-cliff sits at 31 to 34 laps. A final stint of that length does not occasionally fail; it
-must.
+One gap survives the repair intact: **pit loss at ±2 s still moves stops like a coin
+flip, because pit loss is not in the observation.** The 32 dimensions carry
+`pit_count_norm` and `pit_lane_open` and nothing about what a stop costs, so an agent
+asked when a stop is worth taking has never been told the price. That is the named next
+feature, and the perturbation arm is the evidence for it.
 
-That single behaviour is four of the reported results seen from one angle. M6's pit-window
-accuracy of 0.21 is a stop nowhere near the optimum. M9's 37.92 tyre failures per 100 races
-are those stints arriving at the cliff. The under-stopping against the oracle in §6.5 is
-the same fact counted differently. And the advantage disappearing where degradation is
-fitted from real running is what happens when a forgiving tyre model stops forgiving.
-
-The honest summary is therefore not that the agent is robust. **The policy is close to
-open-loop**: it has learned an opening move and executes it largely regardless of the
-world it is placed in. That the opening move is right often enough to beat a scripted
-baseline on eighteen circuits is a genuine result, and a far narrower one than +2.279
-places suggests. Full tables in `docs/results/archetypes.md`.
+The behavioural headline: median first stop moved from lap 3 to lap 13, and on the
+repaired circuits the agent now makes 2.80 stops against the oracle's 1.76 — the
+over-calibration §6.5 reads. The summary the evidence now supports: **the policy
+responds to the physics it can observe, in the right direction, and its remaining
+errors are calibration, not blindness.** That sentence could not have been written
+before the repair, and the fact that the same harness produced both verdicts is the
+strongest argument for having built it. Full tables in `docs/results/archetypes.md`.
 
 ### 6.7 Sensitivity studies
 
@@ -1338,16 +1475,17 @@ Two overlay studies price assumptions rather than asserting them.
 **The harvest cap** (`E-02`). The FIA refined the maximum permitted recharge from 8 to 7 MJ
 in April 2026. Editing the committed configuration would desync the fingerprint the served
 model records and invalidate the whole chapter, so the refined figure runs as an eval-only
-overlay on the same seeds. The frozen agent loses 0.133 places and its derate share rises
-from 0.078 to 0.182 — it keeps its results and runs out of energy more than twice as often.
-Framed explicitly as the frozen agent's robustness, not what a model re-optimised for 7 MJ
-would do.
+overlay on the same seeds. Re-rolled on the retrained agent: it loses 0.17 places
+(P4.02 to P4.19), utilisation falls 0.675 to 0.643, and the derate share rises from
+0.046 to 0.087 — it keeps most of its results and runs out of energy nearly twice as
+often, which is what operating closer to a limit looks like. Framed explicitly as the
+frozen agent's robustness, not what a model re-optimised for 7 MJ would do.
 
 **The borrowed energy coefficients.** The 2024 scenario borrows the 2026 energy-mode fit,
-because no 2024 fit of those coefficients exists. Perturbing the four borrowed values by
-±50% moves the counterfactual metric by at most 0.46 places against its own 4.7-place
-descriptive spread. The borrow is a documented coarseness rather than a load-bearing
-unknown — which is a claim now backed by a measurement.
+because no 2024 fit of those coefficients exists. Perturbing the borrowed block by ±50%
+now moves M2's mean delta not at all — +0.50 in both arms. The borrow is a documented
+coarseness rather than a load-bearing unknown, a claim backed by a measurement that got
+stronger on the repaired physics.
 
 ---
 
@@ -1355,8 +1493,8 @@ unknown — which is a claim now backed by a measurement.
 
 ### 7.1 Testing philosophy
 
-Roughly 486 Python test functions and 155 frontend tests, written before the code they
-cover. Four kinds do most of the work:
+Roughly 570 Python test functions, written before the code they cover. Four kinds do
+most of the work:
 
 **Property tests** where the claim is universal. The compliance property drives ~100,000
 random-legal transitions asserting legality, energy conservation and state-of-charge bounds.
@@ -1459,41 +1597,48 @@ the committed run ledger is the record.
 
 Stated plainly, because every one of them is a question an examiner can ask.
 
-**The headline advantage depends on the tyre model being synthesised.** +2.279 places over
-24 circuits becomes +0.07 on the five circuits whose 2026 degradation is fitted from real
-2026 running, and +3.31 on the eighteen where the T5 transform supplied it (§6.5). The
-mechanism is the under-stopping M9 measures. The defensible claim is that the agent beats
-scripted strategies inside its own simulator by a margin conditional on a tyre model whose
-fidelity has not been established — not that it beats them by 2.279 places.
+**The headline advantage depends on the tyre model being synthesised.** +1.788 places
+over 24 circuits is carried by the eighteen circuits whose 2026 degradation the T5
+transform supplied (+2.38); on the four circuits leaning hardest on their own repaired
+data the agent gives places away (−0.53), and the split survived a full retrain (§6.5).
+The defensible claim is that the agent beats scripted strategies inside its own
+simulator by a margin conditional on a tyre model whose fidelity has not been
+established — not that it beats them by 1.788 places.
 
-**The policy is close to open-loop.** Of six perturbations, one moves the agent's stop in
-about 15% of races and five move it almost not at all (§6.6). It boxes on a median lap 3
-against an oracle's 17 and then runs a mean 52.9 laps to the flag on circuits whose cliff
-is at 31 to 34. Two distinct causes sit underneath: pit loss is absent from the
-32-dimensional observation, so the most important quantity in a pit-stop trade-off is not
-an input to the policy that makes it; and grid position *is* observed and still does not
-change the plan.
+**The agent over-stops where the tyre model is repaired.** 2.80 stops against the
+oracle's 1.76 — a calibration error on a real trade-off, replacing the pre-repair
+exploitation of a fictional one. Part of the cause is structural and measured: pit loss
+is absent from the 32-dimensional observation, and the ±2 s pit-loss perturbation moves
+stops like a coin flip, so the most important quantity in a pit-stop trade-off is not an
+input to the policy that makes it (§6.6). Observing pit loss is the named next feature.
 
 **The synthetic layer's transform is wrong in a known direction.** Simulated 2026 laps run
 3.7–6.1 s fast because the straight-line gain outweighs the corner loss. Every downstream result
 inherits that: the agent is trained and evaluated in a world whose absolute pace is
 optimistic. Relative comparisons — agent versus baseline in the same simulator — are
 unaffected, which is why the position-delta metric is the headline claim and the
-sim-to-real metric is reported honestly beside it.
+sim-to-real metric is reported honestly beside it. The tyre repair did not touch this:
+M8 is 0 of 5 before and after.
+
+**No 2026 circuit has a fully calibrated tyre model.** The repair's honest accounting
+(§5.2) reclassified every 2026 "calibrated" circuit as repaired: the soft compound's wear
+was below the signal floor everywhere, even pooled. The simulator's 2026 tyre physics is
+therefore borrowed shape plus locally evidenced cliffs, stated per curve in the artifact.
 
 **One identified joint-pace fit out of 29.** Fuel and evolution are near-unidentifiable
 within a race by construction, so mass attribution rests on a pooled coefficient from a
 single circuit. The pooled value is used everywhere and flagged everywhere it lands.
 
 **The counterfactual comparison is in-simulator.** The agent optimised the simulator it is
-scored in; real teams optimised reality. Ten races is a small sample and the analysis says
-so before reporting the result.
+scored in; real teams optimised reality. Ten races is a small sample, M2 has now changed
+verdict twice under physics changes, and the analysis says both before reporting the
+result.
 
-**Tyre failure rate is unacceptable** for anything but a simulator, and is the clearest
-target for future work: the failure hazard is priced into the reward only through its
-consequences, and an explicit risk term is the obvious next experiment.
+**The ablation grid predates the tyre repair.** Its design conclusions held across two
+physics but have not been re-rolled on the third (§5.8).
 
-**The agent is blind to virtual safety cars.** The mechanism is hypothesised, not
+**The remaining virtual-safety-car gap is unexplained.** Recall 0.684 against a 0.75
+bar, much improved from zero; the mechanism for what remains is hypothesised, not
 established.
 
 **Weather has two modes, not three.** Both the "mixed" and "wet risk" profiles run the same
@@ -1509,18 +1654,18 @@ target; the cloud deployment path exists and is documented as never executed.
 
 ### 10.1 One feature, one session, one branch
 
-The build ran as sixteen features, each a single session with a fixed ritual: plan in
+The build ran as eighteen features, each a single session with a fixed ritual: plan in
 read-only mode and stop for approval; branch, write tests first and show them failing,
 implement in vertical slices, run subagent reviews, write a lesson; merge with a
 non-fast-forward commit and update the index. Tests before code was a hard rule, and every
 feature's test-first commit precedes its implementation commits in the history.
 
 Two supporting artifacts fell out of this and turned out to matter more than expected. The
-seventeen lessons in `docs/learn/` explain each subsystem in plain language with line-level
-walkthroughs — they were written for the author's own understanding and became the source
-material for this document. The plans in `docs/plans/` record what each feature intended
-*before* it was built, including the divergences it expected, which is what makes the
-recorded divergence list (Appendix D) trustworthy rather than retrospective.
+twenty-three lessons in `docs/learn/` explain each subsystem in plain language with
+line-level walkthroughs — they were written for the author's own understanding and became
+the source material for this document. The plans in `docs/plans/` record what each feature
+intended *before* it was built, including the divergences it expected, which is what makes
+the recorded divergence list (Appendix D) trustworthy rather than retrospective.
 
 ### 10.2 AI assistance
 
@@ -1644,21 +1789,21 @@ fidelity · `A-05` oracle regret · `A-06` paired-seed evaluation with bootstrap
 ## Appendix B — repository map
 
 ```
-senna/            15,870 lines of Python
+senna/            16,240 lines of Python
   data/            1,617   ingest, cleaning, schema, snapshot, the wipe guard
-  physics/fits/    2,185   the fitting battery
-  physics/synth/   1,929   T1-T8 and the 5.4.1 validation
-  env/             2,184   F1RaceEnv, masks, dynamics, events, twin, rivals
-  strategy/          891   baselines, oracle, plans, rollout
+  physics/fits/    2,401   the fitting battery, the signal floor and the repair ladder
+  physics/synth/   1,929   T1-T8, the transfer gates and the 5.4.1 validation
+  env/             2,202   F1RaceEnv, masks, dynamics, events, twin, rivals
+  strategy/          896   baselines, oracle, plans, rollout
   train/           1,725   curriculum, gates, checkpoints, ablations, selection
   explain/         1,192   distillation, TreeSHAP, flip probes, cards
-  eval/            3,308   M1-M11, archetypes, robustness, sensitivities, store, report
+  eval/            3,443   M1-M11, archetypes, robustness, sensitivities, store, report
   serve/             651   model loader, frame builder, episode runner, stints
   bench/             139   throughput benchmark
 api/                 777   FastAPI routes and schemas
-app/                 799   three Streamlit pages, the client and the palette
-tests/            14,366   534 test functions
-configs/           4,400   20 yaml files, every constant with provenance
+app/               1,347   three Streamlit pages, the client, the theme and the story
+tests/            15,000   572 test functions
+configs/           5,983   22 yaml files, every constant with provenance
 docs/             ~18,000  spec split, plans, lessons, results, this document
 ```
 
@@ -1677,18 +1822,19 @@ docs/             ~18,000  spec split, plans, lessons, results, this document
 | Ablation results | `docs/results/F08-ablations.md`, `models/runs.json` |
 | Surrogate fidelity | `docs/results/F09-explainability.md`, `models/explain/<version>/fidelity.json` |
 | Evaluation results | `docs/results/F14-evaluation.md`, `docs/results/F14/store/*.json` |
+| Pre-repair evaluation, archived | `docs/results/F14-pre-repair/`, `docs/results/F14-pre-repair-evaluation.md` |
 | Three archetypes, four categories | `docs/results/archetypes.md`, `.../store/archetypes.json` |
 | The advantage is tyre-model conditional | `.../store/archetypes.json` → `conditional_advantage` |
 | Strategy robustness and the pit-loss gap | `.../store/robustness.json`, `senna/eval/robustness.py` |
 | Divergences from the proposal | §10.3 of this document |
 | Frozen data snapshot | `data/snapshot/MANIFEST.md` |
 | Decisions and their dates | `INDEX.md` decisions log |
-| Per-feature reasoning | `docs/plans/F00-plan.md` … `docs/plans/F23-plan.md` |
-| Per-feature explanation | `docs/learn/F00-*.md` … `docs/learn/F23-*.md` |
+| Per-feature reasoning | `docs/plans/F00-plan.md` … `docs/plans/F25-plan.md` |
+| Per-feature explanation | `docs/learn/F00-*.md` … `docs/learn/F25-*.md` |
 
 ## Appendix D — divergences from the master specification
 
-The plans record roughly thirty divergences and interpretation flags across the sixteen
+The plans record roughly thirty divergences and interpretation flags across the eighteen
 features. Listed below are the thirteen that shaped the architecture; the rest are mostly
 additive response fields and protocol details, and each lives in its feature's plan under
 a "flagged divergences" heading. Every row here was recorded in the relevant plan before

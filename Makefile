@@ -3,7 +3,7 @@
 #   eval (the M1-M11 suite) -> sensitivity / sensitivity-m2 -> report
 # plus the pack around it: snapshot / restore (the frozen data), verify (what a clean
 # clone can prove), test / lint (CI's gates, locally), up (the whole stack), and the
-# demo pair demo-warm / demo-check. Targets that need the ingested Postgres store or
+# demo warm-up demo-warm. Targets that need the ingested Postgres store or
 # the frozen models say so in their comments and never run in CI.
 #
 # Recipes call `python` directly, so run these inside the project env: either
@@ -167,12 +167,11 @@ report:
 # CI's fast suite, locally and by the same spelling — `pytest -m "not slow"` scoped the
 # way ci.yml runs it, so the local gate can't drift from CI (the F03-F06 lesson).
 #
-# Same spelling is not the same environment. ci.yml exports DATABASE_URL and REDIS_URL
-# for its service containers; without both, the API suite skips itself and the run still
-# reports green. F18 merged red that way — 55 skips locally, a real failure in CI. Export
-# both before trusting this as a gate:
-#   DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/senna_test \
-#     REDIS_URL=redis://localhost:6379/0 make test
+# Same spelling is not the same environment. ci.yml exports DATABASE_URL for its
+# postgres service; without it the API suite skips itself and the run still reports
+# green. F18 merged red that way — 55 skips locally, a real failure in CI. Export it
+# before trusting this as a gate:
+#   DATABASE_URL=postgresql+asyncpg://senna:senna@localhost:5432/senna_test make test
 # A green run with skips is not a green run; check the skip count against CI's.
 # two invocations on purpose. Streamlit's AppTest leaves its script runtime installed
 # in the process, and a SubprocVecEnv spawned afterwards re-executes a page in the child
@@ -200,15 +199,9 @@ restore:
 verify:
 	python -m pytest tests/eval/test_freeze.py -q
 	python scripts/check_links.py README.md INDEX.md docs/freeze.md \
-		docs/GETTING-STARTED.md docs/demo/script.md data/snapshot/MANIFEST.md
+		docs/demo/script.md data/snapshot/MANIFEST.md
 
 # pre-run the demo simulations against the local stack so the 5.13 deep link opens
 # mid-race instead of blocking on a cold simulation (E-15: the warm run IS the run)
 demo-warm:
 	./scripts/warm_demo.sh
-
-# the 5.13 first-beat check in a real browser: a cold Chrome must reach mid-race
-# inside the 15 s budget. Needs the stack up (make up) and a warmed demo run.
-# First run: cd frontend && npm i && npx playwright install chromium
-demo-check:
-	cd frontend && npx playwright test

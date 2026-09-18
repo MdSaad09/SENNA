@@ -1,9 +1,4 @@
-"""The circuit library (E-13): the index is configs/circuits.yaml and coverage is
-computed from the fits rather than asserted. The dissertation build has no ribbon
-pipeline, so a circuit's geometry — lap length, corners, braking zones — is not served;
-what the simulator actually needs from a circuit is its race distance, its harvest cap
-and whether it has fitted degradation, and all three come from config.
-"""
+
 
 from fastapi import APIRouter, HTTPException
 

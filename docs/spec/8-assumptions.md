@@ -42,6 +42,6 @@ Every load-bearing assumption, graded: A = verified against two or more primary 
 1. Read Part 0, then Parts 1, 3 and 4 (the audit and the change lists). Part 5 can wait until the build.
 2. Answer the twelve questions in Part 7 (one message; "use defaults" is a valid answer for most).
 3. Show your supervisor Part 1 findings F-01 to F-09 and the Part 3 cut list — five minutes, and it protects you.
-4. Reply "approved" (with any edits). We then start Phase 0 in Claude Code the same day, using Part 6.1 as the working method.
+4. Reply "approved" (with any edits). We then start Phase 0 the same day, using Part 6.1 as the working method.
 
 End of specification. Version 3.0 — prepared 7 July 2026 — supersedes v2.0 in full. Where v2 was right, it is carried forward by name; where it was wrong, the correction and its source are recorded above.

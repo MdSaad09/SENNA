@@ -1,16 +1,4 @@
-"""Assemble a race from the config layer. Everything the hot loop needs is distilled
-here once, at construction, so step() never reads yaml or calls a fitter.
-
-The era switch (A-10) is one recipe over two constant files. Base pace, mass, grid,
-harvest cap and fuel come from the era file; the 2026 synthetic layer (transforms.yaml)
-supplies the per-circuit 2026 pace and energy integrals, falling back to the fitted
-2024 dispersion where a circuit was never run in 2026 — exactly the precedence the
-F03 validator uses. The fine energy-mode coefficients (attack gain, derate, dirty-air,
-SOC floor) are the 2026 fit; the 2024 counterfactual borrows them, a documented
-coarseness that F15 keeps and prices — senna/eval/coefficients.py re-rolls M2 with
-the borrowed block at +/-50% and the report prints the spread beside the metric.
-"""
-
+""
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -28,11 +16,7 @@ def compound_code(name: str) -> int:
 
 
 def cliff_age_laps(max_age_seen: int | None, env_cfg: dict) -> int:
-    """The tyre-failure cliff the sim enforces: cliff_age_margin_laps past a compound's
-    fitted max_age_seen (race_env.py:429). A cluster transfer never saw a cliff, so it
-    falls back to the tyre_age_norm_laps horizon — the same fallback build_scenario uses
-    for deg_max_age below. Both numbers live in configs/env.yaml; the /tyres endpoint
-    reads this so View 4 draws the exact cliff the sim runs, not a literal of its own."""
+    
     horizon = env_cfg["obs"]["tyre_age_norm_laps"]
     margin = env_cfg["tyre_failure"]["cliff_age_margin_laps"]
     base = horizon if max_age_seen is None else max_age_seen
@@ -83,13 +67,7 @@ class CircuitScenario:
 def build_scenario(
     circuit: str, era: str = "2026", *, drivers=None, configs_dir: Path | None = None
 ) -> CircuitScenario:
-    """`drivers` is an optional list of driver codes in seat order.
-
-    configs/drivers.yaml is read only when one is given, which is the same rule
-    ablations.yaml already follows. tests/env/fixtures/pinned_configs/ holds neither, and
-    the F16 golden replay that proves the extraction changed no behaviour is built from
-    that directory — a config loaded unconditionally here would take it down.
-    """
+    
     def load(name):
         return config.load(name, configs_dir)
 
@@ -106,10 +84,7 @@ def build_scenario(
 
     offsets = jp["compound_offsets_s"]
     age_fallback = config.get(envc, "obs.tyre_age_norm_laps")
-    # F24 backstop: a slick with zero fitted wear never reaches the mask — free
-    # tyres are how run 491 pitted on lap 3 and ran one set 55 laps to P2. The
-    # allow flag is true only in tests/env/fixtures/pinned_configs, where the F16
-    # golden photograph must keep serving the world exactly as it ran.
+    
     allow_zero_deg = bool(config.get(envc, "race.allow_zero_deg_compounds"))
     available = tuple(
         c for c in SLICKS
@@ -122,9 +97,6 @@ def build_scenario(
             "two-compound rule (F-20) is unsatisfiable below race.min_dry_compounds"
         )
     if START_COMPOUND not in available:
-        # every car launches on the grid compound (5.5), and dynamics falls back to
-        # the hardest fitted curve for an unfitted one — the whole field would race
-        # lap 1 on physics the guard above just refused. Refuse the race instead.
         raise ValueError(
             f"{circuit} ({era}): the grid compound {START_COMPOUND} is not servable "
             f"here (available: {available}) — a race cannot start on a refused tyre"
@@ -134,7 +106,7 @@ def build_scenario(
     deg_max_age = {c: int(deg[c].get("max_age_seen", age_fallback)) for c in available}
     compound_offset = {c: float(offsets.get(c, 0.0)) for c in available}
 
-    # The energy-mode model is the 2026 fit; the 2024 path borrows it (see module note).
+ 
     fitted = load("physics_2026")["fitted"]
 
     if era == "2026":

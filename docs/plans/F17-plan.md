@@ -102,7 +102,7 @@ seat over which seasons" is the answer that survives it. The leaf is therefore n
   and rewrite the docstring paragraph that currently apologises for not doing so.
 - **`senna/eval/harness.py`** — pass `drivers=list(ordered)` to `F1RaceEnv` so the
   counterfactual gets `deg_mult` as well as pace.
-- **`senna/env/CLAUDE.md`** — one paragraph: the lineup is scenario-borne, not state-borne,
+- **Engine seam notes** — one paragraph: the lineup is scenario-borne, not state-borne,
   and why.
 
 **Bookkeeping**

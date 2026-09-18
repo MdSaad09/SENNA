@@ -120,7 +120,7 @@ Four accent names, four roles. `COAST` exists so that "no energy event" has a to
 its own rather than borrowing grey from the text scale — role vocabulary again.
 
 `TEAMS` is the eleven-tuple with SENNA first, and the decision deserves its own
-paragraph. The grid is 22 cars in 11 teams (the physics table in CLAUDE.md; the 5.9.2
+paragraph. The grid is 22 cars in 11 teams (the 2026 physics table; the 5.9.2
 bounds), and the sheets supply exactly ten constructor pairs. Making SENNA itself the
 eleventh team solves three problems at once: the two-seats-per-team invariant stays
 exact, no eleventh constructor has to be invented, and the ego carries the aqua harvest

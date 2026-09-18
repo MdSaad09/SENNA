@@ -1,8 +1,4 @@
-"""GET /agents: the registry answers from the baked artifacts' own files — manifest,
-promotion, fidelity — never from a database row that could drift from what the image
-actually serves (F-23, F-26). One entry per baked triplet (F-24: the era-matched
-model is deployable too), each badge read from that model's own surrogate.
-"""
+
 
 import json
 

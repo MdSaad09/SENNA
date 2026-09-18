@@ -1,13 +1,4 @@
-"""POST /counterfactuals (F-24): one POST answers with a linked, event-paired run
-pair — the frozen agent and the driver's actual strategy replayed in the same
-simulator. The agent leg runs the era-matched model where one is baked, so the
-comparison separates better strategy from a different car; where none is baked
-the route falls back to the frozen 2026 model on 2024 physics and the run config
-says so loudly — era_matched_model: pending-F14 — so no consumer can mistake the
-preview for the thesis result. The real stops are extracted from the driver's
-ingested laps here at POST time and frozen into the run config, so the worker
-never reads laps and a retry replays the identical plan.
-"""
+
 
 from datetime import UTC, datetime
 

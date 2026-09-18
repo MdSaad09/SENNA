@@ -19,12 +19,7 @@ CIRCUIT = "bahrain_grand_prix"  # the env suite's fixture circuit: three fitted 
 
 @pytest.fixture
 def configs_with_zeroed_slicks(tmp_path):
-    """Copy the live configs and clip the named Bahrain 2026 slicks to a = 0.
-
-    An edit on a copy, for the same reason driver_table.py copies: the repair
-    scrubs the committed zeros, so the fixture plants its own rather than
-    trusting whatever the last `make fit` left behind.
-    """
+  
 
     def plant(compounds):
         configs_dir = tmp_path / "configs"
@@ -43,8 +38,6 @@ def test_zero_deg_slick_is_excluded_from_available_compounds(configs_with_zeroed
     scenario = build_scenario(
         CIRCUIT, "2026", configs_dir=configs_with_zeroed_slicks(["SOFT"])
     )
-
-    # a = 0 means the tyre never loses lap time; it may not reach the mask
     assert "SOFT" not in scenario.available_compounds
     assert set(scenario.available_compounds) == {"MEDIUM", "HARD"}
 
@@ -52,17 +45,13 @@ def test_zero_deg_slick_is_excluded_from_available_compounds(configs_with_zeroed
 def test_fewer_than_two_dry_compounds_refuses_loudly(configs_with_zeroed_slicks):
     configs_dir = configs_with_zeroed_slicks(["SOFT", "MEDIUM"])
 
-    # only HARD survives: below race.min_dry_compounds the F-20 two-compound
-    # rule is unsatisfiable, so the circuit-era is refused by name
+   
     with pytest.raises(ValueError, match=CIRCUIT):
         build_scenario(CIRCUIT, "2026", configs_dir=configs_dir)
 
 
 def test_no_free_tyres_property():
-    # run 491 as an invariant, over the committed configs: every circuit-era
-    # build_scenario will actually serve has real wear on every slick it offers.
-    # A loud refusal (ValueError here; KeyError is the loader's own refusal for
-    # an unfitted block) is a legal outcome — serving a free tyre is not.
+
     params = config.load("physics_params")
     served_free, served = [], 0
     for slug, circuit_params in params["circuits"].items():

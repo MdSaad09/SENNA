@@ -9,7 +9,7 @@ the master-spec PDF is split into per-section markdown so every later session re
 what it needs. Dependencies: none — F00 is the root of the ledger. INDEX.md confirms
 nothing has to land first.
 
-**Repo reality check (explored):** the repo holds only docs, configs and CLAUDE.md files —
+**Repo reality check (explored):** the repo holds only docs and configs —
 no Python, no JS, no CI. The master spec PDF (34 pages) sits in `docs/spec/source/` as
 under its old pre-rename filename, untracked. A GitHub remote exists
 (`MdSaad09/SENNA`). The machine has **no Docker, no Node, no Python 3.11, no Homebrew**
@@ -34,7 +34,7 @@ IDs that shaped choices:
   React 19 / R3F 9.
 
 **Conflicts found (master spec wins, per workflow):**
-1. Root CLAUDE.md says `worker/` is "created in F10"; master spec Phase 0 includes
+1. The repo map says `worker/` is "created in F10"; master spec Phase 0 includes
    `worker/` in the folder structure. → Create the `worker/` directory now with a
    README stub; its code lands in F10. Compose gets only the four F00 services
    (postgres, redis, api, frontend); the worker service is added in F10, matching the
@@ -51,7 +51,7 @@ IDs that shaped choices:
 
 **Scaffolding & packaging**
 - `pyproject.toml` — root project metadata (Python 3.11), ruff + pytest config (incl.
-  `slow`/`property` markers per senna/CLAUDE.md).
+  `slow`/`property` markers per the package conventions).
 - `requirements.in` + `requirements.txt` — the full pinned stack (5.9.1 table) locked
   with `uv pip compile` (pip-compile-compatible output; see Questions Q2).
 - `senna/__init__.py` — package root (version string only; no logic).
@@ -135,7 +135,7 @@ F00** — nothing behavioural exists yet, first property tests arrive with F05):
 
 No E-xx rows target F00 directly (they start biting at F01). The failure modes F00 does
 own, and their mechanisms:
-- **The R3F install failure** (5.9.1, called out in frontend/CLAUDE.md): React 19 + R3F 9
+- **The R3F install failure** (5.9.1): React 19 + R3F 9
   drift — prevented by exact/major pins in package.json and the committed lockfile.
 - **SB3/sb3-contrib minor mismatch** (5.9.1): MaskablePPO import breaks if minors differ —
   prevented by locking the verified 2.9.0 pair.

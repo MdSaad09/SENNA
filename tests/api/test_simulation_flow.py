@@ -1,7 +1,7 @@
-"""The F10 integration test: POST /simulations -> RQ worker -> stored frames and cards
--> read back over the 5.9.2 endpoints. The round trip runs the real frozen triplet with
-TreeSHAP every lap, so it carries the slow marker; the request-validation tests stay
-fast because a queued row is readable before any job runs.
+"""The F10 integration test: POST /simulations runs the race inline, stores frames and
+cards -> read back over the 5.9.2 endpoints. The round trip runs the real frozen triplet
+with TreeSHAP every lap, so it carries the slow marker; the request-validation tests stay
+fast because they are refused at POST before any race starts.
 """
 
 import json

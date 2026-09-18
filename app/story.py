@@ -1,11 +1,4 @@
-"""The race headline and moments strip — template assembly over stored frames.
 
-Deterministic on purpose: the same frames and summary always produce the same
-sentence, the same honesty rule the decision cards follow (5.8.3). The headline
-carries where the race started, where it ended, what the stops cost, and the one
-event that most shaped it — red flag over safety car over virtual over weather —
-and says nothing at all about a race that was clean.
-"""
 
 EGO = 0  # the agent's car id, the F10 CarState contract
 
@@ -32,10 +25,7 @@ def race_headline(frames: list[dict], summary: dict, grid_position: int | None) 
 
 
 def race_moments(frames: list[dict]) -> list[dict]:
-    """Every stored track event once, in lap order, plus the ego's stops and nobody
-    else's. Pit events in the stream cover all 22 cars, so stops are read off the
-    ego's own in_pit flag instead — the pit-lap frame already carries the new
-    compound, which is the detail worth showing."""
+  
     moments = []
     for frame in frames:
         for event in frame.get("events", []):

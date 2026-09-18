@@ -1,7 +1,4 @@
-"""GET /energy/{run_id}: the per-lap harvest/deploy/SOC ledger replayed from stored
-frames, with the per-event harvest cap from configs/circuits.yaml riding along
-(E-02) so the energy view draws the ceiling it was actually raced under.
-"""
+
 
 from fastapi import APIRouter, Request
 from sqlalchemy import select

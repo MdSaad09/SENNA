@@ -1,10 +1,4 @@
-"""The one door to the API.
 
-The interface owns no simulation. Every figure it draws arrived from an HTTP response,
-which is the browser-side half of the interpretability contract: if a number is on the
-screen, there is a request that carried it. SENNA_API_BASE is a server-side value —
-Streamlit calls the API, the reader's browser only ever calls Streamlit (F-27).
-"""
 
 import os
 

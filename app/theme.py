@@ -1,12 +1,4 @@
-"""The petrol design system — tokens, gradients and the small pieces every page draws with.
 
-Every hex below is sourced from the two reference sheets Saad supplied on 19 Aug 2026
-(docs/reference_images/SENNA_petrol_palette_reference.png and SENNA_gradient_system.png),
-which replaced the sampled F23 palette wholesale. The sheets carry the rules as well as
-the colours: team colour answers WHO, aqua and ember answer WHAT, and they never take
-the same visual role in one view; ember stays out of navigation chrome; a gradient may
-be saturated only inside a data fill; nothing under 40px wears a gradient at all.
-"""
 
 import streamlit as st
 

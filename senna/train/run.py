@@ -1,12 +1,4 @@
-"""The curriculum loop (5.6.1, 5.7): one process trains A then B then C, each stage
-ending at its competence gate or its budget ceiling, whichever comes first (R-12).
-The global step never resets, so one W&B run shows the whole curriculum on one axis
-and the schedules decay over the summed ceilings. Every stage exit writes a triplet;
-the next stage carries the VecNormalize statistics forward (5.7, F-23).
 
-    python -m senna.train.run --seed 101
-    make train SEED=101 WANDB=offline          # the same thing, via the Makefile
-"""
 
 import argparse
 import json
@@ -54,18 +46,14 @@ CONFIG_FILES = ["env", "circuits", "physics_2026", "physics_2024", "physics_para
 
 
 def run_identity(*, seed: int, fingerprint: str, run_tag: str | None = None) -> str:
-    """The run's directory name and ledger key. The tag keeps two same-day arms with
-    the same seed apart (F08 finding 6); the harness computes this before training so
-    the ledger row exists while the run is still live."""
+   
     tag = f"{run_tag}-" if run_tag else ""
     return f"{tag}{datetime.now(UTC):%Y%m%d}-s{seed}-{fingerprint[:12]}"
 
 
 def build_evaluator(stage: str, stage_cfg: dict, *, model, venv, banks, gate_log,
                     plateau_floor: float, run_dir: Path, configs_dir=None):
-    """The stage's evaluate(step) -> GateDecision, closing over its eval history so
-    the plateau and stagnation rules see every eval this stage has run. Each call
-    also appends its numbers to curriculum_gates.json (F-21)."""
+   
     policy = Sb3Policy(model, venv.normalize_obs)
     gate = stage_cfg["gate"]
     era = stage_cfg.get("era", "2026")  # only the F14 era-matched overlay sets this

@@ -1,11 +1,17 @@
 # SENNA — index
 
-Claude: read this file at the start of every session. Update it exactly when the
-workflow commands say to: plan approved -> Planned; end of /ship -> In review;
-/land -> Done + date + lesson link. Keep "Active" and "Next up" true at all times.
+Running record of the build: what is done, what is in flight, and what was decided
+along the way. Update a feature's row when its status changes, and keep "Active" and
+"Next up" true at all times.
 
-**Active feature:** none. Next up: Saad's call — the demo re-choreography against
-the F25 interface is the queued follow-up the F24 demo-script note points at.
+**Active feature:** none. The demo re-choreography against the F25 interface is DONE
+(19 Aug 2026, docs/demo/script.md): verified pick Bahrain · P8 · seed 55 · dry —
+"P8 → P3 · three stops · through a lap-16 safety car", VSC-lap stops twice and a
+precautionary stop at cliff age; the money card is lap 22 (a 0.52 pit call with two
+flip lines) and the 53→54 boundary flip. Every quoted string was read off the running
+system; the runbook says to re-verify after any retrain (E-15). The old note's "wet
+three-stop laps 7/25/42/49" does not reproduce on current code and is superseded.
+Next up: Saad's call.
 
 **F24 — tyre-model repair and headline retrain. Done 18 Aug 2026** (branch
 `feature/F24-tyre-model-repair`, plan `docs/plans/F24-plan.md`, lesson
@@ -172,10 +178,9 @@ changed reward or curriculum gate, or different physics; not a rerun.
 | F18 | Full-era refit and revalidation | F02, F16 | Done 12 Aug 2026 | feature/F18-full-era-refit | [F18](docs/learn/F18-full-era-refit.md) |
 | F23 | Dashboard restructure and visual language | F11, F12, F13 | Done 15 Aug 2026 | feature/F23-ui-revamp | [F23](docs/learn/F23-ui-revamp.md) |
 
-Statuses: Todo -> Planned -> In review -> Done. Shipping happens inside one session, so
-there is no persistent "building" state; if a session dies mid-/ship, the branch holds
-the work — resume with `claude --continue`, or start fresh and say
-"resume F0x from its branch".
+Statuses: Todo -> Planned -> In review -> Done. There is no persistent "building"
+state: each feature is built on its own branch, and if the work is interrupted the
+branch holds it until it is picked back up.
 
 ## Decisions log (spec Part 7 answers)
 - **OQ-1 name:** SENNA (Saad, 7 Jul 2026). Repo, docs and UI say SENNA; code identifiers
@@ -333,43 +338,7 @@ F07–F08 by 15 Sep · F09 by 22 Sep · F10 by 6 Oct · F11–F13 by 3 Nov · F1
 Falling behind? The cut order is spec Part 6.3 — and never cut action masking, the
 cleaning contract, the calibration/validation split, the metric suite, or decision cards.
 
----
-
-# Saad's operating manual
-
-## One feature, start to finish
-1. Open a terminal in the repo and run `claude`. Name the session after the feature
-   (`/rename F05 race env` if your version supports it; otherwise the first message
-   names it well enough).
-2. Press Shift+Tab until the input bar shows **plan mode**, then type
-   `/plan-feature F05`.
-3. Read the plan. Ask about anything unclear — in plain English. Request changes the
-   same way. When happy, say **approved** and accept when Claude Code asks to exit
-   plan mode.
-4. Type `/ship F05`. Claude branches, writes failing tests, builds, gets reviewed by
-   the subagents, fixes the findings, writes your lesson, and stops with a ship report.
-5. Read the ship report and the new lesson in `docs/learn/`. Run the "try it" commands
-   yourself. Ask questions — this is your study time. Request changes if you want them.
-6. Type `/land F05` when you are happy. Typing it **is** your approval — you do not have
-   to say the word first. Claude merges to main, deletes the branch, and updates this
-   file. If you are not happy, just say so instead; nothing merges until you land it.
-7. Close the session. Next feature = fresh session. Run `/status` any time you are lost.
-
-## When things wobble
-- Context bloated, Claude repeating itself -> `/compact`, or land what is done and
-  re-plan the remainder as a follow-up feature.
-- Session died mid-build -> `claude --continue`, or a new session with
-  "resume F0x from branch feature/F0x-...".
-- Tests keep failing -> "re-read the spec anchors for this feature, then explain the
-  failure before touching the fix".
-- Claude typed a raw number into code -> "move that to configs with a provenance
-  comment" (the spec-auditor should have caught it; say so).
-- You disagree with a review finding -> you outrank the agents. Tell Claude to record
-  the rejection with a one-line reason and move on.
-- Claude wants to `git push` -> pushes are deliberately not pre-approved in
-  `.claude/settings.json`; approve them when asked.
-
-## What only you can do
-Approve plans. Approve ships. Answer the VERIFY items (AR-10 fuel mass, AR-11 fastest
-lap — spec Part 8). Put your real OQ-2 hardware and OQ-3 deadline in the decisions log
-above. Read your lessons. Everything else is a command.
+## Open items
+- Answer the VERIFY assumptions before the headline runs: AR-10 (race fuel mass) and
+  AR-11 (fastest lap) — spec Part 8.
+- Record the OQ-2 hardware and the OQ-3 deadline in the decisions log above.

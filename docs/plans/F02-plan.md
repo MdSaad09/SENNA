@@ -70,7 +70,7 @@ Only `frames.py` touches Postgres; only `run.py` reads configs and writes files.
 | `senna/physics/fits/params_writer.py` | Hand-rolled deterministic YAML emitter — fixed key order, sorted slugs, every leaf commented with its origin; `validate_complete()` raises listing nulls among F02-owned F05 keys |
 | `senna/physics/fits/plots.py` | Residual-plot helpers (matplotlib Agg) saving PNGs to `docs/fits/<module>/` so plots survive without committed notebook outputs |
 | `senna/physics/fits/run.py` | Orchestrator + CLI (`--only`, `--circuit`, `--params-out`); gate first, then fits, then writer; `asyncio.run` wrapper like `ingest.py` |
-| `senna/data/fastf1_loader.py` | Gains public `load_car_data(season, round, session)` — the only legal fastf1 import site (senna/CLAUDE.md) |
+| `senna/data/fastf1_loader.py` | Gains public `load_car_data(season, round, session)` — the only legal fastf1 import site |
 | `configs/fits.yaml` | New: every fit threshold with provenance (below) |
 | `configs/physics_params.yaml` | New: the output artifact — schema below |
 | `configs/physics_2026.yaml` | `fitted.mass_sensitivity_s_per_kg` set to pooled k_m, comment pointing at per-circuit values |

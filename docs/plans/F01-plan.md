@@ -43,7 +43,7 @@ Rows that shaped the design:
 
 New files:
 
-- `senna/config.py` — the one config loader (senna/CLAUDE.md mandate): `load(name)`
+- `senna/config.py` — the one config loader, as mandated: `load(name)`
   reads `configs/<name>.yaml`; reading a `null` constant raises `NullConstantError`.
   Stdlib + PyYAML only, so the future env hot loop can import it safely.
 - `senna/data/__init__.py` — public ingest surface; imports nothing heavy.

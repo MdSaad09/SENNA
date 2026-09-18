@@ -1,11 +1,4 @@
-"""The SENNA API (5.9.2). The lifespan owns the async engine and nothing else.
 
-The dissertation build has no queue and no worker: a race runs inline on a thread when
-it is asked for, which takes about eighteen seconds and costs the deployment two fewer
-services. Every response still carries X-Model-Version (5.11.2) without touching a 5.9.2
-body shape, errors included: a version-less 404 is still an answer someone will
-screenshot.
-"""
 
 import os
 from contextlib import asynccontextmanager
@@ -21,9 +14,7 @@ from senna.serve.loader import read_manifest
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # MODEL_VERSION selects the baked triplet (5.11.2, F-26); unset and the local
-    # alias dev-latest both mean the promoted headline, and a version this image
-    # does not bake fails loudly at startup, never silently falls back
+    
     app.state.model_version = read_manifest(
         version=os.environ.get("MODEL_VERSION")
     )["model_version"]

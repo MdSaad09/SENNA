@@ -308,7 +308,7 @@ not ship.
 
 React is pinned *exactly*, no caret. R3F 8 pairs with React 18; npm's default caret
 range would happily float React to 19 on some future install, and React 19 with R3F 8
-is the classic install failure named in spec 5.9.1 and in `frontend/CLAUDE.md`.
+is the classic install failure named in spec 5.9.1.
 Everything else carets within a major. `package-lock.json` (7,000 generated lines —
 never hand-edit) freezes the whole tree, and CI installs with `npm ci`, which obeys
 the lock exactly and fails loudly if `package.json` and the lock disagree.

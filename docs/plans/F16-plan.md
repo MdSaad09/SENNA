@@ -26,7 +26,7 @@ Anchors, as invariants:
 - **5.5.5** — `reset(seed=...)` seeds every stream; SubprocVecEnv workers stay stateless. The engine takes an `rng` argument and owns no module-level randomness.
 - **5.6.2** — the throughput gate; 18,477 steps/s measured against a 300 floor.
 - **A-05 / M3** — the deterministic twin survives intact and gets a better home.
-- **`senna/CLAUDE.md`** — nothing pandas-shaped reachable from the tick; the engine inherits this verbatim.
+- **Hot-loop discipline** — nothing pandas-shaped reachable from the tick; the engine inherits this verbatim.
 
 **The design insight from exploration.** `self._twin` is tested in seven separate places
 inside the tick — `_resolve_track_status:343`, `_resolve_weather:384`, `_field_modes:399`,
@@ -46,7 +46,7 @@ so this is also the plumbing any later digital-twin work needs.
 - **`senna/env/events_io.py`** — new, small. `TraceSource` / `LiveSource` / `TraceSink`. Where the seven twin branches go to live.
 - **`senna/env/race_env.py`** — `step()` becomes: coerce action, collect the 21 rival decisions, `begin_lap`, `advance_lap`, ego bookkeeping, reward, mask, observe, info. The eight resolvers leave. Everything ego-shaped stays: `_coerce`, `_snap_pit`, `_ego_mask`, `_observe`, `_info`, `_terminal_info`, the `_ego_*` counters, the v2 reward block.
 - **`senna/env/state.py`** — `ego` documented as an indexing convenience for the adapter; no engine function branches on it.
-- **`senna/env/CLAUDE.md`** — new, short: the two-phase tick order and the draw-order rule, so a later feature does not reintroduce a decision reading stale track status, or vectorise a loop that must stay a loop.
+- **Engine seam notes** — new, short: the two-phase tick order and the draw-order rule, so a later feature does not reintroduce a decision reading stale track status, or vectorise a loop that must stay a loop.
 - **`tests/env/test_engine.py`**, **`tests/env/test_engine_identity.py`** — per the `tests/<module>/test_<file>.py` convention.
 
 ## Constants & configs

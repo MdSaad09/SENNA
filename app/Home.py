@@ -1,10 +1,4 @@
-"""Race — set one up, run it, read what the agent did.
 
-Post-hoc by design. The interface offers no plan and no score before the race, because
-the agent has neither: it decides lap by lap inside the simulator, and a recommended
-strategy printed before the flag would be a claim nothing in this system can support.
-So the page runs a race and then reports it.
-"""
 
 import altair as alt
 import pandas as pd

@@ -40,7 +40,7 @@ worker process; the handler only validates, records and enqueues.**
 
 **Pydantic response models as a contract (5.9.2).** Pydantic classes declare a shape —
 fields, types, bounds — and validate anything crossing the boundary against it, in
-both directions. `api/schemas.py` is 5.9.2 written down verbatim, and api/CLAUDE.md's
+both directions. `api/schemas.py` is 5.9.2 written down verbatim, and the standing
 rule is that you change the spec before you change a shape, because the frontend will
 be built against exactly these fields. The detail worth stealing is on
 `SimulationCreate`:

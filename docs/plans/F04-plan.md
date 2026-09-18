@@ -57,7 +57,7 @@ core is testable without FastF1 or a database.
 - `senna/circuits/__init__.py` — the public surface.
 - `senna/data/fastf1_loader.py` (edit) — add `load_fastest_lap_telemetry(...)` returning the
   fastest clean lap's merged X/Y/Z/Speed/Throttle/Distance as numpy, and `load_circuit_info(...)`.
-  Only this module imports fastf1 (senna/CLAUDE.md); reuses `clean_pos_data` for the
+  Only this module imports fastf1; reuses `clean_pos_data` for the
   decimetre-to-metre conversion, the OnTrack filter and the z-score gate.
 - `configs/ribbon.yaml` (new) — the ribbon/braking/X-mode constants, each with a provenance
   comment. Header states it is F04's stylised-geometry config, distinct from the sourced

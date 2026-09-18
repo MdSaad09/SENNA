@@ -1,12 +1,3 @@
-"""The 5.9.2 response and request shapes, verbatim. These models are the API's
-contract with the frontend and the spec — change the spec before changing a shape
-(api/CLAUDE.md). Most serving detail travels in the open dict fields (config, summary,
-honesty) and in the X-Model-Version header. F12 is the exception: EnergyProfile and
-DegradationCurve gain additive fields (usable_soc_mj, the typed EnergyLap, source_circuit,
-cliff_age) recorded as an approved 5.9.2 divergence in docs/plans/F12-plan.md, the same
-way F10 and F11 recorded theirs — additive only, so no existing consumer breaks.
-"""
-
 from datetime import datetime
 from typing import Literal
 

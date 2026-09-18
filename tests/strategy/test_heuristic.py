@@ -6,8 +6,8 @@ so the mask and the baseline can never disagree.
 
 The behaviour tests run on the deterministic twin so the safety car and the rain appear
 exactly where the test injects them. Bahrain 2026 MEDIUM degrades past the heuristic's
-1.2 s trigger at about age 16, so a stop earlier than that is the injected event talking,
-not the deg model.
+1.2 s trigger at about age 7, so the deg model boxes on lap 9 unprompted; an injected
+event has to land before that to prove it was the event talking and not the deg model.
 """
 
 import pytest
@@ -40,7 +40,7 @@ def test_the_engineer_heuristic_finishes_with_a_legal_two_compound_strategy(
 def test_the_heuristic_takes_the_cheap_stop_inside_a_safety_car_window(
     make_env, green_trace
 ):
-    sc_start = 10  # old enough to clear both the min-stint and SC age gates, before deg
+    sc_start = 7  # clears the SC age gate (6) and lands before the lap-9 deg stop
     green_trace.status[sc_start - 1 : sc_start + 2] = events.SC  # a 3-lap neutralisation
 
     env = make_env(twin=green_trace)

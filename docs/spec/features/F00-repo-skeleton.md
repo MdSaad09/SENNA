@@ -10,7 +10,7 @@ lockfiles pin the stack; and the master spec is split into per-section markdown 
 later session reads only what it needs.
 
 ## Deliverables
-- Folder structure per the root CLAUDE.md repo map (senna/, api/, worker/, frontend/, configs/, tests/, docs/, notebooks/)
+- Folder structure per the repo map (senna/, api/, worker/, frontend/, configs/, tests/, docs/, notebooks/)
 - docker-compose.yml: postgres:16-alpine, redis:7-alpine, api (uvicorn with /api/v1/health), frontend (vite dev server)
 - Pinned lockfiles per spec 5.9.1 (pip-compile or uv lock; package-lock.json). React 18.3 + R3F 8 — never React 19
 - GitHub Actions: pytest + vitest + lint on push

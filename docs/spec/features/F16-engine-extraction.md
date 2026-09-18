@@ -31,7 +31,7 @@ through the new seam — that identity is the deliverable, not a side condition.
 - `senna/env/race_env.py`: `step()` reduced to coerce action, collect rival decisions, call the engine, then reward/mask/observe/info. The eight private resolvers move out; the ego bookkeeping stays
 - `senna/env/state.py`: `ego` documented as an indexing convenience the engine ignores; no engine function may branch on it
 - `tests/env/test_engine_identity.py`: the golden-trace equivalence suite (below)
-- A short `senna/env/CLAUDE.md` note recording the two-phase tick order, so later features do not reintroduce a decision that reads stale track status
+- A short note at the engine seam recording the two-phase tick order, so later features do not reintroduce a decision that reads stale track status
 
 ## Out of scope
 Any behaviour change at all. Specifically **not** in F16, each already scoped elsewhere:

@@ -1,8 +1,3 @@
-"""The 32-dimension ego observation (spec 5.5.1). Every dimension is named, bounded to
-[-1, 1] and justified in the table; the raw encodings are already scale-bounded so the
-served model degrades gracefully if VecNormalize statistics drift. Rival context is the
-actual neighbours' continuous tyre state, not v2's binary archetype flags.
-"""
 
 import numpy as np
 
